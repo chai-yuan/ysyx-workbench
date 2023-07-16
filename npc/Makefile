@@ -23,7 +23,7 @@ $(SIM_EXE): $(VERILOG_DIR)/*.v $(CPP_DIR)/*.cpp
 sim: $(SIM_EXE)
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
 	$(SIM_EXE) $(BUILD_DIR)/$(TARGET_VCD)
-	gtkwave $(BUILD_DIR)/$(TARGET_VCD) &
+	gtkwave $(BUILD_DIR)/$(TARGET_VCD)
 
 clean:
 	rm -rf $(BUILD_DIR)/*

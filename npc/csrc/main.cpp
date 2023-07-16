@@ -16,13 +16,14 @@ int main(int argc, char** argv) {
     }
 
     vluint64_t time = 0;
-    while (!Verilated::gotFinish()) {
+    while (!Verilated::gotFinish() && time < 32) {
         top->a = rand() & 1;
         top->b = rand() & 1;
 
         top->eval();
-        vcd->dump(time);
+        assert(top->f == top->a ^ top->b);
 
+        vcd->dump(time);
         time++;
     }
 
