@@ -1,14 +1,34 @@
-#include "Vexample.h"
+#include "Vtop.h"
 #include "verilated.h"
+#include "verilated_vcd_c.h"
 
 int main(int argc, char** argv) {
-    VerilatedContext* contextp = new VerilatedContext;
-    contextp->commandArgs(argc, argv);
-    Vexample* top = new Vexample{contextp};
-    while (!contextp->gotFinish()) {
-        top->eval();
+    Verilated::commandArgs(argc, argv);
+    Verilated::traceEverOn(true);
+
+    Vtop* top = new Vtop;
+    VerilatedVcdC* vcd = new VerilatedVcdC;
+    top->trace(vcd, 32);
+    if (argc > 1) {
+        vcd->open(argv[1]);
+    } else {
+        vcd->open("trace.vcd");
     }
+
+    vluint64_t time = 0;
+    while (!Verilated::gotFinish()) {
+        top->a = rand() & 1;
+        top->b = rand() & 1;
+
+        top->eval();
+        vcd->dump(time);
+
+        time++;
+    }
+
+    vcd->close();
+    delete vcd;
     delete top;
-    delete contextp;
+
     return 0;
 }

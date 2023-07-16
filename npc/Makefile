@@ -1,29 +1,33 @@
-## 定义Verilator命令行选项
-VERILATOR_FLAGS := --cc --exe --build -j 0 -Wall
-
 # 定义源文件路径
 BUILD_DIR := $(shell pwd)/build
-VSRC := vsrc/example.v
-CSRC := csrc/main.cpp
+VERILOG_DIR := $(shell pwd)/vsrc
+CPP_DIR := $(shell pwd)/csrc
 
-# 定义目标可执行文件名
-TARGET := Vexample
-TARGET_PATH := $(BUILD_DIR)/$(TARGET)
+# 定义编译目标
+TARGET := Vtop
+TARGET_VCD := trace.vcd
+VERILATOR_ARG := -Wall -trace -Mdir $(BUILD_DIR)
 
-# 默认规则，指定 make 时的执行动作
-all: $(TARGET_PATH)
+# 定义 Verilator 生成的仿真可执行文件
+SIM_EXE := $(BUILD_DIR)/$(TARGET)
 
-# Verilator 生成C++代码并编译成可执行文件
-$(TARGET_PATH): $(VSRC) $(CSRC)
+# 编译仿真结果
+all: $(SIM_EXE)
+
+$(SIM_EXE): $(VERILOG_DIR)/*.v $(CPP_DIR)/*.cpp
 	mkdir -p $(BUILD_DIR)
-	verilator $(VERILATOR_FLAGS) -Mdir $(BUILD_DIR) $(CSRC) $(VSRC) -o $(TARGET)
+	verilator $(VERILATOR_ARG) -cc $(VERILOG_DIR)/top.v --exe $(CPP_DIR)/main.cpp
+	make -C $(BUILD_DIR) -f $(TARGET).mk
 
-# 清理生成的文件
+# 进行仿真，同时生成波形文件
+sim: $(SIM_EXE)
+	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
+	$(SIM_EXE) $(BUILD_DIR)/$(TARGET_VCD)
+	gtkwave $(BUILD_DIR)/$(TARGET_VCD) &
+
 clean:
-	rm -rf $(BUILD_DIR)
+	rm -rf $(BUILD_DIR)/*
 
-# 运行可执行文件
-run: $(TARGET_PATH)
-	$(TARGET_PATH)
+.PHONY: clean
 
-.PHONY: all clean run
+include ../Makefile
