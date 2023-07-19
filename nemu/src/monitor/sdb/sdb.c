@@ -16,6 +16,7 @@
 #include "sdb.h"
 #include <cpu/cpu.h>
 #include <isa.h>
+#include <memory/vaddr.h>
 #include <readline/history.h>
 #include <readline/readline.h>
 
@@ -54,6 +55,57 @@ static int cmd_q(char* args) {
 
 static int cmd_help(char* args);
 
+static int cmd_si(char* args) {
+    if (args == NULL) {
+        cpu_exec(1);
+    } else {
+        cpu_exec(atoi(args));
+    }
+    return 0;
+}
+
+static int cmd_info(char* args) {
+    Assert(args != NULL, "nemu/sdb : The info command requires an argument");
+    if (*args == 'r') {
+        isa_reg_display();
+    } else if (*args == 'w') {
+        TODO();
+    } else {
+        panic("nemu/sdb : The info command received incorrect parameters");
+    }
+    return 0;
+}
+
+static int cmd_x(char* args) {
+    char* slen = strtok(NULL, " ");
+    char* saddr = strtok(NULL, " ");
+    int len = 0;
+    vaddr_t addr = 0;
+
+    sscanf(slen, "%d", &len);
+    sscanf(saddr, "%x", &addr);
+    for (int i = 0; i < len; i++) {
+        printf("0x%08x: %08x\n", addr, vaddr_read(addr, 4));
+        addr += 4;
+    }
+    return 0;
+}
+
+static int cmd_p(char* args) {
+    TODO();
+    return 0;
+}
+
+static int cmd_w(char* args) {
+    TODO();
+    return 0;
+}
+
+static int cmd_d(char* args) {
+    TODO();
+    return 0;
+}
+
 static struct {
     const char* name;
     const char* description;
@@ -62,9 +114,12 @@ static struct {
     {"help", "Display information about all supported commands", cmd_help},
     {"c", "Continue the execution of the program", cmd_c},
     {"q", "Exit NEMU", cmd_q},
-
-    /* TODO: Add more commands */
-
+    {"si", "Execute N steps, pause after N instructions", cmd_si},
+    {"info", "Print the program status", cmd_info},
+    {"x", "Scan memory", cmd_x},
+    {"p", "Calculate the value of the expression", cmd_p},
+    {"w", "Set a watchpoint", cmd_w},
+    {"d", "Delete a watchpoint", cmd_d},
 };
 
 #define NR_CMD ARRLEN(cmd_table)
