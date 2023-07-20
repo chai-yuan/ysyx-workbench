@@ -92,7 +92,10 @@ static int cmd_x(char* args) {
 }
 
 static int cmd_p(char* args) {
-    TODO();
+    bool success = true;
+    uint32_t eval_ans = expr(args, &success);
+    Assert(success, "Expression evaluation error");
+    printf("%u\n", eval_ans);
     return 0;
 }
 
