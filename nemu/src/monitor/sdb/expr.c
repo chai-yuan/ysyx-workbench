@@ -153,6 +153,9 @@ static bool make_token(char* e) {
 bool check_parentheses(int p, int q) {
     int left_cnt = 0;
 
+    if (tokens[p].type != '(' || tokens[q].type != ')')
+        return false;
+
     for (int i = p; i <= q; i++) {
         if (tokens[p].type == '(')
             left_cnt++;
@@ -184,21 +187,18 @@ int find_main_operator(int p, int q) {
     for (int i = p; i <= q; i++) {
         if (tokens[i].type == '(') {
             left_cnt++;
-            i++;
             while (true) {
+                i++;
                 if (tokens[i].type == '(')
                     left_cnt++;
                 else if (tokens[i].type == ')')
                     left_cnt--;
-                i++;
                 if (left_cnt == 0)
                     break;
             }
-            if (i > q)
-                break;
-        } else if (tokens[i].type == TK_DECIMAL)
+        } else if (tokens[i].type == TK_DECIMAL) {
             continue;
-        else if (get_priority(tokens[i].type) >= get_priority(now_op)) {
+        } else if (get_priority(tokens[i].type) >= get_priority(now_op)) {
             now_op = tokens[i].type;
             ret = i;
         }
