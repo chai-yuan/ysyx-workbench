@@ -23,7 +23,8 @@
 // this should be enough
 #define BUF_SIZE 4096
 static char buf[BUF_SIZE] = {};
-static int buf_idx;
+static char print_buf[BUF_SIZE] = {};
+static int buf_idx, print_buf_idx;
 static char code_buf[BUF_SIZE + 128] = {};  // a little larger than `buf`
 static char* code_format =
     "#include <stdio.h>\n"
@@ -44,18 +45,22 @@ void gen(char c) {
         printf("Buffer overflow!\n");
         exit(1);
     }
+    if (c != 'U')
+        print_buf[print_buf_idx++] = c;
     buf[buf_idx++] = c;
 }
 
 void gen_num() {
     int num = rand() % 100;  // Generate a random number less than 1000
     int len = snprintf(buf + buf_idx, BUF_SIZE - buf_idx, "%d", num);
+    snprintf(print_buf + print_buf_idx, BUF_SIZE - print_buf_idx, "%d", num);
     if (len >= BUF_SIZE - buf_idx) {
         printf("Buffer overflow!\n");
         exit(1);
     }
     buf_idx += len;
-    // gen('U');
+    print_buf_idx += len;
+    gen('U');
 }
 
 void gen_rand_op() {
@@ -99,9 +104,12 @@ int main(int argc, char* argv[]) {
     if (argc > 1) {
         sscanf(argv[1], "%d", &loop);
     }
+
     int i;
     for (i = 0; i < loop; i++) {
         buf_idx = 0;
+        print_buf_idx = 0;
+        memset(print_buf, 0, sizeof(print_buf));
         memset(buf, 0, sizeof(buf));
         gen_rand_expr();
 
@@ -124,7 +132,7 @@ int main(int argc, char* argv[]) {
         ret = fscanf(fp, "%d", &result);
         pclose(fp);
 
-        printf("%u %s\n", result, buf);
+        printf("%u %s\n", result, print_buf);
     }
     return 0;
 }

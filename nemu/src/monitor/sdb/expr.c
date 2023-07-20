@@ -77,6 +77,7 @@ static bool make_token(char* e) {
     int i;
     regmatch_t pmatch;
 
+    memset(tokens, 0, sizeof(tokens));
     nr_token = 0;
 
     while (e[position] != '\0') {
@@ -150,60 +151,80 @@ static bool make_token(char* e) {
     return true;
 }
 
-bool check_parentheses(int p, int q) {
+bool check_parentheses(uint32_t p, uint32_t q) {
     int left_cnt = 0;
 
     if (tokens[p].type != '(' || tokens[q].type != ')')
         return false;
 
     for (int i = p; i <= q; i++) {
-        if (tokens[p].type == '(')
+        if (tokens[i].type == '(')
             left_cnt++;
-        else if (tokens[p].type == ')')
+        else if (tokens[i].type == ')')
             left_cnt--;
 
         if (left_cnt < 1 && i != q)
             return false;
     }
-    return left_cnt != 0;
+    return left_cnt == 0;
 }
 
 int get_priority(char token_type) {
     switch (token_type) {
         case '*':
         case '/':
-            return 1;
+            return 2;
         case '+':
         case '-':
-            return 2;
+            return 1;
         default:
-            return 0;
+            return 32;
     }
 }
 
-int find_main_operator(int p, int q) {
-    int ret = p, left_cnt = 0;
-    char now_op = '?';
-    for (int i = p; i <= q; i++) {
-        if (tokens[i].type == '(') {
+// int find_main_operator(int p, int q) {
+//     int ret = p, left_cnt = 0;
+//     char now_op = '?';
+//     for (int i = p; i <= q; i++) {
+//         if (tokens[i].type == '(') {
+//             left_cnt++;
+//             while (true) {
+//                 i++;
+//                 if (tokens[i].type == '(')
+//                     left_cnt++;
+//                 else if (tokens[i].type == ')')
+//                     left_cnt--;
+//                 if (left_cnt == 0)
+//                     break;
+//             }
+//         } else if (tokens[i].type == TK_DECIMAL) {
+//             continue;
+//         } else if (get_priority(tokens[i].type) >= get_priority(now_op)) {
+//             now_op = tokens[i].type;
+//             ret = i;
+//         }
+//     }
+//     return ret;
+// }
+
+uint32_t find_main_operator(uint32_t p, uint32_t q) {
+    Assert(p <= q, "Bad expression");
+    uint32_t left_cnt = 0;
+    uint32_t pos = q - 1;
+    for (uint32_t i = q; i > p; i--) {
+        if (tokens[i].type == '(')
             left_cnt++;
-            while (true) {
-                i++;
-                if (tokens[i].type == '(')
-                    left_cnt++;
-                else if (tokens[i].type == ')')
-                    left_cnt--;
-                if (left_cnt == 0)
-                    break;
+        if (tokens[i].type == ')')
+            left_cnt--;
+        if (left_cnt == 0)
+            if (tokens[i].type != '(' && tokens[i].type != ')' && tokens[i].type != TK_NOTYPE && tokens[i].type != TK_DECIMAL) {
+                if (get_priority(tokens[i].type) < get_priority(tokens[pos].type)) {
+                    pos = i;
+                }
             }
-        } else if (tokens[i].type == TK_DECIMAL) {
-            continue;
-        } else if (get_priority(tokens[i].type) >= get_priority(now_op)) {
-            now_op = tokens[i].type;
-            ret = i;
-        }
     }
-    return ret;
+
+    return pos;
 }
 
 uint32_t eval(int p, int q) {
