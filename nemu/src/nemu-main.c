@@ -22,26 +22,26 @@ void am_init_monitor();
 void engine_start();
 int is_exit_status_bad();
 
-// void test() {
-//     int cnt = 0;
-//     unsigned ans;
-//     bool success;
-//     char *input, *input_exp, *input_ans;
-//     while ((input = readline(NULL))) {
-//         printf("input: %s", input);
-//         input_ans = strtok(input, " ");
-//         sscanf(input_ans, "%u", &ans);
-//         input_exp = input + strlen(input_ans) + 1;
+void test() {
+    int cnt = 0;
+    unsigned ans;
+    bool success;
+    char *input, *input_exp, *input_ans;
+    while ((input = readline(NULL))) {
+        printf("input: %s", input);
+        input_ans = strtok(input, " ");
+        sscanf(input_ans, "%u", &ans);
+        input_exp = input + strlen(input_ans) + 1;
 
-//         uint32_t eval_ans = expr(input_exp, &success);
-//         if (eval_ans != ans) {
-//             printf("In test: %d\n", cnt);
-//             printf("ans = %d , eval = %d\n", ans, eval_ans);
-//             exit(1);
-//         }
-//         cnt++;
-//     }
-// }
+        uint32_t eval_ans = expr(input_exp, &success);
+        if (eval_ans != ans) {
+            printf("In test: %d\n", cnt);
+            printf("ans = %d , eval = %d\n", ans, eval_ans);
+            exit(1);
+        }
+        cnt++;
+    }
+}
 
 int main(int argc, char* argv[]) {
 /* Initialize the monitor. */
@@ -51,9 +51,10 @@ int main(int argc, char* argv[]) {
     init_monitor(argc, argv);
 #endif
 
+    // test();
+
     /* Start engine. */
     engine_start();
 
     return is_exit_status_bad();
-    return 0;
 }

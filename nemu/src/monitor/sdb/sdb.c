@@ -65,13 +65,13 @@ static int cmd_si(char* args) {
 }
 
 static int cmd_info(char* args) {
-    Assert(args != NULL, "nemu/sdb : The info command requires an argument");
+    Assert(args != NULL, "The info command requires an argument");
     if (*args == 'r') {
         isa_reg_display();
     } else if (*args == 'w') {
-        TODO();
+        info_wp();
     } else {
-        panic("nemu/sdb : The info command received incorrect parameters");
+        panic("The info command received incorrect parameters");
     }
     return 0;
 }
@@ -100,12 +100,20 @@ static int cmd_p(char* args) {
 }
 
 static int cmd_w(char* args) {
-    TODO();
+    Assert(args != NULL, "Expected an expression parameter");
+    WP* new_watchpoint = new_wp();
+    strcpy(new_watchpoint->exp, args);
+
+    bool success = true;
+    new_watchpoint->val = expr(new_watchpoint->exp, &success);
     return 0;
 }
 
 static int cmd_d(char* args) {
-    TODO();
+    Assert(args != NULL, "Expected an num");
+    int wp_num = 0;
+    sscanf(args, "%d", &wp_num);
+    delete_wp(wp_num);
     return 0;
 }
 
