@@ -1,12 +1,3 @@
-*.*
-*
-!*/
-!Makefile
-!*.mk
-!*.[cSh]
-!*.v
-!*.cc
-!*.cpp
-!.gitignore
-!README.md
-build/
+!resource/*.hex
+!constr/*.nxdc
+.vscode/

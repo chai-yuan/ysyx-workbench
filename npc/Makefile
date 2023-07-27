@@ -1,33 +1,53 @@
-# 定义源文件路径
-BUILD_DIR := $(shell pwd)/build
-VERILOG_DIR := $(shell pwd)/vsrc
-CPP_DIR := $(shell pwd)/csrc
+TOPNAME = top
+NXDC_FILES = constr/top.nxdc
+INC_PATH ?=
 
-# 定义编译目标
-TARGET := Vtop
-TARGET_VCD := trace.vcd
-VERILATOR_ARG := -Wall -trace -Mdir $(BUILD_DIR)
+VERILATOR = verilator
+VERILATOR_CFLAGS += -MMD --build -cc  \
+				-O3 --x-assign fast --x-initial fast --noassert
 
-# 定义 Verilator 生成的仿真可执行文件
-SIM_EXE := $(BUILD_DIR)/$(TARGET)
+BUILD_DIR = ./build
+OBJ_DIR = $(BUILD_DIR)/obj_dir
+BIN = $(BUILD_DIR)/$(TOPNAME)
 
-# 编译仿真结果
-all: $(SIM_EXE)
+default: $(BIN)
 
-$(SIM_EXE): $(VERILOG_DIR)/*.v $(CPP_DIR)/*.cpp
-	mkdir -p $(BUILD_DIR)
-	verilator $(VERILATOR_ARG) -cc $(VERILOG_DIR)/top.v --exe $(CPP_DIR)/main.cpp
-	make -C $(BUILD_DIR) -f $(TARGET).mk
+$(shell mkdir -p $(BUILD_DIR))
 
-# 进行仿真，同时生成波形文件
-sim: $(SIM_EXE)
+# constraint file
+SRC_AUTO_BIND = $(abspath $(BUILD_DIR)/auto_bind.cpp)
+$(SRC_AUTO_BIND): $(NXDC_FILES)
+	python3 $(NVBOARD_HOME)/scripts/auto_pin_bind.py $^ $@
+
+# project source
+VSRCS = $(shell find $(abspath ./vsrc) -name "*.v")
+CSRCS = $(shell find $(abspath ./csrc) -name "*.c" -or -name "*.cc" -or -name "*.cpp")
+CSRCS += $(SRC_AUTO_BIND)
+
+# rules for NVBoard
+include $(NVBOARD_HOME)/scripts/nvboard.mk
+
+# rules for verilator
+INCFLAGS = $(addprefix -I, $(INC_PATH))
+CFLAGS += $(INCFLAGS) -DTOP_NAME="\"V$(TOPNAME)\""
+LDFLAGS += -lSDL2 -lSDL2_image
+
+$(BIN): $(VSRCS) $(CSRCS) $(NVBOARD_ARCHIVE)
+	@rm -rf $(OBJ_DIR)
+	$(VERILATOR) $(VERILATOR_CFLAGS) \
+		--top-module $(TOPNAME) $^ \
+		$(addprefix -CFLAGS , $(CFLAGS)) $(addprefix -LDFLAGS , $(LDFLAGS)) \
+		--Mdir $(OBJ_DIR) --exe -o $(abspath $(BIN))
+
+all: default
+
+run: $(BIN)
 	$(call git_commit, "sim RTL") # DO NOT REMOVE THIS LINE!!!
-	$(SIM_EXE) $(BUILD_DIR)/$(TARGET_VCD)
-	gtkwave $(BUILD_DIR)/$(TARGET_VCD)
+	@$^
 
 clean:
-	rm -rf $(BUILD_DIR)/*
+	rm -rf $(BUILD_DIR)
 
-.PHONY: clean
+.PHONY: default all clean run
 
 include ../Makefile

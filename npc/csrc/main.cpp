@@ -1,35 +1,32 @@
-#include "Vtop.h"
-#include "verilated.h"
-#include "verilated_vcd_c.h"
+#include <Vtop.h>
+#include <nvboard.h>
 
-int main(int argc, char** argv) {
-    Verilated::commandArgs(argc, argv);
-    Verilated::traceEverOn(true);
+static TOP_NAME dut;
 
-    Vtop* top = new Vtop;
-    VerilatedVcdC* vcd = new VerilatedVcdC;
-    top->trace(vcd, 32);
-    if (argc > 1) {
-        vcd->open(argv[1]);
-    } else {
-        vcd->open("trace.vcd");
+void nvboard_bind_all_pins(Vtop* top);
+
+static void single_cycle() {
+    dut.clk = 0;
+    dut.eval();
+    dut.clk = 1;
+    dut.eval();
+}
+
+static void reset(int n) {
+    dut.rst = 1;
+    while (n-- > 0)
+        single_cycle();
+    dut.rst = 0;
+}
+
+int main() {
+    nvboard_bind_all_pins(&dut);
+    nvboard_init();
+
+    reset(10);
+
+    while (1) {
+        nvboard_update();
+        single_cycle();
     }
-
-    vluint64_t time = 0;
-    while (!Verilated::gotFinish() && time < 32) {
-        top->a = rand() & 1;
-        top->b = rand() & 1;
-
-        top->eval();
-        assert(top->f == top->a ^ top->b);
-
-        vcd->dump(time);
-        time++;
-    }
-
-    vcd->close();
-    delete vcd;
-    delete top;
-
-    return 0;
 }
