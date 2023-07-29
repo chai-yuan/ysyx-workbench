@@ -1,11 +1,37 @@
-# 示例工程
+Chisel Project Template
+=======================
 
-先设置环境变量`NVBOARD_HOME`为NVBoard项目的路径, 然后执行`make run`.
+Another version of the [Chisel template](https://github.com/ucb-bar/chisel-template) supporting mill.
+mill is another Scala/Java build tool without obscure DSL like SBT. It is much faster than SBT.
 
-该示例的演示效果如下:
-1. 左边8个LED为流水灯效果
-1. 拨动右边的8个拨码开关, 可控制对应LED的亮灭
-1. 8个数码管流水显示数字0-7
-1. 按钮暂无展示效果
-1. 窗口右侧为VGA输出, 将会展示一张图片
-1. 敲击键盘, 终端将会输出按键的扫描码
+Contents at a glance:
+
+* `.gitignore` - helps Git ignore junk like generated files, build products, and temporary files.
+* `build.sc` - instructs mill to build the Chisel project
+* `Makefile` - rules to call mill
+* `playground/src/GCD.scala` - GCD source file
+* `playground/src/DecoupledGCD.scala` - another GCD source file
+* `playground/src/Elaborate.scala` - wrapper file to call chisel command with the GCD module
+* `playground/test/src/GCDSpec.scala` - GCD tester
+
+Feel free to rename or delete files under `playground/` or use them as a reference/template.
+
+## Getting Started
+
+First, install mill by referring to the documentation [here](https://com-lihaoyi.github.io/mill).
+
+To run all tests in this design (recommended for test-driven development):
+```bash
+make test
+```
+
+To generate Verilog:
+```bash
+make verilog
+```
+
+## Change FIRRTL Compiler
+
+You can change the FIRRTL compiler between SFC (Scala-based FIRRTL compiler) and
+MFC (MLIR-based FIRRTL compiler) by modifying the `useMFC` variable in `playground/src/Elaborate.scala`.
+The latter one requires `firtool`, which is included under `utils/`.
