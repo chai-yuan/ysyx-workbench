@@ -19,6 +19,7 @@
 #include <memory/vaddr.h>
 #include <readline/history.h>
 #include <readline/readline.h>
+#include <utils.h>
 
 static int is_batch_mode = false;
 

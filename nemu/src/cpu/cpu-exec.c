@@ -50,6 +50,16 @@ static void trace_and_difftest(Decode* _this, vaddr_t dnpc) {
     IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
 }
 
+/**
+ * @brief Execute a single instruction in the simulator.
+ *
+ * This function executes a single instruction in the simulator. It first sets the program counter to the given value,
+ * then executes the instruction, and finally updates the program counter to the next instruction.
+ * If CONFIG_ITRACE is defined, it also generates and prints a trace log of the instruction.
+ *
+ * @param s Pointer to the decode structure.
+ * @param pc The current value of the program counter.
+ */
 static void exec_once(Decode* s, vaddr_t pc) {
     s->pc = pc;
     s->snpc = pc;
