@@ -24,9 +24,9 @@ const char* regs[] = {
 
 void isa_reg_display() {
     for (int i = 0; i < 32; i += 2) {
-        printf("r%-2d:%-6s: 0x%-10x %-10d | ", i, reg_name(i), gpr(i), gpr(i));
+        printf("r%-2d:%-6s: 0x%-10x %-12d | ", i, reg_name(i), gpr(i), gpr(i));
         if (i + 1 < 32) {
-            printf("r%-2d:%-6s: 0x%-10x %-10d\n", i + 1, reg_name(i + 1), gpr(i + 1), gpr(i + 1));
+            printf("r%-2d:%-6s: 0x%-10x %-12d\n", i + 1, reg_name(i + 1), gpr(i + 1), gpr(i + 1));
         }
     }
 }
