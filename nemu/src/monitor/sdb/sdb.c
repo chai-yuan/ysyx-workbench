@@ -81,10 +81,11 @@ static int cmd_x(char* args) {
     char* slen = strtok(NULL, " ");
     char* saddr = strtok(NULL, " ");
     int len = 0;
-    vaddr_t addr = 0;
 
     sscanf(slen, "%d", &len);
-    sscanf(saddr, "%x", &addr);
+    bool success = true;
+    vaddr_t addr = expr(saddr, &success);
+
     for (int i = 0; i < len; i++) {
         printf("0x%08x: %08x\n", addr, vaddr_read(addr, 4));
         addr += 4;
