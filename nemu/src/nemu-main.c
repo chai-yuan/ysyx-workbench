@@ -15,6 +15,7 @@
 
 #include <common.h>
 #include <readline/readline.h>
+#include <stdlib.h>
 #include "./monitor/sdb/sdb.h"
 
 void init_monitor(int, char*[]);
@@ -50,8 +51,6 @@ int main(int argc, char* argv[]) {
 #else
     init_monitor(argc, argv);
 #endif
-
-    // test();
 
     /* Start engine. */
     engine_start();

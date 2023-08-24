@@ -5,6 +5,15 @@ html:
 	cat Makefile | sed 's/^\([^#]\)/    \1/g' | markdown_py > Makefile.html
 .PHONY: html
 
+## 1.makefile进行检查
+## 检查构建目标MAKECMDGOALS，默认为image
+## 检查AM_HOME,ARCH,等设置
+## 检查构建源码SRCS
+## 2.生成编译目标
+## 定义了由SRCS的来的OBJS
+## 向LIBS添加am和klib库文件
+## 生成LINKAGE储存所有需要链接的文件
+
 ## 1. Basic Setup and Checks
 
 ### Default to create a bare-metal kernel image

@@ -40,4 +40,8 @@ class Decoder extends Module {
   registers.io.dataWrite      := io.regDataWrite
   io.regSrc1                  := registers.io.dataRead1
   io.regSrc2                  := registers.io.dataRead2
+
+  // 模拟相关
+  val simulationExit = Module(new SimulationExit())
+  simulationExit.io.exit := (opcode === "b1110011".U && immGen.io.imm === 1.U)
 }
