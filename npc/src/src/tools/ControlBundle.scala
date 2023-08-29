@@ -1,4 +1,3 @@
-package tools
 
 import chisel3._
 

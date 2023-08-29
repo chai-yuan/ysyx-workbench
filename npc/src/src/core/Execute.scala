@@ -1,7 +1,6 @@
-package core
-
 import chisel3._
 import tools.ControlBundle
+import tools.DebugBundle
 
 class Execute extends Module {
   val io = IO(new Bundle {

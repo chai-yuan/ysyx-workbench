@@ -1,4 +1,3 @@
-package core
 
 import chisel3._
 import tools._

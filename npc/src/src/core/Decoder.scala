@@ -3,15 +3,18 @@ package core
 import chisel3._
 import chisel3.util._
 import tools._
-import config.OPType._
+import config.Configs._
 
 class DecoderIO extends Bundle {
   val inst          = Input(UInt(32.W))
+  val pc            = Input(UInt(32.W))
   val controlBundle = new ControlBundle()
   val regDataWrite  = Input(UInt(32.W))
   val regSrc1       = Output(UInt(32.W))
   val regSrc2       = Output(UInt(32.W))
   val imm           = Output(UInt(32.W))
+
+  val debug = new DebugBundle()
 }
 
 class Decoder extends Module {
@@ -41,7 +44,7 @@ class Decoder extends Module {
   io.regSrc1                  := registers.io.dataRead1
   io.regSrc2                  := registers.io.dataRead2
 
-  // 模拟相关
-  val simulationExit = Module(new SimulationExit())
-  simulationExit.io.exit := (opcode === "b1110011".U && immGen.io.imm === 1.U)
+  // debug
+  io.debug.debugPC   := io.pc
+  io.debug.debugHalt := (opcode === "b1110011".U && immGen.io.imm === 1.U) // ebreak
 }

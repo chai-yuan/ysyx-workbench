@@ -12,11 +12,12 @@
  *
  * See the Mulan PSL v2 for more details.
  ***************************************************************************************/
-
 #include <cpu/cpu.h>
 #include <cpu/decode.h>
 #include <cpu/difftest.h>
+#include <cpu/ifetch.h>
 #include <locale.h>
+#include <utils.h>
 #include "../src/monitor/sdb/sdb.h"
 /* The assembly code of instructions executed is only output to the screen
  * when the number of instructions executed is less than this value.
@@ -117,6 +118,7 @@ static void statistic() {
 
 void assert_fail_msg() {
     isa_reg_display();
+    itrace_print();
     statistic();
 }
 

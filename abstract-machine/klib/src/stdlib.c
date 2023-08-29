@@ -1,45 +1,74 @@
 #include <am.h>
-#include <klib.h>
 #include <klib-macros.h>
+#include <klib.h>
 
 #if !defined(__ISA_NATIVE__) || defined(__NATIVE_USE_KLIB__)
 static unsigned long int next = 1;
 
 int rand(void) {
-  // RAND_MAX assumed to be 32767
-  next = next * 1103515245 + 12345;
-  return (unsigned int)(next/65536) % 32768;
+    // RAND_MAX assumed to be 32767
+    next = next * 1103515245 + 12345;
+    return (unsigned int)(next / 65536) % 32768;
 }
 
 void srand(unsigned int seed) {
-  next = seed;
+    next = seed;
 }
 
 int abs(int x) {
-  return (x < 0 ? -x : x);
+    return (x < 0 ? -x : x);
 }
 
 int atoi(const char* nptr) {
-  int x = 0;
-  while (*nptr == ' ') { nptr ++; }
-  while (*nptr >= '0' && *nptr <= '9') {
-    x = x * 10 + *nptr - '0';
-    nptr ++;
-  }
-  return x;
+    int x = 0;
+    while (*nptr == ' ') {
+        nptr++;
+    }
+    while (*nptr >= '0' && *nptr <= '9') {
+        x = x * 10 + *nptr - '0';
+        nptr++;
+    }
+    return x;
 }
 
-void *malloc(size_t size) {
-  // On native, malloc() will be called during initializaion of C runtime.
-  // Therefore do not call panic() here, else it will yield a dead recursion:
-  //   panic() -> putchar() -> (glibc) -> malloc() -> panic()
+void itoa(int value, char* str, int base) {
+    static char num[] = "0123456789abcdefghijklmnopqrstuvwxyz";
+    char* wstr = str;
+    int sign;
+
+    // Validate base
+    if (base < 2 || base > 35) {
+        *wstr = '\0';
+        return;
+    }
+
+    // Take care of sign
+    if ((sign = value) < 0)
+        value = -value;
+
+    // Conversion. Number is reversed.
+    do
+        *wstr++ = num[value % base];
+    while (value /= base);
+
+    if (sign < 0)
+        *wstr++ = '-';
+    *wstr = '\0';
+
+    // Reverse string
+    strreverse(str, wstr - 1);
+}
+void* malloc(size_t size) {
+    // On native, malloc() will be called during initializaion of C runtime.
+    // Therefore do not call panic() here, else it will yield a dead recursion:
+    //   panic() -> putchar() -> (glibc) -> malloc() -> panic()
 #if !(defined(__ISA_NATIVE__) && defined(__NATIVE_USE_KLIB__))
-  panic("Not implemented");
+    panic("Not implemented");
 #endif
-  return NULL;
+    return NULL;
 }
 
-void free(void *ptr) {
+void free(void* ptr) {
 }
 
 #endif
