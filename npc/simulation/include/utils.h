@@ -17,27 +17,22 @@
 #define __UTILS_H__
 
 #include <common.h>
-#include <elf.h>
 
 // ----------- state -----------
 
-enum { NEMU_RUNNING,
-       NEMU_STOP,
-       NEMU_END,
-       NEMU_ABORT,
-       NEMU_QUIT };
+enum { NPC_RUNNING,
+       NPC_STOP,
+       NPC_END,
+       NPC_ABORT,
+       NPC_QUIT };
 
 typedef struct {
     int state;
     vaddr_t halt_pc;
     uint32_t halt_ret;
-} NEMUState;
+} NPCState;
 
-extern NEMUState nemu_state;
-
-// ----------- timer -----------
-
-uint64_t get_time();
+extern NPCState npc_state;
 
 // ----------- log -----------
 
@@ -72,38 +67,9 @@ uint64_t get_time();
         }                                 \
     } while (0))
 
-#define _Log(...)               \
-    do {                        \
-        printf(__VA_ARGS__);    \
-        log_write(__VA_ARGS__); \
+#define _Log(...)            \
+    do {                     \
+        printf(__VA_ARGS__); \
     } while (0)
-
-// -------------itrace---------------
-
-typedef struct InstItem {
-    paddr_t pc;
-    uint32_t inst;
-} InstItem;
-
-void itrace_insert(paddr_t pc, uint32_t inst);
-
-void itrace_print();
-
-// -------------ftrace---------------
-
-typedef struct FuncItem {
-    char func_name[64];
-    paddr_t start, size;
-} FuncItem;
-
-void parse_elf(const char* elf_file);
-
-FILE* read_check_elf(const char* elf_file);
-
-Elf64_Ehdr read_elf_head(FILE* fp);
-
-void read_elf_section(FILE* fp, Elf64_Ehdr* elf_head);
-
-FuncItem* find_func(paddr_t pc);
 
 #endif

@@ -7,7 +7,7 @@ static InstItem iringbuf[itrace_buf_len];
 static int iringbuf_p = 0;
 static bool full = false;
 
-void itrace_insert(word_t pc, uint32_t inst) {
+void itrace_insert(paddr_t pc, uint32_t inst) {
     iringbuf[iringbuf_p].pc = pc;
     iringbuf[iringbuf_p].inst = inst;
 
@@ -18,7 +18,6 @@ void itrace_insert(word_t pc, uint32_t inst) {
     }
 }
 
-// 打印指定pc处的内容
 static void print_inst(vaddr_t pc, uint32_t inst_val, bool highlight) {
     char print_buf[128];
     char* p = print_buf;
