@@ -3,7 +3,7 @@ CSRCS_DIR := $(NPC_HOME)/simulation/csrc
 INCLUDE_DIR := $(NPC_HOME)/simulation/include
 
 VSRCS += $(shell find $(abspath $(VSRCS_DIR)) -name "*.v")
-CSRCS += $(shell find $(abspath $(CSRCS_DIR)) -name "*.cpp" -or -name "*.cc") 
+CSRCS += $(shell find $(abspath $(CSRCS_DIR)) -name "*.cpp" -or -name "*.c") 
 HSRCS += $(shell find $(abspath $(INCLUDE_DIR)) -name "*.h")
 
 # verilator
@@ -16,11 +16,12 @@ BIN := $(OBJ_DIR)/V$(TOP_NAME)
 
 # gcc
 CFLAGS := -I$(INCLUDE_DIR) -g -Wall -Wextra
-LDFLAGS := -ldl
+LDFLAGS := -ldl -lreadline
 DIFFTEST_SO := TODO
 IMG ?= TODO
 
-RUN_FLAGS := --img=$(IMG) --diff=$(DIFFTEST_SO)
+NPC_FLAGS += --img=$(IMG)
+# NPC_FLAGS += --diff=$(DIFFTEST_SO)
 
 bin:$(CSRCS) $(VSRCS)
 	verilator $(VERILATOR_FLAGS) $(CSRCS) $(VSRCS) \
@@ -29,7 +30,7 @@ bin:$(CSRCS) $(VSRCS)
 
 run:bin
 	$(call git_commit, "npc simulation")
-	$(BIN)
+	$(BIN) $(NPC_FLAGS)
 
 
 clean:

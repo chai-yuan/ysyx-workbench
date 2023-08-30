@@ -1,3 +1,5 @@
+package core
+
 import chisel3._
 import chisel3.util._
 
@@ -11,6 +13,8 @@ class RegistersIO extends Bundle {
   val dataWrite      = Input(UInt(32.W))
   val dataRead1      = Output(UInt(32.W))
   val dataRead2      = Output(UInt(32.W))
+
+  val debug = Output(Vec(32, UInt(32.W)))
 }
 
 class Registers extends Module {
@@ -26,4 +30,7 @@ class Registers extends Module {
   when(io.regWriteEnable && io.regWriteIdx =/= 0.U) {
     regs(io.regWriteIdx) := io.dataWrite
   }
+
+  // debug
+  io.debug := regs
 }

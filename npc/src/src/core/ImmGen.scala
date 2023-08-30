@@ -1,3 +1,5 @@
+package core
+
 import chisel3._
 import config.InstType._
 

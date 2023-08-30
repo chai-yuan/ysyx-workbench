@@ -1,3 +1,5 @@
+package config
+
 import chisel3._
 
 object OPType {

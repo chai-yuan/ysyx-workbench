@@ -1,10 +1,11 @@
+package core
 
 import chisel3._
-import tools._
+import bundle._
+
 import config.InstType._
 import config.OPType._
 import config.InstType
-import javax.sound.midi.Instrument
 
 class ControlGen extends Module {
   val io = IO(new Bundle {
