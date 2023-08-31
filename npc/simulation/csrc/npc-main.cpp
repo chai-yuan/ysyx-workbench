@@ -1,4 +1,5 @@
 #include <common.h>
+#include <cpu/sim.h>
 #include <monitor.h>
 
 NPCState npc_state = {.state = NPC_STOP, .halt_pc = 0, .halt_ret = 0};
@@ -12,7 +13,9 @@ int is_exit_status_bad() {
 int main(int argc, char* argv[]) {
     init_monitor(argc, argv);
 
+    sim_init();
     sdb_mainloop();
+    sim_exit();
 
     return is_exit_status_bad();
 }

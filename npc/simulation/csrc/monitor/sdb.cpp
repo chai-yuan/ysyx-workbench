@@ -1,5 +1,7 @@
 #include <common.h>
 #include <cpu/cpu.h>
+#include <cpu/reg.h>
+#include <memory/paddr.h>
 #include <readline/history.h>
 #include <readline/readline.h>
 #include <utils.h>
@@ -48,7 +50,7 @@ static int cmd_si(char* args) {
 static int cmd_info(char* args) {
     Assert(args != NULL, "The info command requires an argument");
     if (*args == 'r') {
-        TODO();
+        isa_reg_display();
     } else {
         panic("The info command received incorrect parameters");
     }
@@ -59,15 +61,15 @@ static int cmd_x(char* args) {
     char* slen = strtok(NULL, " ");
     char* saddr = strtok(NULL, " ");
     int len = 0;
+    vaddr_t addr = 0;
 
-    // sscanf(slen, "%d", &len);
-    // bool success = true;
-    // vaddr_t addr = expr(saddr, &success);
+    sscanf(slen, "%d", &len);
+    sscanf(saddr, "%x", &addr);
 
-    // for (int i = 0; i < len; i++) {
-    //     printf("0x%08x: %08x\n", addr, vaddr_read(addr, 4));
-    //     addr += 4;
-    // }
+    for (int i = 0; i < len; i++) {
+        printf("0x%08x: %08x\n", addr, paddr_read(addr, 4));
+        addr += 4;
+    }
     return 0;
 }
 

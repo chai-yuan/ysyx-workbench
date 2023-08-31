@@ -1,3 +1,4 @@
+#include <cpu/cpu.h>
 #include <memory/host.h>
 #include <memory/paddr.h>
 
@@ -20,9 +21,8 @@ static void pmem_write(paddr_t addr, int len, word_t data) {
 }
 
 static void out_of_bound(paddr_t addr) {
-    TODO();
-    // panic("address = " FMT_PADDR " is out of bound of pmem [" FMT_PADDR ", " FMT_PADDR "] at pc = " FMT_WORD,
-    //       addr, PMEM_LEFT, PMEM_RIGHT, cpu.pc);
+    panic("address = " FMT_PADDR " is out of bound of pmem [" FMT_PADDR ", " FMT_PADDR "] at pc = " FMT_WORD,
+          addr, PMEM_LEFT, PMEM_RIGHT, cpu.pc);
 }
 
 void init_mem() {

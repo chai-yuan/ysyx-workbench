@@ -19,6 +19,6 @@ class Execute extends Module {
 
   io.dataSRAM.en    := false.B
   io.dataSRAM.we    := "b1111".U
-  io.dataSRAM.addr  := 0.U
+  io.dataSRAM.addr  := "h80000000".U
   io.dataSRAM.wdata := 0.U
 }

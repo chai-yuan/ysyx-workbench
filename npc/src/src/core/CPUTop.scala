@@ -6,6 +6,7 @@ import chisel3.util._
 import bundle._
 
 class DebugBundle extends Bundle {
+  val pc     = Output(UInt(32.W))
   val decode = new DecodeDebugBundle()
 }
 
@@ -33,5 +34,6 @@ class CPUTop extends Module {
   execute.io.pc      := fetch.io.pc
 
   // debug
+  io.debug.pc := fetch.io.pc
   io.debug.decode <> decode.io.debug
 }
