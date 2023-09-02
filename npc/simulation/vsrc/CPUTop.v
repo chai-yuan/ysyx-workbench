@@ -94,9 +94,11 @@ module Registers(	// @[<stdin>:18:10]
   input         clock,	// @[<stdin>:19:11]
                 io_regWriteEnable,	// @[src/src/core/Registers.scala:21:14]
   input  [4:0]  io_regSrc1Idx,	// @[src/src/core/Registers.scala:21:14]
+                io_regSrc2Idx,	// @[src/src/core/Registers.scala:21:14]
                 io_regWriteIdx,	// @[src/src/core/Registers.scala:21:14]
   input  [31:0] io_dataWrite,	// @[src/src/core/Registers.scala:21:14]
   output [31:0] io_dataRead1,	// @[src/src/core/Registers.scala:21:14]
+                io_dataRead2,	// @[src/src/core/Registers.scala:21:14]
                 io_debug_0,	// @[src/src/core/Registers.scala:21:14]
                 io_debug_1,	// @[src/src/core/Registers.scala:21:14]
                 io_debug_2,	// @[src/src/core/Registers.scala:21:14]
@@ -132,6 +134,7 @@ module Registers(	// @[<stdin>:18:10]
 );
 
   reg  [31:0] casez_tmp;	// @[src/src/core/Registers.scala:27:16]
+  reg  [31:0] casez_tmp_0;	// @[src/src/core/Registers.scala:28:16]
   reg  [31:0] regs_0;	// @[src/src/core/Registers.scala:23:17]
   reg  [31:0] regs_1;	// @[src/src/core/Registers.scala:23:17]
   reg  [31:0] regs_2;	// @[src/src/core/Registers.scala:23:17]
@@ -230,6 +233,74 @@ module Registers(	// @[<stdin>:18:10]
         casez_tmp = regs_30;	// @[src/src/core/Registers.scala:23:17, :27:16]
       default:
         casez_tmp = regs_31;	// @[src/src/core/Registers.scala:23:17, :27:16]
+    endcase	// @[src/src/core/Registers.scala:27:16]
+  end // always_comb
+  always_comb begin	// @[src/src/core/Registers.scala:27:16]
+    casez (io_regSrc2Idx)	// @[src/src/core/Registers.scala:27:16]
+      5'b00000:
+        casez_tmp_0 = regs_0;	// @[src/src/core/Registers.scala:23:17, :27:16]
+      5'b00001:
+        casez_tmp_0 = regs_1;	// @[src/src/core/Registers.scala:23:17, :27:16]
+      5'b00010:
+        casez_tmp_0 = regs_2;	// @[src/src/core/Registers.scala:23:17, :27:16]
+      5'b00011:
+        casez_tmp_0 = regs_3;	// @[src/src/core/Registers.scala:23:17, :27:16]
+      5'b00100:
+        casez_tmp_0 = regs_4;	// @[src/src/core/Registers.scala:23:17, :27:16]
+      5'b00101:
+        casez_tmp_0 = regs_5;	// @[src/src/core/Registers.scala:23:17, :27:16]
+      5'b00110:
+        casez_tmp_0 = regs_6;	// @[src/src/core/Registers.scala:23:17, :27:16]
+      5'b00111:
+        casez_tmp_0 = regs_7;	// @[src/src/core/Registers.scala:23:17, :27:16]
+      5'b01000:
+        casez_tmp_0 = regs_8;	// @[src/src/core/Registers.scala:23:17, :27:16]
+      5'b01001:
+        casez_tmp_0 = regs_9;	// @[src/src/core/Registers.scala:23:17, :27:16]
+      5'b01010:
+        casez_tmp_0 = regs_10;	// @[src/src/core/Registers.scala:23:17, :27:16]
+      5'b01011:
+        casez_tmp_0 = regs_11;	// @[src/src/core/Registers.scala:23:17, :27:16]
+      5'b01100:
+        casez_tmp_0 = regs_12;	// @[src/src/core/Registers.scala:23:17, :27:16]
+      5'b01101:
+        casez_tmp_0 = regs_13;	// @[src/src/core/Registers.scala:23:17, :27:16]
+      5'b01110:
+        casez_tmp_0 = regs_14;	// @[src/src/core/Registers.scala:23:17, :27:16]
+      5'b01111:
+        casez_tmp_0 = regs_15;	// @[src/src/core/Registers.scala:23:17, :27:16]
+      5'b10000:
+        casez_tmp_0 = regs_16;	// @[src/src/core/Registers.scala:23:17, :27:16]
+      5'b10001:
+        casez_tmp_0 = regs_17;	// @[src/src/core/Registers.scala:23:17, :27:16]
+      5'b10010:
+        casez_tmp_0 = regs_18;	// @[src/src/core/Registers.scala:23:17, :27:16]
+      5'b10011:
+        casez_tmp_0 = regs_19;	// @[src/src/core/Registers.scala:23:17, :27:16]
+      5'b10100:
+        casez_tmp_0 = regs_20;	// @[src/src/core/Registers.scala:23:17, :27:16]
+      5'b10101:
+        casez_tmp_0 = regs_21;	// @[src/src/core/Registers.scala:23:17, :27:16]
+      5'b10110:
+        casez_tmp_0 = regs_22;	// @[src/src/core/Registers.scala:23:17, :27:16]
+      5'b10111:
+        casez_tmp_0 = regs_23;	// @[src/src/core/Registers.scala:23:17, :27:16]
+      5'b11000:
+        casez_tmp_0 = regs_24;	// @[src/src/core/Registers.scala:23:17, :27:16]
+      5'b11001:
+        casez_tmp_0 = regs_25;	// @[src/src/core/Registers.scala:23:17, :27:16]
+      5'b11010:
+        casez_tmp_0 = regs_26;	// @[src/src/core/Registers.scala:23:17, :27:16]
+      5'b11011:
+        casez_tmp_0 = regs_27;	// @[src/src/core/Registers.scala:23:17, :27:16]
+      5'b11100:
+        casez_tmp_0 = regs_28;	// @[src/src/core/Registers.scala:23:17, :27:16]
+      5'b11101:
+        casez_tmp_0 = regs_29;	// @[src/src/core/Registers.scala:23:17, :27:16]
+      5'b11110:
+        casez_tmp_0 = regs_30;	// @[src/src/core/Registers.scala:23:17, :27:16]
+      default:
+        casez_tmp_0 = regs_31;	// @[src/src/core/Registers.scala:23:17, :27:16]
     endcase	// @[src/src/core/Registers.scala:27:16]
   end // always_comb
   wire        _GEN = io_regWriteEnable & (|io_regWriteIdx);	// @[src/src/core/Registers.scala:30:{26,44}]
@@ -351,6 +422,7 @@ module Registers(	// @[<stdin>:18:10]
     `endif // FIRRTL_AFTER_INITIAL
   `endif // ENABLE_INITIAL_REG_
   assign io_dataRead1 = casez_tmp;	// @[<stdin>:18:10, src/src/core/Registers.scala:27:16]
+  assign io_dataRead2 = casez_tmp_0;	// @[<stdin>:18:10, src/src/core/Registers.scala:28:16]
   assign io_debug_0 = regs_0;	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
   assign io_debug_1 = regs_1;	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
   assign io_debug_2 = regs_2;	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
@@ -386,30 +458,144 @@ module Registers(	// @[<stdin>:18:10]
 endmodule
 
 module ImmGen(	// @[<stdin>:33:10]
-  input  [2:0]  io_instType,	// @[src/src/core/ImmGen.scala:7:14]
-  input  [31:0] io_inst,	// @[src/src/core/ImmGen.scala:7:14]
-  output [31:0] io_imm	// @[src/src/core/ImmGen.scala:7:14]
+  input  [6:0]  io_opcode,	// @[src/src/core/ImmGen.scala:8:14]
+  input  [31:0] io_inst,	// @[src/src/core/ImmGen.scala:8:14]
+  output [31:0] io_imm	// @[src/src/core/ImmGen.scala:8:14]
 );
 
-  assign io_imm = {20'h0, io_instType == 3'h2 ? io_inst[31:20] : 12'h0};	// @[<stdin>:33:10, src/src/core/ImmGen.scala:13:{10,16,29,48}]
+  assign io_imm =
+    io_opcode == 7'h13 | io_opcode == 7'h3 | io_opcode == 7'h73
+      ? {20'h0, io_inst[31:20]}
+      : io_opcode == 7'h23
+          ? {20'h0, io_inst[31:25], io_inst[11:7]}
+          : io_opcode == 7'h63
+              ? {19'h0, io_inst[31], io_inst[7], io_inst[30:25], io_inst[11:8], 1'h0}
+              : io_opcode == 7'h37 | io_opcode == 7'h17
+                  ? {io_inst[31:12], 12'h0}
+                  : {11'h0,
+                     io_opcode == 7'h6F
+                       ? {io_inst[31], io_inst[19:12], io_inst[20], io_inst[30:21], 1'h0}
+                       : 21'h0};	// @[<stdin>:33:10, src/main/scala/chisel3/util/Mux.scala:141:16, src/src/core/ImmGen.scala:14:{27,59,77,91}, :15:27, :16:27, :17:{27,45,59}, :18:27, :20:21, :21:{25,42}, :22:{17,25,38,50,67}, :23:{21,30}, :24:{17,38,55,68}]
 endmodule
 
-module ControlGen(	// @[<stdin>:43:10]
-  input  [6:0] io_op,	// @[src/src/core/ControlGen.scala:11:14]
-  output [2:0] io_controlBundle_instType,	// @[src/src/core/ControlGen.scala:11:14]
-  output       io_controlBundle_regWriteEnable	// @[src/src/core/ControlGen.scala:11:14]
+module ControlGen(	// @[<stdin>:78:10]
+  input  [6:0] io_opcode,	// @[src/src/core/ControlGen.scala:12:14]
+  input  [2:0] io_funct3,	// @[src/src/core/ControlGen.scala:12:14]
+  input  [6:0] io_funct7,	// @[src/src/core/ControlGen.scala:12:14]
+  output       io_controlBundle_regWriteEnable,	// @[src/src/core/ControlGen.scala:12:14]
+  output [3:0] io_controlBundle_ALUop,	// @[src/src/core/ControlGen.scala:12:14]
+  output       io_controlBundle_ALUsrc2imm,	// @[src/src/core/ControlGen.scala:12:14]
+               io_controlBundle_ALUunsigned,	// @[src/src/core/ControlGen.scala:12:14]
+               io_controlBundle_branch,	// @[src/src/core/ControlGen.scala:12:14]
+               io_controlBundle_mem2reg,	// @[src/src/core/ControlGen.scala:12:14]
+               io_controlBundle_memWriteEnable,	// @[src/src/core/ControlGen.scala:12:14]
+  output [3:0] io_controlBundle_memWe,	// @[src/src/core/ControlGen.scala:12:14]
+  output       io_controlBundle_jal,	// @[src/src/core/ControlGen.scala:12:14]
+               io_controlBundle_jalr,	// @[src/src/core/ControlGen.scala:12:14]
+               io_controlBundle_lui,	// @[src/src/core/ControlGen.scala:12:14]
+               io_controlBundle_auipc	// @[src/src/core/ControlGen.scala:12:14]
 );
 
-  wire [1:0] instType = io_op == 7'h33 ? 2'h1 : 2'h2;	// @[src/src/core/ControlGen.scala:18:{27,34}]
-  assign io_controlBundle_instType = {1'h0, instType};	// @[<stdin>:43:10, src/src/core/ControlGen.scala:18:{27,34}, :23:35]
-  assign io_controlBundle_regWriteEnable = instType == 2'h2 | instType == 2'h1;	// @[<stdin>:43:10, src/src/core/ControlGen.scala:18:27, :19:{34,46,58}]
+  wire _io_controlBundle_regWriteEnable_T = io_opcode == 7'h33;	// @[src/src/core/ControlGen.scala:19:25]
+  wire _jalr_T_1 = io_funct3 == 3'h0;	// @[src/main/scala/chisel3/util/Mux.scala:141:16, src/src/core/ControlGen.scala:19:57]
+  wire _srli_T_3 = io_funct7 == 7'h0;	// @[src/src/core/ControlGen.scala:19:83]
+  wire _srai_T_3 = io_funct7 == 7'h20;	// @[src/src/core/ControlGen.scala:20:83]
+  wire _blt_T_1 = io_funct3 == 3'h4;	// @[src/src/core/ControlGen.scala:21:57]
+  wire _bltu_T_1 = io_funct3 == 3'h6;	// @[src/src/core/ControlGen.scala:22:57]
+  wire _bne_T_1 = io_funct3 == 3'h1;	// @[src/main/scala/chisel3/util/Mux.scala:141:16, src/src/core/ControlGen.scala:24:57]
+  wire _bge_T_1 = io_funct3 == 3'h5;	// @[src/src/core/ControlGen.scala:25:57]
+  wire _sw_T_1 = io_funct3 == 3'h2;	// @[src/main/scala/chisel3/util/Mux.scala:141:16, src/src/core/ControlGen.scala:27:57]
+  wire _sltiu_T_1 = io_funct3 == 3'h3;	// @[src/src/core/ControlGen.scala:28:57]
+  wire _io_controlBundle_regWriteEnable_T_1 = io_opcode == 7'h13;	// @[src/src/core/ControlGen.scala:30:26]
+  wire _io_controlBundle_mem2reg_T = io_opcode == 7'h3;	// @[src/src/core/ControlGen.scala:40:24]
+  wire _io_controlBundle_memWriteEnable_T = io_opcode == 7'h23;	// @[src/src/core/ControlGen.scala:46:23]
+  wire _io_controlBundle_branch_T = io_opcode == 7'h63;	// @[src/src/core/ControlGen.scala:50:25]
+  wire bltu = _io_controlBundle_branch_T & _bltu_T_1;	// @[src/src/core/ControlGen.scala:22:57, :50:25, :54:43]
+  wire bgeu = _io_controlBundle_branch_T & (&io_funct3);	// @[src/src/core/ControlGen.scala:23:57, :50:25, :55:43]
+  wire jal = io_opcode == 7'h6F;	// @[src/src/core/ControlGen.scala:57:25]
+  wire _io_controlBundle_regWriteEnable_T_7 = io_opcode == 7'h67;	// @[src/src/core/ControlGen.scala:58:25]
+  wire lui = io_opcode == 7'h37;	// @[src/src/core/ControlGen.scala:60:26]
+  wire auipc = io_opcode == 7'h17;	// @[src/src/core/ControlGen.scala:61:26]
+  assign io_controlBundle_regWriteEnable =
+    _io_controlBundle_regWriteEnable_T | _io_controlBundle_regWriteEnable_T_1
+    | _io_controlBundle_mem2reg_T | jal | _io_controlBundle_regWriteEnable_T_7 | lui
+    | auipc;	// @[<stdin>:78:10, src/src/core/ControlGen.scala:19:25, :30:26, :40:24, :57:25, :58:25, :60:26, :61:26, :68:34]
+  assign io_controlBundle_ALUop =
+    _io_controlBundle_regWriteEnable_T & _jalr_T_1 & _srli_T_3
+    | _io_controlBundle_regWriteEnable_T_1 & _jalr_T_1 | _io_controlBundle_mem2reg_T
+    | _io_controlBundle_memWriteEnable_T
+      ? 4'h1
+      : _io_controlBundle_regWriteEnable_T & _jalr_T_1 & _srai_T_3
+          ? 4'h2
+          : _io_controlBundle_regWriteEnable_T & (&io_funct3) & _srli_T_3
+            | _io_controlBundle_regWriteEnable_T_1 & (&io_funct3)
+              ? 4'h4
+              : _io_controlBundle_regWriteEnable_T & _bltu_T_1 & _srli_T_3
+                | _io_controlBundle_regWriteEnable_T_1 & _bltu_T_1
+                  ? 4'h5
+                  : _io_controlBundle_regWriteEnable_T & _blt_T_1 & _srli_T_3
+                    | _io_controlBundle_regWriteEnable_T_1 & _blt_T_1
+                      ? 4'h7
+                      : _io_controlBundle_regWriteEnable_T & _bne_T_1 & _srli_T_3
+                        | _io_controlBundle_regWriteEnable_T_1 & _bne_T_1 & _srli_T_3
+                          ? 4'h8
+                          : _io_controlBundle_regWriteEnable_T & _bge_T_1 & _srli_T_3
+                            | _io_controlBundle_regWriteEnable_T_1 & _bge_T_1 & _srli_T_3
+                              ? 4'h9
+                              : _io_controlBundle_regWriteEnable_T & _bge_T_1 & _srai_T_3
+                                | _io_controlBundle_regWriteEnable_T_1 & _bge_T_1
+                                & _srai_T_3
+                                  ? 4'hB
+                                  : _io_controlBundle_branch_T & _jalr_T_1
+                                      ? 4'hC
+                                      : _io_controlBundle_branch_T & _bne_T_1
+                                          ? 4'hD
+                                          : _io_controlBundle_branch_T & _blt_T_1 | bltu
+                                              ? 4'hE
+                                              : {4{_io_controlBundle_branch_T & _bge_T_1
+                                                     | bgeu}};	// @[<stdin>:78:10, src/main/scala/chisel3/util/Mux.scala:141:16, src/src/core/ControlGen.scala:19:{25,57,69,83}, :20:{69,83}, :21:{57,69}, :22:{57,69}, :23:{57,69}, :24:{57,69}, :25:{57,69}, :26:69, :30:{26,44}, :31:44, :32:44, :33:44, :34:70, :35:70, :36:70, :40:24, :46:23, :50:{25,43}, :51:43, :52:43, :53:43, :54:43, :55:43, :74:50, :76:12, :77:11, :78:12, :79:12, :80:12, :81:12, :84:12, :85:12]
+  assign io_controlBundle_ALUsrc2imm =
+    io_opcode == 7'h9 | _io_controlBundle_mem2reg_T | _io_controlBundle_memWriteEnable_T;	// @[<stdin>:78:10, src/src/core/ControlGen.scala:40:24, :46:23, :89:45, :90:34]
+  assign io_controlBundle_ALUunsigned =
+    _io_controlBundle_regWriteEnable_T & _sltiu_T_1 & _srli_T_3
+    | _io_controlBundle_regWriteEnable_T_1 & _sltiu_T_1 | bltu | bgeu;	// @[<stdin>:78:10, src/src/core/ControlGen.scala:19:{25,83}, :28:{57,69}, :30:26, :38:44, :54:43, :55:43, :92:58]
+  assign io_controlBundle_branch = _io_controlBundle_branch_T;	// @[<stdin>:78:10, src/src/core/ControlGen.scala:50:25]
+  assign io_controlBundle_mem2reg = _io_controlBundle_mem2reg_T;	// @[<stdin>:78:10, src/src/core/ControlGen.scala:40:24]
+  assign io_controlBundle_memWriteEnable = _io_controlBundle_memWriteEnable_T;	// @[<stdin>:78:10, src/src/core/ControlGen.scala:46:23]
+  assign io_controlBundle_memWe =
+    {1'h0,
+     _io_controlBundle_mem2reg_T & _jalr_T_1 | _io_controlBundle_mem2reg_T & _blt_T_1
+     | _io_controlBundle_memWriteEnable_T & _jalr_T_1
+       ? 3'h1
+       : _io_controlBundle_mem2reg_T & _bne_T_1 | _io_controlBundle_mem2reg_T & _bge_T_1
+         | _io_controlBundle_memWriteEnable_T & _bne_T_1
+           ? 3'h2
+           : {_io_controlBundle_mem2reg_T & _sw_T_1 | _io_controlBundle_memWriteEnable_T
+                & _sw_T_1,
+              2'h0}};	// @[<stdin>:78:10, src/main/scala/chisel3/util/Mux.scala:141:16, src/src/core/ControlGen.scala:19:{25,57}, :21:57, :24:57, :25:57, :27:57, :40:{24,42}, :41:42, :42:42, :43:42, :44:42, :46:{23,41}, :47:41, :48:41, :100:26, :103:18, :104:18, :105:11]
+  assign io_controlBundle_jal = jal;	// @[<stdin>:78:10, src/src/core/ControlGen.scala:57:25]
+  assign io_controlBundle_jalr = _io_controlBundle_regWriteEnable_T_7 & _jalr_T_1;	// @[<stdin>:78:10, src/src/core/ControlGen.scala:19:57, :58:{25,43}]
+  assign io_controlBundle_lui = lui;	// @[<stdin>:78:10, src/src/core/ControlGen.scala:60:26]
+  assign io_controlBundle_auipc = auipc;	// @[<stdin>:78:10, src/src/core/ControlGen.scala:61:26]
 endmodule
 
-module Decode(	// @[<stdin>:61:10]
-  input         clock,	// @[<stdin>:62:11]
+module Decode(	// @[<stdin>:284:10]
+  input         clock,	// @[<stdin>:285:11]
   input  [31:0] io_inst,	// @[src/src/core/Decode.scala:25:14]
                 io_resultBundle_regDataWrite,	// @[src/src/core/Decode.scala:25:14]
+  output [3:0]  io_controlBundle_ALUop,	// @[src/src/core/Decode.scala:25:14]
+  output        io_controlBundle_ALUsrc2imm,	// @[src/src/core/Decode.scala:25:14]
+                io_controlBundle_ALUunsigned,	// @[src/src/core/Decode.scala:25:14]
+                io_controlBundle_branch,	// @[src/src/core/Decode.scala:25:14]
+                io_controlBundle_mem2reg,	// @[src/src/core/Decode.scala:25:14]
+                io_controlBundle_memWriteEnable,	// @[src/src/core/Decode.scala:25:14]
+  output [3:0]  io_controlBundle_memWe,	// @[src/src/core/Decode.scala:25:14]
+  output        io_controlBundle_jal,	// @[src/src/core/Decode.scala:25:14]
+                io_controlBundle_jalr,	// @[src/src/core/Decode.scala:25:14]
+                io_controlBundle_lui,	// @[src/src/core/Decode.scala:25:14]
+                io_controlBundle_auipc,	// @[src/src/core/Decode.scala:25:14]
   output [31:0] io_regSrc1,	// @[src/src/core/Decode.scala:25:14]
+                io_regSrc2,	// @[src/src/core/Decode.scala:25:14]
                 io_imm,	// @[src/src/core/Decode.scala:25:14]
                 io_debug_regs_0,	// @[src/src/core/Decode.scala:25:14]
                 io_debug_regs_1,	// @[src/src/core/Decode.scala:25:14]
@@ -446,15 +632,16 @@ module Decode(	// @[<stdin>:61:10]
   output        io_debug_ebreak	// @[src/src/core/Decode.scala:25:14]
 );
 
-  wire [2:0] _controlGen_io_controlBundle_instType;	// @[src/src/core/Decode.scala:29:26]
-  wire       _controlGen_io_controlBundle_regWriteEnable;	// @[src/src/core/Decode.scala:29:26]
+  wire _controlGen_io_controlBundle_regWriteEnable;	// @[src/src/core/Decode.scala:29:26]
   Registers registers (	// @[src/src/core/Decode.scala:27:26]
     .clock             (clock),
     .io_regWriteEnable (_controlGen_io_controlBundle_regWriteEnable),	// @[src/src/core/Decode.scala:29:26]
     .io_regSrc1Idx     (io_inst[19:15]),	// @[src/src/core/Decode.scala:44:41]
+    .io_regSrc2Idx     (io_inst[24:20]),	// @[src/src/core/Decode.scala:45:41]
     .io_regWriteIdx    (io_inst[11:7]),	// @[src/src/core/Decode.scala:46:41]
     .io_dataWrite      (io_resultBundle_regDataWrite),
     .io_dataRead1      (io_regSrc1),
+    .io_dataRead2      (io_regSrc2),
     .io_debug_0        (io_debug_regs_0),
     .io_debug_1        (io_debug_regs_1),
     .io_debug_2        (io_debug_regs_2),
@@ -489,33 +676,173 @@ module Decode(	// @[<stdin>:61:10]
     .io_debug_31       (io_debug_regs_31)
   );
   ImmGen immGen (	// @[src/src/core/Decode.scala:28:26]
-    .io_instType (_controlGen_io_controlBundle_instType),	// @[src/src/core/Decode.scala:29:26]
-    .io_inst     (io_inst),
-    .io_imm      (io_imm)
+    .io_opcode (io_inst[6:0]),	// @[src/src/core/Decode.scala:31:23]
+    .io_inst   (io_inst),
+    .io_imm    (io_imm)
   );
   ControlGen controlGen (	// @[src/src/core/Decode.scala:29:26]
-    .io_op                           (io_inst[6:0]),	// @[src/src/core/Decode.scala:31:23]
-    .io_controlBundle_instType       (_controlGen_io_controlBundle_instType),
-    .io_controlBundle_regWriteEnable (_controlGen_io_controlBundle_regWriteEnable)
+    .io_opcode                       (io_inst[6:0]),	// @[src/src/core/Decode.scala:31:23]
+    .io_funct3                       (io_inst[14:12]),	// @[src/src/core/Decode.scala:32:23]
+    .io_funct7                       (io_inst[31:25]),	// @[src/src/core/Decode.scala:33:23]
+    .io_controlBundle_regWriteEnable (_controlGen_io_controlBundle_regWriteEnable),
+    .io_controlBundle_ALUop          (io_controlBundle_ALUop),
+    .io_controlBundle_ALUsrc2imm     (io_controlBundle_ALUsrc2imm),
+    .io_controlBundle_ALUunsigned    (io_controlBundle_ALUunsigned),
+    .io_controlBundle_branch         (io_controlBundle_branch),
+    .io_controlBundle_mem2reg        (io_controlBundle_mem2reg),
+    .io_controlBundle_memWriteEnable (io_controlBundle_memWriteEnable),
+    .io_controlBundle_memWe          (io_controlBundle_memWe),
+    .io_controlBundle_jal            (io_controlBundle_jal),
+    .io_controlBundle_jalr           (io_controlBundle_jalr),
+    .io_controlBundle_lui            (io_controlBundle_lui),
+    .io_controlBundle_auipc          (io_controlBundle_auipc)
   );
-  assign io_debug_ebreak = io_inst[6:0] == 7'h73;	// @[<stdin>:61:10, src/src/core/Decode.scala:31:23, :52:30]
+  assign io_debug_ebreak = io_inst[6:0] == 7'h73;	// @[<stdin>:284:10, src/src/core/Decode.scala:31:23, :52:30]
 endmodule
 
-module Execute(	// @[<stdin>:99:10]
-  input  [31:0] io_regSrc1,	// @[src/src/core/Execute.scala:7:14]
-                io_imm,	// @[src/src/core/Execute.scala:7:14]
-                io_pc,	// @[src/src/core/Execute.scala:7:14]
-  output [31:0] io_resultBundle_regDataWrite,	// @[src/src/core/Execute.scala:7:14]
-                io_resultBundle_nextPC	// @[src/src/core/Execute.scala:7:14]
+module ALU(	// @[<stdin>:322:10]
+  input  [31:0] io_src1,	// @[src/src/core/ALU.scala:18:14]
+                io_src2,	// @[src/src/core/ALU.scala:18:14]
+                io_pc,	// @[src/src/core/ALU.scala:18:14]
+  input  [3:0]  io_controlBundle_ALUop,	// @[src/src/core/ALU.scala:18:14]
+  input         io_controlBundle_ALUunsigned,	// @[src/src/core/ALU.scala:18:14]
+                io_controlBundle_branch,	// @[src/src/core/ALU.scala:18:14]
+                io_controlBundle_jal,	// @[src/src/core/ALU.scala:18:14]
+                io_controlBundle_jalr,	// @[src/src/core/ALU.scala:18:14]
+                io_controlBundle_lui,	// @[src/src/core/ALU.scala:18:14]
+                io_controlBundle_auipc,	// @[src/src/core/ALU.scala:18:14]
+  output [31:0] io_result,	// @[src/src/core/ALU.scala:18:14]
+  output        io_branchResult	// @[src/src/core/ALU.scala:18:14]
 );
 
-  assign io_resultBundle_regDataWrite = io_regSrc1 + io_imm;	// @[<stdin>:99:10, src/src/core/Execute.scala:18:46]
-  assign io_resultBundle_nextPC = io_pc + 32'h4;	// @[<stdin>:99:10, src/src/core/Execute.scala:17:41]
+  reg         casez_tmp;	// @[src/src/core/ALU.scala:23:34, :29:20]
+  wire        _GEN = io_controlBundle_ALUop == 4'h0;	// @[src/src/core/ALU.scala:23:34]
+  wire [62:0] _branchResult_T_7 = {31'h0, io_src1} << io_src2[4:0];	// @[src/src/core/ALU.scala:44:{31,41}]
+  wire [31:0] _branchResult_T_9 = io_src1 >> io_src2[4:0];	// @[src/src/core/ALU.scala:47:{31,41}]
+  wire [31:0] _branchResult_T_12 = $signed($signed(io_src1) >>> io_src2[4:0]);	// @[src/src/core/ALU.scala:50:{39,49}]
+  wire        _GEN_0 =
+    (&io_controlBundle_ALUop)
+    & (io_controlBundle_ALUunsigned
+         ? $signed(io_src1) >= $signed(io_src2)
+         : io_src1 >= io_src2);	// @[src/src/core/ALU.scala:21:33, :23:34, :74:42, :75:{22,40}, :77:{22,33}]
+  always_comb begin	// @[src/src/core/ALU.scala:23:34, :29:20, :32:20, :35:20, :38:20, :41:20, :44:20, :47:20, :50:20, :53:20, :56:20, :59:37]
+    casez (io_controlBundle_ALUop)	// @[src/src/core/ALU.scala:23:34, :29:20, :32:20, :35:20, :38:20, :41:20, :44:20, :47:20, :50:20, :53:20, :56:20, :59:37]
+      4'b0000:
+        casez_tmp = _GEN_0;	// @[src/src/core/ALU.scala:21:33, :23:34, :29:20, :32:20, :35:20, :38:20, :41:20, :44:20, :47:20, :50:20, :53:20, :56:20, :59:37, :74:42]
+      4'b0001:
+        casez_tmp = io_src1[0] + io_src2[0];	// @[src/src/core/ALU.scala:23:34, :29:{20,31}, :32:20, :35:20, :38:20, :41:20, :44:20, :47:20, :50:20, :53:20, :56:20, :59:37]
+      4'b0010:
+        casez_tmp = io_src1[0] - io_src2[0];	// @[src/src/core/ALU.scala:23:34, :29:{20,31}, :32:{20,31}, :35:20, :38:20, :41:20, :44:20, :47:20, :50:20, :53:20, :56:20, :59:37]
+      4'b0011:
+        casez_tmp = _GEN_0;	// @[src/src/core/ALU.scala:21:33, :23:34, :29:20, :32:20, :35:20, :38:20, :41:20, :44:20, :47:20, :50:20, :53:20, :56:20, :59:37, :74:42]
+      4'b0100:
+        casez_tmp = io_src1[0] & io_src2[0];	// @[src/src/core/ALU.scala:23:34, :29:{20,31}, :32:20, :35:{20,31}, :38:20, :41:20, :44:20, :47:20, :50:20, :53:20, :56:20, :59:37]
+      4'b0101:
+        casez_tmp = io_src1[0] | io_src2[0];	// @[src/src/core/ALU.scala:23:34, :29:{20,31}, :32:20, :35:20, :38:{20,31}, :41:20, :44:20, :47:20, :50:20, :53:20, :56:20, :59:37]
+      4'b0110:
+        casez_tmp = _GEN_0;	// @[src/src/core/ALU.scala:21:33, :23:34, :29:20, :32:20, :35:20, :38:20, :41:20, :44:20, :47:20, :50:20, :53:20, :56:20, :59:37, :74:42]
+      4'b0111:
+        casez_tmp = io_src1[0] ^ io_src2[0];	// @[src/src/core/ALU.scala:23:34, :29:{20,31}, :32:20, :35:20, :38:20, :41:{20,31}, :44:20, :47:20, :50:20, :53:20, :56:20, :59:37]
+      4'b1000:
+        casez_tmp = _branchResult_T_7[0];	// @[src/src/core/ALU.scala:23:34, :29:20, :32:20, :35:20, :38:20, :41:20, :44:{20,31}, :47:20, :50:20, :53:20, :56:20, :59:37]
+      4'b1001:
+        casez_tmp = _branchResult_T_9[0];	// @[src/src/core/ALU.scala:23:34, :29:20, :32:20, :35:20, :38:20, :41:20, :44:20, :47:{20,31}, :50:20, :53:20, :56:20, :59:37]
+      4'b1010:
+        casez_tmp = _GEN_0;	// @[src/src/core/ALU.scala:21:33, :23:34, :29:20, :32:20, :35:20, :38:20, :41:20, :44:20, :47:20, :50:20, :53:20, :56:20, :59:37, :74:42]
+      4'b1011:
+        casez_tmp = _branchResult_T_12[0];	// @[src/src/core/ALU.scala:23:34, :29:20, :32:20, :35:20, :38:20, :41:20, :44:20, :47:20, :50:{20,39}, :53:20, :56:20, :59:37]
+      4'b1100:
+        casez_tmp = io_src1 == io_src2;	// @[src/src/core/ALU.scala:23:34, :29:20, :32:20, :35:20, :38:20, :41:20, :44:20, :47:20, :50:20, :53:{20,38}, :56:20, :59:37]
+      4'b1101:
+        casez_tmp = io_src1 != io_src2;	// @[src/src/core/ALU.scala:23:34, :29:20, :32:20, :35:20, :38:20, :41:20, :44:20, :47:20, :50:20, :53:20, :56:{20,38}, :59:37]
+      4'b1110:
+        casez_tmp =
+          io_controlBundle_branch
+          & (io_controlBundle_ALUunsigned
+               ? $signed(io_src1) < $signed(io_src2)
+               : io_src1 < io_src2);	// @[src/src/core/ALU.scala:21:33, :23:34, :29:20, :32:20, :35:20, :38:20, :41:20, :44:20, :47:20, :50:20, :53:20, :56:20, :59:37, :60:44, :61:{24,42}, :63:{24,35}]
+      default:
+        casez_tmp = _GEN_0;	// @[src/src/core/ALU.scala:21:33, :23:34, :29:20, :32:20, :35:20, :38:20, :41:20, :44:20, :47:20, :50:20, :53:20, :56:20, :59:37, :74:42]
+    endcase	// @[src/src/core/ALU.scala:23:34, :29:20, :32:20, :35:20, :38:20, :41:20, :44:20, :47:20, :50:20, :53:20, :56:20, :59:37]
+  end // always_comb
+  wire [31:0] _io_result_T_2 = io_pc + io_src2;	// @[src/src/core/ALU.scala:85:65]
+  assign io_result =
+    io_controlBundle_jal | io_controlBundle_jalr
+      ? _io_result_T_2
+      : io_controlBundle_lui
+          ? io_src2
+          : io_controlBundle_auipc
+              ? _io_result_T_2
+              : _GEN | io_controlBundle_ALUop == 4'h1 | io_controlBundle_ALUop == 4'h2
+                | io_controlBundle_ALUop == 4'h4 | io_controlBundle_ALUop == 4'h5
+                | io_controlBundle_ALUop == 4'h7 | io_controlBundle_ALUop == 4'h8
+                | io_controlBundle_ALUop == 4'h9 | io_controlBundle_ALUop == 4'hB
+                | io_controlBundle_ALUop == 4'hC | io_controlBundle_ALUop == 4'hD
+                | io_controlBundle_ALUop != 4'hE | io_controlBundle_branch
+                  ? 32'h0
+                  : {31'h0,
+                     io_controlBundle_ALUunsigned
+                       ? $signed(io_src1) < $signed(io_src2)
+                       : io_src1 < io_src2};	// @[<stdin>:322:10, src/main/scala/chisel3/util/Mux.scala:141:16, src/src/core/ALU.scala:20:33, :23:34, :25:20, :44:31, :66:44, :67:{18,36}, :69:{18,29}, :85:{29,65}]
+  assign io_branchResult = ~_GEN & casez_tmp;	// @[<stdin>:322:10, src/src/core/ALU.scala:23:34, :26:20, :29:20]
 endmodule
 
-module CPUTop(	// @[<stdin>:115:10]
-  input         clock,	// @[<stdin>:116:11]
-                reset,	// @[<stdin>:117:11]
+module Execute(	// @[<stdin>:438:10]
+  input  [31:0] io_regSrc1,	// @[src/src/core/Execute.scala:8:14]
+                io_regSrc2,	// @[src/src/core/Execute.scala:8:14]
+                io_imm,	// @[src/src/core/Execute.scala:8:14]
+                io_pc,	// @[src/src/core/Execute.scala:8:14]
+  input  [3:0]  io_controlBundle_ALUop,	// @[src/src/core/Execute.scala:8:14]
+  input         io_controlBundle_ALUsrc2imm,	// @[src/src/core/Execute.scala:8:14]
+                io_controlBundle_ALUunsigned,	// @[src/src/core/Execute.scala:8:14]
+                io_controlBundle_branch,	// @[src/src/core/Execute.scala:8:14]
+                io_controlBundle_mem2reg,	// @[src/src/core/Execute.scala:8:14]
+                io_controlBundle_memWriteEnable,	// @[src/src/core/Execute.scala:8:14]
+  input  [3:0]  io_controlBundle_memWe,	// @[src/src/core/Execute.scala:8:14]
+  input         io_controlBundle_jal,	// @[src/src/core/Execute.scala:8:14]
+                io_controlBundle_jalr,	// @[src/src/core/Execute.scala:8:14]
+                io_controlBundle_lui,	// @[src/src/core/Execute.scala:8:14]
+                io_controlBundle_auipc,	// @[src/src/core/Execute.scala:8:14]
+  input  [31:0] io_dataSRAM_rdata,	// @[src/src/core/Execute.scala:8:14]
+  output [31:0] io_resultBundle_regDataWrite,	// @[src/src/core/Execute.scala:8:14]
+                io_resultBundle_nextPC,	// @[src/src/core/Execute.scala:8:14]
+  output        io_dataSRAM_en,	// @[src/src/core/Execute.scala:8:14]
+  output [3:0]  io_dataSRAM_we,	// @[src/src/core/Execute.scala:8:14]
+  output [31:0] io_dataSRAM_addr,	// @[src/src/core/Execute.scala:8:14]
+                io_dataSRAM_wdata	// @[src/src/core/Execute.scala:8:14]
+);
+
+  wire [31:0] _alu_io_result;	// @[src/src/core/Execute.scala:18:19]
+  wire        _alu_io_branchResult;	// @[src/src/core/Execute.scala:18:19]
+  ALU alu (	// @[src/src/core/Execute.scala:18:19]
+    .io_src1                      (io_regSrc1),
+    .io_src2                      (io_controlBundle_ALUsrc2imm ? io_imm : io_regSrc2),	// @[src/src/core/Execute.scala:21:21]
+    .io_pc                        (io_pc),
+    .io_controlBundle_ALUop       (io_controlBundle_ALUop),
+    .io_controlBundle_ALUunsigned (io_controlBundle_ALUunsigned),
+    .io_controlBundle_branch      (io_controlBundle_branch),
+    .io_controlBundle_jal         (io_controlBundle_jal),
+    .io_controlBundle_jalr        (io_controlBundle_jalr),
+    .io_controlBundle_lui         (io_controlBundle_lui),
+    .io_controlBundle_auipc       (io_controlBundle_auipc),
+    .io_result                    (_alu_io_result),
+    .io_branchResult              (_alu_io_branchResult)
+  );
+  assign io_resultBundle_regDataWrite =
+    io_controlBundle_mem2reg ? io_dataSRAM_rdata : _alu_io_result;	// @[<stdin>:438:10, src/src/core/Execute.scala:18:19, :32:38]
+  assign io_resultBundle_nextPC =
+    io_controlBundle_jal | _alu_io_branchResult | io_controlBundle_branch
+      ? io_pc + io_imm
+      : io_controlBundle_jalr ? io_regSrc1 + io_imm : io_pc + 32'h4;	// @[<stdin>:438:10, src/main/scala/chisel3/util/Mux.scala:141:16, src/src/core/Execute.scala:18:19, :26:11, :28:{52,90}, :29:46]
+  assign io_dataSRAM_en = io_controlBundle_memWriteEnable;	// @[<stdin>:438:10]
+  assign io_dataSRAM_we = io_controlBundle_memWe;	// @[<stdin>:438:10]
+  assign io_dataSRAM_addr = _alu_io_result;	// @[<stdin>:438:10, src/src/core/Execute.scala:18:19]
+  assign io_dataSRAM_wdata = io_regSrc2;	// @[<stdin>:438:10]
+endmodule
+
+module CPUTop(	// @[<stdin>:469:10]
+  input         clock,	// @[<stdin>:470:11]
+                reset,	// @[<stdin>:471:11]
   input  [31:0] io_instSRAM_rdata,	// @[src/src/core/CPUTop.scala:14:14]
                 io_dataSRAM_rdata,	// @[src/src/core/CPUTop.scala:14:14]
   output        io_instSRAM_en,	// @[src/src/core/CPUTop.scala:14:14]
@@ -564,7 +891,19 @@ module CPUTop(	// @[<stdin>:115:10]
 
   wire [31:0] _execute_io_resultBundle_regDataWrite;	// @[src/src/core/CPUTop.scala:21:23]
   wire [31:0] _execute_io_resultBundle_nextPC;	// @[src/src/core/CPUTop.scala:21:23]
+  wire [3:0]  _decode_io_controlBundle_ALUop;	// @[src/src/core/CPUTop.scala:20:23]
+  wire        _decode_io_controlBundle_ALUsrc2imm;	// @[src/src/core/CPUTop.scala:20:23]
+  wire        _decode_io_controlBundle_ALUunsigned;	// @[src/src/core/CPUTop.scala:20:23]
+  wire        _decode_io_controlBundle_branch;	// @[src/src/core/CPUTop.scala:20:23]
+  wire        _decode_io_controlBundle_mem2reg;	// @[src/src/core/CPUTop.scala:20:23]
+  wire        _decode_io_controlBundle_memWriteEnable;	// @[src/src/core/CPUTop.scala:20:23]
+  wire [3:0]  _decode_io_controlBundle_memWe;	// @[src/src/core/CPUTop.scala:20:23]
+  wire        _decode_io_controlBundle_jal;	// @[src/src/core/CPUTop.scala:20:23]
+  wire        _decode_io_controlBundle_jalr;	// @[src/src/core/CPUTop.scala:20:23]
+  wire        _decode_io_controlBundle_lui;	// @[src/src/core/CPUTop.scala:20:23]
+  wire        _decode_io_controlBundle_auipc;	// @[src/src/core/CPUTop.scala:20:23]
   wire [31:0] _decode_io_regSrc1;	// @[src/src/core/CPUTop.scala:20:23]
+  wire [31:0] _decode_io_regSrc2;	// @[src/src/core/CPUTop.scala:20:23]
   wire [31:0] _decode_io_imm;	// @[src/src/core/CPUTop.scala:20:23]
   wire [31:0] _fetch_io_pc;	// @[src/src/core/CPUTop.scala:19:23]
   wire [31:0] _fetch_io_inst;	// @[src/src/core/CPUTop.scala:19:23]
@@ -578,59 +917,84 @@ module CPUTop(	// @[<stdin>:115:10]
     .io_inst                (_fetch_io_inst)
   );
   Decode decode (	// @[src/src/core/CPUTop.scala:20:23]
-    .clock                        (clock),
-    .io_inst                      (_fetch_io_inst),	// @[src/src/core/CPUTop.scala:19:23]
-    .io_resultBundle_regDataWrite (_execute_io_resultBundle_regDataWrite),	// @[src/src/core/CPUTop.scala:21:23]
-    .io_regSrc1                   (_decode_io_regSrc1),
-    .io_imm                       (_decode_io_imm),
-    .io_debug_regs_0              (io_debug_decode_regs_0),
-    .io_debug_regs_1              (io_debug_decode_regs_1),
-    .io_debug_regs_2              (io_debug_decode_regs_2),
-    .io_debug_regs_3              (io_debug_decode_regs_3),
-    .io_debug_regs_4              (io_debug_decode_regs_4),
-    .io_debug_regs_5              (io_debug_decode_regs_5),
-    .io_debug_regs_6              (io_debug_decode_regs_6),
-    .io_debug_regs_7              (io_debug_decode_regs_7),
-    .io_debug_regs_8              (io_debug_decode_regs_8),
-    .io_debug_regs_9              (io_debug_decode_regs_9),
-    .io_debug_regs_10             (io_debug_decode_regs_10),
-    .io_debug_regs_11             (io_debug_decode_regs_11),
-    .io_debug_regs_12             (io_debug_decode_regs_12),
-    .io_debug_regs_13             (io_debug_decode_regs_13),
-    .io_debug_regs_14             (io_debug_decode_regs_14),
-    .io_debug_regs_15             (io_debug_decode_regs_15),
-    .io_debug_regs_16             (io_debug_decode_regs_16),
-    .io_debug_regs_17             (io_debug_decode_regs_17),
-    .io_debug_regs_18             (io_debug_decode_regs_18),
-    .io_debug_regs_19             (io_debug_decode_regs_19),
-    .io_debug_regs_20             (io_debug_decode_regs_20),
-    .io_debug_regs_21             (io_debug_decode_regs_21),
-    .io_debug_regs_22             (io_debug_decode_regs_22),
-    .io_debug_regs_23             (io_debug_decode_regs_23),
-    .io_debug_regs_24             (io_debug_decode_regs_24),
-    .io_debug_regs_25             (io_debug_decode_regs_25),
-    .io_debug_regs_26             (io_debug_decode_regs_26),
-    .io_debug_regs_27             (io_debug_decode_regs_27),
-    .io_debug_regs_28             (io_debug_decode_regs_28),
-    .io_debug_regs_29             (io_debug_decode_regs_29),
-    .io_debug_regs_30             (io_debug_decode_regs_30),
-    .io_debug_regs_31             (io_debug_decode_regs_31),
-    .io_debug_ebreak              (io_debug_decode_ebreak)
+    .clock                           (clock),
+    .io_inst                         (_fetch_io_inst),	// @[src/src/core/CPUTop.scala:19:23]
+    .io_resultBundle_regDataWrite    (_execute_io_resultBundle_regDataWrite),	// @[src/src/core/CPUTop.scala:21:23]
+    .io_controlBundle_ALUop          (_decode_io_controlBundle_ALUop),
+    .io_controlBundle_ALUsrc2imm     (_decode_io_controlBundle_ALUsrc2imm),
+    .io_controlBundle_ALUunsigned    (_decode_io_controlBundle_ALUunsigned),
+    .io_controlBundle_branch         (_decode_io_controlBundle_branch),
+    .io_controlBundle_mem2reg        (_decode_io_controlBundle_mem2reg),
+    .io_controlBundle_memWriteEnable (_decode_io_controlBundle_memWriteEnable),
+    .io_controlBundle_memWe          (_decode_io_controlBundle_memWe),
+    .io_controlBundle_jal            (_decode_io_controlBundle_jal),
+    .io_controlBundle_jalr           (_decode_io_controlBundle_jalr),
+    .io_controlBundle_lui            (_decode_io_controlBundle_lui),
+    .io_controlBundle_auipc          (_decode_io_controlBundle_auipc),
+    .io_regSrc1                      (_decode_io_regSrc1),
+    .io_regSrc2                      (_decode_io_regSrc2),
+    .io_imm                          (_decode_io_imm),
+    .io_debug_regs_0                 (io_debug_decode_regs_0),
+    .io_debug_regs_1                 (io_debug_decode_regs_1),
+    .io_debug_regs_2                 (io_debug_decode_regs_2),
+    .io_debug_regs_3                 (io_debug_decode_regs_3),
+    .io_debug_regs_4                 (io_debug_decode_regs_4),
+    .io_debug_regs_5                 (io_debug_decode_regs_5),
+    .io_debug_regs_6                 (io_debug_decode_regs_6),
+    .io_debug_regs_7                 (io_debug_decode_regs_7),
+    .io_debug_regs_8                 (io_debug_decode_regs_8),
+    .io_debug_regs_9                 (io_debug_decode_regs_9),
+    .io_debug_regs_10                (io_debug_decode_regs_10),
+    .io_debug_regs_11                (io_debug_decode_regs_11),
+    .io_debug_regs_12                (io_debug_decode_regs_12),
+    .io_debug_regs_13                (io_debug_decode_regs_13),
+    .io_debug_regs_14                (io_debug_decode_regs_14),
+    .io_debug_regs_15                (io_debug_decode_regs_15),
+    .io_debug_regs_16                (io_debug_decode_regs_16),
+    .io_debug_regs_17                (io_debug_decode_regs_17),
+    .io_debug_regs_18                (io_debug_decode_regs_18),
+    .io_debug_regs_19                (io_debug_decode_regs_19),
+    .io_debug_regs_20                (io_debug_decode_regs_20),
+    .io_debug_regs_21                (io_debug_decode_regs_21),
+    .io_debug_regs_22                (io_debug_decode_regs_22),
+    .io_debug_regs_23                (io_debug_decode_regs_23),
+    .io_debug_regs_24                (io_debug_decode_regs_24),
+    .io_debug_regs_25                (io_debug_decode_regs_25),
+    .io_debug_regs_26                (io_debug_decode_regs_26),
+    .io_debug_regs_27                (io_debug_decode_regs_27),
+    .io_debug_regs_28                (io_debug_decode_regs_28),
+    .io_debug_regs_29                (io_debug_decode_regs_29),
+    .io_debug_regs_30                (io_debug_decode_regs_30),
+    .io_debug_regs_31                (io_debug_decode_regs_31),
+    .io_debug_ebreak                 (io_debug_decode_ebreak)
   );
   Execute execute (	// @[src/src/core/CPUTop.scala:21:23]
-    .io_regSrc1                   (_decode_io_regSrc1),	// @[src/src/core/CPUTop.scala:20:23]
-    .io_imm                       (_decode_io_imm),	// @[src/src/core/CPUTop.scala:20:23]
-    .io_pc                        (_fetch_io_pc),	// @[src/src/core/CPUTop.scala:19:23]
-    .io_resultBundle_regDataWrite (_execute_io_resultBundle_regDataWrite),
-    .io_resultBundle_nextPC       (_execute_io_resultBundle_nextPC)
+    .io_regSrc1                      (_decode_io_regSrc1),	// @[src/src/core/CPUTop.scala:20:23]
+    .io_regSrc2                      (_decode_io_regSrc2),	// @[src/src/core/CPUTop.scala:20:23]
+    .io_imm                          (_decode_io_imm),	// @[src/src/core/CPUTop.scala:20:23]
+    .io_pc                           (_fetch_io_pc),	// @[src/src/core/CPUTop.scala:19:23]
+    .io_controlBundle_ALUop          (_decode_io_controlBundle_ALUop),	// @[src/src/core/CPUTop.scala:20:23]
+    .io_controlBundle_ALUsrc2imm     (_decode_io_controlBundle_ALUsrc2imm),	// @[src/src/core/CPUTop.scala:20:23]
+    .io_controlBundle_ALUunsigned    (_decode_io_controlBundle_ALUunsigned),	// @[src/src/core/CPUTop.scala:20:23]
+    .io_controlBundle_branch         (_decode_io_controlBundle_branch),	// @[src/src/core/CPUTop.scala:20:23]
+    .io_controlBundle_mem2reg        (_decode_io_controlBundle_mem2reg),	// @[src/src/core/CPUTop.scala:20:23]
+    .io_controlBundle_memWriteEnable (_decode_io_controlBundle_memWriteEnable),	// @[src/src/core/CPUTop.scala:20:23]
+    .io_controlBundle_memWe          (_decode_io_controlBundle_memWe),	// @[src/src/core/CPUTop.scala:20:23]
+    .io_controlBundle_jal            (_decode_io_controlBundle_jal),	// @[src/src/core/CPUTop.scala:20:23]
+    .io_controlBundle_jalr           (_decode_io_controlBundle_jalr),	// @[src/src/core/CPUTop.scala:20:23]
+    .io_controlBundle_lui            (_decode_io_controlBundle_lui),	// @[src/src/core/CPUTop.scala:20:23]
+    .io_controlBundle_auipc          (_decode_io_controlBundle_auipc),	// @[src/src/core/CPUTop.scala:20:23]
+    .io_dataSRAM_rdata               (io_dataSRAM_rdata),
+    .io_resultBundle_regDataWrite    (_execute_io_resultBundle_regDataWrite),
+    .io_resultBundle_nextPC          (_execute_io_resultBundle_nextPC),
+    .io_dataSRAM_en                  (io_dataSRAM_en),
+    .io_dataSRAM_we                  (io_dataSRAM_we),
+    .io_dataSRAM_addr                (io_dataSRAM_addr),
+    .io_dataSRAM_wdata               (io_dataSRAM_wdata)
   );
-  assign io_instSRAM_en = 1'h1;	// @[<stdin>:115:10, src/src/core/CPUTop.scala:19:23]
-  assign io_instSRAM_we = 4'hF;	// @[<stdin>:115:10, src/src/core/CPUTop.scala:19:23, :21:23]
-  assign io_instSRAM_wdata = 32'h0;	// @[<stdin>:115:10, src/src/core/CPUTop.scala:19:23, :21:23]
-  assign io_dataSRAM_en = 1'h0;	// @[<stdin>:115:10, src/src/core/CPUTop.scala:21:23]
-  assign io_dataSRAM_we = 4'hF;	// @[<stdin>:115:10, src/src/core/CPUTop.scala:19:23, :21:23]
-  assign io_dataSRAM_addr = 32'h80000000;	// @[<stdin>:115:10, src/src/core/CPUTop.scala:21:23]
-  assign io_dataSRAM_wdata = 32'h0;	// @[<stdin>:115:10, src/src/core/CPUTop.scala:19:23, :21:23]
-  assign io_debug_pc = _fetch_io_pc;	// @[<stdin>:115:10, src/src/core/CPUTop.scala:19:23]
+  assign io_instSRAM_en = 1'h1;	// @[<stdin>:469:10, src/src/core/CPUTop.scala:19:23]
+  assign io_instSRAM_we = 4'hF;	// @[<stdin>:469:10, src/src/core/CPUTop.scala:19:23]
+  assign io_instSRAM_wdata = 32'h0;	// @[<stdin>:469:10, src/src/core/CPUTop.scala:19:23]
+  assign io_debug_pc = _fetch_io_pc;	// @[<stdin>:469:10, src/src/core/CPUTop.scala:19:23]
 endmodule
 

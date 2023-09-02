@@ -31,14 +31,14 @@ class Decode extends Module {
   val opcode = io.inst(6, 0)
   val funct3 = io.inst(14, 12)
   val funct7 = io.inst(31, 25)
-  controlGen.io.op     := opcode
+  controlGen.io.opcode := opcode
   controlGen.io.funct3 := funct3
   controlGen.io.funct7 := funct7
   io.controlBundle <> controlGen.io.controlBundle
 
-  immGen.io.instType := controlGen.io.controlBundle.instType
-  immGen.io.inst     := io.inst
-  io.imm             := immGen.io.imm
+  immGen.io.opcode := opcode
+  immGen.io.inst   := io.inst
+  io.imm           := immGen.io.imm
 
   registers.io.regWriteEnable := controlGen.io.controlBundle.regWriteEnable
   registers.io.regSrc1Idx     := io.inst(19, 15)

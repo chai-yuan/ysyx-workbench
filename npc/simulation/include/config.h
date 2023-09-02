@@ -7,6 +7,8 @@
 #define CONFIG_ISA "riscv32"
 // #define CONFIG_ISA64 ""
 #define CONFIG_ITRACE 1
+#define CONFIG_MTRACE 1
+#define CONFIG_VTRACE 1
 // #define CONFIG_DEVICE 1
 // #define CONFIG_DISASM 1
 

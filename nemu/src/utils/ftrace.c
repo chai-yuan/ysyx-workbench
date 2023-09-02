@@ -13,6 +13,8 @@
 FuncItem elf_func[FUNC_NUM];
 
 void parse_elf(const char* elf_file) {
+    if (elf_file == NULL || strlen(elf_file) == 0)
+        return;
     Log("Specify elf file : %s", elf_file);
 
     FILE* fp = read_check_elf(elf_file);

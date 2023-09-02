@@ -11,7 +11,6 @@ void sim_exit();
 void sim_exec();
 void sim_mem();
 
-extern VerilatedContext* context;
 extern VCPUTop* cpu_top;
 extern word_t cycle_num;
 extern word_t inst;

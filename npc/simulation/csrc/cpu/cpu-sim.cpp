@@ -1,9 +1,11 @@
 #include <cpu/cpu.h>
 #include <cpu/sim.h>
 #include <memory/paddr.h>
+#include <trace.h>
 
-VerilatedContext* context;
 VCPUTop* cpu_top;
+VerilatedContext* contextp;
+VerilatedVcdC* tfp;
 
 word_t cycle_num;
 word_t inst;
@@ -11,7 +13,10 @@ word_t inst;
 void sim_init() {
     Log("sim init");
 
+    contextp = new VerilatedContext();
+    tfp = new VerilatedVcdC();
     cpu_top = new VCPUTop();
+    IFDEF(CONFIG_VTRACE, vtrace_init("debug.vcd"));
     cycle_num = 0;
     inst = 0;
 
@@ -27,14 +32,17 @@ void sim_reset() {
     cpu_top->eval();
     cpu_top->reset = 1;
     cpu_top->eval();
+    IFDEF(CONFIG_VTRACE, dump_wave());
 
     cpu_top->clock = 1;
     cpu_top->eval();
     cpu_top->reset = 0;
     cpu_top->eval();
+    IFDEF(CONFIG_VTRACE, dump_wave());
 }
 
 void sim_exit() {
+    IFDEF(CONFIG_VTRACE, vtrace_exit());
     Log("sim exit");
 }
 
@@ -44,9 +52,11 @@ void sim_exec() {
     cpu_top->clock = 0;
     cpu_top->eval();
     sim_mem();
+    IFDEF(CONFIG_VTRACE, dump_wave());
 
     cpu_top->clock = 1;
     cpu_top->eval();
+    IFDEF(CONFIG_VTRACE, dump_wave());
 
     update_regs();
 
@@ -60,11 +70,11 @@ void sim_mem() {
     paddr_t dataAddr = cpu_top->io_dataSRAM_addr;
     int dataWe = cpu_top->io_dataSRAM_we;
 
-    word_t data = paddr_read(dataAddr, dataWe);
-    cpu_top->io_dataSRAM_rdata = data;
-    if (cpu_top->io_dataSRAM_en) {
-        Log("Data Mem write: 0x%x we: 0x%x", dataAddr, dataWe);
-        paddr_write(dataAddr, cpu_top->io_dataSRAM_we, cpu_top->io_dataSRAM_wdata);
+    if (cpu_top->io_dataSRAM_we) {
+        cpu_top->io_dataSRAM_rdata = paddr_read(dataAddr, cpu_top->io_dataSRAM_we);
+        if (cpu_top->io_dataSRAM_en) {
+            paddr_write(dataAddr, cpu_top->io_dataSRAM_we, cpu_top->io_dataSRAM_wdata);
+        }
     }
 
     cpu_top->eval();
