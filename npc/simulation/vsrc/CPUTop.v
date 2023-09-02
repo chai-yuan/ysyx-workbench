@@ -465,20 +465,23 @@ module ImmGen(	// @[<stdin>:33:10]
 
   assign io_imm =
     io_opcode == 7'h13 | io_opcode == 7'h3 | io_opcode == 7'h73
-      ? {20'h0, io_inst[31:20]}
+      ? {{20{io_inst[31]}}, io_inst[31:20]}
       : io_opcode == 7'h23
-          ? {20'h0, io_inst[31:25], io_inst[11:7]}
+          ? {{20{io_inst[31]}}, io_inst[31:25], io_inst[11:7]}
           : io_opcode == 7'h63
-              ? {19'h0, io_inst[31], io_inst[7], io_inst[30:25], io_inst[11:8], 1'h0}
+              ? {{20{io_inst[31]}}, io_inst[7], io_inst[30:25], io_inst[11:8], 1'h0}
               : io_opcode == 7'h37 | io_opcode == 7'h17
                   ? {io_inst[31:12], 12'h0}
-                  : {11'h0,
-                     io_opcode == 7'h6F
-                       ? {io_inst[31], io_inst[19:12], io_inst[20], io_inst[30:21], 1'h0}
-                       : 21'h0};	// @[<stdin>:33:10, src/main/scala/chisel3/util/Mux.scala:141:16, src/src/core/ImmGen.scala:14:{27,59,77,91}, :15:27, :16:27, :17:{27,45,59}, :18:27, :20:21, :21:{25,42}, :22:{17,25,38,50,67}, :23:{21,30}, :24:{17,38,55,68}]
+                  : io_opcode == 7'h6F
+                      ? {{12{io_inst[31]}},
+                         io_inst[19:12],
+                         io_inst[20],
+                         io_inst[30:21],
+                         1'h0}
+                      : 32'h0;	// @[<stdin>:33:10, src/main/scala/chisel3/util/Mux.scala:141:16, src/src/core/ImmGen.scala:14:{27,59,77,91}, :15:27, :16:27, :17:{27,45,59}, :18:27, :20:{22,34,48}, :21:{22,48,65}, :22:{17,22,48,60,77}, :23:{25,39}, :24:{17,61,78,91}]
 endmodule
 
-module ControlGen(	// @[<stdin>:78:10]
+module ControlGen(	// @[<stdin>:93:10]
   input  [6:0] io_opcode,	// @[src/src/core/ControlGen.scala:12:14]
   input  [2:0] io_funct3,	// @[src/src/core/ControlGen.scala:12:14]
   input  [6:0] io_funct7,	// @[src/src/core/ControlGen.scala:12:14]
@@ -506,7 +509,7 @@ module ControlGen(	// @[<stdin>:78:10]
   wire _bge_T_1 = io_funct3 == 3'h5;	// @[src/src/core/ControlGen.scala:25:57]
   wire _sw_T_1 = io_funct3 == 3'h2;	// @[src/main/scala/chisel3/util/Mux.scala:141:16, src/src/core/ControlGen.scala:27:57]
   wire _sltiu_T_1 = io_funct3 == 3'h3;	// @[src/src/core/ControlGen.scala:28:57]
-  wire _io_controlBundle_regWriteEnable_T_1 = io_opcode == 7'h13;	// @[src/src/core/ControlGen.scala:30:26]
+  wire _io_controlBundle_ALUsrc2imm_T = io_opcode == 7'h13;	// @[src/src/core/ControlGen.scala:30:26]
   wire _io_controlBundle_mem2reg_T = io_opcode == 7'h3;	// @[src/src/core/ControlGen.scala:40:24]
   wire _io_controlBundle_memWriteEnable_T = io_opcode == 7'h23;	// @[src/src/core/ControlGen.scala:46:23]
   wire _io_controlBundle_branch_T = io_opcode == 7'h63;	// @[src/src/core/ControlGen.scala:50:25]
@@ -517,34 +520,33 @@ module ControlGen(	// @[<stdin>:78:10]
   wire lui = io_opcode == 7'h37;	// @[src/src/core/ControlGen.scala:60:26]
   wire auipc = io_opcode == 7'h17;	// @[src/src/core/ControlGen.scala:61:26]
   assign io_controlBundle_regWriteEnable =
-    _io_controlBundle_regWriteEnable_T | _io_controlBundle_regWriteEnable_T_1
+    _io_controlBundle_regWriteEnable_T | _io_controlBundle_ALUsrc2imm_T
     | _io_controlBundle_mem2reg_T | jal | _io_controlBundle_regWriteEnable_T_7 | lui
-    | auipc;	// @[<stdin>:78:10, src/src/core/ControlGen.scala:19:25, :30:26, :40:24, :57:25, :58:25, :60:26, :61:26, :68:34]
+    | auipc;	// @[<stdin>:93:10, src/src/core/ControlGen.scala:19:25, :30:26, :40:24, :57:25, :58:25, :60:26, :61:26, :68:34]
   assign io_controlBundle_ALUop =
     _io_controlBundle_regWriteEnable_T & _jalr_T_1 & _srli_T_3
-    | _io_controlBundle_regWriteEnable_T_1 & _jalr_T_1 | _io_controlBundle_mem2reg_T
+    | _io_controlBundle_ALUsrc2imm_T & _jalr_T_1 | _io_controlBundle_mem2reg_T
     | _io_controlBundle_memWriteEnable_T
       ? 4'h1
       : _io_controlBundle_regWriteEnable_T & _jalr_T_1 & _srai_T_3
           ? 4'h2
           : _io_controlBundle_regWriteEnable_T & (&io_funct3) & _srli_T_3
-            | _io_controlBundle_regWriteEnable_T_1 & (&io_funct3)
+            | _io_controlBundle_ALUsrc2imm_T & (&io_funct3)
               ? 4'h4
               : _io_controlBundle_regWriteEnable_T & _bltu_T_1 & _srli_T_3
-                | _io_controlBundle_regWriteEnable_T_1 & _bltu_T_1
+                | _io_controlBundle_ALUsrc2imm_T & _bltu_T_1
                   ? 4'h5
                   : _io_controlBundle_regWriteEnable_T & _blt_T_1 & _srli_T_3
-                    | _io_controlBundle_regWriteEnable_T_1 & _blt_T_1
+                    | _io_controlBundle_ALUsrc2imm_T & _blt_T_1
                       ? 4'h7
                       : _io_controlBundle_regWriteEnable_T & _bne_T_1 & _srli_T_3
-                        | _io_controlBundle_regWriteEnable_T_1 & _bne_T_1 & _srli_T_3
+                        | _io_controlBundle_ALUsrc2imm_T & _bne_T_1 & _srli_T_3
                           ? 4'h8
                           : _io_controlBundle_regWriteEnable_T & _bge_T_1 & _srli_T_3
-                            | _io_controlBundle_regWriteEnable_T_1 & _bge_T_1 & _srli_T_3
+                            | _io_controlBundle_ALUsrc2imm_T & _bge_T_1 & _srli_T_3
                               ? 4'h9
                               : _io_controlBundle_regWriteEnable_T & _bge_T_1 & _srai_T_3
-                                | _io_controlBundle_regWriteEnable_T_1 & _bge_T_1
-                                & _srai_T_3
+                                | _io_controlBundle_ALUsrc2imm_T & _bge_T_1 & _srai_T_3
                                   ? 4'hB
                                   : _io_controlBundle_branch_T & _jalr_T_1
                                       ? 4'hC
@@ -553,15 +555,16 @@ module ControlGen(	// @[<stdin>:78:10]
                                           : _io_controlBundle_branch_T & _blt_T_1 | bltu
                                               ? 4'hE
                                               : {4{_io_controlBundle_branch_T & _bge_T_1
-                                                     | bgeu}};	// @[<stdin>:78:10, src/main/scala/chisel3/util/Mux.scala:141:16, src/src/core/ControlGen.scala:19:{25,57,69,83}, :20:{69,83}, :21:{57,69}, :22:{57,69}, :23:{57,69}, :24:{57,69}, :25:{57,69}, :26:69, :30:{26,44}, :31:44, :32:44, :33:44, :34:70, :35:70, :36:70, :40:24, :46:23, :50:{25,43}, :51:43, :52:43, :53:43, :54:43, :55:43, :74:50, :76:12, :77:11, :78:12, :79:12, :80:12, :81:12, :84:12, :85:12]
+                                                     | bgeu}};	// @[<stdin>:93:10, src/main/scala/chisel3/util/Mux.scala:141:16, src/src/core/ControlGen.scala:19:{25,57,69,83}, :20:{69,83}, :21:{57,69}, :22:{57,69}, :23:{57,69}, :24:{57,69}, :25:{57,69}, :26:69, :30:{26,44}, :31:44, :32:44, :33:44, :34:70, :35:70, :36:70, :40:24, :46:23, :50:{25,43}, :51:43, :52:43, :53:43, :54:43, :55:43, :74:50, :76:12, :77:11, :78:12, :79:12, :80:12, :81:12, :84:12, :85:12]
   assign io_controlBundle_ALUsrc2imm =
-    io_opcode == 7'h9 | _io_controlBundle_mem2reg_T | _io_controlBundle_memWriteEnable_T;	// @[<stdin>:78:10, src/src/core/ControlGen.scala:40:24, :46:23, :89:45, :90:34]
+    _io_controlBundle_ALUsrc2imm_T | _io_controlBundle_mem2reg_T
+    | _io_controlBundle_memWriteEnable_T | lui | auipc;	// @[<stdin>:93:10, src/src/core/ControlGen.scala:30:26, :40:24, :46:23, :60:26, :61:26, :90:73]
   assign io_controlBundle_ALUunsigned =
     _io_controlBundle_regWriteEnable_T & _sltiu_T_1 & _srli_T_3
-    | _io_controlBundle_regWriteEnable_T_1 & _sltiu_T_1 | bltu | bgeu;	// @[<stdin>:78:10, src/src/core/ControlGen.scala:19:{25,83}, :28:{57,69}, :30:26, :38:44, :54:43, :55:43, :92:58]
-  assign io_controlBundle_branch = _io_controlBundle_branch_T;	// @[<stdin>:78:10, src/src/core/ControlGen.scala:50:25]
-  assign io_controlBundle_mem2reg = _io_controlBundle_mem2reg_T;	// @[<stdin>:78:10, src/src/core/ControlGen.scala:40:24]
-  assign io_controlBundle_memWriteEnable = _io_controlBundle_memWriteEnable_T;	// @[<stdin>:78:10, src/src/core/ControlGen.scala:46:23]
+    | _io_controlBundle_ALUsrc2imm_T & _sltiu_T_1 | bltu | bgeu;	// @[<stdin>:93:10, src/src/core/ControlGen.scala:19:{25,83}, :28:{57,69}, :30:26, :38:44, :54:43, :55:43, :92:58]
+  assign io_controlBundle_branch = _io_controlBundle_branch_T;	// @[<stdin>:93:10, src/src/core/ControlGen.scala:50:25]
+  assign io_controlBundle_mem2reg = _io_controlBundle_mem2reg_T;	// @[<stdin>:93:10, src/src/core/ControlGen.scala:40:24]
+  assign io_controlBundle_memWriteEnable = _io_controlBundle_memWriteEnable_T;	// @[<stdin>:93:10, src/src/core/ControlGen.scala:46:23]
   assign io_controlBundle_memWe =
     {1'h0,
      _io_controlBundle_mem2reg_T & _jalr_T_1 | _io_controlBundle_mem2reg_T & _blt_T_1
@@ -572,15 +575,15 @@ module ControlGen(	// @[<stdin>:78:10]
            ? 3'h2
            : {_io_controlBundle_mem2reg_T & _sw_T_1 | _io_controlBundle_memWriteEnable_T
                 & _sw_T_1,
-              2'h0}};	// @[<stdin>:78:10, src/main/scala/chisel3/util/Mux.scala:141:16, src/src/core/ControlGen.scala:19:{25,57}, :21:57, :24:57, :25:57, :27:57, :40:{24,42}, :41:42, :42:42, :43:42, :44:42, :46:{23,41}, :47:41, :48:41, :100:26, :103:18, :104:18, :105:11]
-  assign io_controlBundle_jal = jal;	// @[<stdin>:78:10, src/src/core/ControlGen.scala:57:25]
-  assign io_controlBundle_jalr = _io_controlBundle_regWriteEnable_T_7 & _jalr_T_1;	// @[<stdin>:78:10, src/src/core/ControlGen.scala:19:57, :58:{25,43}]
-  assign io_controlBundle_lui = lui;	// @[<stdin>:78:10, src/src/core/ControlGen.scala:60:26]
-  assign io_controlBundle_auipc = auipc;	// @[<stdin>:78:10, src/src/core/ControlGen.scala:61:26]
+              2'h0}};	// @[<stdin>:93:10, src/main/scala/chisel3/util/Mux.scala:141:16, src/src/core/ControlGen.scala:19:{25,57}, :21:57, :24:57, :25:57, :27:57, :40:{24,42}, :41:42, :42:42, :43:42, :44:42, :46:{23,41}, :47:41, :48:41, :100:26, :103:18, :104:18, :105:11]
+  assign io_controlBundle_jal = jal;	// @[<stdin>:93:10, src/src/core/ControlGen.scala:57:25]
+  assign io_controlBundle_jalr = _io_controlBundle_regWriteEnable_T_7 & _jalr_T_1;	// @[<stdin>:93:10, src/src/core/ControlGen.scala:19:57, :58:{25,43}]
+  assign io_controlBundle_lui = lui;	// @[<stdin>:93:10, src/src/core/ControlGen.scala:60:26]
+  assign io_controlBundle_auipc = auipc;	// @[<stdin>:93:10, src/src/core/ControlGen.scala:61:26]
 endmodule
 
-module Decode(	// @[<stdin>:284:10]
-  input         clock,	// @[<stdin>:285:11]
+module Decode(	// @[<stdin>:301:10]
+  input         clock,	// @[<stdin>:302:11]
   input  [31:0] io_inst,	// @[src/src/core/Decode.scala:25:14]
                 io_resultBundle_regDataWrite,	// @[src/src/core/Decode.scala:25:14]
   output [3:0]  io_controlBundle_ALUop,	// @[src/src/core/Decode.scala:25:14]
@@ -697,10 +700,10 @@ module Decode(	// @[<stdin>:284:10]
     .io_controlBundle_lui            (io_controlBundle_lui),
     .io_controlBundle_auipc          (io_controlBundle_auipc)
   );
-  assign io_debug_ebreak = io_inst[6:0] == 7'h73;	// @[<stdin>:284:10, src/src/core/Decode.scala:31:23, :52:30]
+  assign io_debug_ebreak = io_inst[6:0] == 7'h73;	// @[<stdin>:301:10, src/src/core/Decode.scala:31:23, :52:30]
 endmodule
 
-module ALU(	// @[<stdin>:322:10]
+module ALU(	// @[<stdin>:339:10]
   input  [31:0] io_src1,	// @[src/src/core/ALU.scala:18:14]
                 io_src2,	// @[src/src/core/ALU.scala:18:14]
                 io_pc,	// @[src/src/core/ALU.scala:18:14]
@@ -715,79 +718,82 @@ module ALU(	// @[<stdin>:322:10]
   output        io_branchResult	// @[src/src/core/ALU.scala:18:14]
 );
 
-  reg         casez_tmp;	// @[src/src/core/ALU.scala:23:34, :29:20]
-  wire        _GEN = io_controlBundle_ALUop == 4'h0;	// @[src/src/core/ALU.scala:23:34]
-  wire [62:0] _branchResult_T_7 = {31'h0, io_src1} << io_src2[4:0];	// @[src/src/core/ALU.scala:44:{31,41}]
-  wire [31:0] _branchResult_T_9 = io_src1 >> io_src2[4:0];	// @[src/src/core/ALU.scala:47:{31,41}]
-  wire [31:0] _branchResult_T_12 = $signed($signed(io_src1) >>> io_src2[4:0]);	// @[src/src/core/ALU.scala:50:{39,49}]
-  wire        _GEN_0 =
-    (&io_controlBundle_ALUop)
-    & (io_controlBundle_ALUunsigned
-         ? $signed(io_src1) >= $signed(io_src2)
-         : io_src1 >= io_src2);	// @[src/src/core/ALU.scala:21:33, :23:34, :74:42, :75:{22,40}, :77:{22,33}]
-  always_comb begin	// @[src/src/core/ALU.scala:23:34, :29:20, :32:20, :35:20, :38:20, :41:20, :44:20, :47:20, :50:20, :53:20, :56:20, :59:37]
-    casez (io_controlBundle_ALUop)	// @[src/src/core/ALU.scala:23:34, :29:20, :32:20, :35:20, :38:20, :41:20, :44:20, :47:20, :50:20, :53:20, :56:20, :59:37]
+  reg  [31:0] casez_tmp;	// @[src/src/core/ALU.scala:23:34, :25:20]
+  wire        _GEN = io_controlBundle_ALUop == 4'hC;	// @[src/src/core/ALU.scala:23:34]
+  wire        _GEN_0 = io_controlBundle_ALUop == 4'hD;	// @[src/src/core/ALU.scala:23:34]
+  wire        _GEN_1 = io_controlBundle_ALUop == 4'hE;	// @[src/src/core/ALU.scala:23:34]
+  wire [62:0] _result_T_8 = {31'h0, io_src1} << io_src2[4:0];	// @[src/src/core/ALU.scala:44:{25,35}]
+  wire [31:0] _GEN_2 =
+    _GEN | _GEN_0 | ~_GEN_1 | io_controlBundle_branch
+      ? 32'h0
+      : {31'h0,
+         io_controlBundle_ALUunsigned
+           ? $signed(io_src1) < $signed(io_src2)
+           : io_src1 < io_src2};	// @[src/src/core/ALU.scala:20:33, :23:34, :44:25, :59:37, :66:44, :67:{18,36}, :69:{18,29}]
+  always_comb begin	// @[src/src/core/ALU.scala:20:33, :23:34, :25:20, :29:14, :32:14, :35:14, :38:14, :41:14, :44:14, :47:14, :50:14]
+    casez (io_controlBundle_ALUop)	// @[src/src/core/ALU.scala:20:33, :23:34, :25:20, :29:14, :32:14, :35:14, :38:14, :41:14, :44:14, :47:14, :50:14]
       4'b0000:
-        casez_tmp = _GEN_0;	// @[src/src/core/ALU.scala:21:33, :23:34, :29:20, :32:20, :35:20, :38:20, :41:20, :44:20, :47:20, :50:20, :53:20, :56:20, :59:37, :74:42]
+        casez_tmp = 32'h0;	// @[src/src/core/ALU.scala:20:33, :23:34, :25:20, :29:14, :32:14, :35:14, :38:14, :41:14, :44:14, :47:14, :50:14]
       4'b0001:
-        casez_tmp = io_src1[0] + io_src2[0];	// @[src/src/core/ALU.scala:23:34, :29:{20,31}, :32:20, :35:20, :38:20, :41:20, :44:20, :47:20, :50:20, :53:20, :56:20, :59:37]
+        casez_tmp = io_src1 + io_src2;	// @[src/src/core/ALU.scala:20:33, :23:34, :25:20, :29:{14,25}, :32:14, :35:14, :38:14, :41:14, :44:14, :47:14, :50:14]
       4'b0010:
-        casez_tmp = io_src1[0] - io_src2[0];	// @[src/src/core/ALU.scala:23:34, :29:{20,31}, :32:{20,31}, :35:20, :38:20, :41:20, :44:20, :47:20, :50:20, :53:20, :56:20, :59:37]
+        casez_tmp = io_src1 - io_src2;	// @[src/src/core/ALU.scala:20:33, :23:34, :25:20, :29:14, :32:{14,25}, :35:14, :38:14, :41:14, :44:14, :47:14, :50:14]
       4'b0011:
-        casez_tmp = _GEN_0;	// @[src/src/core/ALU.scala:21:33, :23:34, :29:20, :32:20, :35:20, :38:20, :41:20, :44:20, :47:20, :50:20, :53:20, :56:20, :59:37, :74:42]
+        casez_tmp = _GEN_2;	// @[src/src/core/ALU.scala:20:33, :23:34, :25:20, :29:14, :32:14, :35:14, :38:14, :41:14, :44:14, :47:14, :50:14]
       4'b0100:
-        casez_tmp = io_src1[0] & io_src2[0];	// @[src/src/core/ALU.scala:23:34, :29:{20,31}, :32:20, :35:{20,31}, :38:20, :41:20, :44:20, :47:20, :50:20, :53:20, :56:20, :59:37]
+        casez_tmp = io_src1 & io_src2;	// @[src/src/core/ALU.scala:20:33, :23:34, :25:20, :29:14, :32:14, :35:{14,25}, :38:14, :41:14, :44:14, :47:14, :50:14]
       4'b0101:
-        casez_tmp = io_src1[0] | io_src2[0];	// @[src/src/core/ALU.scala:23:34, :29:{20,31}, :32:20, :35:20, :38:{20,31}, :41:20, :44:20, :47:20, :50:20, :53:20, :56:20, :59:37]
+        casez_tmp = io_src1 | io_src2;	// @[src/src/core/ALU.scala:20:33, :23:34, :25:20, :29:14, :32:14, :35:14, :38:{14,25}, :41:14, :44:14, :47:14, :50:14]
       4'b0110:
-        casez_tmp = _GEN_0;	// @[src/src/core/ALU.scala:21:33, :23:34, :29:20, :32:20, :35:20, :38:20, :41:20, :44:20, :47:20, :50:20, :53:20, :56:20, :59:37, :74:42]
+        casez_tmp = _GEN_2;	// @[src/src/core/ALU.scala:20:33, :23:34, :25:20, :29:14, :32:14, :35:14, :38:14, :41:14, :44:14, :47:14, :50:14]
       4'b0111:
-        casez_tmp = io_src1[0] ^ io_src2[0];	// @[src/src/core/ALU.scala:23:34, :29:{20,31}, :32:20, :35:20, :38:20, :41:{20,31}, :44:20, :47:20, :50:20, :53:20, :56:20, :59:37]
+        casez_tmp = io_src1 ^ io_src2;	// @[src/src/core/ALU.scala:20:33, :23:34, :25:20, :29:14, :32:14, :35:14, :38:14, :41:{14,25}, :44:14, :47:14, :50:14]
       4'b1000:
-        casez_tmp = _branchResult_T_7[0];	// @[src/src/core/ALU.scala:23:34, :29:20, :32:20, :35:20, :38:20, :41:20, :44:{20,31}, :47:20, :50:20, :53:20, :56:20, :59:37]
+        casez_tmp = _result_T_8[31:0];	// @[src/src/core/ALU.scala:20:33, :23:34, :25:20, :29:14, :32:14, :35:14, :38:14, :41:14, :44:{14,25}, :47:14, :50:14]
       4'b1001:
-        casez_tmp = _branchResult_T_9[0];	// @[src/src/core/ALU.scala:23:34, :29:20, :32:20, :35:20, :38:20, :41:20, :44:20, :47:{20,31}, :50:20, :53:20, :56:20, :59:37]
+        casez_tmp = io_src1 >> io_src2[4:0];	// @[src/src/core/ALU.scala:20:33, :23:34, :25:20, :29:14, :32:14, :35:14, :38:14, :41:14, :44:14, :47:{14,25,35}, :50:14]
       4'b1010:
-        casez_tmp = _GEN_0;	// @[src/src/core/ALU.scala:21:33, :23:34, :29:20, :32:20, :35:20, :38:20, :41:20, :44:20, :47:20, :50:20, :53:20, :56:20, :59:37, :74:42]
+        casez_tmp = _GEN_2;	// @[src/src/core/ALU.scala:20:33, :23:34, :25:20, :29:14, :32:14, :35:14, :38:14, :41:14, :44:14, :47:14, :50:14]
       4'b1011:
-        casez_tmp = _branchResult_T_12[0];	// @[src/src/core/ALU.scala:23:34, :29:20, :32:20, :35:20, :38:20, :41:20, :44:20, :47:20, :50:{20,39}, :53:20, :56:20, :59:37]
+        casez_tmp = $signed($signed(io_src1) >>> io_src2[4:0]);	// @[src/src/core/ALU.scala:20:33, :23:34, :25:20, :29:14, :32:14, :35:14, :38:14, :41:14, :44:14, :47:14, :50:{14,33,43}]
       4'b1100:
-        casez_tmp = io_src1 == io_src2;	// @[src/src/core/ALU.scala:23:34, :29:20, :32:20, :35:20, :38:20, :41:20, :44:20, :47:20, :50:20, :53:{20,38}, :56:20, :59:37]
+        casez_tmp = 32'h0;	// @[src/src/core/ALU.scala:20:33, :23:34, :25:20, :29:14, :32:14, :35:14, :38:14, :41:14, :44:14, :47:14, :50:14]
       4'b1101:
-        casez_tmp = io_src1 != io_src2;	// @[src/src/core/ALU.scala:23:34, :29:20, :32:20, :35:20, :38:20, :41:20, :44:20, :47:20, :50:20, :53:20, :56:{20,38}, :59:37]
+        casez_tmp = 32'h0;	// @[src/src/core/ALU.scala:20:33, :23:34, :25:20, :29:14, :32:14, :35:14, :38:14, :41:14, :44:14, :47:14, :50:14]
       4'b1110:
-        casez_tmp =
-          io_controlBundle_branch
-          & (io_controlBundle_ALUunsigned
-               ? $signed(io_src1) < $signed(io_src2)
-               : io_src1 < io_src2);	// @[src/src/core/ALU.scala:21:33, :23:34, :29:20, :32:20, :35:20, :38:20, :41:20, :44:20, :47:20, :50:20, :53:20, :56:20, :59:37, :60:44, :61:{24,42}, :63:{24,35}]
+        casez_tmp = _GEN_2;	// @[src/src/core/ALU.scala:20:33, :23:34, :25:20, :29:14, :32:14, :35:14, :38:14, :41:14, :44:14, :47:14, :50:14]
       default:
-        casez_tmp = _GEN_0;	// @[src/src/core/ALU.scala:21:33, :23:34, :29:20, :32:20, :35:20, :38:20, :41:20, :44:20, :47:20, :50:20, :53:20, :56:20, :59:37, :74:42]
-    endcase	// @[src/src/core/ALU.scala:23:34, :29:20, :32:20, :35:20, :38:20, :41:20, :44:20, :47:20, :50:20, :53:20, :56:20, :59:37]
+        casez_tmp = _GEN_2;	// @[src/src/core/ALU.scala:20:33, :23:34, :25:20, :29:14, :32:14, :35:14, :38:14, :41:14, :44:14, :47:14, :50:14]
+    endcase	// @[src/src/core/ALU.scala:20:33, :23:34, :25:20, :29:14, :32:14, :35:14, :38:14, :41:14, :44:14, :47:14, :50:14]
   end // always_comb
-  wire [31:0] _io_result_T_2 = io_pc + io_src2;	// @[src/src/core/ALU.scala:85:65]
   assign io_result =
     io_controlBundle_jal | io_controlBundle_jalr
-      ? _io_result_T_2
+      ? io_pc + 32'h4
       : io_controlBundle_lui
           ? io_src2
-          : io_controlBundle_auipc
-              ? _io_result_T_2
-              : _GEN | io_controlBundle_ALUop == 4'h1 | io_controlBundle_ALUop == 4'h2
-                | io_controlBundle_ALUop == 4'h4 | io_controlBundle_ALUop == 4'h5
-                | io_controlBundle_ALUop == 4'h7 | io_controlBundle_ALUop == 4'h8
-                | io_controlBundle_ALUop == 4'h9 | io_controlBundle_ALUop == 4'hB
-                | io_controlBundle_ALUop == 4'hC | io_controlBundle_ALUop == 4'hD
-                | io_controlBundle_ALUop != 4'hE | io_controlBundle_branch
-                  ? 32'h0
-                  : {31'h0,
-                     io_controlBundle_ALUunsigned
-                       ? $signed(io_src1) < $signed(io_src2)
-                       : io_src1 < io_src2};	// @[<stdin>:322:10, src/main/scala/chisel3/util/Mux.scala:141:16, src/src/core/ALU.scala:20:33, :23:34, :25:20, :44:31, :66:44, :67:{18,36}, :69:{18,29}, :85:{29,65}]
-  assign io_branchResult = ~_GEN & casez_tmp;	// @[<stdin>:322:10, src/src/core/ALU.scala:23:34, :26:20, :29:20]
+          : io_controlBundle_auipc ? io_pc + io_src2 : casez_tmp;	// @[<stdin>:339:10, src/main/scala/chisel3/util/Mux.scala:141:16, src/src/core/ALU.scala:23:34, :25:20, :85:{29,65}, :87:42]
+  assign io_branchResult =
+    ~(io_controlBundle_ALUop == 4'h0 | io_controlBundle_ALUop == 4'h1
+      | io_controlBundle_ALUop == 4'h2 | io_controlBundle_ALUop == 4'h4
+      | io_controlBundle_ALUop == 4'h5 | io_controlBundle_ALUop == 4'h7
+      | io_controlBundle_ALUop == 4'h8 | io_controlBundle_ALUop == 4'h9
+      | io_controlBundle_ALUop == 4'hB)
+    & (_GEN
+         ? io_src1 == io_src2
+         : _GEN_0
+             ? io_src1 != io_src2
+             : _GEN_1
+                 ? io_controlBundle_branch
+                   & (io_controlBundle_ALUunsigned
+                        ? $signed(io_src1) < $signed(io_src2)
+                        : io_src1 < io_src2)
+                 : (&io_controlBundle_ALUop)
+                   & (io_controlBundle_ALUunsigned
+                        ? $signed(io_src1) >= $signed(io_src2)
+                        : io_src1 >= io_src2));	// @[<stdin>:339:10, src/src/core/ALU.scala:21:33, :23:34, :26:20, :53:{20,38}, :56:{20,38}, :59:37, :60:44, :61:{24,42}, :63:{24,35}, :74:42, :75:{22,40}, :77:{22,33}]
 endmodule
 
-module Execute(	// @[<stdin>:438:10]
+module Execute(	// @[<stdin>:456:10]
   input  [31:0] io_regSrc1,	// @[src/src/core/Execute.scala:8:14]
                 io_regSrc2,	// @[src/src/core/Execute.scala:8:14]
                 io_imm,	// @[src/src/core/Execute.scala:8:14]
@@ -829,20 +835,20 @@ module Execute(	// @[<stdin>:438:10]
     .io_branchResult              (_alu_io_branchResult)
   );
   assign io_resultBundle_regDataWrite =
-    io_controlBundle_mem2reg ? io_dataSRAM_rdata : _alu_io_result;	// @[<stdin>:438:10, src/src/core/Execute.scala:18:19, :32:38]
+    io_controlBundle_mem2reg ? io_dataSRAM_rdata : _alu_io_result;	// @[<stdin>:456:10, src/src/core/Execute.scala:18:19, :32:38]
   assign io_resultBundle_nextPC =
     io_controlBundle_jal | _alu_io_branchResult | io_controlBundle_branch
       ? io_pc + io_imm
-      : io_controlBundle_jalr ? io_regSrc1 + io_imm : io_pc + 32'h4;	// @[<stdin>:438:10, src/main/scala/chisel3/util/Mux.scala:141:16, src/src/core/Execute.scala:18:19, :26:11, :28:{52,90}, :29:46]
-  assign io_dataSRAM_en = io_controlBundle_memWriteEnable;	// @[<stdin>:438:10]
-  assign io_dataSRAM_we = io_controlBundle_memWe;	// @[<stdin>:438:10]
-  assign io_dataSRAM_addr = _alu_io_result;	// @[<stdin>:438:10, src/src/core/Execute.scala:18:19]
-  assign io_dataSRAM_wdata = io_regSrc2;	// @[<stdin>:438:10]
+      : io_controlBundle_jalr ? io_regSrc1 + io_imm : io_pc + 32'h4;	// @[<stdin>:456:10, src/main/scala/chisel3/util/Mux.scala:141:16, src/src/core/Execute.scala:18:19, :26:11, :28:{52,90}, :29:46]
+  assign io_dataSRAM_en = io_controlBundle_memWriteEnable;	// @[<stdin>:456:10]
+  assign io_dataSRAM_we = io_controlBundle_memWe;	// @[<stdin>:456:10]
+  assign io_dataSRAM_addr = _alu_io_result;	// @[<stdin>:456:10, src/src/core/Execute.scala:18:19]
+  assign io_dataSRAM_wdata = io_regSrc2;	// @[<stdin>:456:10]
 endmodule
 
-module CPUTop(	// @[<stdin>:469:10]
-  input         clock,	// @[<stdin>:470:11]
-                reset,	// @[<stdin>:471:11]
+module CPUTop(	// @[<stdin>:487:10]
+  input         clock,	// @[<stdin>:488:11]
+                reset,	// @[<stdin>:489:11]
   input  [31:0] io_instSRAM_rdata,	// @[src/src/core/CPUTop.scala:14:14]
                 io_dataSRAM_rdata,	// @[src/src/core/CPUTop.scala:14:14]
   output        io_instSRAM_en,	// @[src/src/core/CPUTop.scala:14:14]
@@ -992,9 +998,9 @@ module CPUTop(	// @[<stdin>:469:10]
     .io_dataSRAM_addr                (io_dataSRAM_addr),
     .io_dataSRAM_wdata               (io_dataSRAM_wdata)
   );
-  assign io_instSRAM_en = 1'h1;	// @[<stdin>:469:10, src/src/core/CPUTop.scala:19:23]
-  assign io_instSRAM_we = 4'hF;	// @[<stdin>:469:10, src/src/core/CPUTop.scala:19:23]
-  assign io_instSRAM_wdata = 32'h0;	// @[<stdin>:469:10, src/src/core/CPUTop.scala:19:23]
-  assign io_debug_pc = _fetch_io_pc;	// @[<stdin>:469:10, src/src/core/CPUTop.scala:19:23]
+  assign io_instSRAM_en = 1'h1;	// @[<stdin>:487:10, src/src/core/CPUTop.scala:19:23]
+  assign io_instSRAM_we = 4'hF;	// @[<stdin>:487:10, src/src/core/CPUTop.scala:19:23]
+  assign io_instSRAM_wdata = 32'h0;	// @[<stdin>:487:10, src/src/core/CPUTop.scala:19:23]
+  assign io_debug_pc = _fetch_io_pc;	// @[<stdin>:487:10, src/src/core/CPUTop.scala:19:23]
 endmodule
 

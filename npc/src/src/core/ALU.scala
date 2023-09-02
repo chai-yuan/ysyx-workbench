@@ -26,28 +26,28 @@ class ALU extends Module {
       branchResult := false.B
     }
     is(OP_ADD) {
-      branchResult := io.src1 +& io.src2
+      result := io.src1 + io.src2
     }
     is(OP_SUB) {
-      branchResult := io.src1 -& io.src2
+      result := io.src1 - io.src2
     }
     is(OP_AND) {
-      branchResult := io.src1 & io.src2
+      result := io.src1 & io.src2
     }
     is(OP_OR) {
-      branchResult := io.src1 | io.src2
+      result := io.src1 | io.src2
     }
     is(OP_XOR) {
-      branchResult := io.src1 ^ io.src2
+      result := io.src1 ^ io.src2
     }
     is(OP_SLL) {
-      branchResult := io.src1 << io.src2(4, 0)
+      result := io.src1 << io.src2(4, 0)
     }
     is(OP_SRL) {
-      branchResult := io.src1 >> io.src2(4, 0)
+      result := io.src1 >> io.src2(4, 0)
     }
     is(OP_SRA) {
-      branchResult := (io.src1.asSInt >> io.src2(4, 0)).asUInt
+      result := (io.src1.asSInt >> io.src2(4, 0)).asUInt
     }
     is(OP_EQ) {
       branchResult := io.src1.asSInt === io.src2.asSInt
@@ -82,7 +82,7 @@ class ALU extends Module {
   io.result := MuxCase(
     result,
     Array(
-      (io.controlBundle.jal || io.controlBundle.jalr) -> (io.pc + io.src2),
+      (io.controlBundle.jal || io.controlBundle.jalr) -> (io.pc + 4.U),
       (io.controlBundle.lui) -> (io.src2),
       (io.controlBundle.auipc) -> (io.pc + io.src2)
     )

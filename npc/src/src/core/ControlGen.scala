@@ -86,8 +86,8 @@ class ControlGen extends Module {
     )
   )
 
-  io.controlBundle.ALUsrc2imm := (io.opcode === "b001001".U) ||
-    (io.opcode === "b0000011".U) || (io.opcode === "b0100011".U)
+  io.controlBundle.ALUsrc2imm := (io.opcode === "b0010011".U) ||
+    (io.opcode === "b0000011".U) || (io.opcode === "b0100011".U) || lui || auipc
 
   io.controlBundle.ALUunsigned := (sltu || sltiu || bltu || bgeu)
 

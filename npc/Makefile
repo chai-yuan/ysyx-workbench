@@ -9,6 +9,7 @@ verilog:
 	$(call git_commit, "generate verilog")
 	mkdir -p $(BUILD_DIR)
 	mill -i __.test.runMain Elaborate -td $(BUILD_DIR)
+	cp $(BUILD_DIR)/CPUTop.v ./simulation/vsrc/CPUTop.v
 
 help:
 	mill -i __.test.runMain Elaborate --help
