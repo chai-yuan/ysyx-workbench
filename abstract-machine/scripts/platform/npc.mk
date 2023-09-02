@@ -15,6 +15,8 @@ LDFLAGS   += --gc-sections -e _start
 CFLAGS += -DMAINARGS=\"$(mainargs)\"
 .PHONY: $(AM_HOME)/am/src/riscv/npc/trm.c
 
+NPCFLAGS += -b
+
 image: $(IMAGE).elf
 	@$(OBJDUMP) -d $(IMAGE).elf > $(IMAGE).txt
 	@echo + OBJCOPY "->" $(IMAGE_REL).bin
@@ -22,4 +24,4 @@ image: $(IMAGE).elf
 	
 	
 run: image
-	$(MAKE) -C $(NPC_HOME)/simulation ISA=$(ISA) run IMG=$(IMAGE).bin
+	$(MAKE) -C $(NPC_HOME)/simulation ISA=$(ISA) run ARGS="$(NPCFLAGS)" IMG=$(IMAGE).bin

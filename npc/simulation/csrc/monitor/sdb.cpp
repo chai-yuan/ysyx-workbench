@@ -111,6 +111,7 @@ static int cmd_help(char* args) {
 }
 
 void sdb_set_batch_mode() {
+    Log("batch mode on");
     is_batch_mode = true;
 }
 

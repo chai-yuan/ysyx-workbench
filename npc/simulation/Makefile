@@ -25,11 +25,10 @@ CFLAGS := -I$(INCLUDE_DIR) -g -Wall -Wextra
 LDFLAGS := -ldl -lreadline
 # LDFLAGS += $(LLVM_LIBS)
 
-DIFFTEST_SO := NULL
 IMG ?= NULL
+ARGS ?= NULL
 
-NPC_FLAGS += $(IMG)
-# NPC_FLAGS += --diff=$(DIFFTEST_SO)
+NPC_FLAGS += $(ARGS) $(IMG) 
 
 bin:$(CSRCS) $(VSRCS)
 	verilator $(VERILATOR_FLAGS) $(CSRCS) $(VSRCS) \
@@ -38,6 +37,7 @@ bin:$(CSRCS) $(VSRCS)
 
 run:bin
 	$(call git_commit, "npc simulation")
+	@echo $(NPC_FLAGS) 
 	$(BIN) $(NPC_FLAGS)
 
 
