@@ -33,7 +33,7 @@ void init_mem() {
 
 word_t paddr_read(paddr_t addr, int len) {
 #ifdef CONFIG_MTRACE
-    Log("Memory read at " FMT_PADDR " ,len %d", addr, len);
+    Log("Memory read at " FMT_PADDR " ,len %d ,data %d", addr, len, pmem_read(addr, len));
 #endif
 
     if (in_pmem(addr))

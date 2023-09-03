@@ -2,7 +2,7 @@ package core
 
 import chisel3._
 import bundle._
-import chisel3.util.MuxCase
+import chisel3.util._
 
 class Execute extends Module {
   val io = IO(new Bundle {
@@ -25,11 +25,25 @@ class Execute extends Module {
   io.resultBundle.nextPC := MuxCase(
     io.pc + 4.U,
     Array(
-      (io.controlBundle.jal || alu.io.branchResult || io.controlBundle.branch) -> (io.pc + io.imm),
+      (io.controlBundle.jal || (alu.io.branchResult && io.controlBundle.branch)) -> (io.pc + io.imm),
       (io.controlBundle.jalr) -> (io.regSrc1 + io.imm)
     )
   )
-  io.resultBundle.regDataWrite := Mux(io.controlBundle.mem2reg, io.dataSRAM.rdata, alu.io.result)
+
+  val dataRData = MuxCase(
+    io.dataSRAM.rdata,
+    Array(
+      (io.controlBundle.ALUunsigned === false.B && io.controlBundle.memWe === "b0010".U) -> (Cat(
+        Fill(16, io.dataSRAM.rdata(15)),
+        io.dataSRAM.rdata(15, 0)
+      )),
+      (io.controlBundle.ALUunsigned === false.B && io.controlBundle.memWe === "b0001".U) -> (Cat(
+        Fill(24, io.dataSRAM.rdata(7)),
+        io.dataSRAM.rdata(7, 0)
+      ))
+    )
+  )
+  io.resultBundle.regDataWrite := Mux(io.controlBundle.mem2reg, dataRData, alu.io.result)
 
   io.dataSRAM.en    := io.controlBundle.memWriteEnable
   io.dataSRAM.we    := io.controlBundle.memWe

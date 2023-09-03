@@ -20,9 +20,8 @@ class RegistersIO extends Bundle {
 class Registers extends Module {
   val io = IO(new RegistersIO())
 
+  // val regs = RegInit(VecInit(Seq.fill(32)(0.U(32.W))))
   val regs = Reg(Vec(32, UInt(32.W)))
-  // TODO
-  // val regs = RegInit(Vec(32, UInt(32.W)), 0.U)
 
   io.dataRead1 := regs(io.regSrc1Idx)
   io.dataRead2 := regs(io.regSrc2Idx)

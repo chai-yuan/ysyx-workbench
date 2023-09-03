@@ -1,4 +1,5 @@
 #include <cpu/cpu.h>
+#include <cpu/difftest.h>
 #include <cpu/sim.h>
 #include <memory/paddr.h>
 #include <trace.h>
@@ -48,7 +49,6 @@ void sim_exit() {
 
 void sim_exec() {
     cycle_num++;
-
     cpu_top->clock = 0;
     cpu_top->eval();
     sim_mem();
@@ -59,6 +59,8 @@ void sim_exec() {
     IFDEF(CONFIG_VTRACE, dump_wave());
 
     update_regs();
+    // difftest
+    IFDEF(CONFIG_DIFFTEST, difftest_step(cpu.pc, 0));
 
     // halt
     if (cpu_top->io_debug_decode_ebreak) {
@@ -67,27 +69,27 @@ void sim_exec() {
 }
 
 void sim_mem() {
-    paddr_t dataAddr = cpu_top->io_dataSRAM_addr;
-    int dataWe = cpu_top->io_dataSRAM_we;
-
-    if (cpu_top->io_dataSRAM_we) {
-        cpu_top->io_dataSRAM_rdata = paddr_read(dataAddr, cpu_top->io_dataSRAM_we);
-        if (cpu_top->io_dataSRAM_en) {
-            paddr_write(dataAddr, cpu_top->io_dataSRAM_we, cpu_top->io_dataSRAM_wdata);
-        }
-    }
-
-    cpu_top->eval();
-
     paddr_t instAddr = cpu_top->io_instSRAM_addr;
     inst = paddr_read(instAddr, 4);
     cpu_top->io_instSRAM_rdata = inst;
 
     cpu_top->eval();
+
+    paddr_t dataAddr = cpu_top->io_dataSRAM_addr;
+    int dataWe = cpu_top->io_dataSRAM_we;
+
+    if (dataWe) {
+        if (cpu_top->io_dataSRAM_en) {
+            paddr_write(dataAddr, dataWe, cpu_top->io_dataSRAM_wdata);
+        } else {
+            cpu_top->io_dataSRAM_rdata = paddr_read(dataAddr, dataWe);
+        }
+    }
+
+    cpu_top->eval();
 }
 
 void update_regs() {
-    cpu.last_pc = cpu.pc;
     cpu.pc = cpu_top->io_debug_pc;
 
     cpu.gpr[0] = cpu_top->io_debug_decode_regs_0;

@@ -81,7 +81,7 @@ class ControlGen extends Module {
       (sra || srai) -> OP_SRA,
       (beq) -> OP_EQ,
       (bne) -> OP_NEQ,
-      (blt || bltu) -> OP_LT,
+      (blt || bltu || slti || sltiu || slt || sltu) -> OP_LT,
       (bge || bgeu) -> OP_GE
     )
   )
@@ -89,7 +89,7 @@ class ControlGen extends Module {
   io.controlBundle.ALUsrc2imm := (io.opcode === "b0010011".U) ||
     (io.opcode === "b0000011".U) || (io.opcode === "b0100011".U) || lui || auipc
 
-  io.controlBundle.ALUunsigned := (sltu || sltiu || bltu || bgeu)
+  io.controlBundle.ALUunsigned := (sltu || sltiu || bltu || bgeu || lhu || lbu)
 
   io.controlBundle.branch := (io.opcode === "b1100011".U)
 

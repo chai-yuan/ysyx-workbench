@@ -8,6 +8,7 @@ const char* regs[] = {
     "s8", "s9", "s10", "s11", "t3", "t4", "t5", "t6"};
 
 void isa_reg_display() {
+    printf("pc : 0x%-10x\n", cpu.pc);
     for (int i = 0; i < 32; i += 2) {
         printf("x%-2d:%-6s: 0x%-10x %-12d | ", i, reg_name(i), gpr(i), gpr(i));
         if (i + 1 < 32) {

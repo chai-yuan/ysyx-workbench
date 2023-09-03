@@ -58,23 +58,23 @@ class ALU extends Module {
     is(OP_LT) {
       when(io.controlBundle.branch) {
         when(io.controlBundle.ALUunsigned) {
-          branchResult := io.src1.asSInt < io.src2.asSInt
-        }.otherwise {
           branchResult := io.src1 < io.src2
+        }.otherwise {
+          branchResult := io.src1.asSInt < io.src2.asSInt
         }
       }.otherwise {
         when(io.controlBundle.ALUunsigned) {
-          result := io.src1.asSInt < io.src2.asSInt
-        }.otherwise {
           result := io.src1 < io.src2
+        }.otherwise {
+          result := io.src1.asSInt < io.src2.asSInt
         }
       }
     }
     is(OP_GE) {
       when(io.controlBundle.ALUunsigned) {
-        branchResult := io.src1.asSInt >= io.src2.asSInt
-      }.otherwise {
         branchResult := io.src1 >= io.src2
+      }.otherwise {
+        branchResult := io.src1.asSInt >= io.src2.asSInt
       }
     }
   }

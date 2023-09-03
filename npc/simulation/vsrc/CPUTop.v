@@ -133,242 +133,242 @@ module Registers(	// @[<stdin>:18:10]
                 io_debug_31	// @[src/src/core/Registers.scala:21:14]
 );
 
-  reg  [31:0] casez_tmp;	// @[src/src/core/Registers.scala:27:16]
-  reg  [31:0] casez_tmp_0;	// @[src/src/core/Registers.scala:28:16]
-  reg  [31:0] regs_0;	// @[src/src/core/Registers.scala:23:17]
-  reg  [31:0] regs_1;	// @[src/src/core/Registers.scala:23:17]
-  reg  [31:0] regs_2;	// @[src/src/core/Registers.scala:23:17]
-  reg  [31:0] regs_3;	// @[src/src/core/Registers.scala:23:17]
-  reg  [31:0] regs_4;	// @[src/src/core/Registers.scala:23:17]
-  reg  [31:0] regs_5;	// @[src/src/core/Registers.scala:23:17]
-  reg  [31:0] regs_6;	// @[src/src/core/Registers.scala:23:17]
-  reg  [31:0] regs_7;	// @[src/src/core/Registers.scala:23:17]
-  reg  [31:0] regs_8;	// @[src/src/core/Registers.scala:23:17]
-  reg  [31:0] regs_9;	// @[src/src/core/Registers.scala:23:17]
-  reg  [31:0] regs_10;	// @[src/src/core/Registers.scala:23:17]
-  reg  [31:0] regs_11;	// @[src/src/core/Registers.scala:23:17]
-  reg  [31:0] regs_12;	// @[src/src/core/Registers.scala:23:17]
-  reg  [31:0] regs_13;	// @[src/src/core/Registers.scala:23:17]
-  reg  [31:0] regs_14;	// @[src/src/core/Registers.scala:23:17]
-  reg  [31:0] regs_15;	// @[src/src/core/Registers.scala:23:17]
-  reg  [31:0] regs_16;	// @[src/src/core/Registers.scala:23:17]
-  reg  [31:0] regs_17;	// @[src/src/core/Registers.scala:23:17]
-  reg  [31:0] regs_18;	// @[src/src/core/Registers.scala:23:17]
-  reg  [31:0] regs_19;	// @[src/src/core/Registers.scala:23:17]
-  reg  [31:0] regs_20;	// @[src/src/core/Registers.scala:23:17]
-  reg  [31:0] regs_21;	// @[src/src/core/Registers.scala:23:17]
-  reg  [31:0] regs_22;	// @[src/src/core/Registers.scala:23:17]
-  reg  [31:0] regs_23;	// @[src/src/core/Registers.scala:23:17]
-  reg  [31:0] regs_24;	// @[src/src/core/Registers.scala:23:17]
-  reg  [31:0] regs_25;	// @[src/src/core/Registers.scala:23:17]
-  reg  [31:0] regs_26;	// @[src/src/core/Registers.scala:23:17]
-  reg  [31:0] regs_27;	// @[src/src/core/Registers.scala:23:17]
-  reg  [31:0] regs_28;	// @[src/src/core/Registers.scala:23:17]
-  reg  [31:0] regs_29;	// @[src/src/core/Registers.scala:23:17]
-  reg  [31:0] regs_30;	// @[src/src/core/Registers.scala:23:17]
-  reg  [31:0] regs_31;	// @[src/src/core/Registers.scala:23:17]
-  always_comb begin	// @[src/src/core/Registers.scala:27:16]
-    casez (io_regSrc1Idx)	// @[src/src/core/Registers.scala:27:16]
+  reg  [31:0] casez_tmp;	// @[src/src/core/Registers.scala:26:16]
+  reg  [31:0] casez_tmp_0;	// @[src/src/core/Registers.scala:27:16]
+  reg  [31:0] regs_0;	// @[src/src/core/Registers.scala:24:17]
+  reg  [31:0] regs_1;	// @[src/src/core/Registers.scala:24:17]
+  reg  [31:0] regs_2;	// @[src/src/core/Registers.scala:24:17]
+  reg  [31:0] regs_3;	// @[src/src/core/Registers.scala:24:17]
+  reg  [31:0] regs_4;	// @[src/src/core/Registers.scala:24:17]
+  reg  [31:0] regs_5;	// @[src/src/core/Registers.scala:24:17]
+  reg  [31:0] regs_6;	// @[src/src/core/Registers.scala:24:17]
+  reg  [31:0] regs_7;	// @[src/src/core/Registers.scala:24:17]
+  reg  [31:0] regs_8;	// @[src/src/core/Registers.scala:24:17]
+  reg  [31:0] regs_9;	// @[src/src/core/Registers.scala:24:17]
+  reg  [31:0] regs_10;	// @[src/src/core/Registers.scala:24:17]
+  reg  [31:0] regs_11;	// @[src/src/core/Registers.scala:24:17]
+  reg  [31:0] regs_12;	// @[src/src/core/Registers.scala:24:17]
+  reg  [31:0] regs_13;	// @[src/src/core/Registers.scala:24:17]
+  reg  [31:0] regs_14;	// @[src/src/core/Registers.scala:24:17]
+  reg  [31:0] regs_15;	// @[src/src/core/Registers.scala:24:17]
+  reg  [31:0] regs_16;	// @[src/src/core/Registers.scala:24:17]
+  reg  [31:0] regs_17;	// @[src/src/core/Registers.scala:24:17]
+  reg  [31:0] regs_18;	// @[src/src/core/Registers.scala:24:17]
+  reg  [31:0] regs_19;	// @[src/src/core/Registers.scala:24:17]
+  reg  [31:0] regs_20;	// @[src/src/core/Registers.scala:24:17]
+  reg  [31:0] regs_21;	// @[src/src/core/Registers.scala:24:17]
+  reg  [31:0] regs_22;	// @[src/src/core/Registers.scala:24:17]
+  reg  [31:0] regs_23;	// @[src/src/core/Registers.scala:24:17]
+  reg  [31:0] regs_24;	// @[src/src/core/Registers.scala:24:17]
+  reg  [31:0] regs_25;	// @[src/src/core/Registers.scala:24:17]
+  reg  [31:0] regs_26;	// @[src/src/core/Registers.scala:24:17]
+  reg  [31:0] regs_27;	// @[src/src/core/Registers.scala:24:17]
+  reg  [31:0] regs_28;	// @[src/src/core/Registers.scala:24:17]
+  reg  [31:0] regs_29;	// @[src/src/core/Registers.scala:24:17]
+  reg  [31:0] regs_30;	// @[src/src/core/Registers.scala:24:17]
+  reg  [31:0] regs_31;	// @[src/src/core/Registers.scala:24:17]
+  always_comb begin	// @[src/src/core/Registers.scala:26:16]
+    casez (io_regSrc1Idx)	// @[src/src/core/Registers.scala:26:16]
       5'b00000:
-        casez_tmp = regs_0;	// @[src/src/core/Registers.scala:23:17, :27:16]
+        casez_tmp = regs_0;	// @[src/src/core/Registers.scala:24:17, :26:16]
       5'b00001:
-        casez_tmp = regs_1;	// @[src/src/core/Registers.scala:23:17, :27:16]
+        casez_tmp = regs_1;	// @[src/src/core/Registers.scala:24:17, :26:16]
       5'b00010:
-        casez_tmp = regs_2;	// @[src/src/core/Registers.scala:23:17, :27:16]
+        casez_tmp = regs_2;	// @[src/src/core/Registers.scala:24:17, :26:16]
       5'b00011:
-        casez_tmp = regs_3;	// @[src/src/core/Registers.scala:23:17, :27:16]
+        casez_tmp = regs_3;	// @[src/src/core/Registers.scala:24:17, :26:16]
       5'b00100:
-        casez_tmp = regs_4;	// @[src/src/core/Registers.scala:23:17, :27:16]
+        casez_tmp = regs_4;	// @[src/src/core/Registers.scala:24:17, :26:16]
       5'b00101:
-        casez_tmp = regs_5;	// @[src/src/core/Registers.scala:23:17, :27:16]
+        casez_tmp = regs_5;	// @[src/src/core/Registers.scala:24:17, :26:16]
       5'b00110:
-        casez_tmp = regs_6;	// @[src/src/core/Registers.scala:23:17, :27:16]
+        casez_tmp = regs_6;	// @[src/src/core/Registers.scala:24:17, :26:16]
       5'b00111:
-        casez_tmp = regs_7;	// @[src/src/core/Registers.scala:23:17, :27:16]
+        casez_tmp = regs_7;	// @[src/src/core/Registers.scala:24:17, :26:16]
       5'b01000:
-        casez_tmp = regs_8;	// @[src/src/core/Registers.scala:23:17, :27:16]
+        casez_tmp = regs_8;	// @[src/src/core/Registers.scala:24:17, :26:16]
       5'b01001:
-        casez_tmp = regs_9;	// @[src/src/core/Registers.scala:23:17, :27:16]
+        casez_tmp = regs_9;	// @[src/src/core/Registers.scala:24:17, :26:16]
       5'b01010:
-        casez_tmp = regs_10;	// @[src/src/core/Registers.scala:23:17, :27:16]
+        casez_tmp = regs_10;	// @[src/src/core/Registers.scala:24:17, :26:16]
       5'b01011:
-        casez_tmp = regs_11;	// @[src/src/core/Registers.scala:23:17, :27:16]
+        casez_tmp = regs_11;	// @[src/src/core/Registers.scala:24:17, :26:16]
       5'b01100:
-        casez_tmp = regs_12;	// @[src/src/core/Registers.scala:23:17, :27:16]
+        casez_tmp = regs_12;	// @[src/src/core/Registers.scala:24:17, :26:16]
       5'b01101:
-        casez_tmp = regs_13;	// @[src/src/core/Registers.scala:23:17, :27:16]
+        casez_tmp = regs_13;	// @[src/src/core/Registers.scala:24:17, :26:16]
       5'b01110:
-        casez_tmp = regs_14;	// @[src/src/core/Registers.scala:23:17, :27:16]
+        casez_tmp = regs_14;	// @[src/src/core/Registers.scala:24:17, :26:16]
       5'b01111:
-        casez_tmp = regs_15;	// @[src/src/core/Registers.scala:23:17, :27:16]
+        casez_tmp = regs_15;	// @[src/src/core/Registers.scala:24:17, :26:16]
       5'b10000:
-        casez_tmp = regs_16;	// @[src/src/core/Registers.scala:23:17, :27:16]
+        casez_tmp = regs_16;	// @[src/src/core/Registers.scala:24:17, :26:16]
       5'b10001:
-        casez_tmp = regs_17;	// @[src/src/core/Registers.scala:23:17, :27:16]
+        casez_tmp = regs_17;	// @[src/src/core/Registers.scala:24:17, :26:16]
       5'b10010:
-        casez_tmp = regs_18;	// @[src/src/core/Registers.scala:23:17, :27:16]
+        casez_tmp = regs_18;	// @[src/src/core/Registers.scala:24:17, :26:16]
       5'b10011:
-        casez_tmp = regs_19;	// @[src/src/core/Registers.scala:23:17, :27:16]
+        casez_tmp = regs_19;	// @[src/src/core/Registers.scala:24:17, :26:16]
       5'b10100:
-        casez_tmp = regs_20;	// @[src/src/core/Registers.scala:23:17, :27:16]
+        casez_tmp = regs_20;	// @[src/src/core/Registers.scala:24:17, :26:16]
       5'b10101:
-        casez_tmp = regs_21;	// @[src/src/core/Registers.scala:23:17, :27:16]
+        casez_tmp = regs_21;	// @[src/src/core/Registers.scala:24:17, :26:16]
       5'b10110:
-        casez_tmp = regs_22;	// @[src/src/core/Registers.scala:23:17, :27:16]
+        casez_tmp = regs_22;	// @[src/src/core/Registers.scala:24:17, :26:16]
       5'b10111:
-        casez_tmp = regs_23;	// @[src/src/core/Registers.scala:23:17, :27:16]
+        casez_tmp = regs_23;	// @[src/src/core/Registers.scala:24:17, :26:16]
       5'b11000:
-        casez_tmp = regs_24;	// @[src/src/core/Registers.scala:23:17, :27:16]
+        casez_tmp = regs_24;	// @[src/src/core/Registers.scala:24:17, :26:16]
       5'b11001:
-        casez_tmp = regs_25;	// @[src/src/core/Registers.scala:23:17, :27:16]
+        casez_tmp = regs_25;	// @[src/src/core/Registers.scala:24:17, :26:16]
       5'b11010:
-        casez_tmp = regs_26;	// @[src/src/core/Registers.scala:23:17, :27:16]
+        casez_tmp = regs_26;	// @[src/src/core/Registers.scala:24:17, :26:16]
       5'b11011:
-        casez_tmp = regs_27;	// @[src/src/core/Registers.scala:23:17, :27:16]
+        casez_tmp = regs_27;	// @[src/src/core/Registers.scala:24:17, :26:16]
       5'b11100:
-        casez_tmp = regs_28;	// @[src/src/core/Registers.scala:23:17, :27:16]
+        casez_tmp = regs_28;	// @[src/src/core/Registers.scala:24:17, :26:16]
       5'b11101:
-        casez_tmp = regs_29;	// @[src/src/core/Registers.scala:23:17, :27:16]
+        casez_tmp = regs_29;	// @[src/src/core/Registers.scala:24:17, :26:16]
       5'b11110:
-        casez_tmp = regs_30;	// @[src/src/core/Registers.scala:23:17, :27:16]
+        casez_tmp = regs_30;	// @[src/src/core/Registers.scala:24:17, :26:16]
       default:
-        casez_tmp = regs_31;	// @[src/src/core/Registers.scala:23:17, :27:16]
-    endcase	// @[src/src/core/Registers.scala:27:16]
+        casez_tmp = regs_31;	// @[src/src/core/Registers.scala:24:17, :26:16]
+    endcase	// @[src/src/core/Registers.scala:26:16]
   end // always_comb
-  always_comb begin	// @[src/src/core/Registers.scala:27:16]
-    casez (io_regSrc2Idx)	// @[src/src/core/Registers.scala:27:16]
+  always_comb begin	// @[src/src/core/Registers.scala:26:16]
+    casez (io_regSrc2Idx)	// @[src/src/core/Registers.scala:26:16]
       5'b00000:
-        casez_tmp_0 = regs_0;	// @[src/src/core/Registers.scala:23:17, :27:16]
+        casez_tmp_0 = regs_0;	// @[src/src/core/Registers.scala:24:17, :26:16]
       5'b00001:
-        casez_tmp_0 = regs_1;	// @[src/src/core/Registers.scala:23:17, :27:16]
+        casez_tmp_0 = regs_1;	// @[src/src/core/Registers.scala:24:17, :26:16]
       5'b00010:
-        casez_tmp_0 = regs_2;	// @[src/src/core/Registers.scala:23:17, :27:16]
+        casez_tmp_0 = regs_2;	// @[src/src/core/Registers.scala:24:17, :26:16]
       5'b00011:
-        casez_tmp_0 = regs_3;	// @[src/src/core/Registers.scala:23:17, :27:16]
+        casez_tmp_0 = regs_3;	// @[src/src/core/Registers.scala:24:17, :26:16]
       5'b00100:
-        casez_tmp_0 = regs_4;	// @[src/src/core/Registers.scala:23:17, :27:16]
+        casez_tmp_0 = regs_4;	// @[src/src/core/Registers.scala:24:17, :26:16]
       5'b00101:
-        casez_tmp_0 = regs_5;	// @[src/src/core/Registers.scala:23:17, :27:16]
+        casez_tmp_0 = regs_5;	// @[src/src/core/Registers.scala:24:17, :26:16]
       5'b00110:
-        casez_tmp_0 = regs_6;	// @[src/src/core/Registers.scala:23:17, :27:16]
+        casez_tmp_0 = regs_6;	// @[src/src/core/Registers.scala:24:17, :26:16]
       5'b00111:
-        casez_tmp_0 = regs_7;	// @[src/src/core/Registers.scala:23:17, :27:16]
+        casez_tmp_0 = regs_7;	// @[src/src/core/Registers.scala:24:17, :26:16]
       5'b01000:
-        casez_tmp_0 = regs_8;	// @[src/src/core/Registers.scala:23:17, :27:16]
+        casez_tmp_0 = regs_8;	// @[src/src/core/Registers.scala:24:17, :26:16]
       5'b01001:
-        casez_tmp_0 = regs_9;	// @[src/src/core/Registers.scala:23:17, :27:16]
+        casez_tmp_0 = regs_9;	// @[src/src/core/Registers.scala:24:17, :26:16]
       5'b01010:
-        casez_tmp_0 = regs_10;	// @[src/src/core/Registers.scala:23:17, :27:16]
+        casez_tmp_0 = regs_10;	// @[src/src/core/Registers.scala:24:17, :26:16]
       5'b01011:
-        casez_tmp_0 = regs_11;	// @[src/src/core/Registers.scala:23:17, :27:16]
+        casez_tmp_0 = regs_11;	// @[src/src/core/Registers.scala:24:17, :26:16]
       5'b01100:
-        casez_tmp_0 = regs_12;	// @[src/src/core/Registers.scala:23:17, :27:16]
+        casez_tmp_0 = regs_12;	// @[src/src/core/Registers.scala:24:17, :26:16]
       5'b01101:
-        casez_tmp_0 = regs_13;	// @[src/src/core/Registers.scala:23:17, :27:16]
+        casez_tmp_0 = regs_13;	// @[src/src/core/Registers.scala:24:17, :26:16]
       5'b01110:
-        casez_tmp_0 = regs_14;	// @[src/src/core/Registers.scala:23:17, :27:16]
+        casez_tmp_0 = regs_14;	// @[src/src/core/Registers.scala:24:17, :26:16]
       5'b01111:
-        casez_tmp_0 = regs_15;	// @[src/src/core/Registers.scala:23:17, :27:16]
+        casez_tmp_0 = regs_15;	// @[src/src/core/Registers.scala:24:17, :26:16]
       5'b10000:
-        casez_tmp_0 = regs_16;	// @[src/src/core/Registers.scala:23:17, :27:16]
+        casez_tmp_0 = regs_16;	// @[src/src/core/Registers.scala:24:17, :26:16]
       5'b10001:
-        casez_tmp_0 = regs_17;	// @[src/src/core/Registers.scala:23:17, :27:16]
+        casez_tmp_0 = regs_17;	// @[src/src/core/Registers.scala:24:17, :26:16]
       5'b10010:
-        casez_tmp_0 = regs_18;	// @[src/src/core/Registers.scala:23:17, :27:16]
+        casez_tmp_0 = regs_18;	// @[src/src/core/Registers.scala:24:17, :26:16]
       5'b10011:
-        casez_tmp_0 = regs_19;	// @[src/src/core/Registers.scala:23:17, :27:16]
+        casez_tmp_0 = regs_19;	// @[src/src/core/Registers.scala:24:17, :26:16]
       5'b10100:
-        casez_tmp_0 = regs_20;	// @[src/src/core/Registers.scala:23:17, :27:16]
+        casez_tmp_0 = regs_20;	// @[src/src/core/Registers.scala:24:17, :26:16]
       5'b10101:
-        casez_tmp_0 = regs_21;	// @[src/src/core/Registers.scala:23:17, :27:16]
+        casez_tmp_0 = regs_21;	// @[src/src/core/Registers.scala:24:17, :26:16]
       5'b10110:
-        casez_tmp_0 = regs_22;	// @[src/src/core/Registers.scala:23:17, :27:16]
+        casez_tmp_0 = regs_22;	// @[src/src/core/Registers.scala:24:17, :26:16]
       5'b10111:
-        casez_tmp_0 = regs_23;	// @[src/src/core/Registers.scala:23:17, :27:16]
+        casez_tmp_0 = regs_23;	// @[src/src/core/Registers.scala:24:17, :26:16]
       5'b11000:
-        casez_tmp_0 = regs_24;	// @[src/src/core/Registers.scala:23:17, :27:16]
+        casez_tmp_0 = regs_24;	// @[src/src/core/Registers.scala:24:17, :26:16]
       5'b11001:
-        casez_tmp_0 = regs_25;	// @[src/src/core/Registers.scala:23:17, :27:16]
+        casez_tmp_0 = regs_25;	// @[src/src/core/Registers.scala:24:17, :26:16]
       5'b11010:
-        casez_tmp_0 = regs_26;	// @[src/src/core/Registers.scala:23:17, :27:16]
+        casez_tmp_0 = regs_26;	// @[src/src/core/Registers.scala:24:17, :26:16]
       5'b11011:
-        casez_tmp_0 = regs_27;	// @[src/src/core/Registers.scala:23:17, :27:16]
+        casez_tmp_0 = regs_27;	// @[src/src/core/Registers.scala:24:17, :26:16]
       5'b11100:
-        casez_tmp_0 = regs_28;	// @[src/src/core/Registers.scala:23:17, :27:16]
+        casez_tmp_0 = regs_28;	// @[src/src/core/Registers.scala:24:17, :26:16]
       5'b11101:
-        casez_tmp_0 = regs_29;	// @[src/src/core/Registers.scala:23:17, :27:16]
+        casez_tmp_0 = regs_29;	// @[src/src/core/Registers.scala:24:17, :26:16]
       5'b11110:
-        casez_tmp_0 = regs_30;	// @[src/src/core/Registers.scala:23:17, :27:16]
+        casez_tmp_0 = regs_30;	// @[src/src/core/Registers.scala:24:17, :26:16]
       default:
-        casez_tmp_0 = regs_31;	// @[src/src/core/Registers.scala:23:17, :27:16]
-    endcase	// @[src/src/core/Registers.scala:27:16]
+        casez_tmp_0 = regs_31;	// @[src/src/core/Registers.scala:24:17, :26:16]
+    endcase	// @[src/src/core/Registers.scala:26:16]
   end // always_comb
-  wire        _GEN = io_regWriteEnable & (|io_regWriteIdx);	// @[src/src/core/Registers.scala:30:{26,44}]
+  wire        _GEN = io_regWriteEnable & (|io_regWriteIdx);	// @[src/src/core/Registers.scala:29:{26,44}]
   always @(posedge clock) begin	// @[<stdin>:19:11]
-    if (_GEN & ~(|io_regWriteIdx))	// @[src/src/core/Registers.scala:23:17, :30:{26,44,53}, :31:26]
-      regs_0 <= io_dataWrite;	// @[src/src/core/Registers.scala:23:17]
-    if (_GEN & io_regWriteIdx == 5'h1)	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17, :30:{26,53}, :31:26]
-      regs_1 <= io_dataWrite;	// @[src/src/core/Registers.scala:23:17]
-    if (_GEN & io_regWriteIdx == 5'h2)	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17, :30:{26,53}, :31:26]
-      regs_2 <= io_dataWrite;	// @[src/src/core/Registers.scala:23:17]
-    if (_GEN & io_regWriteIdx == 5'h3)	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17, :30:{26,53}, :31:26]
-      regs_3 <= io_dataWrite;	// @[src/src/core/Registers.scala:23:17]
-    if (_GEN & io_regWriteIdx == 5'h4)	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17, :30:{26,53}, :31:26]
-      regs_4 <= io_dataWrite;	// @[src/src/core/Registers.scala:23:17]
-    if (_GEN & io_regWriteIdx == 5'h5)	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17, :30:{26,53}, :31:26]
-      regs_5 <= io_dataWrite;	// @[src/src/core/Registers.scala:23:17]
-    if (_GEN & io_regWriteIdx == 5'h6)	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17, :30:{26,53}, :31:26]
-      regs_6 <= io_dataWrite;	// @[src/src/core/Registers.scala:23:17]
-    if (_GEN & io_regWriteIdx == 5'h7)	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17, :30:{26,53}, :31:26]
-      regs_7 <= io_dataWrite;	// @[src/src/core/Registers.scala:23:17]
-    if (_GEN & io_regWriteIdx == 5'h8)	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17, :30:{26,53}, :31:26]
-      regs_8 <= io_dataWrite;	// @[src/src/core/Registers.scala:23:17]
-    if (_GEN & io_regWriteIdx == 5'h9)	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17, :30:{26,53}, :31:26]
-      regs_9 <= io_dataWrite;	// @[src/src/core/Registers.scala:23:17]
-    if (_GEN & io_regWriteIdx == 5'hA)	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17, :30:{26,53}, :31:26]
-      regs_10 <= io_dataWrite;	// @[src/src/core/Registers.scala:23:17]
-    if (_GEN & io_regWriteIdx == 5'hB)	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17, :30:{26,53}, :31:26]
-      regs_11 <= io_dataWrite;	// @[src/src/core/Registers.scala:23:17]
-    if (_GEN & io_regWriteIdx == 5'hC)	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17, :30:{26,53}, :31:26]
-      regs_12 <= io_dataWrite;	// @[src/src/core/Registers.scala:23:17]
-    if (_GEN & io_regWriteIdx == 5'hD)	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17, :30:{26,53}, :31:26]
-      regs_13 <= io_dataWrite;	// @[src/src/core/Registers.scala:23:17]
-    if (_GEN & io_regWriteIdx == 5'hE)	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17, :30:{26,53}, :31:26]
-      regs_14 <= io_dataWrite;	// @[src/src/core/Registers.scala:23:17]
-    if (_GEN & io_regWriteIdx == 5'hF)	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17, :30:{26,53}, :31:26]
-      regs_15 <= io_dataWrite;	// @[src/src/core/Registers.scala:23:17]
-    if (_GEN & io_regWriteIdx == 5'h10)	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17, :30:{26,53}, :31:26]
-      regs_16 <= io_dataWrite;	// @[src/src/core/Registers.scala:23:17]
-    if (_GEN & io_regWriteIdx == 5'h11)	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17, :30:{26,53}, :31:26]
-      regs_17 <= io_dataWrite;	// @[src/src/core/Registers.scala:23:17]
-    if (_GEN & io_regWriteIdx == 5'h12)	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17, :30:{26,53}, :31:26]
-      regs_18 <= io_dataWrite;	// @[src/src/core/Registers.scala:23:17]
-    if (_GEN & io_regWriteIdx == 5'h13)	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17, :30:{26,53}, :31:26]
-      regs_19 <= io_dataWrite;	// @[src/src/core/Registers.scala:23:17]
-    if (_GEN & io_regWriteIdx == 5'h14)	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17, :30:{26,53}, :31:26]
-      regs_20 <= io_dataWrite;	// @[src/src/core/Registers.scala:23:17]
-    if (_GEN & io_regWriteIdx == 5'h15)	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17, :30:{26,53}, :31:26]
-      regs_21 <= io_dataWrite;	// @[src/src/core/Registers.scala:23:17]
-    if (_GEN & io_regWriteIdx == 5'h16)	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17, :30:{26,53}, :31:26]
-      regs_22 <= io_dataWrite;	// @[src/src/core/Registers.scala:23:17]
-    if (_GEN & io_regWriteIdx == 5'h17)	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17, :30:{26,53}, :31:26]
-      regs_23 <= io_dataWrite;	// @[src/src/core/Registers.scala:23:17]
-    if (_GEN & io_regWriteIdx == 5'h18)	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17, :30:{26,53}, :31:26]
-      regs_24 <= io_dataWrite;	// @[src/src/core/Registers.scala:23:17]
-    if (_GEN & io_regWriteIdx == 5'h19)	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17, :30:{26,53}, :31:26]
-      regs_25 <= io_dataWrite;	// @[src/src/core/Registers.scala:23:17]
-    if (_GEN & io_regWriteIdx == 5'h1A)	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17, :30:{26,53}, :31:26]
-      regs_26 <= io_dataWrite;	// @[src/src/core/Registers.scala:23:17]
-    if (_GEN & io_regWriteIdx == 5'h1B)	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17, :30:{26,53}, :31:26]
-      regs_27 <= io_dataWrite;	// @[src/src/core/Registers.scala:23:17]
-    if (_GEN & io_regWriteIdx == 5'h1C)	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17, :30:{26,53}, :31:26]
-      regs_28 <= io_dataWrite;	// @[src/src/core/Registers.scala:23:17]
-    if (_GEN & io_regWriteIdx == 5'h1D)	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17, :30:{26,53}, :31:26]
-      regs_29 <= io_dataWrite;	// @[src/src/core/Registers.scala:23:17]
-    if (_GEN & io_regWriteIdx == 5'h1E)	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17, :30:{26,53}, :31:26]
-      regs_30 <= io_dataWrite;	// @[src/src/core/Registers.scala:23:17]
-    if (_GEN & (&io_regWriteIdx))	// @[src/src/core/Registers.scala:23:17, :30:{26,53}, :31:26]
-      regs_31 <= io_dataWrite;	// @[src/src/core/Registers.scala:23:17]
+    if (_GEN & ~(|io_regWriteIdx))	// @[src/src/core/Registers.scala:24:17, :29:{26,44,53}, :30:26]
+      regs_0 <= io_dataWrite;	// @[src/src/core/Registers.scala:24:17]
+    if (_GEN & io_regWriteIdx == 5'h1)	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17, :29:{26,53}, :30:26]
+      regs_1 <= io_dataWrite;	// @[src/src/core/Registers.scala:24:17]
+    if (_GEN & io_regWriteIdx == 5'h2)	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17, :29:{26,53}, :30:26]
+      regs_2 <= io_dataWrite;	// @[src/src/core/Registers.scala:24:17]
+    if (_GEN & io_regWriteIdx == 5'h3)	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17, :29:{26,53}, :30:26]
+      regs_3 <= io_dataWrite;	// @[src/src/core/Registers.scala:24:17]
+    if (_GEN & io_regWriteIdx == 5'h4)	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17, :29:{26,53}, :30:26]
+      regs_4 <= io_dataWrite;	// @[src/src/core/Registers.scala:24:17]
+    if (_GEN & io_regWriteIdx == 5'h5)	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17, :29:{26,53}, :30:26]
+      regs_5 <= io_dataWrite;	// @[src/src/core/Registers.scala:24:17]
+    if (_GEN & io_regWriteIdx == 5'h6)	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17, :29:{26,53}, :30:26]
+      regs_6 <= io_dataWrite;	// @[src/src/core/Registers.scala:24:17]
+    if (_GEN & io_regWriteIdx == 5'h7)	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17, :29:{26,53}, :30:26]
+      regs_7 <= io_dataWrite;	// @[src/src/core/Registers.scala:24:17]
+    if (_GEN & io_regWriteIdx == 5'h8)	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17, :29:{26,53}, :30:26]
+      regs_8 <= io_dataWrite;	// @[src/src/core/Registers.scala:24:17]
+    if (_GEN & io_regWriteIdx == 5'h9)	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17, :29:{26,53}, :30:26]
+      regs_9 <= io_dataWrite;	// @[src/src/core/Registers.scala:24:17]
+    if (_GEN & io_regWriteIdx == 5'hA)	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17, :29:{26,53}, :30:26]
+      regs_10 <= io_dataWrite;	// @[src/src/core/Registers.scala:24:17]
+    if (_GEN & io_regWriteIdx == 5'hB)	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17, :29:{26,53}, :30:26]
+      regs_11 <= io_dataWrite;	// @[src/src/core/Registers.scala:24:17]
+    if (_GEN & io_regWriteIdx == 5'hC)	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17, :29:{26,53}, :30:26]
+      regs_12 <= io_dataWrite;	// @[src/src/core/Registers.scala:24:17]
+    if (_GEN & io_regWriteIdx == 5'hD)	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17, :29:{26,53}, :30:26]
+      regs_13 <= io_dataWrite;	// @[src/src/core/Registers.scala:24:17]
+    if (_GEN & io_regWriteIdx == 5'hE)	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17, :29:{26,53}, :30:26]
+      regs_14 <= io_dataWrite;	// @[src/src/core/Registers.scala:24:17]
+    if (_GEN & io_regWriteIdx == 5'hF)	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17, :29:{26,53}, :30:26]
+      regs_15 <= io_dataWrite;	// @[src/src/core/Registers.scala:24:17]
+    if (_GEN & io_regWriteIdx == 5'h10)	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17, :29:{26,53}, :30:26]
+      regs_16 <= io_dataWrite;	// @[src/src/core/Registers.scala:24:17]
+    if (_GEN & io_regWriteIdx == 5'h11)	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17, :29:{26,53}, :30:26]
+      regs_17 <= io_dataWrite;	// @[src/src/core/Registers.scala:24:17]
+    if (_GEN & io_regWriteIdx == 5'h12)	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17, :29:{26,53}, :30:26]
+      regs_18 <= io_dataWrite;	// @[src/src/core/Registers.scala:24:17]
+    if (_GEN & io_regWriteIdx == 5'h13)	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17, :29:{26,53}, :30:26]
+      regs_19 <= io_dataWrite;	// @[src/src/core/Registers.scala:24:17]
+    if (_GEN & io_regWriteIdx == 5'h14)	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17, :29:{26,53}, :30:26]
+      regs_20 <= io_dataWrite;	// @[src/src/core/Registers.scala:24:17]
+    if (_GEN & io_regWriteIdx == 5'h15)	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17, :29:{26,53}, :30:26]
+      regs_21 <= io_dataWrite;	// @[src/src/core/Registers.scala:24:17]
+    if (_GEN & io_regWriteIdx == 5'h16)	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17, :29:{26,53}, :30:26]
+      regs_22 <= io_dataWrite;	// @[src/src/core/Registers.scala:24:17]
+    if (_GEN & io_regWriteIdx == 5'h17)	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17, :29:{26,53}, :30:26]
+      regs_23 <= io_dataWrite;	// @[src/src/core/Registers.scala:24:17]
+    if (_GEN & io_regWriteIdx == 5'h18)	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17, :29:{26,53}, :30:26]
+      regs_24 <= io_dataWrite;	// @[src/src/core/Registers.scala:24:17]
+    if (_GEN & io_regWriteIdx == 5'h19)	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17, :29:{26,53}, :30:26]
+      regs_25 <= io_dataWrite;	// @[src/src/core/Registers.scala:24:17]
+    if (_GEN & io_regWriteIdx == 5'h1A)	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17, :29:{26,53}, :30:26]
+      regs_26 <= io_dataWrite;	// @[src/src/core/Registers.scala:24:17]
+    if (_GEN & io_regWriteIdx == 5'h1B)	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17, :29:{26,53}, :30:26]
+      regs_27 <= io_dataWrite;	// @[src/src/core/Registers.scala:24:17]
+    if (_GEN & io_regWriteIdx == 5'h1C)	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17, :29:{26,53}, :30:26]
+      regs_28 <= io_dataWrite;	// @[src/src/core/Registers.scala:24:17]
+    if (_GEN & io_regWriteIdx == 5'h1D)	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17, :29:{26,53}, :30:26]
+      regs_29 <= io_dataWrite;	// @[src/src/core/Registers.scala:24:17]
+    if (_GEN & io_regWriteIdx == 5'h1E)	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17, :29:{26,53}, :30:26]
+      regs_30 <= io_dataWrite;	// @[src/src/core/Registers.scala:24:17]
+    if (_GEN & (&io_regWriteIdx))	// @[src/src/core/Registers.scala:24:17, :29:{26,53}, :30:26]
+      regs_31 <= io_dataWrite;	// @[src/src/core/Registers.scala:24:17]
   end // always @(posedge)
   `ifdef ENABLE_INITIAL_REG_	// @[<stdin>:18:10]
     `ifdef FIRRTL_BEFORE_INITIAL	// @[<stdin>:18:10]
@@ -383,78 +383,78 @@ module Registers(	// @[<stdin>:18:10]
         for (logic [5:0] i = 6'h0; i < 6'h20; i += 6'h1) begin
           _RANDOM[i[4:0]] = `RANDOM;	// @[<stdin>:18:10]
         end	// @[<stdin>:18:10]
-        regs_0 = _RANDOM[5'h0];	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
-        regs_1 = _RANDOM[5'h1];	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
-        regs_2 = _RANDOM[5'h2];	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
-        regs_3 = _RANDOM[5'h3];	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
-        regs_4 = _RANDOM[5'h4];	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
-        regs_5 = _RANDOM[5'h5];	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
-        regs_6 = _RANDOM[5'h6];	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
-        regs_7 = _RANDOM[5'h7];	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
-        regs_8 = _RANDOM[5'h8];	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
-        regs_9 = _RANDOM[5'h9];	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
-        regs_10 = _RANDOM[5'hA];	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
-        regs_11 = _RANDOM[5'hB];	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
-        regs_12 = _RANDOM[5'hC];	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
-        regs_13 = _RANDOM[5'hD];	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
-        regs_14 = _RANDOM[5'hE];	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
-        regs_15 = _RANDOM[5'hF];	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
-        regs_16 = _RANDOM[5'h10];	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
-        regs_17 = _RANDOM[5'h11];	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
-        regs_18 = _RANDOM[5'h12];	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
-        regs_19 = _RANDOM[5'h13];	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
-        regs_20 = _RANDOM[5'h14];	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
-        regs_21 = _RANDOM[5'h15];	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
-        regs_22 = _RANDOM[5'h16];	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
-        regs_23 = _RANDOM[5'h17];	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
-        regs_24 = _RANDOM[5'h18];	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
-        regs_25 = _RANDOM[5'h19];	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
-        regs_26 = _RANDOM[5'h1A];	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
-        regs_27 = _RANDOM[5'h1B];	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
-        regs_28 = _RANDOM[5'h1C];	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
-        regs_29 = _RANDOM[5'h1D];	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
-        regs_30 = _RANDOM[5'h1E];	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
-        regs_31 = _RANDOM[5'h1F];	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
+        regs_0 = _RANDOM[5'h0];	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
+        regs_1 = _RANDOM[5'h1];	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
+        regs_2 = _RANDOM[5'h2];	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
+        regs_3 = _RANDOM[5'h3];	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
+        regs_4 = _RANDOM[5'h4];	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
+        regs_5 = _RANDOM[5'h5];	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
+        regs_6 = _RANDOM[5'h6];	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
+        regs_7 = _RANDOM[5'h7];	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
+        regs_8 = _RANDOM[5'h8];	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
+        regs_9 = _RANDOM[5'h9];	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
+        regs_10 = _RANDOM[5'hA];	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
+        regs_11 = _RANDOM[5'hB];	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
+        regs_12 = _RANDOM[5'hC];	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
+        regs_13 = _RANDOM[5'hD];	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
+        regs_14 = _RANDOM[5'hE];	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
+        regs_15 = _RANDOM[5'hF];	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
+        regs_16 = _RANDOM[5'h10];	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
+        regs_17 = _RANDOM[5'h11];	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
+        regs_18 = _RANDOM[5'h12];	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
+        regs_19 = _RANDOM[5'h13];	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
+        regs_20 = _RANDOM[5'h14];	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
+        regs_21 = _RANDOM[5'h15];	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
+        regs_22 = _RANDOM[5'h16];	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
+        regs_23 = _RANDOM[5'h17];	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
+        regs_24 = _RANDOM[5'h18];	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
+        regs_25 = _RANDOM[5'h19];	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
+        regs_26 = _RANDOM[5'h1A];	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
+        regs_27 = _RANDOM[5'h1B];	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
+        regs_28 = _RANDOM[5'h1C];	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
+        regs_29 = _RANDOM[5'h1D];	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
+        regs_30 = _RANDOM[5'h1E];	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
+        regs_31 = _RANDOM[5'h1F];	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
       `endif // RANDOMIZE_REG_INIT
     end // initial
     `ifdef FIRRTL_AFTER_INITIAL	// @[<stdin>:18:10]
       `FIRRTL_AFTER_INITIAL	// @[<stdin>:18:10]
     `endif // FIRRTL_AFTER_INITIAL
   `endif // ENABLE_INITIAL_REG_
-  assign io_dataRead1 = casez_tmp;	// @[<stdin>:18:10, src/src/core/Registers.scala:27:16]
-  assign io_dataRead2 = casez_tmp_0;	// @[<stdin>:18:10, src/src/core/Registers.scala:28:16]
-  assign io_debug_0 = regs_0;	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
-  assign io_debug_1 = regs_1;	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
-  assign io_debug_2 = regs_2;	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
-  assign io_debug_3 = regs_3;	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
-  assign io_debug_4 = regs_4;	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
-  assign io_debug_5 = regs_5;	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
-  assign io_debug_6 = regs_6;	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
-  assign io_debug_7 = regs_7;	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
-  assign io_debug_8 = regs_8;	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
-  assign io_debug_9 = regs_9;	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
-  assign io_debug_10 = regs_10;	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
-  assign io_debug_11 = regs_11;	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
-  assign io_debug_12 = regs_12;	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
-  assign io_debug_13 = regs_13;	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
-  assign io_debug_14 = regs_14;	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
-  assign io_debug_15 = regs_15;	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
-  assign io_debug_16 = regs_16;	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
-  assign io_debug_17 = regs_17;	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
-  assign io_debug_18 = regs_18;	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
-  assign io_debug_19 = regs_19;	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
-  assign io_debug_20 = regs_20;	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
-  assign io_debug_21 = regs_21;	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
-  assign io_debug_22 = regs_22;	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
-  assign io_debug_23 = regs_23;	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
-  assign io_debug_24 = regs_24;	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
-  assign io_debug_25 = regs_25;	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
-  assign io_debug_26 = regs_26;	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
-  assign io_debug_27 = regs_27;	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
-  assign io_debug_28 = regs_28;	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
-  assign io_debug_29 = regs_29;	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
-  assign io_debug_30 = regs_30;	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
-  assign io_debug_31 = regs_31;	// @[<stdin>:18:10, src/src/core/Registers.scala:23:17]
+  assign io_dataRead1 = casez_tmp;	// @[<stdin>:18:10, src/src/core/Registers.scala:26:16]
+  assign io_dataRead2 = casez_tmp_0;	// @[<stdin>:18:10, src/src/core/Registers.scala:27:16]
+  assign io_debug_0 = regs_0;	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
+  assign io_debug_1 = regs_1;	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
+  assign io_debug_2 = regs_2;	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
+  assign io_debug_3 = regs_3;	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
+  assign io_debug_4 = regs_4;	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
+  assign io_debug_5 = regs_5;	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
+  assign io_debug_6 = regs_6;	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
+  assign io_debug_7 = regs_7;	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
+  assign io_debug_8 = regs_8;	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
+  assign io_debug_9 = regs_9;	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
+  assign io_debug_10 = regs_10;	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
+  assign io_debug_11 = regs_11;	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
+  assign io_debug_12 = regs_12;	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
+  assign io_debug_13 = regs_13;	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
+  assign io_debug_14 = regs_14;	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
+  assign io_debug_15 = regs_15;	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
+  assign io_debug_16 = regs_16;	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
+  assign io_debug_17 = regs_17;	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
+  assign io_debug_18 = regs_18;	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
+  assign io_debug_19 = regs_19;	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
+  assign io_debug_20 = regs_20;	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
+  assign io_debug_21 = regs_21;	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
+  assign io_debug_22 = regs_22;	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
+  assign io_debug_23 = regs_23;	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
+  assign io_debug_24 = regs_24;	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
+  assign io_debug_25 = regs_25;	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
+  assign io_debug_26 = regs_26;	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
+  assign io_debug_27 = regs_27;	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
+  assign io_debug_28 = regs_28;	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
+  assign io_debug_29 = regs_29;	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
+  assign io_debug_30 = regs_30;	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
+  assign io_debug_31 = regs_31;	// @[<stdin>:18:10, src/src/core/Registers.scala:24:17]
 endmodule
 
 module ImmGen(	// @[<stdin>:33:10]
@@ -509,8 +509,12 @@ module ControlGen(	// @[<stdin>:93:10]
   wire _bge_T_1 = io_funct3 == 3'h5;	// @[src/src/core/ControlGen.scala:25:57]
   wire _sw_T_1 = io_funct3 == 3'h2;	// @[src/main/scala/chisel3/util/Mux.scala:141:16, src/src/core/ControlGen.scala:27:57]
   wire _sltiu_T_1 = io_funct3 == 3'h3;	// @[src/src/core/ControlGen.scala:28:57]
+  wire sltu = _io_controlBundle_regWriteEnable_T & _sltiu_T_1 & _srli_T_3;	// @[src/src/core/ControlGen.scala:19:{25,83}, :28:{57,69}]
   wire _io_controlBundle_ALUsrc2imm_T = io_opcode == 7'h13;	// @[src/src/core/ControlGen.scala:30:26]
+  wire sltiu = _io_controlBundle_ALUsrc2imm_T & _sltiu_T_1;	// @[src/src/core/ControlGen.scala:28:57, :30:26, :38:44]
   wire _io_controlBundle_mem2reg_T = io_opcode == 7'h3;	// @[src/src/core/ControlGen.scala:40:24]
+  wire lbu = _io_controlBundle_mem2reg_T & _blt_T_1;	// @[src/src/core/ControlGen.scala:21:57, :40:24, :43:42]
+  wire lhu = _io_controlBundle_mem2reg_T & _bge_T_1;	// @[src/src/core/ControlGen.scala:25:57, :40:24, :44:42]
   wire _io_controlBundle_memWriteEnable_T = io_opcode == 7'h23;	// @[src/src/core/ControlGen.scala:46:23]
   wire _io_controlBundle_branch_T = io_opcode == 7'h63;	// @[src/src/core/ControlGen.scala:50:25]
   wire bltu = _io_controlBundle_branch_T & _bltu_T_1;	// @[src/src/core/ControlGen.scala:22:57, :50:25, :54:43]
@@ -553,37 +557,38 @@ module ControlGen(	// @[<stdin>:93:10]
                                       : _io_controlBundle_branch_T & _bne_T_1
                                           ? 4'hD
                                           : _io_controlBundle_branch_T & _blt_T_1 | bltu
+                                            | _io_controlBundle_ALUsrc2imm_T & _sw_T_1
+                                            | sltiu | _io_controlBundle_regWriteEnable_T
+                                            & _sw_T_1 & _srli_T_3 | sltu
                                               ? 4'hE
                                               : {4{_io_controlBundle_branch_T & _bge_T_1
-                                                     | bgeu}};	// @[<stdin>:93:10, src/main/scala/chisel3/util/Mux.scala:141:16, src/src/core/ControlGen.scala:19:{25,57,69,83}, :20:{69,83}, :21:{57,69}, :22:{57,69}, :23:{57,69}, :24:{57,69}, :25:{57,69}, :26:69, :30:{26,44}, :31:44, :32:44, :33:44, :34:70, :35:70, :36:70, :40:24, :46:23, :50:{25,43}, :51:43, :52:43, :53:43, :54:43, :55:43, :74:50, :76:12, :77:11, :78:12, :79:12, :80:12, :81:12, :84:12, :85:12]
+                                                     | bgeu}};	// @[<stdin>:93:10, src/main/scala/chisel3/util/Mux.scala:141:16, src/src/core/ControlGen.scala:19:{25,57,69,83}, :20:{69,83}, :21:{57,69}, :22:{57,69}, :23:{57,69}, :24:{57,69}, :25:{57,69}, :26:69, :27:{57,69}, :28:69, :30:{26,44}, :31:44, :32:44, :33:44, :34:70, :35:70, :36:70, :37:44, :38:44, :40:24, :46:23, :50:{25,43}, :51:43, :52:43, :53:43, :54:43, :55:43, :74:50, :76:12, :77:11, :78:12, :79:12, :80:12, :81:12, :84:44, :85:12]
   assign io_controlBundle_ALUsrc2imm =
     _io_controlBundle_ALUsrc2imm_T | _io_controlBundle_mem2reg_T
     | _io_controlBundle_memWriteEnable_T | lui | auipc;	// @[<stdin>:93:10, src/src/core/ControlGen.scala:30:26, :40:24, :46:23, :60:26, :61:26, :90:73]
-  assign io_controlBundle_ALUunsigned =
-    _io_controlBundle_regWriteEnable_T & _sltiu_T_1 & _srli_T_3
-    | _io_controlBundle_ALUsrc2imm_T & _sltiu_T_1 | bltu | bgeu;	// @[<stdin>:93:10, src/src/core/ControlGen.scala:19:{25,83}, :28:{57,69}, :30:26, :38:44, :54:43, :55:43, :92:58]
+  assign io_controlBundle_ALUunsigned = sltu | sltiu | bltu | bgeu | lhu | lbu;	// @[<stdin>:93:10, src/src/core/ControlGen.scala:28:69, :38:44, :43:42, :44:42, :54:43, :55:43, :92:73]
   assign io_controlBundle_branch = _io_controlBundle_branch_T;	// @[<stdin>:93:10, src/src/core/ControlGen.scala:50:25]
   assign io_controlBundle_mem2reg = _io_controlBundle_mem2reg_T;	// @[<stdin>:93:10, src/src/core/ControlGen.scala:40:24]
   assign io_controlBundle_memWriteEnable = _io_controlBundle_memWriteEnable_T;	// @[<stdin>:93:10, src/src/core/ControlGen.scala:46:23]
   assign io_controlBundle_memWe =
     {1'h0,
-     _io_controlBundle_mem2reg_T & _jalr_T_1 | _io_controlBundle_mem2reg_T & _blt_T_1
-     | _io_controlBundle_memWriteEnable_T & _jalr_T_1
+     _io_controlBundle_mem2reg_T & _jalr_T_1 | lbu | _io_controlBundle_memWriteEnable_T
+     & _jalr_T_1
        ? 3'h1
-       : _io_controlBundle_mem2reg_T & _bne_T_1 | _io_controlBundle_mem2reg_T & _bge_T_1
-         | _io_controlBundle_memWriteEnable_T & _bne_T_1
+       : _io_controlBundle_mem2reg_T & _bne_T_1 | lhu | _io_controlBundle_memWriteEnable_T
+         & _bne_T_1
            ? 3'h2
            : {_io_controlBundle_mem2reg_T & _sw_T_1 | _io_controlBundle_memWriteEnable_T
                 & _sw_T_1,
-              2'h0}};	// @[<stdin>:93:10, src/main/scala/chisel3/util/Mux.scala:141:16, src/src/core/ControlGen.scala:19:{25,57}, :21:57, :24:57, :25:57, :27:57, :40:{24,42}, :41:42, :42:42, :43:42, :44:42, :46:{23,41}, :47:41, :48:41, :100:26, :103:18, :104:18, :105:11]
+              2'h0}};	// @[<stdin>:93:10, src/main/scala/chisel3/util/Mux.scala:141:16, src/src/core/ControlGen.scala:19:{25,57}, :24:57, :27:57, :40:{24,42}, :41:42, :42:42, :43:42, :44:42, :46:{23,41}, :47:41, :48:41, :100:26, :103:18, :104:18, :105:11]
   assign io_controlBundle_jal = jal;	// @[<stdin>:93:10, src/src/core/ControlGen.scala:57:25]
   assign io_controlBundle_jalr = _io_controlBundle_regWriteEnable_T_7 & _jalr_T_1;	// @[<stdin>:93:10, src/src/core/ControlGen.scala:19:57, :58:{25,43}]
   assign io_controlBundle_lui = lui;	// @[<stdin>:93:10, src/src/core/ControlGen.scala:60:26]
   assign io_controlBundle_auipc = auipc;	// @[<stdin>:93:10, src/src/core/ControlGen.scala:61:26]
 endmodule
 
-module Decode(	// @[<stdin>:301:10]
-  input         clock,	// @[<stdin>:302:11]
+module Decode(	// @[<stdin>:307:10]
+  input         clock,	// @[<stdin>:308:11]
   input  [31:0] io_inst,	// @[src/src/core/Decode.scala:25:14]
                 io_resultBundle_regDataWrite,	// @[src/src/core/Decode.scala:25:14]
   output [3:0]  io_controlBundle_ALUop,	// @[src/src/core/Decode.scala:25:14]
@@ -700,10 +705,10 @@ module Decode(	// @[<stdin>:301:10]
     .io_controlBundle_lui            (io_controlBundle_lui),
     .io_controlBundle_auipc          (io_controlBundle_auipc)
   );
-  assign io_debug_ebreak = io_inst[6:0] == 7'h73;	// @[<stdin>:301:10, src/src/core/Decode.scala:31:23, :52:30]
+  assign io_debug_ebreak = io_inst[6:0] == 7'h73;	// @[<stdin>:307:10, src/src/core/Decode.scala:31:23, :52:30]
 endmodule
 
-module ALU(	// @[<stdin>:339:10]
+module ALU(	// @[<stdin>:345:10]
   input  [31:0] io_src1,	// @[src/src/core/ALU.scala:18:14]
                 io_src2,	// @[src/src/core/ALU.scala:18:14]
                 io_pc,	// @[src/src/core/ALU.scala:18:14]
@@ -728,8 +733,8 @@ module ALU(	// @[<stdin>:339:10]
       ? 32'h0
       : {31'h0,
          io_controlBundle_ALUunsigned
-           ? $signed(io_src1) < $signed(io_src2)
-           : io_src1 < io_src2};	// @[src/src/core/ALU.scala:20:33, :23:34, :44:25, :59:37, :66:44, :67:{18,36}, :69:{18,29}]
+           ? io_src1 < io_src2
+           : $signed(io_src1) < $signed(io_src2)};	// @[src/src/core/ALU.scala:20:33, :23:34, :44:25, :59:37, :66:44, :67:{18,29}, :69:{18,36}]
   always_comb begin	// @[src/src/core/ALU.scala:20:33, :23:34, :25:20, :29:14, :32:14, :35:14, :38:14, :41:14, :44:14, :47:14, :50:14]
     casez (io_controlBundle_ALUop)	// @[src/src/core/ALU.scala:20:33, :23:34, :25:20, :29:14, :32:14, :35:14, :38:14, :41:14, :44:14, :47:14, :50:14]
       4'b0000:
@@ -771,7 +776,7 @@ module ALU(	// @[<stdin>:339:10]
       ? io_pc + 32'h4
       : io_controlBundle_lui
           ? io_src2
-          : io_controlBundle_auipc ? io_pc + io_src2 : casez_tmp;	// @[<stdin>:339:10, src/main/scala/chisel3/util/Mux.scala:141:16, src/src/core/ALU.scala:23:34, :25:20, :85:{29,65}, :87:42]
+          : io_controlBundle_auipc ? io_pc + io_src2 : casez_tmp;	// @[<stdin>:345:10, src/main/scala/chisel3/util/Mux.scala:141:16, src/src/core/ALU.scala:23:34, :25:20, :85:{29,65}, :87:42]
   assign io_branchResult =
     ~(io_controlBundle_ALUop == 4'h0 | io_controlBundle_ALUop == 4'h1
       | io_controlBundle_ALUop == 4'h2 | io_controlBundle_ALUop == 4'h4
@@ -785,15 +790,15 @@ module ALU(	// @[<stdin>:339:10]
              : _GEN_1
                  ? io_controlBundle_branch
                    & (io_controlBundle_ALUunsigned
-                        ? $signed(io_src1) < $signed(io_src2)
-                        : io_src1 < io_src2)
+                        ? io_src1 < io_src2
+                        : $signed(io_src1) < $signed(io_src2))
                  : (&io_controlBundle_ALUop)
                    & (io_controlBundle_ALUunsigned
-                        ? $signed(io_src1) >= $signed(io_src2)
-                        : io_src1 >= io_src2));	// @[<stdin>:339:10, src/src/core/ALU.scala:21:33, :23:34, :26:20, :53:{20,38}, :56:{20,38}, :59:37, :60:44, :61:{24,42}, :63:{24,35}, :74:42, :75:{22,40}, :77:{22,33}]
+                        ? io_src1 >= io_src2
+                        : $signed(io_src1) >= $signed(io_src2)));	// @[<stdin>:345:10, src/src/core/ALU.scala:21:33, :23:34, :26:20, :53:{20,38}, :56:{20,38}, :59:37, :60:44, :61:{24,35}, :63:{24,42}, :74:42, :75:{22,33}, :77:{22,40}]
 endmodule
 
-module Execute(	// @[<stdin>:456:10]
+module Execute(	// @[<stdin>:462:10]
   input  [31:0] io_regSrc1,	// @[src/src/core/Execute.scala:8:14]
                 io_regSrc2,	// @[src/src/core/Execute.scala:8:14]
                 io_imm,	// @[src/src/core/Execute.scala:8:14]
@@ -835,20 +840,26 @@ module Execute(	// @[<stdin>:456:10]
     .io_branchResult              (_alu_io_branchResult)
   );
   assign io_resultBundle_regDataWrite =
-    io_controlBundle_mem2reg ? io_dataSRAM_rdata : _alu_io_result;	// @[<stdin>:456:10, src/src/core/Execute.scala:18:19, :32:38]
+    io_controlBundle_mem2reg
+      ? (~io_controlBundle_ALUunsigned & io_controlBundle_memWe == 4'h2
+           ? {{16{io_dataSRAM_rdata[15]}}, io_dataSRAM_rdata[15:0]}
+           : ~io_controlBundle_ALUunsigned & io_controlBundle_memWe == 4'h1
+               ? {{24{io_dataSRAM_rdata[7]}}, io_dataSRAM_rdata[7:0]}
+               : io_dataSRAM_rdata)
+      : _alu_io_result;	// @[<stdin>:462:10, src/main/scala/chisel3/util/Mux.scala:141:16, src/src/core/Execute.scala:18:19, :36:{37,49,75,97}, :37:{13,35}, :38:26, :40:{49,75,97}, :41:{13,35}, :42:26, :46:38]
   assign io_resultBundle_nextPC =
-    io_controlBundle_jal | _alu_io_branchResult | io_controlBundle_branch
+    io_controlBundle_jal | _alu_io_branchResult & io_controlBundle_branch
       ? io_pc + io_imm
-      : io_controlBundle_jalr ? io_regSrc1 + io_imm : io_pc + 32'h4;	// @[<stdin>:456:10, src/main/scala/chisel3/util/Mux.scala:141:16, src/src/core/Execute.scala:18:19, :26:11, :28:{52,90}, :29:46]
-  assign io_dataSRAM_en = io_controlBundle_memWriteEnable;	// @[<stdin>:456:10]
-  assign io_dataSRAM_we = io_controlBundle_memWe;	// @[<stdin>:456:10]
-  assign io_dataSRAM_addr = _alu_io_result;	// @[<stdin>:456:10, src/src/core/Execute.scala:18:19]
-  assign io_dataSRAM_wdata = io_regSrc2;	// @[<stdin>:456:10]
+      : io_controlBundle_jalr ? io_regSrc1 + io_imm : io_pc + 32'h4;	// @[<stdin>:462:10, src/main/scala/chisel3/util/Mux.scala:141:16, src/src/core/Execute.scala:18:19, :26:11, :28:{29,53,92}, :29:46]
+  assign io_dataSRAM_en = io_controlBundle_memWriteEnable;	// @[<stdin>:462:10]
+  assign io_dataSRAM_we = io_controlBundle_memWe;	// @[<stdin>:462:10]
+  assign io_dataSRAM_addr = _alu_io_result;	// @[<stdin>:462:10, src/src/core/Execute.scala:18:19]
+  assign io_dataSRAM_wdata = io_regSrc2;	// @[<stdin>:462:10]
 endmodule
 
-module CPUTop(	// @[<stdin>:487:10]
-  input         clock,	// @[<stdin>:488:11]
-                reset,	// @[<stdin>:489:11]
+module CPUTop(	// @[<stdin>:511:10]
+  input         clock,	// @[<stdin>:512:11]
+                reset,	// @[<stdin>:513:11]
   input  [31:0] io_instSRAM_rdata,	// @[src/src/core/CPUTop.scala:14:14]
                 io_dataSRAM_rdata,	// @[src/src/core/CPUTop.scala:14:14]
   output        io_instSRAM_en,	// @[src/src/core/CPUTop.scala:14:14]
@@ -998,9 +1009,9 @@ module CPUTop(	// @[<stdin>:487:10]
     .io_dataSRAM_addr                (io_dataSRAM_addr),
     .io_dataSRAM_wdata               (io_dataSRAM_wdata)
   );
-  assign io_instSRAM_en = 1'h1;	// @[<stdin>:487:10, src/src/core/CPUTop.scala:19:23]
-  assign io_instSRAM_we = 4'hF;	// @[<stdin>:487:10, src/src/core/CPUTop.scala:19:23]
-  assign io_instSRAM_wdata = 32'h0;	// @[<stdin>:487:10, src/src/core/CPUTop.scala:19:23]
-  assign io_debug_pc = _fetch_io_pc;	// @[<stdin>:487:10, src/src/core/CPUTop.scala:19:23]
+  assign io_instSRAM_en = 1'h1;	// @[<stdin>:511:10, src/src/core/CPUTop.scala:19:23]
+  assign io_instSRAM_we = 4'hF;	// @[<stdin>:511:10, src/src/core/CPUTop.scala:19:23]
+  assign io_instSRAM_wdata = 32'h0;	// @[<stdin>:511:10, src/src/core/CPUTop.scala:19:23]
+  assign io_debug_pc = _fetch_io_pc;	// @[<stdin>:511:10, src/src/core/CPUTop.scala:19:23]
 endmodule
 

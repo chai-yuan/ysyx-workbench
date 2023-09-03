@@ -3,7 +3,7 @@
 #include <cpu/reg.h>
 #include <cpu/sim.h>
 
-cpu_regs cpu;
+CPU_regs cpu;
 
 static void exec_once() {
     sim_exec();
@@ -11,7 +11,6 @@ static void exec_once() {
 #ifdef CONFIG_ITRACE
     char logbuf[128] = {0};
     char* p = logbuf;
-    p += snprintf(p, sizeof(logbuf), FMT_WORD ":", cpu.last_pc);
     int ilen = 4;
     int i;
     uint8_t* now_inst = (uint8_t*)&inst;

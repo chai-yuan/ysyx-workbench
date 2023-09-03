@@ -3,12 +3,12 @@
 
 #include <common.h>
 
-typedef struct cpu_regs {
-    paddr_t pc, last_pc;
+typedef struct CPU_regs {
     word_t gpr[32];
-} cpu_regs;
+    paddr_t pc;
+} CPU_regs;
 
-extern cpu_regs cpu;
+extern CPU_regs cpu;
 
 void cpu_exec(uint64_t n);
 
