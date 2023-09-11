@@ -19,6 +19,7 @@ void itrace_insert(paddr_t pc, uint32_t inst) {
 }
 
 static void print_inst(vaddr_t pc, uint32_t inst_val, bool highlight) {
+#ifdef CONFIG_ITRACE
     char print_buf[128];
     char* p = print_buf;
     if (highlight) {
@@ -49,6 +50,8 @@ static void print_inst(vaddr_t pc, uint32_t inst_val, bool highlight) {
     p[0] = '\0';  // the upstream llvm does not support loongarch32r
 #endif
     printf("%s\n", print_buf);
+
+#endif
 }
 
 void itrace_print() {
