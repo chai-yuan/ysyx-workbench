@@ -1,5 +1,4 @@
 #include <cpu/cpu.h>
-#include <memory/host.h>
 #include <memory/paddr.h>
 
 static uint8_t* pmem = NULL;
@@ -9,15 +8,6 @@ uint8_t* guest_to_host(paddr_t paddr) {
 }
 paddr_t host_to_guest(uint8_t* haddr) {
     return haddr - pmem + CONFIG_MBASE;
-}
-
-static word_t pmem_read(paddr_t addr, int len) {
-    word_t ret = host_read(guest_to_host(addr), len);
-    return ret;
-}
-
-static void pmem_write(paddr_t addr, int len, word_t data) {
-    host_write(guest_to_host(addr), len, data);
 }
 
 static void out_of_bound(paddr_t addr) {
@@ -31,27 +21,35 @@ void init_mem() {
     Log("physical memory area [" FMT_PADDR ", " FMT_PADDR "]", PMEM_LEFT, PMEM_RIGHT);
 }
 
-word_t paddr_read(paddr_t addr, int len) {
-#ifdef CONFIG_MTRACE
-    Log("Memory read at " FMT_PADDR " ,len %d ,data %d", addr, len, pmem_read(addr, len));
-#endif
+void pmem_read(int raddr, word_t* rdata) {
+    if (in_pmem(raddr)) {
+        int aligned_addr = raddr & ~0x3u;
+        *rdata = *(uint32_t*)guest_to_host(aligned_addr);
+    }
+#ifdef CONFIG_DEVICE
 
-    if (in_pmem(addr))
-        return pmem_read(addr, len);
-    IFDEF(CONFIG_DEVICE, return mmio_read(addr, len));
-    out_of_bound(addr);
-    return 0;
+#endif
+    else {
+        out_of_bound(raddr);
+    }
 }
 
-void paddr_write(paddr_t addr, int len, word_t data) {
-#ifdef CONFIG_MTRACE
-    Log("Memory write at " FMT_PADDR " : %d", addr, data);
-#endif
+void pmem_write(int waddr, word_t wdata, char wmask) {
+    if (in_pmem(waddr)) {
+        int aligned_addr = waddr & ~0x3u;
+        uint8_t* base_addr = guest_to_host(aligned_addr);
 
-    if (in_pmem(addr)) {
-        pmem_write(addr, len, data);
-        return;
+        for (int i = 0; i < 4; i++) {
+            if (wmask & (1 << i)) {
+                base_addr[i] = wdata & 0xFF;
+            }
+            wdata >>= 8;
+        }
     }
-    IFDEF(CONFIG_DEVICE, mmio_write(addr, len, data); return);
-    out_of_bound(addr);
+#ifdef CONFIG_DEVICE
+
+#endif
+    else {
+        out_of_bound(waddr);
+    }
 }
