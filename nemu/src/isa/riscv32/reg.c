@@ -24,6 +24,12 @@ const char* regs[] = {
 
 void isa_reg_display() {
     printf("pc: 0x%-10x\n", cpu.pc);
+    // CSR
+    printf("mepc: 0x%-10x\n", cpu.mepc);
+    printf("mcause: 0x%-10x\n", cpu.mcause);
+    printf("mstatus: 0x%-10x\n", cpu.mstatus);
+    printf("mtvec: 0x%-10x\n", cpu.mtvec);
+
     for (int i = 0; i < 32; i += 2) {
         printf("x%-2d:%-6s: 0x%-10x %-12d | ", i, reg_name(i), gpr(i), gpr(i));
         if (i + 1 < 32) {
@@ -46,4 +52,19 @@ word_t isa_reg_str2val(const char* s, bool* success) {
     }
 
     return -1;
+}
+
+word_t* isa_csr_from_imm(word_t imm) {
+    switch (imm) {
+        case 0x341:
+            return &(cpu.mepc);
+        case 0x342:
+            return &(cpu.mcause);
+        case 0x300:
+            return &(cpu.mstatus);
+        case 0x305:
+            return &(cpu.mtvec);
+        default:
+            panic("Unknown csr num");
+    }
 }

@@ -17,16 +17,27 @@
 #include <isa.h>
 #include "../local-include/reg.h"
 
+#define CHECK_REG(name)                                                      \
+    if (ref_r->name != cpu.name) {                                           \
+        printf("difftest fail at " #name ",ref value: 0x%x\n", ref_r->name); \
+        return false;                                                        \
+    }
+
 bool isa_difftest_checkregs(CPU_state* ref_r, vaddr_t pc) {
     int reg_num = ARRLEN(cpu.gpr);
     for (int i = 0; i < reg_num; i++) {
         if (ref_r->gpr[i] != cpu.gpr[i]) {
+            printf("difftest fail at %s ,ref value: 0x%x\n", reg_name(i), ref_r->gpr[i]);
             return false;
         }
     }
-    if (ref_r->pc != cpu.pc) {
-        return false;
-    }
+
+    CHECK_REG(pc);
+    // CHECK_REG(mstatus);
+    // CHECK_REG(mcause);
+    // CHECK_REG(mepc);
+    // CHECK_REG(mtvec);
+
     return true;
 }
 

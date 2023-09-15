@@ -59,7 +59,13 @@ void difftest_skip_dut(int nr_ref, int nr_dut) {
     }
 }
 
+static void difftest_reg_init() {
+    cpu.mstatus = 0x1800;
+}
+
 void init_difftest(char* ref_so_file, long img_size, int port) {
+    difftest_reg_init();
+
     assert(ref_so_file != NULL);
 
     void* handle;
