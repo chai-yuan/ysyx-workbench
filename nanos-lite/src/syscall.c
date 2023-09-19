@@ -3,6 +3,15 @@
 #include <fs.h>
 #include <nanos-config.h>
 
+struct timeval {
+    long tv_sec;  /* seconds */
+    long tv_usec; /* microseconds */
+};
+struct timezone {
+    int tz_minuteswest; /* Minutes west of GMT.  */
+    int tz_dsttime;     /* Nonzero if DST is ever in effect.  */
+};
+
 int sys_yield() {
 #ifdef CONFIG_STRACE
     Log("yield() -> void");
@@ -67,6 +76,20 @@ int sys_close(int fd) {
     return ret;
 }
 
+int sys_gettimeofday(struct timeval* tv, struct timezone* tz) {
+    uint64_t us = io_read(AM_TIMER_UPTIME).us;
+    if (tv != NULL) {
+        tv->tv_sec = us / (1000 * 1000);
+        tv->tv_usec = us % (1000 * 1000);
+    }
+    if (tz != NULL) {
+    }
+#ifdef CONFIG_STRACE
+    Log("gettimeofday(%p,%p) -> %d", tv, tz, 0);
+#endif
+    return 0;
+}
+
 void do_syscall(Context* c) {
     uintptr_t a[4];
     a[0] = c->GPR1;
@@ -92,6 +115,9 @@ void do_syscall(Context* c) {
             break;
         case SYS_close:
             c->GPRx = sys_close(c->GPR2);
+            break;
+        case SYS_gettimeofday:
+            c->GPRx = sys_gettimeofday((struct timeval*)c->GPR2, (struct timezone*)c->GPR3);
             break;
         case SYS_brk:
             c->GPRx = sys_brk((void*)c->GPR2);
