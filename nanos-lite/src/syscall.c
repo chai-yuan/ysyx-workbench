@@ -1,5 +1,71 @@
 #include "syscall.h"
 #include <common.h>
+#include <fs.h>
+#include <nanos-config.h>
+
+int sys_yield() {
+#ifdef CONFIG_STRACE
+    Log("yield() -> void");
+#endif
+    yield();
+    return 0;
+}
+
+int sys_exit(int code) {
+#ifdef CONFIG_STRACE
+    Log("halt(%d) -> void", code);
+#endif
+    halt(code);
+    return 0;
+}
+
+int sys_write(int fd, void* buf, size_t count) {
+    int ret = fs_write(fd, buf, count);
+#ifdef CONFIG_STRACE
+    Log("write(%s,%d,%d) -> %d", fd_to_filename(fd), buf, count, ret);
+#endif
+    return ret;
+}
+
+int sys_brk(void* addr) {
+    int ret = 0;
+#ifdef CONFIG_STRACE
+    Log("brk(%p) -> %d", addr, ret);
+#endif
+    return ret;
+}
+
+int sys_open(char* pathname, int flags, int mode) {
+    int ret = fs_open(pathname, flags, mode);
+#ifdef CONFIG_STRACE
+    Log("open(%s,%d,%d) -> %d", pathname, flags, mode, ret);
+#endif
+    return ret;
+}
+
+size_t sys_read(int fd, void* buf, size_t len) {
+    int ret = fs_read(fd, buf, len);
+#ifdef CONFIG_STRACE
+    Log("read(%s,%d,%d) -> %d", fd_to_filename(fd), buf, len, ret);
+#endif
+    return ret;
+}
+
+size_t sys_lseek(int fd, size_t offset, int whence) {
+    int ret = fs_lseek(fd, offset, whence);
+#ifdef CONFIG_STRACE
+    Log("lseek(%s,%d,%d) -> %d", fd_to_filename(fd), offset, whence, ret);
+#endif
+    return ret;
+}
+
+int sys_close(int fd) {
+    int ret = fs_close(fd);
+#ifdef CONFIG_STRACE
+    Log("close(%s) -> %d", fd_to_filename(fd), ret);
+#endif
+    return ret;
+}
 
 void do_syscall(Context* c) {
     uintptr_t a[4];
@@ -12,19 +78,25 @@ void do_syscall(Context* c) {
         case SYS_yield:
             c->GPRx = sys_yield();
             break;
+        case SYS_open:
+            c->GPRx = sys_open((char*)c->GPR2, c->GPR3, c->GPR4);
+            break;
+        case SYS_write:
+            c->GPRx = sys_write(c->GPR2, (void*)c->GPR3, c->GPR4);
+            break;
+        case SYS_read:
+            c->GPRx = sys_read(c->GPR2, (void*)c->GPR3, c->GPR4);
+            break;
+        case SYS_lseek:
+            c->GPRx = sys_lseek(c->GPR2, c->GPR3, c->GPR4);
+            break;
+        case SYS_close:
+            c->GPRx = sys_close(c->GPR2);
+            break;
+        case SYS_brk:
+            c->GPRx = sys_brk((void*)c->GPR2);
+            break;
         default:
             panic("Unhandled syscall ID = %d", a[0]);
     }
-
-    Log("syscall : %d(%d,%d) -> %d", a[0], c->GPR2, c->GPR3, c->GPRx);
-}
-
-int sys_yield() {
-    yield();
-    return 0;
-}
-
-int sys_exit(int code) {
-    halt(code);
-    return 0;
 }

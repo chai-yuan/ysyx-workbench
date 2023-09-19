@@ -25,6 +25,7 @@ int vsprintf(char* out, const char* fmt, va_list ap) {
 
         fmt++;
         switch (*fmt) {
+            case 'p':	
             case 'd': {
                 int i = va_arg(ap, int);
                 char buffer[12];  // Buffer to hold int as string
@@ -77,6 +78,7 @@ int vsnprintf(char* out, size_t n, const char* fmt, va_list ap) {
 
         fmt++;
         switch (*fmt) {
+            case 'p':
             case 'd': {
                 int i = va_arg(ap, int);
                 char buffer[12];  // Buffer to hold int as string
