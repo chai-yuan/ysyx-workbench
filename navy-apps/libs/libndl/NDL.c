@@ -19,8 +19,9 @@ uint32_t NDL_GetTicks() {
 
 int NDL_PollEvent(char* buf, int len) {
     int event_file = open("/dev/events", 0, 0);
-    assert(event_file >= 0);
-    return read(event_file, buf, len);
+    int ret = read(event_file, buf, len);
+    close(event_file);
+    return ret;
 }
 
 void NDL_OpenCanvas(int* w, int* h) {
