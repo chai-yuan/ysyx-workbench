@@ -1,9 +1,10 @@
 #include <stdio.h>
 #include <assert.h>
 #include <time.h>
+#include <NDL.h>
 
 int main() {
-    	NDL_Init();
+    	NDL_Init(0);
     	int ms = 0;
 	
     	while(1) {

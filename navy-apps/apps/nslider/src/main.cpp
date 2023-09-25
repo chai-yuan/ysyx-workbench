@@ -23,9 +23,10 @@ void render() {
   if (slide) {
     SDL_FreeSurface(slide);
   }
+
   char fname[256];
   sprintf(fname, path, cur);
-  slide = SDL_LoadBMP(fname);
+  slide = SDL_LoadBMP("/share/slides/slides-0.bmp");
   assert(slide);
   SDL_UpdateRect(slide, 0, 0, 0, 0);
 }

@@ -7,7 +7,7 @@
 #include <time.h>
 #include <unistd.h>
 
-static int evtdev = 3;
+static int evtdev = -1;
 static int fbdev = -1;
 static int screen_w = 0, screen_h = 0;
 
@@ -18,7 +18,9 @@ uint32_t NDL_GetTicks() {
 }
 
 int NDL_PollEvent(char* buf, int len) {
-    return read(evtdev, buf, len);
+    int event_file = open("/dev/events", 0, 0);
+    assert(event_file >= 0);
+    return read(event_file, buf, len);
 }
 
 void NDL_OpenCanvas(int* w, int* h) {
@@ -27,7 +29,7 @@ void NDL_OpenCanvas(int* w, int* h) {
     char dispinfo_s[32];
     read(dispinfo, dispinfo_s, 32);
     sscanf(dispinfo_s, "WIDTH: %d\nHEIGHT: %d", &screen_w, &screen_h);
-    printf("%d %d\n",screen_w,screen_h);
+
     close(dispinfo);
     if (*w == 0 || *h == 0) {
         *w = screen_w;

@@ -46,7 +46,7 @@ size_t fb_write(const void* buf, size_t offset, size_t len) {
     int draw_w = len >> 16;
     int draw_h = len & 0x0000ffff;
 
-    io_write(AM_GPU_FBDRAW, draw_x, draw_y, (void*)buf, draw_h, draw_w, true);
+    io_write(AM_GPU_FBDRAW, draw_x, draw_y, (void*)buf, draw_w, draw_h, true);
     return len;
 }
 
