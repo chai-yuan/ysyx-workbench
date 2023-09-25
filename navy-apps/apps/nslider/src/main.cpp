@@ -12,7 +12,7 @@
 //   gg - first page
 
 // number of slides
-const int N = 10;
+const int N = 4;
 // slides path pattern (starts from 0)
 const char *path = "/share/slides/slides-%d.bmp";
 
@@ -26,7 +26,8 @@ void render() {
 
   char fname[256];
   sprintf(fname, path, cur);
-  slide = SDL_LoadBMP("/share/slides/slides-0.bmp");
+  slide = SDL_LoadBMP(fname);
+  printf("render :%s\n",fname);
   assert(slide);
   SDL_UpdateRect(slide, 0, 0, 0, 0);
 }
@@ -57,7 +58,7 @@ int main() {
     SDL_Event e;
     SDL_WaitEvent(&e);
 
-    if (e.type == SDL_KEYDOWN) {
+    if (e.type == SDL_KEYDOWN) {    
       switch(e.key.keysym.sym) {
         case SDLK_0: rep = rep * 10 + 0; break;
         case SDLK_1: rep = rep * 10 + 1; break;
