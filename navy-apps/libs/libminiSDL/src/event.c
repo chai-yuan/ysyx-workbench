@@ -41,10 +41,12 @@ int SDL_PollEvent(SDL_Event* ev) {
             ev->key.keysym.sym = key_code;
             ev->type = ev->key.type = SDL_KEYDOWN;
             key_states[key_code] = 1;
-        } else if (strcmp(key_type, "ku")) {
+        } else if (strcmp(key_type, "ku") == 0) {
             ev->key.keysym.sym = key_code;
             ev->type = ev->key.type = SDL_KEYUP;
             key_states[key_code] = 0;
+        } else {
+            assert(0);
         }
 
         return 1;
