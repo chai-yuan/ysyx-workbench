@@ -1,4 +1,6 @@
 #include <NDL.h>
+#include <assert.h>
+#include <stdio.h>
 #include <string.h>
 
 int SDL_Init(uint32_t flags) {
