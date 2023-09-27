@@ -1,6 +1,7 @@
 #include "syscall.h"
 #include <common.h>
 #include <fs.h>
+#include <loader.h>
 #include <nanos-config.h>
 
 struct timeval {
@@ -17,14 +18,6 @@ int sys_yield() {
     Log("yield() -> void");
 #endif
     yield();
-    return 0;
-}
-
-int sys_exit(int code) {
-#ifdef CONFIG_STRACE
-    Log("halt(%d) -> void", code);
-#endif
-    halt(code);
     return 0;
 }
 
@@ -90,6 +83,23 @@ int sys_gettimeofday(struct timeval* tv, struct timezone* tz) {
     return 0;
 }
 
+int sys_execve(const char* filename, char* const argv[], char* const envp[]) {
+    naive_uload(NULL, filename);
+#ifdef CONFIG_STRACE
+    Log("execve(%s,%p,%p) -> %d", filename, argv, envp, 0);
+#endif
+    return 0;
+}
+
+int sys_exit(int code) {
+#ifdef CONFIG_STRACE
+    Log("halt(%d) -> void", code);
+#endif
+    sys_execve("/bin/nterm", NULL, NULL);
+    // halt(code);
+    return 0;
+}
+
 void do_syscall(Context* c) {
     uintptr_t a[4];
     a[0] = c->GPR1;
@@ -121,6 +131,9 @@ void do_syscall(Context* c) {
             break;
         case SYS_brk:
             c->GPRx = sys_brk((void*)c->GPR2);
+            break;
+        case SYS_execve:
+            c->GPRx = sys_execve((char*)c->GPR2, (char* const*)c->GPR3, (char* const*)c->GPR4);
             break;
         default:
             panic("Unhandled syscall ID = %d", a[0]);

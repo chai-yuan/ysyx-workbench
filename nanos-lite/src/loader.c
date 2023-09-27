@@ -12,6 +12,7 @@
 static uintptr_t loader(PCB* pcb, const char* filename) {
     Elf_Ehdr ehdr;
     int file = fs_open(filename, 0, 0);
+
     fs_read(file, &ehdr, sizeof(Elf_Ehdr));
     assert((*(uint32_t*)ehdr.e_ident == 0x464c457f));  // check file type
 
@@ -25,6 +26,7 @@ static uintptr_t loader(PCB* pcb, const char* filename) {
             fs_read(file, (void*)phdr[i].p_vaddr, phdr[i].p_filesz);
         }
     }
+    fs_close(file);
     return ehdr.e_entry;
 }
 
