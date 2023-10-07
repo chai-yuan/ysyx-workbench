@@ -11,25 +11,12 @@ class IF2IDBundle extends Bundle {
 
 class IF2ID extends Module {
   val io = IO(new Bundle {
-    val if2id = new IF2IDBundle
-
-    val pc   = Input(UInt(32.W))
-    val inst = Input(UInt(32.W))
-
-    val ifStop  = Input(Bool())
+    val if2id   = new IF2IDBundle
+    val ifIn    = Flipped(new IF2IDBundle)
     val ifFlush = Input(Bool())
   })
 
-  val regs = RegInit(0.U(64.W))
+  val regs = RegNext(Mux(io.ifFlush, 0.U, io.ifIn))
 
-  regs := MuxCase(
-    Cat(io.pc, io.inst),
-    Seq(
-      (io.ifFlush) -> (0.U),
-      (io.ifStop) -> (regs)
-    )
-  )
-
-  io.if2id.pc   := regs(0, 31)
-  io.if2id.inst := regs(32, 63)
+  io.if2id := regs
 }

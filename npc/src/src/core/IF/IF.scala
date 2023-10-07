@@ -13,17 +13,18 @@ class IFBundle extends Bundle {
 }
 
 class IF extends Module {
-  val io    = IO(new IFBundle)
-  val if2id = new IF2ID
+  val io = IO(new IFBundle)
+
+  val if2id = Module(new IF2ID)
 
   val pc = RegInit(Config.PCinit)
 
   val nextPC = MuxCase(
-    pc,
+    pc + 4.U,
     Seq(
       (pc === Config.PCinit) -> (pc + 4.U),
-      (io.hazerd2IF.nextPCSel) -> (io.hazerd2IF.nextPC),
-      (!io.hazerd2IF.nextPCSel) -> (pc + 4.U)
+      (io.hazerd2IF.ifStop) -> (pc),
+      (io.hazerd2IF.nextPCSel) -> (io.hazerd2IF.nextPC)
     )
   )
   pc := nextPC
@@ -34,8 +35,7 @@ class IF extends Module {
   io.instMem.writeEn   := false.B
   io.instMem.writeData := 0.U
   // if2id
-  if2id.io.pc      := pc
-  if2id.io.inst    := io.instMem.readData
-  if2id.io.ifStop  := io.hazerd2IF.ifStop
-  if2id.io.ifFlush := io.hazerd2IF.ifFlush
+  if2id.io.ifIn.pc   := pc
+  if2id.io.ifIn.inst := io.instMem.readData
+  if2id.io.ifFlush   := io.hazerd2IF.ifFlush
 }
