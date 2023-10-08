@@ -7,7 +7,7 @@ static Context* (*user_handler)(Event, Context*) = NULL;
 Context* __am_irq_handle(Context* c) {
     if (user_handler) {
         Event ev = {0};
-        
+
         switch (c->mcause) {
             case 0xb:
                 if (c->GPR1 == -1) {
@@ -45,7 +45,15 @@ bool cte_init(Context* (*handler)(Event, Context*)) {
 }
 
 Context* kcontext(Area kstack, void (*entry)(void*), void* arg) {
-    return NULL;
+    Context* ret = kstack.end - sizeof(Context);
+    /* 设置栈指针和入口 */
+    ret->gpr[2] = (uintptr_t)(kstack.end - sizeof(Context) - 1);
+    /* 所谓入口，就是第一次执行时应该返回的地址 */
+    ret->mepc = (uintptr_t)entry;
+
+    ret->GPR2 = (uintptr_t)arg;
+
+    return ret;
 }
 
 void yield() {
