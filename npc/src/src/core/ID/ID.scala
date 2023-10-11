@@ -33,13 +33,30 @@ class ID extends Module {
   val pc   = io.if2id.pc
   val inst = io.if2id.inst
   // regs
+  regs.io.wen    := io.wb2id.regwen
+  regs.io.waddr  := io.wb2id.regaddr
+  regs.io.wdata  := io.wb2id.regwdata
   regs.io.raddr1 := inst(19, 15)
   regs.io.raddr2 := inst(24, 20)
+  val regData1 = regs.io.rdata1
+  val regData2 = regs.io.rdata2
   // control
   control.io.inst := inst
+  val outControl = control.io.outControl
   // immGen
   immGen.io.inst     := inst
-  immGen.io.instType := control.io.outControl.instType
+  immGen.io.instType := outControl.instType
+  val imm = immGen.io.imm
   //id2hazerd
+  io.id2hazerd.inst     := inst
+  io.id2hazerd.regData1 := regData1
+  io.id2hazerd.regData2 := regData2
   //id2exe
+  id2exe.io.idIn.control := outControl
+  id2exe.io.idIn.inst    := inst
+  id2exe.io.idIn.reg1    := regData1
+  id2exe.io.idIn.reg2    := regData2
+  id2exe.io.idIn.imm     := imm
+
+  io.id2exe := id2exe.io.id2exe
 }
