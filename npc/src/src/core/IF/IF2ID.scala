@@ -16,7 +16,10 @@ class IF2ID extends Module {
     val ifFlush = Input(Bool())
   })
 
-  val regs = RegNext(Mux(io.ifFlush, 0.U, io.ifIn))
+  val zeroWire = Wire(new IF2IDBundle)
+  zeroWire := 0.U.asTypeOf(new IF2IDBundle)
+
+  val regs = RegNext(Mux(io.ifFlush, zeroWire, io.ifIn))
 
   io.if2id := regs
 }

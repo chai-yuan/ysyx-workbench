@@ -17,8 +17,10 @@ class EXE2MEM extends Module {
     val exeIn    = Flipped(new EXE2MEMBundle)
     val exeFlush = Input(Bool())
   })
+  val zeroWire = Wire(new EXE2MEMBundle)
+  zeroWire := 0.U.asTypeOf(new EXE2MEMBundle)
 
-  val regs = RegNext(Mux(io.exeFlush, 0.U, io.exeIn))
+  val regs = RegNext(Mux(io.exeFlush, zeroWire, io.exeIn))
 
   io.exe2mem := regs
 }

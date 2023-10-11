@@ -19,8 +19,10 @@ class MEM2WB extends Module {
 
     val memFlush = Input(Bool())
   })
+  val zeroWire = Wire(new MEM2WBBundle)
+  zeroWire := 0.U.asTypeOf(new MEM2WBBundle)
 
-  val regs = RegNext(Mux(io.memFlush, 0.U, io.memIn))
+  val regs = RegNext(Mux(io.memFlush, zeroWire, io.memIn))
 
   io.mem2wb := regs
 }

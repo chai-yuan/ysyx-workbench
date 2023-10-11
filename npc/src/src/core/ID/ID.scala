@@ -5,8 +5,9 @@ import chisel3.util._
 import config.Config
 import core.IF.IF2IDBundle
 import core.WB.WB2IDBundle
+import core.Hazerd2IDBundle
 
-class ID2Hazerd extends Bundle {
+class ID2HazerdBundle extends Bundle {
   val inst     = Output(UInt(32.W))
   val regData1 = Output(UInt(32.W))
   val regData2 = Output(UInt(32.W))
@@ -16,8 +17,12 @@ class IDBundle extends Bundle {
   val if2id = Flipped(new IF2IDBundle)
   val wb2id = Flipped(new WB2IDBundle)
 
-  val id2hazerd = new ID2Hazerd
+  val hazerd2id = Flipped(new Hazerd2IDBundle)
+
+  val id2hazerd = new ID2HazerdBundle
   val id2exe    = new ID2EXEBundle
+  // debug
+  val debugRegs = Output(Vec(32, UInt(32.W)))
 }
 
 class ID extends Module {
@@ -57,6 +62,9 @@ class ID extends Module {
   id2exe.io.idIn.reg1    := regData1
   id2exe.io.idIn.reg2    := regData2
   id2exe.io.idIn.imm     := imm
+  id2exe.io.idFlush      := io.hazerd2id.idFlush
 
   io.id2exe := id2exe.io.id2exe
+  // debug
+  io.debugRegs := regs.io.debug
 }

@@ -3,9 +3,11 @@ package core.EXE
 import chisel3._
 import chisel3.util._
 import core.ID._
+import core.Hazerd2EXEBundle
 
 class EXEBundle extends Bundle {
-  val id2exe = Flipped(new ID2EXEBundle)
+  val id2exe     = Flipped(new ID2EXEBundle)
+  val hazerd2exe = Flipped(new Hazerd2EXEBundle)
 
   val exe2mem = new EXE2MEMBundle
 }
@@ -28,5 +30,7 @@ class EXE extends Module {
   exe2mem.io.exeIn.control := control
   exe2mem.io.exeIn.inst    := inst
   exe2mem.io.exeIn.result  := alu.io.out
-  io.exe2mem               := exe2mem.io.exe2mem
+  exe2mem.io.exeFlush      := io.hazerd2exe.exeFlush
+
+  io.exe2mem := exe2mem.io.exe2mem
 }

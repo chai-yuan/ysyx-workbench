@@ -3,6 +3,11 @@ package core
 import chisel3._
 import chisel3.util._
 import debug._
+import core.IF._
+import core.ID._
+import core.EXE._
+import core.MEM._
+import core.WB._
 
 class MemBundle extends Bundle {
   val addr      = Output(UInt(32.W))
@@ -20,4 +25,33 @@ class CPUTop extends Module {
     val debug = new DebugBundle
   })
 
+  val IF_stage  = Module(new IF)
+  val ID_stage  = Module(new ID)
+  val EXE_stage = Module(new EXE)
+  val MEM_stage = Module(new MEM)
+  val WB_stage  = Module(new WB)
+
+  val hazardDetection = Module(new HazardDetection)
+  // mem
+  IF_stage.io.instMem <> io.inst
+  MEM_stage.io.dataMem <> io.data
+  // hazard
+  IF_stage.io.hazerd2if <> hazardDetection.io.hazard2if
+  ID_stage.io.hazerd2id <> hazardDetection.io.hazerd2id
+  EXE_stage.io.hazerd2exe <> hazardDetection.io.hazerd2exe
+  MEM_stage.io.hazerd2mem <> hazardDetection.io.hazerd2mem
+
+  ID_stage.io.id2hazerd <> hazardDetection.io.id2hazerd
+  // pipe line
+  ID_stage.io.if2id <> IF_stage.io.if2id
+  EXE_stage.io.id2exe <> ID_stage.io.id2exe
+  MEM_stage.io.exe2mem <> EXE_stage.io.exe2mem
+  WB_stage.io.mem2wb <> MEM_stage.io.mem2wb
+
+  ID_stage.io.wb2id <> WB_stage.io.wb2id
+  // debug
+  io.debug.pc   := 0.U
+  io.debug.regs := ID_stage.io.debugRegs
+
+  io.debug.halt := false.B
 }

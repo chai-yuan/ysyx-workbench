@@ -19,8 +19,10 @@ class ID2EXE extends Module {
     val idIn    = Flipped(new ID2EXEBundle)
     val idFlush = Input(Bool())
   })
+  val zeroWire = Wire(new ID2EXEBundle)
+  zeroWire := 0.U.asTypeOf(new ID2EXEBundle)
 
-  val regs = RegNext(Mux(io.idFlush, 0.U, io.idIn))
+  val regs = RegNext(Mux(io.idFlush, zeroWire, io.idIn))
 
   io.id2exe := regs
 }

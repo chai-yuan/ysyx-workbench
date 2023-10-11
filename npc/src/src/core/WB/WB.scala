@@ -20,7 +20,7 @@ class WB extends Module {
   val io = IO(new WBBundle)
 
   // wb2id
+  io.wb2id.regwen   := false.B
   io.wb2id.regaddr  := io.mem2wb.aluResult
   io.wb2id.regwdata := io.mem2wb.aluResult
-  // io.wb2id.regwen   := io.mem2wb.control
 }
