@@ -43,7 +43,7 @@ class MemWrap extends Module {
     )
   )
 
-  val readData = io.readData << Cat(addr(1, 0), 0.U(3.W))
+  val readData = io.dataMem.readData << Cat(addr(1, 0), 0.U(3.W))
 
   io.readData := MuxCase(
     0.U(32.W),

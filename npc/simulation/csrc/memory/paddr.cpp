@@ -18,6 +18,10 @@ static void out_of_bound(paddr_t addr) {
 void init_mem() {
     pmem = (uint8_t*)malloc(CONFIG_MSIZE);
     assert(pmem);
+
+    word_t build_in_img[] = {0x00009117, 0xffc10113};
+    memcpy(pmem, build_in_img, sizeof(build_in_img));
+
     Log("physical memory area [" FMT_PADDR ", " FMT_PADDR "]", PMEM_LEFT, PMEM_RIGHT);
 }
 

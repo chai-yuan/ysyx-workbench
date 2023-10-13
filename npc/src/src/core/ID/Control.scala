@@ -7,13 +7,15 @@ import config._
 import config.Inst._
 
 class ControlBundle extends Bundle {
-  val instType   = Output(UInt(InstType.InstTypeWidth))
-  val aluOp      = Output(UInt(AluOp.AluOpWidth))
-  val memOp      = Output(UInt(MemOp.MemOpWidth))
-  val memReadEn  = Output(Bool())
-  val memWriteEn = Output(Bool())
-  val wbOp       = Output(UInt(WriteBackOp.WriteBackOpWidth))
-  val wbEn       = Output(Bool())
+  val instType    = Output(UInt(InstType.InstTypeWidth))
+  val src1PC_sel  = Output(Bool())
+  val src2Imm_sel = Output(Bool())
+  val aluOp       = Output(UInt(AluOp.AluOpWidth))
+  val memOp       = Output(UInt(MemOp.MemOpWidth))
+  val memReadEn   = Output(Bool())
+  val memWriteEn  = Output(Bool())
+  val wbOp        = Output(UInt(WriteBackOp.WriteBackOpWidth))
+  val wbEn        = Output(Bool())
 }
 
 class Control extends Module {
@@ -26,6 +28,10 @@ class Control extends Module {
   val funct3 = io.inst(14, 12)
   val funct7 = io.inst(31, 25)
   val inst   = io.inst
+
+  io.outControl.src1PC_sel := (io.inst === AUIPC)
+
+  io.outControl.src2Imm_sel := (io.inst === AUIPC)
 
   io.outControl.aluOp := Lookup(
     io.inst,

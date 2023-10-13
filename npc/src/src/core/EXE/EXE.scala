@@ -18,14 +18,27 @@ class EXE extends Module {
   val control = io.id2exe.control
   val inst    = io.id2exe.inst
   val imm     = io.id2exe.imm
+  val pc      = io.id2exe.pc
 
   val alu     = Module(new ALU)
   val exe2mem = Module(new EXE2MEM)
 
+  val reg1 = io.id2exe.reg1
+  val reg2 = io.id2exe.reg2
   // alu
   alu.io.aluOp := control.aluOp
-  alu.io.src1  := io.id2exe.reg1
-  alu.io.src2  := io.id2exe.reg2
+  alu.io.src1 := MuxCase(
+    io.id2exe.reg1,
+    Seq(
+      (control.src1PC_sel) -> pc
+    )
+  )
+  alu.io.src2 := MuxCase(
+    io.id2exe.reg2,
+    Seq(
+      (control.src2Imm_sel) -> imm
+    )
+  )
   // exe2mem
   exe2mem.io.exeIn.control := control
   exe2mem.io.exeIn.inst    := inst

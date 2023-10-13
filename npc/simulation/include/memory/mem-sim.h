@@ -7,8 +7,8 @@
 #include <memory/paddr.h>
 #include <trace.h>
 
-inline void sram_mem_sim();
+void sram_mem_sim();
 
-inline void axi_mem_sim();
+void axi_mem_sim();
 
 #endif

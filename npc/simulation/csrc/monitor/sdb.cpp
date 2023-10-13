@@ -67,7 +67,9 @@ static int cmd_x(char* args) {
     sscanf(saddr, "%x", &addr);
 
     for (int i = 0; i < len; i++) {
-        printf("0x%08x: %08x\n", addr, paddr_read(addr, 4));
+        word_t rdata;
+        pmem_read(addr, &rdata);
+        printf("0x%08x: %08x\n", addr, rdata);
         addr += 4;
     }
     return 0;

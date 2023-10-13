@@ -25,8 +25,8 @@ CFLAGS := -I$(INCLUDE_DIR) -g -Wall -Wextra
 LDFLAGS := -ldl -lreadline
 # LDFLAGS += $(LLVM_LIBS)
 
-IMG ?= NULL
-ARGS ?= NULL
+IMG ?= 
+ARGS ?= 
 
 NPC_FLAGS += $(ARGS) $(IMG) 
 
