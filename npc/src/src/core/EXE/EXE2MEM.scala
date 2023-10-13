@@ -8,7 +8,9 @@ class EXE2MEMBundle extends Bundle {
   val control = new ControlBundle
 
   val result = Output(UInt(32.W))
+  val reg2   = Output(UInt(32.W))
   val inst   = Output(UInt(32.W))
+  val pc     = Output(UInt(32.W))
 }
 
 class EXE2MEM extends Module {

@@ -12,7 +12,8 @@ class MEMBundle extends Bundle {
 
   val mem2wb = new MEM2WBBundle
 
-  val dataMem = new MemBundle
+  val dataMem  = new MemBundle
+  val readData = Output(UInt(32.W))
 }
 
 class MEM extends Module {
@@ -24,18 +25,20 @@ class MEM extends Module {
 
   val mem2wb = Module(new MEM2WB)
 
+  val memWrap = Module(new MemWrap)
+
   // mem
-  io.dataMem.readEn    := false.B
-  io.dataMem.writeEn   := false.B
-  io.dataMem.addr      := 0.U
-  io.dataMem.writeData := 0.U
-  io.dataMem.mark      := "b1111".U
+  memWrap.io.dataMem <> io.dataMem
+  memWrap.io.control <> control
+  memWrap.io.addr      := aluResult
+  memWrap.io.writeData := io.exe2mem.reg2
+  io.readData          := memWrap.io.readData
   // mem2wb
   mem2wb.io.memIn.aluResult := aluResult
   mem2wb.io.memIn.inst      := inst
   mem2wb.io.memIn.control   := control
-  mem2wb.io.memIn.memResult := 0.U
-  mem2wb.io.memFlush        := io.hazerd2mem.memFlush
+  mem2wb.io.memIn.pc        := io.exe2mem.pc
 
-  io.mem2wb := mem2wb.io.mem2wb
+  mem2wb.io.memFlush := io.hazerd2mem.memFlush
+  io.mem2wb          := mem2wb.io.mem2wb
 }

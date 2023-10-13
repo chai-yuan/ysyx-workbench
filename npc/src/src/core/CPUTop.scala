@@ -47,11 +47,11 @@ class CPUTop extends Module {
   EXE_stage.io.id2exe <> ID_stage.io.id2exe
   MEM_stage.io.exe2mem <> EXE_stage.io.exe2mem
   WB_stage.io.mem2wb <> MEM_stage.io.mem2wb
+  WB_stage.io.readData := MEM_stage.io.readData
 
   ID_stage.io.wb2id <> WB_stage.io.wb2id
   // debug
-  io.debug.pc   := 0.U
+  io.debug.pc   := WB_stage.io.debugPc
   io.debug.regs := ID_stage.io.debugRegs
-
-  io.debug.halt := false.B
+  io.debug.halt := ID_stage.io.debugHalt
 }

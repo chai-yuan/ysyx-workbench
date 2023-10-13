@@ -26,7 +26,8 @@ class Registers extends Module {
   io.rdata1 := Mux(io.raddr1.orR, Mux((io.raddr1 === io.waddr) && io.wen, io.wdata, regfile(io.raddr1)), 0.U)
   io.rdata2 := Mux(io.raddr2.orR, Mux((io.raddr2 === io.waddr) && io.wen, io.wdata, regfile(io.raddr2)), 0.U)
 
-  for (i <- 0 until 32) {
+  io.debug(0) := 0.U
+  for (i <- 1 until 32) {
     io.debug(i) := regfile(i.U)
   }
 }

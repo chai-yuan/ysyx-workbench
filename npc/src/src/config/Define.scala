@@ -23,6 +23,23 @@ object AluOp {
   val ALU_SUB    = 11.U(AluOpWidth)
 }
 
+object MemOp {
+  def MemOpWidth = 3.W
+  val MEM_NOP    = 0.U(MemOpWidth)
+  val MEM_B      = 1.U(MemOpWidth)
+  val MEM_BU     = 2.U(MemOpWidth)
+  val MEM_H      = 3.U(MemOpWidth)
+  val MEM_HU     = 4.U(MemOpWidth)
+  val MEM_W      = 5.U(MemOpWidth)
+}
+
+object WriteBackOp {
+  def WriteBackOpWidth = 2.W
+  val WB_NOP           = 0.U(WriteBackOpWidth)
+  val WB_ALU           = 1.U(WriteBackOpWidth)
+  val WB_MEM           = 2.U(WriteBackOpWidth)
+}
+
 object InstType {
   def InstTypeWidth = 4.W
   val instR         = 0.U(InstTypeWidth)

@@ -3,12 +3,17 @@ package core.ID
 import chisel3._
 import chisel3.util._
 import config.InstType
-import config.AluOp
+import config._
 import config.Inst._
 
 class ControlBundle extends Bundle {
-  val instType = Output(UInt(InstType.InstTypeWidth))
-  val aluOp    = Output(UInt(AluOp.AluOpWidth))
+  val instType   = Output(UInt(InstType.InstTypeWidth))
+  val aluOp      = Output(UInt(AluOp.AluOpWidth))
+  val memOp      = Output(UInt(MemOp.MemOpWidth))
+  val memReadEn  = Output(Bool())
+  val memWriteEn = Output(Bool())
+  val wbOp       = Output(UInt(WriteBackOp.WriteBackOpWidth))
+  val wbEn       = Output(Bool())
 }
 
 class Control extends Module {
@@ -20,6 +25,7 @@ class Control extends Module {
   val opcode = io.inst(6, 0)
   val funct3 = io.inst(14, 12)
   val funct7 = io.inst(31, 25)
+  val inst   = io.inst
 
   io.outControl.aluOp := Lookup(
     io.inst,
@@ -58,6 +64,35 @@ class Control extends Module {
       SRAI -> AluOp.ALU_SRA
     )
   )
+
+  io.outControl.memOp := Lookup(
+    io.inst,
+    MemOp.MEM_NOP,
+    Seq(
+      LB -> MemOp.MEM_B,
+      LBU -> MemOp.MEM_BU,
+      LH -> MemOp.MEM_H,
+      LHU -> MemOp.MEM_HU,
+      LW -> MemOp.MEM_W,
+      SB -> MemOp.MEM_B,
+      SH -> MemOp.MEM_H,
+      SW -> MemOp.MEM_W
+    )
+  )
+
+  io.outControl.memReadEn  := (opcode === "b0000011".U)
+  io.outControl.memWriteEn := (opcode === "b0100011".U)
+
+  io.outControl.wbOp := MuxCase(
+    WriteBackOp.WB_NOP,
+    Seq(
+      (opcode === "b0000011".U) -> (WriteBackOp.WB_MEM),
+      (opcode === "b0010011".U || opcode === "b0110011".U) -> (WriteBackOp.WB_ALU),
+      (inst === JAL || inst === JALR || inst === LUI || inst === AUIPC) -> (WriteBackOp.WB_ALU)
+    )
+  )
+
+  io.outControl.wbEn := !(io.outControl.wbOp === WriteBackOp.WB_NOP)
 
   io.outControl.instType := MuxCase(
     InstType.instR,

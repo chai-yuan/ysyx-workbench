@@ -11,6 +11,7 @@ class ID2EXEBundle extends Bundle {
   val reg2 = Output(UInt(32.W))
   val imm  = Output(UInt(32.W))
   val inst = Output(UInt(32.W))
+  val pc   = Output(UInt(32.W))
 }
 
 class ID2EXE extends Module {

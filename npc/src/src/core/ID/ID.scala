@@ -23,6 +23,7 @@ class IDBundle extends Bundle {
   val id2exe    = new ID2EXEBundle
   // debug
   val debugRegs = Output(Vec(32, UInt(32.W)))
+  val debugHalt = Output(Bool())
 }
 
 class ID extends Module {
@@ -62,9 +63,11 @@ class ID extends Module {
   id2exe.io.idIn.reg1    := regData1
   id2exe.io.idIn.reg2    := regData2
   id2exe.io.idIn.imm     := imm
+  id2exe.io.idIn.pc      := pc
   id2exe.io.idFlush      := io.hazerd2id.idFlush
 
   io.id2exe := id2exe.io.id2exe
   // debug
   io.debugRegs := regs.io.debug
+  io.debugHalt := (inst(6, 0) === "b1110011".U && imm === 1.U)
 }
