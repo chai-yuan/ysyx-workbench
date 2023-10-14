@@ -28,15 +28,17 @@ class EXE extends Module {
   // alu
   alu.io.aluOp := control.aluOp
   alu.io.src1 := MuxCase(
-    io.id2exe.reg1,
+    0.U,
     Seq(
-      (control.src1PC_sel) -> pc
+      (control.src1PC_sel) -> pc,
+      (control.src1Reg_sel) -> reg1
     )
   )
   alu.io.src2 := MuxCase(
-    io.id2exe.reg2,
+    0.U,
     Seq(
-      (control.src2Imm_sel) -> imm
+      (control.src2Imm_sel) -> imm,
+      (control.src2Reg_sel) -> reg2
     )
   )
   // exe2mem

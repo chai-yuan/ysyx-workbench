@@ -7,15 +7,19 @@ import config._
 import config.Inst._
 
 class ControlBundle extends Bundle {
-  val instType    = Output(UInt(InstType.InstTypeWidth))
+  val instType = Output(UInt(InstType.InstTypeWidth))
+
+  val src1Reg_sel = Output(Bool())
   val src1PC_sel  = Output(Bool())
+  val src2Reg_sel = Output(Bool())
   val src2Imm_sel = Output(Bool())
-  val aluOp       = Output(UInt(AluOp.AluOpWidth))
-  val memOp       = Output(UInt(MemOp.MemOpWidth))
-  val memReadEn   = Output(Bool())
-  val memWriteEn  = Output(Bool())
-  val wbOp        = Output(UInt(WriteBackOp.WriteBackOpWidth))
-  val wbEn        = Output(Bool())
+
+  val aluOp      = Output(UInt(AluOp.AluOpWidth))
+  val memOp      = Output(UInt(MemOp.MemOpWidth))
+  val memReadEn  = Output(Bool())
+  val memWriteEn = Output(Bool())
+  val wbOp       = Output(UInt(WriteBackOp.WriteBackOpWidth))
+  val wbEn       = Output(Bool())
 }
 
 class Control extends Module {
@@ -29,9 +33,15 @@ class Control extends Module {
   val funct7 = io.inst(31, 25)
   val inst   = io.inst
 
-  io.outControl.src1PC_sel := (io.inst === AUIPC)
+  io.outControl.src1Reg_sel := true.B
+  io.outControl.src1PC_sel  := (io.inst === AUIPC)
 
-  io.outControl.src2Imm_sel := (io.inst === AUIPC)
+  io.outControl.src2Reg_sel := true.B
+  io.outControl.src2Imm_sel := (io.inst === AUIPC) ||
+    (opcode === "b0010011".U) ||
+    (opcode === "b0000011".U) ||
+    (opcode === "b0100011".U) ||
+    (io.inst === LUI)
 
   io.outControl.aluOp := Lookup(
     io.inst,
@@ -108,7 +118,7 @@ class Control extends Module {
       (opcode === "b0100011".U) -> (InstType.instS),
       (opcode === "b1100011".U) -> (InstType.instB),
       (opcode === "b1101111".U) -> (InstType.instJ),
-      (opcode === "b0110111".U) -> (InstType.instU)
+      (opcode === "b0110111".U || opcode === "b0010111".U) -> (InstType.instU)
     )
   )
 

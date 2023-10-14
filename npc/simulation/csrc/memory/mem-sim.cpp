@@ -1,22 +1,17 @@
 #include <memory/mem-sim.h>
 #include <memory/paddr.h>
 
-void sram_mem_sim() {
-    paddr_t instAddr = cpu_top->io_inst_addr;
-    pmem_read(instAddr, &inst);
-    cpu_top->io_inst_readData = inst;
+extern "C" void verilog_pmem_read(int raddr, int* rdata) {
+    pmem_read(raddr, (word_t*)rdata);
+//    inst = *rdata;
+#ifdef CONFIG_MTRACE
+    Log("pmem_read(addr:0x%08x,rdata:0x%08x)", raddr, *rdata);
+#endif
+}
 
-    paddr_t dataAddr = cpu_top->io_data_addr;
-    char dataMark = cpu_top->io_data_mark;
-
-    if (cpu_top->io_data_readEn) {
-        word_t readData;
-        pmem_read(dataAddr, &readData);
-        cpu_top->io_data_readData = readData;
-    }
-    if (cpu_top->io_data_writeEn) {
-        pmem_write(dataAddr, cpu_top->io_data_writeData, dataMark);
-    }
-
-    cpu_top->eval();
+extern "C" void verilog_pmem_write(int waddr, int wdata, char wmask) {
+    pmem_write(waddr, wdata, wmask);
+#ifdef CONFIG_MTRACE
+    Log("pmem_write(addr:0x%08x,wdata:0x%08x,mask:%x)", waddr, wdata, wmask);
+#endif
 }

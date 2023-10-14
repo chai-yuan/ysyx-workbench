@@ -19,7 +19,11 @@ void init_mem() {
     pmem = (uint8_t*)malloc(CONFIG_MSIZE);
     assert(pmem);
 
-    word_t build_in_img[] = {0x00009117, 0xffc10113};
+    word_t build_in_img[] = {0x00009117,  // auipc x2,0x9
+                             0x00300193,  // addi x3, x0, 3
+                             0x00200213,  // addi x4,x0,2
+                             0x404182b3,  // sub x5, x3, x4
+                             0x00000000};
     memcpy(pmem, build_in_img, sizeof(build_in_img));
 
     Log("physical memory area [" FMT_PADDR ", " FMT_PADDR "]", PMEM_LEFT, PMEM_RIGHT);

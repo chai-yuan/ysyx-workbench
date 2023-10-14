@@ -36,7 +36,7 @@ class IF extends Module {
   io.instMem.writeData := 0.U
   io.instMem.mark      := "b1111".U
   // if2id
-  if2id.io.ifIn.pc   := pc
+  if2id.io.ifIn.pc   := nextPC
   if2id.io.ifIn.inst := io.instMem.readData
   if2id.io.ifFlush   := io.hazerd2if.ifFlush
   io.if2id           := if2id.io.if2id

@@ -4,7 +4,7 @@
 void vtrace_init(const char* vcd_file) {
     Log("vtrace on");
     contextp->traceEverOn(true);
-    cpu_top->trace(tfp, 0);
+    sim_cpu->trace(tfp, 0);
     tfp->open(vcd_file);
 }
 
@@ -15,7 +15,7 @@ void vtrace_exit() {
 }
 
 void dump_wave() {
-    cpu_top->eval();
+    sim_cpu->eval();
 
     contextp->timeInc(1);
     tfp->dump(contextp->time());
