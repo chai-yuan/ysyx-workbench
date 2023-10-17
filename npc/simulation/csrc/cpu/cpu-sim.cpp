@@ -24,7 +24,7 @@ void sim_init() {
 
     sim_reset();
 
-    update_regs();
+    update_cpu_state();
 
     Log("sim init end, pc = 0x%x", cpu.pc);
 }
@@ -59,7 +59,7 @@ void sim_exec() {
     sim_cpu->eval();
     IFDEF(CONFIG_VTRACE, dump_wave());
 
-    update_regs();
+    update_cpu_state();
     // difftest
     IFDEF(CONFIG_DIFFTEST, difftest_step(cpu.pc, 0));
 
@@ -69,8 +69,9 @@ void sim_exec() {
     }
 }
 
-void update_regs() {
+void update_cpu_state() {
     cpu.pc = sim_cpu->io_debug_pc;
+    inst = sim_cpu->io_debug_inst;
 
     cpu.gpr[0] = sim_cpu->io_debug_regs_0;
     cpu.gpr[1] = sim_cpu->io_debug_regs_1;

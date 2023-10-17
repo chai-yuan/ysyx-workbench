@@ -68,6 +68,7 @@ class EXE extends Module {
   exe2mem.io.exeIn.result  := alu.io.out
   exe2mem.io.exeIn.reg2    := io.id2exe.reg2
   exe2mem.io.exeIn.pc      := io.id2exe.pc
+  exe2mem.io.exeIn.halt    := io.id2exe.halt
 
   exe2mem.io.exeFlush := io.hazerd2exe.exeFlush
   io.exe2mem          := exe2mem.io.exe2mem

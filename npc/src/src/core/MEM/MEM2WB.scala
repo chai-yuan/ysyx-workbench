@@ -7,10 +7,11 @@ import core.ID.ControlBundle
 class MEM2WBBundle extends Bundle {
   val control = new ControlBundle
 
-  val inst = Output(UInt(32.W))
-  val pc   = Output(UInt(32.W))
-
+  val inst      = Output(UInt(32.W))
+  val pc        = Output(UInt(32.W))
   val aluResult = Output(UInt(32.W))
+  // debug
+  val halt = Output(Bool())
 }
 
 class MEM2WB extends Module {

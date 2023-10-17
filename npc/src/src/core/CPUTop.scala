@@ -57,7 +57,9 @@ class CPUTop extends Module {
 
   ID_stage.io.wb2id <> WB_stage.io.wb2id
   // debug
-  io.debug.pc   := WB_stage.io.debugPc
+  io.debug.pc   := WB_stage.io.debugPC
+  io.debug.inst := WB_stage.io.debugInst
   io.debug.regs := ID_stage.io.debugRegs
-  io.debug.halt := ID_stage.io.debugHalt
+  io.debug.halt := WB_stage.io.debugHalt
+
 }

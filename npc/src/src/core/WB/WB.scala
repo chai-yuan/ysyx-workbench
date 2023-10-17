@@ -26,7 +26,9 @@ class WBBundle extends Bundle {
   val mem2wb   = Flipped(new MEM2WBBundle)
   val readData = Input(UInt(32.W))
   // debug
-  val debugPc = Output(UInt(32.W))
+  val debugInst = Output(UInt(32.W))
+  val debugHalt = Output(Bool())
+  val debugPC   = Output(UInt(32.W))
 }
 
 class WB extends Module {
@@ -49,5 +51,7 @@ class WB extends Module {
   io.wb2forward.addr   := io.mem2wb.inst(11, 7)
   io.wb2forward.data   := regwdata
   // debug
-  io.debugPc := io.mem2wb.pc
+  io.debugInst := io.mem2wb.inst
+  io.debugHalt := io.mem2wb.halt
+  io.debugPC   := io.mem2wb.pc
 }

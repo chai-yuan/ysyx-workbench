@@ -11,6 +11,8 @@ class EXE2MEMBundle extends Bundle {
   val reg2   = Output(UInt(32.W))
   val inst   = Output(UInt(32.W))
   val pc     = Output(UInt(32.W))
+  // debug
+  val halt = Output(Bool())
 }
 
 class EXE2MEM extends Module {

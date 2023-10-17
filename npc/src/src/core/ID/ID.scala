@@ -9,6 +9,8 @@ import core.Hazerd2IDBundle
 
 class ID2HazerdBundle extends Bundle {
   val inst     = Output(UInt(32.W))
+  val pc       = Output(UInt(32.W))
+  val imm      = Output(UInt(32.W))
   val regData1 = Output(UInt(32.W))
   val regData2 = Output(UInt(32.W))
 }
@@ -23,7 +25,6 @@ class IDBundle extends Bundle {
   val id2exe    = new ID2EXEBundle
   // debug
   val debugRegs = Output(Vec(32, UInt(32.W)))
-  val debugHalt = Output(Bool())
 }
 
 class ID extends Module {
@@ -55,6 +56,8 @@ class ID extends Module {
   val imm = immGen.io.imm
   //id2hazerd
   io.id2hazerd.inst     := inst
+  io.id2hazerd.imm      := imm
+  io.id2hazerd.pc       := pc
   io.id2hazerd.regData1 := regData1
   io.id2hazerd.regData2 := regData2
   //id2exe
@@ -68,6 +71,6 @@ class ID extends Module {
 
   io.id2exe := id2exe.io.id2exe
   // debug
-  io.debugRegs := regs.io.debug
-  io.debugHalt := (inst(6, 0) === "b1110011".U && imm === 1.U)
+  io.debugRegs        := regs.io.debug
+  id2exe.io.idIn.halt := (inst(6, 0) === "b1110011".U && imm === 1.U)
 }

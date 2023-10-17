@@ -2,6 +2,7 @@ module SimCPUTop(	// @[<stdin>:711:10]
   input         clock,	// @[<stdin>:712:11]
                 reset,	// @[<stdin>:713:11]
   output [31:0] io_debug_pc,	// @[src/src/core/CPUTop.scala:22:14]
+                io_debug_inst,	// @[src/src/core/CPUTop.scala:22:14]
                 io_debug_regs_0,	// @[src/src/core/CPUTop.scala:22:14]
                 io_debug_regs_1,	// @[src/src/core/CPUTop.scala:22:14]
                 io_debug_regs_2,	// @[src/src/core/CPUTop.scala:22:14]
@@ -125,7 +126,7 @@ module SimCPUTop(	// @[<stdin>:711:10]
     .io_debug_regs_30(io_debug_regs_30),
     .io_debug_regs_31(io_debug_regs_31),
 
-
+    .io_debug_inst(io_debug_inst),
     .io_debug_halt(io_debug_halt)
   );
 

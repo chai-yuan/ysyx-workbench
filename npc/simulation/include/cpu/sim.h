@@ -14,6 +14,6 @@ extern VSimCPUTop* sim_cpu;
 extern word_t cycle_num;
 extern word_t inst;
 
-void update_regs();
+void update_cpu_state();
 
 #endif

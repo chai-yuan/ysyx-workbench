@@ -50,6 +50,7 @@ class MEM extends Module {
   mem2wb.io.memIn.inst      := inst
   mem2wb.io.memIn.control   := control
   mem2wb.io.memIn.pc        := io.exe2mem.pc
+  mem2wb.io.memIn.halt      := io.exe2mem.halt
 
   mem2wb.io.memFlush := io.hazerd2mem.memFlush
   io.mem2wb          := mem2wb.io.mem2wb
