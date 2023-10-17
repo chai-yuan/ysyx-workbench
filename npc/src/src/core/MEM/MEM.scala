@@ -5,15 +5,23 @@ import chisel3.util._
 import core.EXE._
 import core.MemBundle
 import core.Hazerd2MEMBundle
+import core.ID.ControlBundle
 
 class MEMBundle extends Bundle {
-  val exe2mem    = Flipped(new EXE2MEMBundle)
-  val hazerd2mem = Flipped(new Hazerd2MEMBundle)
+  val exe2mem     = Flipped(new EXE2MEMBundle)
+  val hazerd2mem  = Flipped(new Hazerd2MEMBundle)
+  val mem2forward = new MEM2ForwardBundle
 
   val mem2wb = new MEM2WBBundle
 
   val dataMem  = new MemBundle
   val readData = Output(UInt(32.W))
+}
+
+class MEM2ForwardBundle extends Bundle {
+  val enable = Output(Bool())
+  val addr   = Output(UInt(32.W))
+  val data   = Output(UInt(32.W))
 }
 
 class MEM extends Module {
@@ -33,6 +41,10 @@ class MEM extends Module {
   memWrap.io.addr      := aluResult
   memWrap.io.writeData := io.exe2mem.reg2
   io.readData          := memWrap.io.readData
+  // forward
+  io.mem2forward.enable := control.wbEn
+  io.mem2forward.addr   := inst(11, 7)
+  io.mem2forward.data   := aluResult
   // mem2wb
   mem2wb.io.memIn.aluResult := aluResult
   mem2wb.io.memIn.inst      := inst

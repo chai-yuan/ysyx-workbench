@@ -4,7 +4,7 @@ import chisel3._
 import chisel3.util._
 
 object Config {
-  def PCinit = "h7FFF_FFFC".U(32.W)
+  def PCinit = "h8000_0000".U(32.W)
 }
 
 object AluOp {

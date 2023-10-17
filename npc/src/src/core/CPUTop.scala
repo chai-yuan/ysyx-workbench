@@ -32,6 +32,7 @@ class CPUTop extends Module {
   val WB_stage  = Module(new WB)
 
   val hazardDetection = Module(new HazardDetection)
+  val forward         = Module(new Forward)
   // mem
   IF_stage.io.instMem <> io.inst
   MEM_stage.io.dataMem <> io.data
@@ -42,6 +43,11 @@ class CPUTop extends Module {
   MEM_stage.io.hazerd2mem <> hazardDetection.io.hazerd2mem
 
   ID_stage.io.id2hazerd <> hazardDetection.io.id2hazerd
+  // forward
+  forward.io.forward2exe <> EXE_stage.io.forward2exe
+  forward.io.exe2forward <> EXE_stage.io.exe2forward
+  forward.io.mem2forward <> MEM_stage.io.mem2forward
+  forward.io.wb2forward <> WB_stage.io.wb2forward
   // pipe line
   ID_stage.io.if2id <> IF_stage.io.if2id
   EXE_stage.io.id2exe <> ID_stage.io.id2exe
