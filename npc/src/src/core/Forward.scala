@@ -13,9 +13,15 @@ class Forward2EXEBundle extends Bundle {
   val regData2    = Output(UInt(32.W))
 }
 
+class Forward2MEMBundle extends Bundle {
+  val forward2Sel = Output(Bool())
+  val regData2    = Output(UInt(32.W))
+}
+
 class Forward extends Module {
   val io = IO(new Bundle {
     val forward2exe = new Forward2EXEBundle
+    val forward2mem = new Forward2MEMBundle
     val exe2forward = Flipped(new EXE2ForwardBundle)
     val mem2forward = Flipped(new MEM2ForwardBundle)
     val wb2forward  = Flipped(new WB2ForwardBundle)
@@ -44,4 +50,7 @@ class Forward extends Module {
       ((io.exe2forward.regSrc2 === io.wb2forward.addr) && io.wb2forward.enable) -> (io.wb2forward.data)
     )
   )
+// forward2mem
+  io.forward2mem.forward2Sel := ((io.mem2forward.regSrc2 === io.wb2forward.addr) && (io.wb2forward.enable))
+  io.forward2mem.regData2    := io.wb2forward.data
 }

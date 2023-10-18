@@ -45,6 +45,8 @@ class CPUTop extends Module {
   ID_stage.io.id2hazerd <> hazardDetection.io.id2hazerd
   // forward
   forward.io.forward2exe <> EXE_stage.io.forward2exe
+  forward.io.forward2mem <> MEM_stage.io.forward2mem
+
   forward.io.exe2forward <> EXE_stage.io.exe2forward
   forward.io.mem2forward <> MEM_stage.io.mem2forward
   forward.io.wb2forward <> WB_stage.io.wb2forward
