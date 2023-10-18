@@ -61,7 +61,9 @@ void sim_exec() {
 
     update_cpu_state();
     // difftest
-    IFDEF(CONFIG_DIFFTEST, difftest_step(cpu.pc, 0));
+    if (cpu.pc != 0 && cpu.pc != 0x80000000) {
+        IFDEF(CONFIG_DIFFTEST, difftest_step(cpu.pc, 0));
+    }
 
     // halt
     if (sim_cpu->io_debug_halt) {

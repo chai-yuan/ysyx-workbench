@@ -1506,6 +1506,7 @@ module CPUTop(	// @[<stdin>:894:10]
   wire        _WB_stage_io_wb2forward_enable;	// @[src/src/core/CPUTop.scala:32:25]
   wire [31:0] _WB_stage_io_wb2forward_addr;	// @[src/src/core/CPUTop.scala:32:25]
   wire [31:0] _WB_stage_io_wb2forward_data;	// @[src/src/core/CPUTop.scala:32:25]
+  wire [31:0] _WB_stage_io_debugInst;	// @[src/src/core/CPUTop.scala:32:25]
   wire        _MEM_stage_io_mem2forward_enable;	// @[src/src/core/CPUTop.scala:31:25]
   wire [31:0] _MEM_stage_io_mem2forward_addr;	// @[src/src/core/CPUTop.scala:31:25]
   wire [31:0] _MEM_stage_io_mem2forward_data;	// @[src/src/core/CPUTop.scala:31:25]
@@ -1550,6 +1551,27 @@ module CPUTop(	// @[<stdin>:894:10]
   wire        _ID_stage_io_id2exe_halt;	// @[src/src/core/CPUTop.scala:29:25]
   wire [31:0] _IF_stage_io_if2id_pc;	// @[src/src/core/CPUTop.scala:28:25]
   wire [31:0] _IF_stage_io_if2id_inst;	// @[src/src/core/CPUTop.scala:28:25]
+  reg  [31:0] io_debug_inst_REG;	// @[src/src/core/CPUTop.scala:61:27]
+  always @(posedge clock)	// @[<stdin>:895:11]
+    io_debug_inst_REG <= _WB_stage_io_debugInst;	// @[src/src/core/CPUTop.scala:32:25, :61:27]
+  `ifdef ENABLE_INITIAL_REG_	// @[<stdin>:894:10]
+    `ifdef FIRRTL_BEFORE_INITIAL	// @[<stdin>:894:10]
+      `FIRRTL_BEFORE_INITIAL	// @[<stdin>:894:10]
+    `endif // FIRRTL_BEFORE_INITIAL
+    logic [31:0] _RANDOM[0:0];	// @[<stdin>:894:10]
+    initial begin	// @[<stdin>:894:10]
+      `ifdef INIT_RANDOM_PROLOG_	// @[<stdin>:894:10]
+        `INIT_RANDOM_PROLOG_	// @[<stdin>:894:10]
+      `endif // INIT_RANDOM_PROLOG_
+      `ifdef RANDOMIZE_REG_INIT	// @[<stdin>:894:10]
+        _RANDOM[/*Zero width*/ 1'b0] = `RANDOM;	// @[<stdin>:894:10]
+        io_debug_inst_REG = _RANDOM[/*Zero width*/ 1'b0];	// @[<stdin>:894:10, src/src/core/CPUTop.scala:61:27]
+      `endif // RANDOMIZE_REG_INIT
+    end // initial
+    `ifdef FIRRTL_AFTER_INITIAL	// @[<stdin>:894:10]
+      `FIRRTL_AFTER_INITIAL	// @[<stdin>:894:10]
+    `endif // FIRRTL_AFTER_INITIAL
+  `endif // ENABLE_INITIAL_REG_
   IF IF_stage (	// @[src/src/core/CPUTop.scala:28:25]
     .clock                  (clock),
     .reset                  (reset),
@@ -1623,10 +1645,10 @@ module CPUTop(	// @[<stdin>:894:10]
   );
   EXE EXE_stage (	// @[src/src/core/CPUTop.scala:30:25]
     .clock                           (clock),
-    .io_id2exe_control_src1Reg_sel   (1'h1),	// @[src/src/core/CPUTop.scala:28:25]
+    .io_id2exe_control_src1Reg_sel   (1'h1),	// @[<stdin>:894:10]
     .io_id2exe_control_src1SeqPC_sel (_ID_stage_io_id2exe_control_src1SeqPC_sel),	// @[src/src/core/CPUTop.scala:29:25]
     .io_id2exe_control_src1PC_sel    (_ID_stage_io_id2exe_control_src1PC_sel),	// @[src/src/core/CPUTop.scala:29:25]
-    .io_id2exe_control_src2Reg_sel   (1'h1),	// @[src/src/core/CPUTop.scala:28:25]
+    .io_id2exe_control_src2Reg_sel   (1'h1),	// @[<stdin>:894:10]
     .io_id2exe_control_src2Imm_sel   (_ID_stage_io_id2exe_control_src2Imm_sel),	// @[src/src/core/CPUTop.scala:29:25]
     .io_id2exe_control_aluOp         (_ID_stage_io_id2exe_control_aluOp),	// @[src/src/core/CPUTop.scala:29:25]
     .io_id2exe_control_memOp         (_ID_stage_io_id2exe_control_memOp),	// @[src/src/core/CPUTop.scala:29:25]
@@ -1700,7 +1722,7 @@ module CPUTop(	// @[<stdin>:894:10]
     .io_wb2forward_enable   (_WB_stage_io_wb2forward_enable),
     .io_wb2forward_addr     (_WB_stage_io_wb2forward_addr),
     .io_wb2forward_data     (_WB_stage_io_wb2forward_data),
-    .io_debugInst           (io_debug_inst),
+    .io_debugInst           (_WB_stage_io_debugInst),
     .io_debugHalt           (io_debug_halt),
     .io_debugPC             (io_debug_pc)
   );
@@ -1729,10 +1751,11 @@ module CPUTop(	// @[<stdin>:894:10]
     .io_forward2exe_forward2Sel (_forward_io_forward2exe_forward2Sel),
     .io_forward2exe_regData2    (_forward_io_forward2exe_regData2)
   );
-  assign io_inst_writeEn = 1'h0;	// @[<stdin>:894:10, src/src/core/CPUTop.scala:28:25, :29:25, :30:25, :31:25, :34:31]
+  assign io_inst_writeEn = 1'h0;	// @[<stdin>:894:10]
   assign io_inst_writeData = 32'h0;	// @[<stdin>:894:10, src/src/core/CPUTop.scala:28:25, :29:25]
-  assign io_inst_readEn = 1'h1;	// @[<stdin>:894:10, src/src/core/CPUTop.scala:28:25]
+  assign io_inst_readEn = 1'h1;	// @[<stdin>:894:10]
   assign io_inst_mark = 4'hF;	// @[<stdin>:894:10, src/src/core/CPUTop.scala:28:25]
+  assign io_debug_inst = io_debug_inst_REG;	// @[<stdin>:894:10, src/src/core/CPUTop.scala:61:27]
   assign io_debug_regs_0 = 32'h0;	// @[<stdin>:894:10, src/src/core/CPUTop.scala:28:25, :29:25]
 endmodule
 
