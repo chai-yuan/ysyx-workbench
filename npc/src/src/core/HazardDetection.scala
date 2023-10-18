@@ -82,12 +82,14 @@ class HazardDetection extends Module {
   )
   val nextPCSel = !(nextPC === pc + 4.U)
 
+  val halt = (inst(6, 0) === "b1110011".U && imm === 1.U)
+
   io.hazard2if.ifFlush   := nextPCSel
-  io.hazard2if.ifStop    := false.B
+  io.hazard2if.ifStop    := halt
   io.hazard2if.nextPC    := nextPC
   io.hazard2if.nextPCSel := nextPCSel
 
-  io.hazerd2id.idFlush   := nextPCSel
+  io.hazerd2id.idFlush   := false.B
   io.hazerd2exe.exeFlush := false.B
   io.hazerd2mem.memFlush := false.B
 }

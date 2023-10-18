@@ -48,6 +48,7 @@ class EXE extends Module {
   alu.io.src1 := MuxCase(
     0.U,
     Seq(
+      (control.src1SeqPC_sel) -> (pc + 4.U),
       (control.src1PC_sel) -> pc,
       (control.src1Reg_sel) -> reg1
     )

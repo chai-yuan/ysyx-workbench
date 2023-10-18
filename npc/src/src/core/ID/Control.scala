@@ -9,10 +9,11 @@ import config.Inst._
 class ControlBundle extends Bundle {
   val instType = Output(UInt(InstType.InstTypeWidth))
 
-  val src1Reg_sel = Output(Bool())
-  val src1PC_sel  = Output(Bool())
-  val src2Reg_sel = Output(Bool())
-  val src2Imm_sel = Output(Bool())
+  val src1Reg_sel   = Output(Bool())
+  val src1SeqPC_sel = Output(Bool())
+  val src1PC_sel    = Output(Bool())
+  val src2Reg_sel   = Output(Bool())
+  val src2Imm_sel   = Output(Bool())
 
   val aluOp      = Output(UInt(AluOp.AluOpWidth))
   val memOp      = Output(UInt(MemOp.MemOpWidth))
@@ -33,8 +34,9 @@ class Control extends Module {
   val funct7 = io.inst(31, 25)
   val inst   = io.inst
 
-  io.outControl.src1Reg_sel := true.B
-  io.outControl.src1PC_sel  := (io.inst === AUIPC)
+  io.outControl.src1Reg_sel   := true.B
+  io.outControl.src1SeqPC_sel := (inst === JAL) || (inst === JALR)
+  io.outControl.src1PC_sel    := (io.inst === AUIPC)
 
   io.outControl.src2Reg_sel := true.B
   io.outControl.src2Imm_sel := (io.inst === AUIPC) ||
@@ -50,6 +52,8 @@ class Control extends Module {
       LUI -> AluOp.ALU_PSV,
       CSRRW -> AluOp.ALU_PSV,
       CSRRS -> AluOp.ALU_PSV,
+      JAL -> AluOp.ALU_PSV,
+      JALR -> AluOp.ALU_PSV,
       AUIPC -> AluOp.ALU_ADD,
       SB -> AluOp.ALU_ADD,
       SH -> AluOp.ALU_ADD,
