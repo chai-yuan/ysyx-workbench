@@ -16,7 +16,7 @@ CFLAGS += -DMAINARGS=\"$(mainargs)\"
 .PHONY: $(AM_HOME)/am/src/riscv/npc/trm.c
 
 NPCFLAGS += -d $(NEMU_HOME)/build/riscv32-nemu-interpreter-so
-NPCFLAGS += -b
+NPCFLAGS += 
 
 image: $(IMAGE).elf
 	@$(OBJDUMP) -d $(IMAGE).elf > $(IMAGE).txt

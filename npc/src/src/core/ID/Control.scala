@@ -5,45 +5,35 @@ import chisel3.util._
 import config.InstType
 import config._
 import config.Inst._
+import org.apache.commons.lang3.concurrent.EventCountCircuitBreaker
 
 class ControlBundle extends Bundle {
   val instType = Output(UInt(InstType.InstTypeWidth))
 
-  val src1Reg_sel   = Output(Bool())
-  val src1SeqPC_sel = Output(Bool())
-  val src1PC_sel    = Output(Bool())
-  val src2Reg_sel   = Output(Bool())
-  val src2Imm_sel   = Output(Bool())
-
-  val aluOp      = Output(UInt(AluOp.AluOpWidth))
-  val memOp      = Output(UInt(MemOp.MemOpWidth))
-  val memReadEn  = Output(Bool())
+  val src1Op = Output(UInt(AluSrcOp.AluSrcOpWidth))
+  val src2Op = Output(UInt(AluSrcOp.AluSrcOpWidth))
+  val aluOp = Output(UInt(AluOp.AluOpWidth))
+  val memOp = Output(UInt(MemOp.MemOpWidth))
+  val memReadEn = Output(Bool())
   val memWriteEn = Output(Bool())
-  val wbOp       = Output(UInt(WriteBackOp.WriteBackOpWidth))
-  val wbEn       = Output(Bool())
+  val wbOp = Output(UInt(WriteBackOp.WriteBackOpWidth))
+
+  val halt = Output(Bool())
 }
 
 class Control extends Module {
   val io = IO(new Bundle {
-    val inst       = Input(UInt(32.W))
+    val inst = Input(UInt(32.W))
     val outControl = new ControlBundle
   })
 
   val opcode = io.inst(6, 0)
   val funct3 = io.inst(14, 12)
   val funct7 = io.inst(31, 25)
-  val inst   = io.inst
+  val inst = io.inst
 
-  io.outControl.src1Reg_sel   := true.B
-  io.outControl.src1SeqPC_sel := (inst === JAL) || (inst === JALR)
-  io.outControl.src1PC_sel    := (io.inst === AUIPC)
-
-  io.outControl.src2Reg_sel := true.B
-  io.outControl.src2Imm_sel := (io.inst === AUIPC) ||
-    (opcode === "b0010011".U) ||
-    (opcode === "b0000011".U) ||
-    (opcode === "b0100011".U) ||
-    (io.inst === LUI)
+  io.outControl.src1Op := AluSrcOp.SrcReg
+  io.outControl.src2Op := AluSrcOp.SrcReg
 
   io.outControl.aluOp := Lookup(
     io.inst,
@@ -100,7 +90,7 @@ class Control extends Module {
     )
   )
 
-  io.outControl.memReadEn  := (opcode === "b0000011".U)
+  io.outControl.memReadEn := (opcode === "b0000011".U)
   io.outControl.memWriteEn := (opcode === "b0100011".U)
 
   io.outControl.wbOp := MuxCase(
@@ -111,8 +101,6 @@ class Control extends Module {
       (inst === JAL || inst === JALR || inst === LUI || inst === AUIPC) -> (WriteBackOp.WB_ALU)
     )
   )
-
-  io.outControl.wbEn := !(io.outControl.wbOp === WriteBackOp.WB_NOP)
 
   io.outControl.instType := MuxCase(
     InstType.instR,
@@ -126,4 +114,5 @@ class Control extends Module {
     )
   )
 
+  io.outControl.halt := inst === EBREAK
 }

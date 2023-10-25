@@ -65,6 +65,7 @@ void cpu_exec(uint64_t n) {
                 npc_state.halt_pc);
             // fall through
         case NPC_QUIT:
+            Log("npc end at cycle : %d", cycle_num);
             // statistic();
             break;
     }

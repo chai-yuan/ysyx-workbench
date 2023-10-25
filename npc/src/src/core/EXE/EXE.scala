@@ -3,74 +3,72 @@ package core.EXE
 import chisel3._
 import chisel3.util._
 import core.ID._
-import core.Hazerd2EXEBundle
-import core.Forward2EXEBundle
-
-class EXE2ForwardBundle extends Bundle {
-  val regSrc1 = Output(UInt(5.W))
-  val regSrc2 = Output(UInt(5.W))
-}
-
-class EXEBundle extends Bundle {
-  val id2exe      = Flipped(new ID2EXEBundle)
-  val hazerd2exe  = Flipped(new Hazerd2EXEBundle)
-  val exe2forward = new EXE2ForwardBundle
-  val forward2exe = Flipped(new Forward2EXEBundle)
-
-  val exe2mem = new EXE2MEMBundle
-}
+import core.MEM.MEMDataBundle
+import config.AluSrcOp
 
 class EXE extends Module {
-  val io = IO(new EXEBundle)
+  val io = IO(new Bundle {
+    val dataMem = new MEMDataBundle
+    val id2exe = Flipped(Decoupled(new ID2EXEBundle))
+    val exe2mem = Decoupled(new EXE2MEMBundle)
+    val exe2global = new EXE2GlobalBundle
+  })
+  // pipeline ctrl
+  val readyGo = true.B
+  val exeValid = RegInit(false.B)
+  exeValid := Mux(exeAllowin, io.id2exe.valid, exeValid)
+  val exeAllowin = !exeValid || (readyGo && memAllowin)
+  val wbValid = exeValid && readyGo
+  val memAllowin = io.exe2mem.ready
 
-  val control = io.id2exe.control
-  val inst    = io.id2exe.inst
-  val imm     = io.id2exe.imm
-  val pc      = io.id2exe.pc
+  io.exe2mem.valid := wbValid
+  io.id2exe.ready := exeAllowin
 
-  val alu     = Module(new ALU)
-  val exe2mem = Module(new EXE2MEM)
+  // from if data
+  val id2exe = RegInit(0.U.asTypeOf(new ID2EXEBundle))
+  id2exe := Mux(exeValid && exeAllowin, io.id2exe.bits, id2exe)
+  val pc = id2exe.ifdata.pc
+  val control = id2exe.iddata.control
+  val regData1 = id2exe.iddata.reg1
+  val regData2 = id2exe.iddata.reg2
+  val imm = id2exe.iddata.imm
 
-  val reg1 = MuxCase(
-    io.id2exe.reg1,
-    Seq(
-      (io.forward2exe.forward1Sel) -> (io.forward2exe.regData1)
-    )
-  )
-  val reg2 = MuxCase(
-    io.id2exe.reg2,
-    Seq(
-      (io.forward2exe.forward2Sel) -> (io.forward2exe.regData2)
-    )
-  )
   // alu
+  val alu = Module(new ALU)
   alu.io.aluOp := control.aluOp
   alu.io.src1 := MuxCase(
-    0.U,
+    regData1,
     Seq(
-      (control.src1SeqPC_sel) -> (pc + 4.U),
-      (control.src1PC_sel) -> pc,
-      (control.src1Reg_sel) -> reg1
+      (control.src1Op === AluSrcOp.SrcPC) -> (pc),
+      (control.src1Op === AluSrcOp.SrcSeqPC) -> (pc + 4.U),
+      (control.src1Op === AluSrcOp.SrcImm) -> (imm)
     )
   )
   alu.io.src2 := MuxCase(
-    0.U,
+    regData2,
     Seq(
-      (control.src2Imm_sel) -> imm,
-      (control.src2Reg_sel) -> reg2
+      (control.src1Op === AluSrcOp.SrcPC) -> (pc),
+      (control.src1Op === AluSrcOp.SrcSeqPC) -> (pc + 4.U),
+      (control.src1Op === AluSrcOp.SrcImm) -> (imm)
     )
   )
-  // exe2forward
-  io.exe2forward.regSrc1 := inst(19, 15)
-  io.exe2forward.regSrc2 := inst(24, 20)
-  // exe2mem
-  exe2mem.io.exeIn.control := control
-  exe2mem.io.exeIn.inst    := inst
-  exe2mem.io.exeIn.result  := alu.io.out
-  exe2mem.io.exeIn.reg2    := io.id2exe.reg2
-  exe2mem.io.exeIn.pc      := io.id2exe.pc
-  exe2mem.io.exeIn.halt    := io.id2exe.halt
+  val aluResult = alu.io.out
 
-  exe2mem.io.exeFlush := io.hazerd2exe.exeFlush
-  io.exe2mem          := exe2mem.io.exe2mem
+  // mem
+  val memWrap = Module(new MemWrap)
+  memWrap.io.dataMem <> io.dataMem
+  memWrap.io.valid := exeValid
+  memWrap.io.control <> control
+  memWrap.io.addr := aluResult
+  memWrap.io.writeData := regData2
+  val readData = memWrap.io.readData
+
+  // to mem data
+  val exe2mem = Wire(new EXE2MEMBundle)
+  exe2mem.ifdata <> io.id2exe.bits.ifdata
+  exe2mem.iddata <> io.id2exe.bits.iddata
+  exe2mem.exedata.aluResult := aluResult
+
+  // exe2global
+  io.exe2global.globalmem.memData := readData
 }

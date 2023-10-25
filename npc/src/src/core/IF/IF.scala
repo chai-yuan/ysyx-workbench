@@ -4,40 +4,39 @@ import chisel3._
 import chisel3.util._
 import config.Config
 import core.MemBundle
-import core.Hazerd2IFBundle
-
-class IFBundle extends Bundle {
-  val instMem   = new MemBundle
-  val hazerd2if = Flipped(new Hazerd2IFBundle)
-  val if2id     = new IF2IDBundle
-}
 
 class IF extends Module {
-  val io = IO(new IFBundle)
+  val io = IO(new Bundle {
+    val preif2if = Flipped(Decoupled(new PreIF2IFBundle))
+    val if2id = Decoupled(new IF2IDBundle)
+    val if2global = new IF2GlobalBundle
+  })
 
-  val if2id = Module(new IF2ID)
+  // pipeline ctrl
+  val readyGo = true.B
+  val ifValid = RegInit(false.B)
+  ifValid := Mux(ifAllowin, io.preif2if.valid, ifValid)
+  val ifAllowin = !ifValid || (readyGo && idAllowin)
+  val idValid = ifValid && readyGo
+  val idAllowin = io.if2id.ready
+
+  io.if2id.valid := idValid
+  io.preif2if.ready := ifAllowin
+
+  // from preif data
+  val preif2if = io.preif2if.bits
 
   val pc = RegInit(Config.PCinit)
+  pc := Mux(ifValid && ifAllowin, preif2if.nextPC, pc)
+  val inst = preif2if.instData
 
-  val nextPC = MuxCase(
-    pc + 4.U,
-    Seq(
-      (pc === Config.PCinit) -> (pc + 4.U),
-      (io.hazerd2if.ifStop) -> (pc),
-      (io.hazerd2if.nextPCSel) -> (io.hazerd2if.nextPC)
-    )
-  )
-  pc := nextPC
+  // to id data
+  val if2id = Wire(new IF2IDBundle)
+  if2id.ifdata.pc := pc
+  if2id.ifdata.inst := preif2if.instData
 
-  // inst mem
-  io.instMem.addr      := pc
-  io.instMem.readEn    := true.B
-  io.instMem.writeEn   := false.B
-  io.instMem.writeData := 0.U
-  io.instMem.mark      := "b1111".U
-  // if2id
-  if2id.io.ifIn.pc   := pc
-  if2id.io.ifIn.inst := io.instMem.readData
-  if2id.io.ifFlush   := io.hazerd2if.ifFlush
-  io.if2id           := if2id.io.if2id
+  io.if2id.bits <> if2id
+
+  // if2global
+  io.if2global.pc := pc
 }

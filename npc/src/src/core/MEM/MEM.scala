@@ -4,65 +4,37 @@ import chisel3._
 import chisel3.util._
 import core.EXE._
 import core.MemBundle
-import core.Hazerd2MEMBundle
 import core.ID.ControlBundle
-import core.Forward2MEMBundle
-
-class MEMBundle extends Bundle {
-  val exe2mem     = Flipped(new EXE2MEMBundle)
-  val hazerd2mem  = Flipped(new Hazerd2MEMBundle)
-  val mem2forward = new MEM2ForwardBundle
-  val forward2mem = Flipped(new Forward2MEMBundle)
-
-  val mem2wb = new MEM2WBBundle
-
-  val dataMem  = new MemBundle
-  val readData = Output(UInt(32.W))
-}
-
-class MEM2ForwardBundle extends Bundle {
-  val enable = Output(Bool())
-  val addr   = Output(UInt(32.W))
-  val data   = Output(UInt(32.W))
-
-  val regSrc2 = Output(UInt(5.W))
-}
 
 class MEM extends Module {
-  val io = IO(new MEMBundle)
+  val io = IO(new Bundle {
+    val exe2mem = Flipped(Decoupled(new EXE2MEMBundle))
+    val mem2wb = Decoupled(new MEM2WBBundle)
+    // global
+    val globalmem = new DataMemGlobalBundle
+  })
 
-  val inst      = io.exe2mem.inst
-  val aluResult = io.exe2mem.result
-  val control   = io.exe2mem.control
+  // pipeline ctrl
+  val readyGo = true.B
+  val memValid = RegInit(false.B)
+  memValid := Mux(memAllowin, io.exe2mem.valid, memValid)
+  val memAllowin = !memValid || (readyGo && wbAllowin)
+  val wbValid = memValid && readyGo
+  val wbAllowin = io.mem2wb.ready
 
-  val mem2wb = Module(new MEM2WB)
+  io.mem2wb.valid := wbValid
+  io.exe2mem.ready := memAllowin
 
-  val memWrap = Module(new MemWrap)
+  // from if data
+  val exe2mem = RegInit(0.U.asTypeOf(new EXE2MEMBundle))
+  exe2mem := Mux(memValid && memAllowin, io.exe2mem.bits, exe2mem)
+  val memData = io.globalmem.memData
 
-  // mem
-  val reg2 = MuxCase(
-    io.exe2mem.reg2,
-    Seq(
-      (io.forward2mem.forward2Sel) -> (io.forward2mem.regData2)
-    )
-  )
-  memWrap.io.dataMem <> io.dataMem
-  memWrap.io.control <> control
-  memWrap.io.addr      := aluResult
-  memWrap.io.writeData := reg2
-  io.readData          := memWrap.io.readData
-  // forward
-  io.mem2forward.enable  := control.wbEn
-  io.mem2forward.addr    := inst(11, 7)
-  io.mem2forward.data    := aluResult
-  io.mem2forward.regSrc2 := inst(24, 20)
-  // mem2wb
-  mem2wb.io.memIn.aluResult := aluResult
-  mem2wb.io.memIn.inst      := inst
-  mem2wb.io.memIn.control   := control
-  mem2wb.io.memIn.pc        := io.exe2mem.pc
-  mem2wb.io.memIn.halt      := io.exe2mem.halt
-
-  mem2wb.io.memFlush := io.hazerd2mem.memFlush
-  io.mem2wb          := mem2wb.io.mem2wb
+  // to wb data
+  val mem2wbData = Wire(new MEM2WBBundle)
+  mem2wbData.ifdata <> io.exe2mem.bits.ifdata
+  mem2wbData.iddata <> io.exe2mem.bits.iddata
+  mem2wbData.exedata <> io.exe2mem.bits.exedata
+  mem2wbData.memdata.memData := memData
+  // mem2global
 }
