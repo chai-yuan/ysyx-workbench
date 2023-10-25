@@ -5,6 +5,7 @@ import chisel3.util._
 
 class WBDebugBundle extends Bundle {
   val valid = Output(Bool())
+  val pc    = Output(UInt(32.W))
   val inst  = Output(UInt(32.W))
   val halt  = Output(Bool())
 }

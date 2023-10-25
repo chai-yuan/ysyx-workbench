@@ -61,19 +61,19 @@ void sim_exec() {
 
     update_cpu_state();
     // difftest
-    if (cpu.pc != 0 && cpu.pc != 0x80000000) {
+    if (sim_cpu->io_debug_wbDebug_valid) {
         IFDEF(CONFIG_DIFFTEST, difftest_step(cpu.pc, 0));
     }
 
     // halt
-    if (sim_cpu->io_debug_halt) {
+    if (sim_cpu->io_debug_wbDebug_halt) {
         set_npc_state(NPC_END, cpu.pc, cpu.gpr[10]);
     }
 }
 
 void update_cpu_state() {
-    cpu.pc = sim_cpu->io_debug_pc;
-    inst = sim_cpu->io_debug_inst;
+    cpu.pc = sim_cpu->io_debug_wbDebug_pc;
+    inst = sim_cpu->io_debug_wbDebug_inst;
 
     cpu.gpr[0] = sim_cpu->io_debug_regs_0;
     cpu.gpr[1] = sim_cpu->io_debug_regs_1;

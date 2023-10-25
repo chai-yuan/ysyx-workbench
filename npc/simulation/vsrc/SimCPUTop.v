@@ -1,9 +1,8 @@
 module SimCPUTop(	// @[<stdin>:711:10]
   input         clock,	// @[<stdin>:712:11]
                 reset,	// @[<stdin>:713:11]
-  output [31:0] io_debug_pc,	// @[src/src/core/CPUTop.scala:22:14]
-                io_debug_inst,	// @[src/src/core/CPUTop.scala:22:14]
-                io_debug_regs_0,	// @[src/src/core/CPUTop.scala:22:14]
+
+  output [31:0] io_debug_regs_0,	// @[src/src/core/CPUTop.scala:22:14]
                 io_debug_regs_1,	// @[src/src/core/CPUTop.scala:22:14]
                 io_debug_regs_2,	// @[src/src/core/CPUTop.scala:22:14]
                 io_debug_regs_3,	// @[src/src/core/CPUTop.scala:22:14]
@@ -35,7 +34,11 @@ module SimCPUTop(	// @[<stdin>:711:10]
                 io_debug_regs_29,	// @[src/src/core/CPUTop.scala:22:14]
                 io_debug_regs_30,	// @[src/src/core/CPUTop.scala:22:14]
                 io_debug_regs_31,	// @[src/src/core/CPUTop.scala:22:14]
-  output        io_debug_halt	// @[src/src/core/CPUTop.scala:22:14]
+
+  output        io_debug_wbDebug_valid,	// @[src/src/core/CPUTop.scala:22:14]
+  output [31:0] io_debug_wbDebug_pc,	// @[src/src/core/CPUTop.scala:22:14]
+  output [31:0] io_debug_wbDebug_inst,	// @[src/src/core/CPUTop.scala:22:14]
+  output        io_debug_wbDebug_halt	// @[src/src/core/CPUTop.scala:22:14]
 );
 
   wire [31:0] io_inst_readData;
@@ -91,8 +94,6 @@ module SimCPUTop(	// @[<stdin>:711:10]
     .io_data_readEn(io_data_readEn),
     .io_data_mark(io_data_mark),
 
-    .io_debug_pc(io_debug_pc),
-
     .io_debug_regs_0(io_debug_regs_0),
     .io_debug_regs_1(io_debug_regs_1),
     .io_debug_regs_2(io_debug_regs_2),
@@ -126,8 +127,10 @@ module SimCPUTop(	// @[<stdin>:711:10]
     .io_debug_regs_30(io_debug_regs_30),
     .io_debug_regs_31(io_debug_regs_31),
 
-    .io_debug_inst(io_debug_inst),
-    .io_debug_halt(io_debug_halt)
+    .io_debug_wbDebug_valid(io_debug_wbDebug_valid),
+    .io_debug_wbDebug_pc(io_debug_wbDebug_pc),
+    .io_debug_wbDebug_inst(io_debug_wbDebug_inst),
+    .io_debug_wbDebug_halt(io_debug_wbDebug_halt)
   );
 
 endmodule

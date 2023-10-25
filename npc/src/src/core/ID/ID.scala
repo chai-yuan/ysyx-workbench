@@ -18,7 +18,7 @@ class ID extends Module {
   // pipeline ctrl
   val readyGo    = true.B
   val idValid    = RegInit(false.B)
-  val exeAllowin = io.if2id.ready
+  val exeAllowin = io.id2exe.ready
   val idAllowin  = !idValid || (readyGo && exeAllowin)
   idValid := Mux(idAllowin, io.if2id.valid, idValid)
   val exeValid = idValid && readyGo
