@@ -5,17 +5,17 @@ import chisel3.util._
 
 class WBDebugBundle extends Bundle {
   val valid = Output(Bool())
-  val inst = Output(UInt(32.W))
-  val halt = Output(Bool())
+  val inst  = Output(UInt(32.W))
+  val halt  = Output(Bool())
 }
 
 class WriteBackBundle extends Bundle {
   val enable = Output(Bool())
-  val wAddr = Output(UInt(5.W))
-  val wData = Output(UInt(32.W))
+  val wAddr  = Output(UInt(5.W))
+  val wData  = Output(UInt(32.W))
 }
 
 class WB2GlobalBundle extends Bundle {
-  val debug = new WBDebugBundle
-  val WriteBack = new WriteBackBundle
+  val debug     = new WBDebugBundle
+  val writeBack = new WriteBackBundle
 }
