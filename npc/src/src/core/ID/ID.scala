@@ -16,13 +16,20 @@ class ID extends Module {
     val memForward = Flipped(new WriteBackBundle)
     val writeBack  = Flipped(new WriteBackBundle)
   })
+  val branchSel = Wire(Bool())
 
   // pipeline ctrl
   val readyGo    = true.B
   val idValid    = RegInit(false.B)
   val exeAllowin = io.id2exe.ready
   val idAllowin  = !idValid || (readyGo && exeAllowin)
-  idValid := Mux(idAllowin, io.if2id.valid, idValid)
+  idValid := MuxCase(
+    idValid,
+    Seq(
+      (branchSel) -> (false.B),
+      (idAllowin) -> (io.if2id.valid)
+    )
+  )
   val exeValid = idValid && readyGo
 
   io.id2exe.valid := exeValid
@@ -59,7 +66,8 @@ class ID extends Module {
   branch.io.regData2 := regData2
   branch.io.imm      := imm
   branch.io.pc       := pc
-  val branchSel    = branch.io.nextPCsel
+
+  branchSel := branch.io.nextPCsel && idValid
   val branchTarget = branch.io.nextPC
 
   // to exe data
