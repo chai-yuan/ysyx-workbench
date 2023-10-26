@@ -65,8 +65,7 @@ void cpu_exec(uint64_t n) {
                 npc_state.halt_pc);
             // fall through
         case NPC_QUIT:
-            Log("npc end at cycle : %d", cycle_num);
-            // statistic();
+            statistic();
             break;
     }
 }
@@ -80,4 +79,9 @@ void set_npc_state(int state, vaddr_t pc, int halt_ret) {
     npc_state.state = state;
     npc_state.halt_pc = pc;
     npc_state.halt_ret = halt_ret;
+}
+
+void statistic() {
+    Log("npc end at cycle : %d", clk_cycle);
+    Log("npc ipc : %f", (float)valid_cycle / (float)clk_cycle);
 }

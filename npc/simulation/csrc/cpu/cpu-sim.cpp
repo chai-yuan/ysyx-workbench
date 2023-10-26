@@ -9,7 +9,7 @@ VSimCPUTop* sim_cpu;
 VerilatedContext* contextp;
 VerilatedVcdC* tfp;
 
-word_t cycle_num;
+word_t clk_cycle, valid_cycle;
 word_t inst;
 
 void sim_init() {
@@ -19,7 +19,7 @@ void sim_init() {
     tfp = new VerilatedVcdC();
     sim_cpu = new VSimCPUTop();
     IFDEF(CONFIG_VTRACE, vtrace_init("debug.vcd"));
-    cycle_num = 0;
+    clk_cycle = 0;
     inst = 0;
 
     sim_reset();
@@ -49,8 +49,6 @@ void sim_exit() {
 }
 
 void sim_exec() {
-    cycle_num++;
-
     sim_cpu->clock = 0;
     sim_cpu->eval();
     IFDEF(CONFIG_VTRACE, dump_wave());
@@ -59,9 +57,11 @@ void sim_exec() {
     sim_cpu->eval();
     IFDEF(CONFIG_VTRACE, dump_wave());
 
+    clk_cycle++;
     update_cpu_state();
     // difftest
     if (sim_cpu->io_debug_wbDebug_valid) {
+        valid_cycle++;
         IFDEF(CONFIG_DIFFTEST, difftest_step(cpu.pc, 0));
     }
 

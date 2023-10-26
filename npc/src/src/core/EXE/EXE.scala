@@ -5,6 +5,7 @@ import chisel3.util._
 import core.ID._
 import core.MemBundle
 import config.AluSrcOp
+import config.WriteBackOp
 
 class EXE extends Module {
   val io = IO(new Bundle {
@@ -28,6 +29,7 @@ class EXE extends Module {
   val id2exe = RegInit(0.U.asTypeOf(new ID2EXEBundle))
   id2exe := Mux(io.id2exe.valid && exeAllowin, io.id2exe.bits, id2exe)
   val pc       = id2exe.ifdata.pc
+  val inst     = id2exe.ifdata.inst
   val control  = id2exe.iddata.control
   val regData1 = id2exe.iddata.reg1
   val regData2 = id2exe.iddata.reg2
@@ -47,9 +49,9 @@ class EXE extends Module {
   alu.io.src2 := MuxCase(
     regData2,
     Seq(
-      (control.src1Op === AluSrcOp.SrcPC) -> (pc),
-      (control.src1Op === AluSrcOp.SrcSeqPC) -> (pc + 4.U),
-      (control.src1Op === AluSrcOp.SrcImm) -> (imm)
+      (control.src2Op === AluSrcOp.SrcPC) -> (pc),
+      (control.src2Op === AluSrcOp.SrcSeqPC) -> (pc + 4.U),
+      (control.src2Op === AluSrcOp.SrcImm) -> (imm)
     )
   )
   val aluResult = alu.io.out
@@ -73,4 +75,8 @@ class EXE extends Module {
 
   // exe2global
   io.exe2global.globalmem.memData := readData
+
+  io.exe2global.forward.enable := (control.wbOp === WriteBackOp.WB_ALU) && exeValid
+  io.exe2global.forward.wAddr  := inst(11, 7)
+  io.exe2global.forward.wData  := aluResult
 }

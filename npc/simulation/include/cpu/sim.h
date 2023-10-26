@@ -11,8 +11,10 @@ void sim_exit();
 void sim_exec();
 
 extern VSimCPUTop* sim_cpu;
-extern word_t cycle_num;
+extern word_t clk_cycle, valid_cycle;
 extern word_t inst;
+
+void statistic();
 
 void update_cpu_state();
 

@@ -10,30 +10,44 @@ import org.apache.commons.lang3.concurrent.EventCountCircuitBreaker
 class ControlBundle extends Bundle {
   val instType = Output(UInt(InstType.InstTypeWidth))
 
-  val src1Op = Output(UInt(AluSrcOp.AluSrcOpWidth))
-  val src2Op = Output(UInt(AluSrcOp.AluSrcOpWidth))
-  val aluOp = Output(UInt(AluOp.AluOpWidth))
-  val memOp = Output(UInt(MemOp.MemOpWidth))
-  val memReadEn = Output(Bool())
+  val src1Op     = Output(UInt(AluSrcOp.AluSrcOpWidth))
+  val src2Op     = Output(UInt(AluSrcOp.AluSrcOpWidth))
+  val aluOp      = Output(UInt(AluOp.AluOpWidth))
+  val memOp      = Output(UInt(MemOp.MemOpWidth))
+  val memReadEn  = Output(Bool())
   val memWriteEn = Output(Bool())
-  val wbOp = Output(UInt(WriteBackOp.WriteBackOpWidth))
+  val wbOp       = Output(UInt(WriteBackOp.WriteBackOpWidth))
 
   val halt = Output(Bool())
 }
 
 class Control extends Module {
   val io = IO(new Bundle {
-    val inst = Input(UInt(32.W))
+    val inst       = Input(UInt(32.W))
     val outControl = new ControlBundle
   })
 
   val opcode = io.inst(6, 0)
   val funct3 = io.inst(14, 12)
   val funct7 = io.inst(31, 25)
-  val inst = io.inst
+  val inst   = io.inst
 
-  io.outControl.src1Op := AluSrcOp.SrcReg
-  io.outControl.src2Op := AluSrcOp.SrcReg
+  io.outControl.src1Op := MuxCase(
+    AluSrcOp.SrcReg,
+    Seq(
+      (inst === AUIPC) -> (AluSrcOp.SrcPC),
+      (inst === JAL || inst === JALR) -> (AluSrcOp.SrcSeqPC),
+      (inst === LUI) -> (AluSrcOp.SrcImm)
+    )
+  )
+  io.outControl.src2Op := MuxCase(
+    AluSrcOp.SrcReg,
+    Seq(
+      (opcode === "b0010011".U) -> (AluSrcOp.SrcImm),
+      (opcode === "b0000011".U || opcode === "b0100011".U) -> (AluSrcOp.SrcImm),
+      (inst === AUIPC) -> (AluSrcOp.SrcImm)
+    )
+  )
 
   io.outControl.aluOp := Lookup(
     io.inst,
@@ -90,7 +104,7 @@ class Control extends Module {
     )
   )
 
-  io.outControl.memReadEn := (opcode === "b0000011".U)
+  io.outControl.memReadEn  := (opcode === "b0000011".U)
   io.outControl.memWriteEn := (opcode === "b0100011".U)
 
   io.outControl.wbOp := MuxCase(

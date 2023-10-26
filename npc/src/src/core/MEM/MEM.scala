@@ -5,11 +5,13 @@ import chisel3.util._
 import core.EXE._
 import core.MemBundle
 import core.ID.ControlBundle
+import config.WriteBackOp
 
 class MEM extends Module {
   val io = IO(new Bundle {
-    val exe2mem = Flipped(Decoupled(new EXE2MEMBundle))
-    val mem2wb  = Decoupled(new MEM2WBBundle)
+    val exe2mem    = Flipped(Decoupled(new EXE2MEMBundle))
+    val mem2wb     = Decoupled(new MEM2WBBundle)
+    val mem2global = new MEM2GlobalBundle
     // global
     val globalmem = Flipped(new DataMemGlobalBundle)
   })
@@ -28,6 +30,8 @@ class MEM extends Module {
   // from if data
   val exe2mem = RegInit(0.U.asTypeOf(new EXE2MEMBundle))
   exe2mem := Mux(io.exe2mem.valid && memAllowin, io.exe2mem.bits, exe2mem)
+  val inst    = exe2mem.ifdata.inst
+  val control = exe2mem.iddata.control
   val memData = io.globalmem.memData
 
   // to wb data
@@ -40,4 +44,13 @@ class MEM extends Module {
   io.mem2wb.bits := mem2wbData
 
   // mem2global
+  io.mem2global.forward.enable := (control.wbOp =/= WriteBackOp.WB_NOP) && memValid
+  io.mem2global.forward.wAddr  := inst(11, 7)
+  io.mem2global.forward.wData := MuxCase(
+    0.U,
+    Seq(
+      (control.wbOp === WriteBackOp.WB_ALU) -> (exe2mem.exedata.aluResult),
+      (control.wbOp === WriteBackOp.WB_MEM) -> (memData)
+    )
+  )
 }

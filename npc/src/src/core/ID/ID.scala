@@ -12,7 +12,9 @@ class ID extends Module {
     val id2exe    = Decoupled(new ID2EXEBundle)
     val id2global = new ID2GlobalBundle
     // global
-    val writeBack = Flipped(new WriteBackBundle)
+    val exeForward = Flipped(new WriteBackBundle)
+    val memForward = Flipped(new WriteBackBundle)
+    val writeBack  = Flipped(new WriteBackBundle)
   })
 
   // pipeline ctrl
@@ -36,15 +38,15 @@ class ID extends Module {
   val control = Module(new Control)
   control.io.inst := inst
   val outControl = control.io.outControl
-  // regs
-  val regs = Module(new Registers)
-  regs.io.raddr1 := inst(19, 15)
-  regs.io.raddr2 := inst(24, 20)
-  regs.io.wen    := io.writeBack.enable
-  regs.io.waddr  := io.writeBack.wAddr
-  regs.io.wdata  := io.writeBack.wData
-  val regData1 = regs.io.rdata1
-  val regData2 = regs.io.rdata2
+  // forward
+  val forward = Module(new Forward)
+  forward.io.addr1      := inst(19, 15)
+  forward.io.addr2      := inst(24, 20)
+  forward.io.exeForward := io.exeForward
+  forward.io.memForward := io.memForward
+  forward.io.writeBack  := io.writeBack
+  val regData1 = forward.io.data1
+  val regData2 = forward.io.data2
   // imm
   val immGen = Module(new ImmGen)
   immGen.io.inst     := inst
@@ -73,5 +75,5 @@ class ID extends Module {
   io.id2global.branch.branchSel    := branchSel
   io.id2global.branch.branchTarget := branchTarget
 
-  io.id2global.debugRegs := regs.io.debug
+  io.id2global.debugRegs := forward.io.debugRegs
 }

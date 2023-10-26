@@ -41,8 +41,8 @@ class WB extends Module {
     )
   )
 
-  io.wb2global.debug.valid := wbValid
-  io.wb2global.debug.pc    := io.mem2wb.bits.ifdata.pc
-  io.wb2global.debug.inst  := inst
-  io.wb2global.debug.halt  := control.halt
+  io.wb2global.debug.valid := RegNext(wbValid)
+  io.wb2global.debug.pc    := mem2wb.ifdata.pc
+  io.wb2global.debug.inst  := RegNext(inst)
+  io.wb2global.debug.halt  := RegNext(control.halt)
 }
