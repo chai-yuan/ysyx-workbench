@@ -28,7 +28,7 @@ class ID extends Module {
 
   // from if data
   val if2id = RegInit(0.U.asTypeOf(new IF2IDBundle))
-  if2id := Mux(idValid && idAllowin, io.if2id.bits, if2id)
+  if2id := Mux(io.if2id.valid && idAllowin, io.if2id.bits, if2id)
   val pc   = if2id.ifdata.pc
   val inst = if2id.ifdata.inst
 

@@ -27,15 +27,15 @@ class IF extends Module {
   val preif2if = io.preif2if.bits
 
   val pc = RegInit(Config.PCinit)
-  pc := Mux(ifValid && ifAllowin, preif2if.nextPC, pc)
+  pc := Mux(io.preif2if.valid && ifAllowin, preif2if.nextPC, pc)
   val inst = preif2if.instData
 
   // to id data
   val if2id = Wire(new IF2IDBundle)
   if2id.ifdata.pc   := pc
-  if2id.ifdata.inst := preif2if.instData
+  if2id.ifdata.inst := inst
 
-  io.if2id.bits <> if2id
+  io.if2id.bits := if2id
 
   // if2global
   io.if2global.pc := pc

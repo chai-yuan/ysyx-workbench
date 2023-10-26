@@ -26,7 +26,7 @@ class EXE extends Module {
 
   // from if data
   val id2exe = RegInit(0.U.asTypeOf(new ID2EXEBundle))
-  id2exe := Mux(exeValid && exeAllowin, io.id2exe.bits, id2exe)
+  id2exe := Mux(io.id2exe.valid && exeAllowin, io.id2exe.bits, id2exe)
   val pc       = id2exe.ifdata.pc
   val control  = id2exe.iddata.control
   val regData1 = id2exe.iddata.reg1

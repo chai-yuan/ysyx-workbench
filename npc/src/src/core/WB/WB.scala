@@ -16,14 +16,14 @@ class WB extends Module {
   // pipeline ctrl
   val readyGo   = true.B
   val wbValid   = RegInit(false.B)
-  val wbAllowin = !wbValid && readyGo
+  val wbAllowin = !wbValid || readyGo
   wbValid := Mux(wbAllowin, io.mem2wb.valid, wbValid)
 
   io.mem2wb.ready := wbAllowin
 
   // from mem data
   val mem2wb = RegInit(0.U.asTypeOf(new MEM2WBBundle))
-  mem2wb := Mux(wbValid && wbAllowin, io.mem2wb.bits, mem2wb)
+  mem2wb := Mux(io.mem2wb.valid && wbAllowin, io.mem2wb.bits, mem2wb)
   val control   = mem2wb.iddata.control
   val inst      = mem2wb.ifdata.inst
   val wbAddr    = inst(11, 7)
