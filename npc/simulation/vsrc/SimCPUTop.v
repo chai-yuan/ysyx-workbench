@@ -146,13 +146,12 @@ module SimInstMem (
     input [31:0] writeData,
     output reg [31:0] readData
 );
-    import "DPI-C" function void verilog_pmem_read(input int raddr, output int rdata);
-    import "DPI-C" function void verilog_pmem_write(input int waddr, input int wdata, input byte wmask);
+    import "DPI-C" function void verilog_inst_read(input int raddr, output int rdata);
 
     wire [31:0]read_data;
     always @(posedge clk) begin
         if (readEn && !reset) begin
-            verilog_pmem_read(addr, read_data);
+            verilog_inst_read(addr, read_data);
             readData <= read_data;
         end
     end
