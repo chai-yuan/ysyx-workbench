@@ -71,8 +71,10 @@ class DataMemReadWrap extends Module {
     shiftData,
     Seq(
       (control.memOp === MEM_B) -> (Cat(Fill(24, shiftData(7)), shiftData(7, 0))),
+      (control.memOp === MEM_BU) -> (Cat(0.U(24.W), shiftData(7, 0))),
       (control.memOp === MEM_H) -> (Cat(Fill(16, shiftData(15)), shiftData(15, 0))),
-      (control.memOp === MEM_BU || control.memOp === MEM_HU || control.memOp === MEM_W) -> (shiftData)
+      (control.memOp === MEM_HU) -> (Cat(0.U(16.W), shiftData(15, 0))),
+      (control.memOp === MEM_W) -> (shiftData)
     )
   )
 
