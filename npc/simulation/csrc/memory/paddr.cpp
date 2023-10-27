@@ -1,4 +1,5 @@
 #include <cpu/cpu.h>
+#include <device/device.h>
 #include <memory/paddr.h>
 
 static uint8_t* pmem = NULL;
@@ -50,23 +51,34 @@ inline void mem_write(uint8_t* mem, int waddr, word_t wdata, char wmask) {
 void pmem_read(int raddr, word_t* rdata) {
     if (in_pmem(raddr)) {
         mem_read(pmem, raddr - CONFIG_MBASE, rdata);
+        return;
     }
 #ifdef CONFIG_DEVICE
-
-#endif
-    else {
-        out_of_bound(raddr);
+    for (int i = 0; i < DEVICE_NUM; i++) {
+        Device* device = &devices[i];
+        if (device->low <= raddr && device->high > raddr) {
+            mem_read(device->space, raddr - device->low, rdata);
+            return;
+        }
     }
+#endif
+    out_of_bound(raddr);
 }
 
 void pmem_write(int waddr, word_t wdata, char wmask) {
     if (in_pmem(waddr)) {
         mem_write(pmem, waddr - CONFIG_MBASE, wdata, wmask);
+        return;
     }
 #ifdef CONFIG_DEVICE
-
-#endif
-    else {
-        out_of_bound(waddr);
+    for (int i = 0; i < DEVICE_NUM; i++) {
+        Device* device = &devices[i];
+        if (device->low <= waddr && device->high > waddr) {
+            mem_write(device->space, waddr - devices->low, wdata, wmask);
+            device->callback(waddr - device->low, 4);
+            return;
+        }
     }
+#endif
+    out_of_bound(waddr);
 }
