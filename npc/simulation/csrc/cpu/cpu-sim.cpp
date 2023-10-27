@@ -1,7 +1,6 @@
 #include <cpu/cpu.h>
 #include <cpu/difftest.h>
 #include <cpu/sim.h>
-#include <memory/mem-sim.h>
 #include <memory/paddr.h>
 #include <trace.h>
 

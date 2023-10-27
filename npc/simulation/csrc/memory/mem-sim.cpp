@@ -1,4 +1,3 @@
-#include <memory/mem-sim.h>
 #include <memory/paddr.h>
 
 extern "C" void verilog_inst_read(int raddr, int* rdata) {
