@@ -25,20 +25,22 @@ class Forward extends Module {
   regs.io.waddr  := io.writeBack.wAddr
   regs.io.wdata  := io.writeBack.wData
 
-  io.data1 := MuxCase(
+  val data1 = MuxCase(
     regs.io.rdata1,
     Seq(
       (io.exeForward.enable && (io.exeForward.wAddr === io.addr1)) -> (io.exeForward.wData),
       (io.memForward.enable && (io.memForward.wAddr === io.addr1)) -> (io.memForward.wData)
     )
   )
-  io.data2 := MuxCase(
+  val data2 = MuxCase(
     regs.io.rdata2,
     Seq(
       (io.exeForward.enable && (io.exeForward.wAddr === io.addr2)) -> (io.exeForward.wData),
       (io.memForward.enable && (io.memForward.wAddr === io.addr2)) -> (io.memForward.wData)
     )
   )
+  io.data1 := Mux(io.addr1 === 0.U, 0.U, data1)
+  io.data2 := Mux(io.addr2 === 0.U, 0.U, data2)
 
   io.debugRegs := regs.io.debug
 }
