@@ -23,7 +23,13 @@ class WB extends Module {
 
   // from mem data
   val mem2wb = RegInit(0.U.asTypeOf(new MEM2WBBundle))
-  mem2wb := Mux(io.mem2wb.valid && wbAllowin, io.mem2wb.bits, mem2wb)
+  mem2wb := MuxCase(
+    mem2wb,
+    Seq(
+      (io.mem2wb.valid && wbAllowin) -> (io.mem2wb.bits),
+      (!io.mem2wb.valid && wbAllowin) -> (0.U.asTypeOf(new MEM2WBBundle))
+    )
+  )
   val control   = mem2wb.iddata.control
   val inst      = mem2wb.ifdata.inst
   val wbAddr    = inst(11, 7)

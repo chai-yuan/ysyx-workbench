@@ -29,7 +29,13 @@ class MEM extends Module {
 
   // from if data
   val exe2mem = RegInit(0.U.asTypeOf(new EXE2MEMBundle))
-  exe2mem := Mux(io.exe2mem.valid && memAllowin, io.exe2mem.bits, exe2mem)
+  exe2mem := MuxCase(
+    exe2mem,
+    Seq(
+      (io.exe2mem.valid && memAllowin) -> (io.exe2mem.bits),
+      (!io.exe2mem.valid && memAllowin) -> (0.U.asTypeOf(new EXE2MEMBundle))
+    )
+  )
   val inst    = exe2mem.ifdata.inst
   val control = exe2mem.iddata.control
   val memData = io.globalmem.memData
