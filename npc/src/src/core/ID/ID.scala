@@ -20,7 +20,7 @@ class ID extends Module {
   val branchSel = Wire(Bool())
 
   // pipeline ctrl
-  val readyGo    = true.B
+  val readyGo    = !io.exeMemReadEnable
   val idValid    = RegInit(false.B)
   val exeAllowin = io.id2exe.ready
   val idAllowin  = !idValid || (readyGo && exeAllowin)
