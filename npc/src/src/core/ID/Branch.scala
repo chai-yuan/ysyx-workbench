@@ -6,21 +6,21 @@ import config.Inst._
 
 class Branch extends Module {
   val io = IO(new Bundle {
-    val inst = Input(UInt(32.W))
+    val inst     = Input(UInt(32.W))
     val regData1 = Input(UInt(32.W))
     val regData2 = Input(UInt(32.W))
-    val imm = Input(UInt(32.W))
-    val pc = Input(UInt(32.W))
+    val imm      = Input(UInt(32.W))
+    val pc       = Input(UInt(32.W))
 
     val nextPCsel = Output(Bool())
-    val nextPC = Output(UInt(32.W))
+    val nextPC    = Output(UInt(32.W))
   })
 
   val inst = io.inst
-  val imm = io.imm
+  val imm  = io.imm
   val reg1 = io.regData1
   val reg2 = io.regData2
-  val pc = io.pc
+  val pc   = io.pc
 
   val nextPC = Lookup(
     inst,
@@ -64,6 +64,6 @@ class Branch extends Module {
     )
   )
 
-  io.nextPC := nextPC
+  io.nextPC    := nextPC
   io.nextPCsel := !(nextPC === pc + 4.U)
 }

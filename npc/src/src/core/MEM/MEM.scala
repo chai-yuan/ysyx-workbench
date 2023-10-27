@@ -27,7 +27,7 @@ class MEM extends Module {
   io.mem2wb.valid  := wbValid
   io.exe2mem.ready := memAllowin
 
-  // from if data
+  // from exe data
   val exe2mem = RegInit(0.U.asTypeOf(new EXE2MEMBundle))
   exe2mem := MuxCase(
     exe2mem,
@@ -38,7 +38,13 @@ class MEM extends Module {
   )
   val inst    = exe2mem.ifdata.inst
   val control = exe2mem.iddata.control
-  val memData = io.globalmem.memData
+
+  // mem wrap
+  val memReadWrap = Module(new DataMemReadWrap)
+  memReadWrap.io.control     := control
+  memReadWrap.io.rawReadData := io.globalmem.memData
+  memReadWrap.io.addr        := exe2mem.exedata.aluResult
+  val memData = memReadWrap.io.readData
 
   // to wb data
   val mem2wbData = Wire(new MEM2WBBundle)

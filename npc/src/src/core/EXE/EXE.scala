@@ -6,6 +6,7 @@ import core.ID._
 import core.MemBundle
 import config.AluSrcOp
 import config.WriteBackOp
+import core.MEM.DataMemWriteWrap
 
 class EXE extends Module {
   val io = IO(new Bundle {
@@ -63,13 +64,12 @@ class EXE extends Module {
   val aluResult = alu.io.out
 
   // mem
-  val memWrap = Module(new MemWrap)
-  memWrap.io.dataMem <> io.dataMem
-  memWrap.io.control <> control
-  memWrap.io.valid     := exeValid
-  memWrap.io.addr      := aluResult
-  memWrap.io.writeData := regData2
-  val readData = memWrap.io.readData
+  val writeMemWrap = Module(new DataMemWriteWrap)
+  writeMemWrap.io.dataMem <> io.dataMem
+  writeMemWrap.io.control   := control
+  writeMemWrap.io.addr      := aluResult
+  writeMemWrap.io.writeData := regData2
+  val rawReadData = writeMemWrap.io.rawReadData
 
   // to mem data
   val exe2mem = Wire(new EXE2MEMBundle)
@@ -80,7 +80,7 @@ class EXE extends Module {
   io.exe2mem.bits := exe2mem
 
   // exe2global
-  io.exe2global.globalmem.memData := readData
+  io.exe2global.globalmem.memData := rawReadData
 
   io.exe2global.forward.enable := (control.wbOp === WriteBackOp.WB_ALU) && exeValid
   io.exe2global.forward.wAddr  := inst(11, 7)
