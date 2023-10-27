@@ -267,24 +267,25 @@ endmodule
 module IF(	// @[<stdin>:22:10]
   input         clock,	// @[<stdin>:23:11]
                 reset,	// @[<stdin>:24:11]
-  input  [31:0] io_preif2if_bits_nextPC,	// @[src/src/core/IF/IF.scala:9:14]
-                io_preif2if_bits_instData,	// @[src/src/core/IF/IF.scala:9:14]
-  output        io_if2id_valid,	// @[src/src/core/IF/IF.scala:9:14]
-  output [31:0] io_if2id_bits_ifdata_pc,	// @[src/src/core/IF/IF.scala:9:14]
-                io_if2id_bits_ifdata_inst,	// @[src/src/core/IF/IF.scala:9:14]
-                io_if2global_pc	// @[src/src/core/IF/IF.scala:9:14]
+  input  [31:0] io_preif2if_bits_nextPC,	// @[src/src/core/IF/IF.scala:10:14]
+                io_preif2if_bits_instData,	// @[src/src/core/IF/IF.scala:10:14]
+  input         io_branch_branchSel,	// @[src/src/core/IF/IF.scala:10:14]
+  output        io_if2id_valid,	// @[src/src/core/IF/IF.scala:10:14]
+  output [31:0] io_if2id_bits_ifdata_pc,	// @[src/src/core/IF/IF.scala:10:14]
+                io_if2id_bits_ifdata_inst,	// @[src/src/core/IF/IF.scala:10:14]
+                io_if2global_pc	// @[src/src/core/IF/IF.scala:10:14]
 );
 
-  reg        ifValid;	// @[src/src/core/IF/IF.scala:17:26]
-  reg [31:0] pc;	// @[src/src/core/IF/IF.scala:29:19]
+  reg        ifValid;	// @[src/src/core/IF/IF.scala:19:26]
+  reg [31:0] pc;	// @[src/src/core/IF/IF.scala:31:19]
   always @(posedge clock) begin	// @[<stdin>:23:11]
     if (reset) begin	// @[<stdin>:23:11]
-      ifValid <= 1'h0;	// @[<stdin>:22:10, src/src/core/IF/IF.scala:17:26]
-      pc <= 32'h7FFFFFFC;	// @[src/src/core/IF/IF.scala:29:19]
+      ifValid <= 1'h0;	// @[<stdin>:22:10, src/src/core/IF/IF.scala:19:26]
+      pc <= 32'h7FFFFFFC;	// @[src/src/core/IF/IF.scala:31:19]
     end
     else begin	// @[<stdin>:23:11]
-      ifValid <= 1'h1;	// @[<stdin>:22:10, src/src/core/IF/IF.scala:17:26]
-      pc <= io_preif2if_bits_nextPC;	// @[src/src/core/IF/IF.scala:29:19]
+      ifValid <= 1'h1;	// @[<stdin>:22:10, src/src/core/IF/IF.scala:19:26]
+      pc <= io_preif2if_bits_nextPC;	// @[src/src/core/IF/IF.scala:31:19]
     end
   end // always @(posedge)
   `ifdef ENABLE_INITIAL_REG_	// @[<stdin>:22:10]
@@ -300,21 +301,21 @@ module IF(	// @[<stdin>:22:10]
         for (logic [1:0] i = 2'h0; i < 2'h2; i += 2'h1) begin
           _RANDOM[i[0]] = `RANDOM;	// @[<stdin>:22:10]
         end	// @[<stdin>:22:10]
-        ifValid = _RANDOM[1'h0][0];	// @[<stdin>:22:10, src/src/core/IF/IF.scala:17:26]
-        pc = {_RANDOM[1'h0][31:1], _RANDOM[1'h1][0]};	// @[<stdin>:22:10, src/src/core/IF/IF.scala:17:26, :29:19]
+        ifValid = _RANDOM[1'h0][0];	// @[<stdin>:22:10, src/src/core/IF/IF.scala:19:26]
+        pc = {_RANDOM[1'h0][31:1], _RANDOM[1'h1][0]};	// @[<stdin>:22:10, src/src/core/IF/IF.scala:19:26, :31:19]
       `endif // RANDOMIZE_REG_INIT
     end // initial
     `ifdef FIRRTL_AFTER_INITIAL	// @[<stdin>:22:10]
       `FIRRTL_AFTER_INITIAL	// @[<stdin>:22:10]
     `endif // FIRRTL_AFTER_INITIAL
   `endif // ENABLE_INITIAL_REG_
-  assign io_if2id_valid = ifValid;	// @[<stdin>:22:10, src/src/core/IF/IF.scala:17:26]
-  assign io_if2id_bits_ifdata_pc = pc;	// @[<stdin>:22:10, src/src/core/IF/IF.scala:29:19]
+  assign io_if2id_valid = ifValid & ~io_branch_branchSel;	// @[<stdin>:22:10, src/src/core/IF/IF.scala:19:26, :23:{36,39}]
+  assign io_if2id_bits_ifdata_pc = pc;	// @[<stdin>:22:10, src/src/core/IF/IF.scala:31:19]
   assign io_if2id_bits_ifdata_inst = io_preif2if_bits_instData;	// @[<stdin>:22:10]
-  assign io_if2global_pc = pc;	// @[<stdin>:22:10, src/src/core/IF/IF.scala:29:19]
+  assign io_if2global_pc = pc;	// @[<stdin>:22:10, src/src/core/IF/IF.scala:31:19]
 endmodule
 
-module Control(	// @[<stdin>:48:10]
+module Control(	// @[<stdin>:50:10]
   input  [31:0] io_inst,	// @[src/src/core/ID/Control.scala:25:14]
   output [3:0]  io_outControl_instType,	// @[src/src/core/ID/Control.scala:25:14]
   output [1:0]  io_outControl_src1Op,	// @[src/src/core/ID/Control.scala:25:14]
@@ -345,14 +346,14 @@ module Control(	// @[<stdin>:48:10]
                   ? 4'h3
                   : io_inst[6:0] == 7'h6F
                       ? 4'h5
-                      : {1'h0, io_inst[6:0] == 7'h37 | io_inst[6:0] == 7'h17, 2'h0};	// @[<stdin>:48:10, src/main/scala/chisel3/util/Mux.scala:141:16, src/src/core/ID/Control.scala:30:23, :39:{13,29}, :46:15, :47:{15,42}, :114:42, :123:{69,86,96}, :125:15, :126:15, :127:{15,32,42}]
+                      : {1'h0, io_inst[6:0] == 7'h37 | io_inst[6:0] == 7'h17, 2'h0};	// @[<stdin>:50:10, src/main/scala/chisel3/util/Mux.scala:141:16, src/src/core/ID/Control.scala:30:23, :39:{13,29}, :46:15, :47:{15,42}, :114:42, :123:{69,86,96}, :125:15, :126:15, :127:{15,32,42}]
   assign io_outControl_src1Op =
     io_inst[6:0] == 7'h17
       ? 2'h1
-      : io_inst[6:0] == 7'h6F | _GEN == 10'h67 ? 2'h2 : {2{io_inst[6:0] == 7'h37}};	// @[<stdin>:48:10, src/main/scala/chisel3/util/Mux.scala:141:16, src/src/core/ID/Control.scala:38:13, :39:{13,21,29}, :40:13, :127:{15,42}]
+      : io_inst[6:0] == 7'h6F | _GEN == 10'h67 ? 2'h2 : {2{io_inst[6:0] == 7'h37}};	// @[<stdin>:50:10, src/main/scala/chisel3/util/Mux.scala:141:16, src/src/core/ID/Control.scala:38:13, :39:{13,21,29}, :40:13, :127:{15,42}]
   assign io_outControl_src2Op =
     {2{_io_outControl_instType_T_1 | _io_outControl_instType_T_2
-         | _io_outControl_instType_T_8 | io_inst[6:0] == 7'h17}};	// @[<stdin>:48:10, src/main/scala/chisel3/util/Mux.scala:141:16, src/src/core/ID/Control.scala:38:13, :46:15, :47:{15,42}, :48:13, :127:42]
+         | _io_outControl_instType_T_8 | io_inst[6:0] == 7'h17}};	// @[<stdin>:50:10, src/main/scala/chisel3/util/Mux.scala:141:16, src/src/core/ID/Control.scala:38:13, :46:15, :47:{15,42}, :48:13, :127:42]
   assign io_outControl_aluOp =
     io_inst[6:0] == 7'h37 | _GEN == 10'hF3 | _GEN == 10'h173 | io_inst[6:0] == 7'h6F
     | _GEN == 10'h67
@@ -379,7 +380,7 @@ module Control(	// @[<stdin>:48:10]
                                           ? 7'h9
                                           : _GEN_0 == 17'h82B3 | _GEN_0 == 17'h8293
                                               ? 7'hA
-                                              : 7'h0;	// @[<stdin>:48:10, src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39, src/src/core/ID/Control.scala:38:13, :39:{13,29}, :127:{15,42}]
+                                              : 7'h0;	// @[<stdin>:50:10, src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39, src/src/core/ID/Control.scala:38:13, :39:{13,29}, :127:{15,42}]
   assign io_outControl_memOp =
     _GEN == 10'h3
       ? 3'h1
@@ -393,20 +394,20 @@ module Control(	// @[<stdin>:48:10]
                       ? 3'h5
                       : _GEN == 10'h23
                           ? 3'h1
-                          : _GEN == 10'hA3 ? 3'h3 : _GEN == 10'h123 ? 3'h5 : 3'h0;	// @[<stdin>:48:10, src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39, src/src/core/ID/Control.scala:39:29]
-  assign io_outControl_memReadEn = _io_outControl_instType_T_2;	// @[<stdin>:48:10, src/src/core/ID/Control.scala:47:15]
-  assign io_outControl_memWriteEn = _io_outControl_instType_T_8;	// @[<stdin>:48:10, src/src/core/ID/Control.scala:47:42]
+                          : _GEN == 10'hA3 ? 3'h3 : _GEN == 10'h123 ? 3'h5 : 3'h0;	// @[<stdin>:50:10, src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39, src/src/core/ID/Control.scala:39:29]
+  assign io_outControl_memReadEn = _io_outControl_instType_T_2;	// @[<stdin>:50:10, src/src/core/ID/Control.scala:47:15]
+  assign io_outControl_memWriteEn = _io_outControl_instType_T_8;	// @[<stdin>:50:10, src/src/core/ID/Control.scala:47:42]
   assign io_outControl_wbOp =
     _io_outControl_instType_T_2
       ? 2'h2
       : {1'h0,
          _io_outControl_instType_T_1 | _io_outControl_instType_T | io_inst[6:0] == 7'h6F
-           | _GEN == 10'h67 | io_inst[6:0] == 7'h37 | io_inst[6:0] == 7'h17};	// @[<stdin>:48:10, src/main/scala/chisel3/util/Mux.scala:141:16, src/src/core/ID/Control.scala:38:13, :39:{13,29}, :46:15, :47:15, :114:42, :115:{13,29,46,62}, :127:{15,42}]
-  assign io_outControl_halt = io_inst == 32'h100073;	// @[<stdin>:48:10, src/src/core/ID/Control.scala:131:30]
+           | _GEN == 10'h67 | io_inst[6:0] == 7'h37 | io_inst[6:0] == 7'h17};	// @[<stdin>:50:10, src/main/scala/chisel3/util/Mux.scala:141:16, src/src/core/ID/Control.scala:38:13, :39:{13,29}, :46:15, :47:15, :114:42, :115:{13,29,46,62}, :127:{15,42}]
+  assign io_outControl_halt = io_inst == 32'h100073;	// @[<stdin>:50:10, src/src/core/ID/Control.scala:131:30]
 endmodule
 
-module Registers(	// @[<stdin>:252:10]
-  input         clock,	// @[<stdin>:253:11]
+module Registers(	// @[<stdin>:254:10]
+  input         clock,	// @[<stdin>:255:11]
                 io_wen,	// @[src/src/core/ID/Registers.scala:7:14]
   input  [4:0]  io_waddr,	// @[src/src/core/ID/Registers.scala:7:14]
   input  [31:0] io_wdata,	// @[src/src/core/ID/Registers.scala:7:14]
@@ -451,103 +452,103 @@ module Registers(	// @[<stdin>:252:10]
   wire [31:0] _regfile_ext_R32_data;	// @[src/src/core/ID/Registers.scala:19:20]
   regfile_combMem regfile_ext (	// @[src/src/core/ID/Registers.scala:19:20]
     .R0_addr  (5'hA),	// @[src/src/core/ID/Registers.scala:31:27]
-    .R0_en    (1'h1),	// @[<stdin>:252:10]
+    .R0_en    (1'h1),	// @[<stdin>:254:10]
     .R0_clk   (clock),
     .R1_addr  (5'hB),	// @[src/src/core/ID/Registers.scala:31:27]
-    .R1_en    (1'h1),	// @[<stdin>:252:10]
+    .R1_en    (1'h1),	// @[<stdin>:254:10]
     .R1_clk   (clock),
     .R2_addr  (5'hC),	// @[src/src/core/ID/Registers.scala:31:27]
-    .R2_en    (1'h1),	// @[<stdin>:252:10]
+    .R2_en    (1'h1),	// @[<stdin>:254:10]
     .R2_clk   (clock),
     .R3_addr  (5'hD),	// @[src/src/core/ID/Registers.scala:31:27]
-    .R3_en    (1'h1),	// @[<stdin>:252:10]
+    .R3_en    (1'h1),	// @[<stdin>:254:10]
     .R3_clk   (clock),
     .R4_addr  (5'hE),	// @[src/src/core/ID/Registers.scala:31:27]
-    .R4_en    (1'h1),	// @[<stdin>:252:10]
+    .R4_en    (1'h1),	// @[<stdin>:254:10]
     .R4_clk   (clock),
     .R5_addr  (5'hF),	// @[src/src/core/ID/Registers.scala:31:27]
-    .R5_en    (1'h1),	// @[<stdin>:252:10]
+    .R5_en    (1'h1),	// @[<stdin>:254:10]
     .R5_clk   (clock),
     .R6_addr  (5'h10),	// @[src/src/core/ID/Registers.scala:31:27]
-    .R6_en    (1'h1),	// @[<stdin>:252:10]
+    .R6_en    (1'h1),	// @[<stdin>:254:10]
     .R6_clk   (clock),
     .R7_addr  (5'h11),	// @[src/src/core/ID/Registers.scala:31:27]
-    .R7_en    (1'h1),	// @[<stdin>:252:10]
+    .R7_en    (1'h1),	// @[<stdin>:254:10]
     .R7_clk   (clock),
     .R8_addr  (5'h12),	// @[src/src/core/ID/Registers.scala:31:27]
-    .R8_en    (1'h1),	// @[<stdin>:252:10]
+    .R8_en    (1'h1),	// @[<stdin>:254:10]
     .R8_clk   (clock),
     .R9_addr  (5'h13),	// @[src/src/core/ID/Registers.scala:31:27]
-    .R9_en    (1'h1),	// @[<stdin>:252:10]
+    .R9_en    (1'h1),	// @[<stdin>:254:10]
     .R9_clk   (clock),
     .R10_addr (5'h1),	// @[src/src/core/ID/Registers.scala:31:27]
-    .R10_en   (1'h1),	// @[<stdin>:252:10]
+    .R10_en   (1'h1),	// @[<stdin>:254:10]
     .R10_clk  (clock),
     .R11_addr (5'h14),	// @[src/src/core/ID/Registers.scala:31:27]
-    .R11_en   (1'h1),	// @[<stdin>:252:10]
+    .R11_en   (1'h1),	// @[<stdin>:254:10]
     .R11_clk  (clock),
     .R12_addr (5'h15),	// @[src/src/core/ID/Registers.scala:31:27]
-    .R12_en   (1'h1),	// @[<stdin>:252:10]
+    .R12_en   (1'h1),	// @[<stdin>:254:10]
     .R12_clk  (clock),
     .R13_addr (5'h16),	// @[src/src/core/ID/Registers.scala:31:27]
-    .R13_en   (1'h1),	// @[<stdin>:252:10]
+    .R13_en   (1'h1),	// @[<stdin>:254:10]
     .R13_clk  (clock),
     .R14_addr (5'h17),	// @[src/src/core/ID/Registers.scala:31:27]
-    .R14_en   (1'h1),	// @[<stdin>:252:10]
+    .R14_en   (1'h1),	// @[<stdin>:254:10]
     .R14_clk  (clock),
     .R15_addr (5'h18),	// @[src/src/core/ID/Registers.scala:31:27]
-    .R15_en   (1'h1),	// @[<stdin>:252:10]
+    .R15_en   (1'h1),	// @[<stdin>:254:10]
     .R15_clk  (clock),
     .R16_addr (5'h19),	// @[src/src/core/ID/Registers.scala:31:27]
-    .R16_en   (1'h1),	// @[<stdin>:252:10]
+    .R16_en   (1'h1),	// @[<stdin>:254:10]
     .R16_clk  (clock),
     .R17_addr (5'h1A),	// @[src/src/core/ID/Registers.scala:31:27]
-    .R17_en   (1'h1),	// @[<stdin>:252:10]
+    .R17_en   (1'h1),	// @[<stdin>:254:10]
     .R17_clk  (clock),
     .R18_addr (5'h1B),	// @[src/src/core/ID/Registers.scala:31:27]
-    .R18_en   (1'h1),	// @[<stdin>:252:10]
+    .R18_en   (1'h1),	// @[<stdin>:254:10]
     .R18_clk  (clock),
     .R19_addr (5'h1C),	// @[src/src/core/ID/Registers.scala:31:27]
-    .R19_en   (1'h1),	// @[<stdin>:252:10]
+    .R19_en   (1'h1),	// @[<stdin>:254:10]
     .R19_clk  (clock),
     .R20_addr (5'h1D),	// @[src/src/core/ID/Registers.scala:31:27]
-    .R20_en   (1'h1),	// @[<stdin>:252:10]
+    .R20_en   (1'h1),	// @[<stdin>:254:10]
     .R20_clk  (clock),
     .R21_addr (5'h2),	// @[src/src/core/ID/Registers.scala:31:27]
-    .R21_en   (1'h1),	// @[<stdin>:252:10]
+    .R21_en   (1'h1),	// @[<stdin>:254:10]
     .R21_clk  (clock),
     .R22_addr (5'h1E),	// @[src/src/core/ID/Registers.scala:31:27]
-    .R22_en   (1'h1),	// @[<stdin>:252:10]
+    .R22_en   (1'h1),	// @[<stdin>:254:10]
     .R22_clk  (clock),
     .R23_addr (5'h1F),	// @[src/src/core/ID/Registers.scala:31:27]
-    .R23_en   (1'h1),	// @[<stdin>:252:10]
+    .R23_en   (1'h1),	// @[<stdin>:254:10]
     .R23_clk  (clock),
     .R24_addr (5'h3),	// @[src/src/core/ID/Registers.scala:31:27]
-    .R24_en   (1'h1),	// @[<stdin>:252:10]
+    .R24_en   (1'h1),	// @[<stdin>:254:10]
     .R24_clk  (clock),
     .R25_addr (5'h4),	// @[src/src/core/ID/Registers.scala:31:27]
-    .R25_en   (1'h1),	// @[<stdin>:252:10]
+    .R25_en   (1'h1),	// @[<stdin>:254:10]
     .R25_clk  (clock),
     .R26_addr (5'h5),	// @[src/src/core/ID/Registers.scala:31:27]
-    .R26_en   (1'h1),	// @[<stdin>:252:10]
+    .R26_en   (1'h1),	// @[<stdin>:254:10]
     .R26_clk  (clock),
     .R27_addr (5'h6),	// @[src/src/core/ID/Registers.scala:31:27]
-    .R27_en   (1'h1),	// @[<stdin>:252:10]
+    .R27_en   (1'h1),	// @[<stdin>:254:10]
     .R27_clk  (clock),
     .R28_addr (5'h7),	// @[src/src/core/ID/Registers.scala:31:27]
-    .R28_en   (1'h1),	// @[<stdin>:252:10]
+    .R28_en   (1'h1),	// @[<stdin>:254:10]
     .R28_clk  (clock),
     .R29_addr (5'h8),	// @[src/src/core/ID/Registers.scala:31:27]
-    .R29_en   (1'h1),	// @[<stdin>:252:10]
+    .R29_en   (1'h1),	// @[<stdin>:254:10]
     .R29_clk  (clock),
     .R30_addr (5'h9),	// @[src/src/core/ID/Registers.scala:31:27]
-    .R30_en   (1'h1),	// @[<stdin>:252:10]
+    .R30_en   (1'h1),	// @[<stdin>:254:10]
     .R30_clk  (clock),
     .R31_addr (io_raddr1),
-    .R31_en   (1'h1),	// @[<stdin>:252:10]
+    .R31_en   (1'h1),	// @[<stdin>:254:10]
     .R31_clk  (clock),
     .R32_addr (io_raddr2),
-    .R32_en   (1'h1),	// @[<stdin>:252:10]
+    .R32_en   (1'h1),	// @[<stdin>:254:10]
     .R32_clk  (clock),
     .W0_addr  (io_waddr),
     .W0_en    (io_wen),
@@ -590,15 +591,15 @@ module Registers(	// @[<stdin>:252:10]
   assign io_rdata1 =
     (|io_raddr1)
       ? (io_raddr1 == io_waddr & io_wen ? io_wdata : _regfile_ext_R31_data)
-      : 32'h0;	// @[<stdin>:252:10, src/src/core/ID/Registers.scala:19:20, :26:{19,30,38,50,64}, :29:15]
+      : 32'h0;	// @[<stdin>:254:10, src/src/core/ID/Registers.scala:19:20, :26:{19,30,38,50,64}, :29:15]
   assign io_rdata2 =
     (|io_raddr2)
       ? (io_raddr2 == io_waddr & io_wen ? io_wdata : _regfile_ext_R32_data)
-      : 32'h0;	// @[<stdin>:252:10, src/src/core/ID/Registers.scala:19:20, :27:{19,30,38,50,64}, :29:15]
+      : 32'h0;	// @[<stdin>:254:10, src/src/core/ID/Registers.scala:19:20, :27:{19,30,38,50,64}, :29:15]
 endmodule
 
-module Forward(	// @[<stdin>:339:10]
-  input         clock,	// @[<stdin>:340:11]
+module Forward(	// @[<stdin>:341:10]
+  input         clock,	// @[<stdin>:342:11]
                 io_exeForward_enable,	// @[src/src/core/ID/Forward.scala:8:14]
   input  [4:0]  io_exeForward_wAddr,	// @[src/src/core/ID/Forward.scala:8:14]
   input  [31:0] io_exeForward_wData,	// @[src/src/core/ID/Forward.scala:8:14]
@@ -693,16 +694,16 @@ module Forward(	// @[<stdin>:339:10]
       ? io_exeForward_wData
       : io_memForward_enable & io_memForward_wAddr == io_addr1
           ? io_memForward_wData
-          : _regs_io_rdata1;	// @[<stdin>:339:10, src/main/scala/chisel3/util/Mux.scala:141:16, src/src/core/ID/Forward.scala:21:20, :31:{29,53}, :32:{29,53}]
+          : _regs_io_rdata1;	// @[<stdin>:341:10, src/main/scala/chisel3/util/Mux.scala:141:16, src/src/core/ID/Forward.scala:21:20, :31:{29,53}, :32:{29,53}]
   assign io_data2 =
     io_exeForward_enable & io_exeForward_wAddr == io_addr2
       ? io_exeForward_wData
       : io_memForward_enable & io_memForward_wAddr == io_addr2
           ? io_memForward_wData
-          : _regs_io_rdata2;	// @[<stdin>:339:10, src/main/scala/chisel3/util/Mux.scala:141:16, src/src/core/ID/Forward.scala:21:20, :38:{29,53}, :39:{29,53}]
+          : _regs_io_rdata2;	// @[<stdin>:341:10, src/main/scala/chisel3/util/Mux.scala:141:16, src/src/core/ID/Forward.scala:21:20, :38:{29,53}, :39:{29,53}]
 endmodule
 
-module ImmGen(	// @[<stdin>:368:10]
+module ImmGen(	// @[<stdin>:370:10]
   input  [31:0] io_inst,	// @[src/src/core/ID/ImmGen.scala:14:14]
   input  [3:0]  io_instType,	// @[src/src/core/ID/ImmGen.scala:14:14]
   output [31:0] io_imm	// @[src/src/core/ID/ImmGen.scala:14:14]
@@ -723,10 +724,10 @@ module ImmGen(	// @[<stdin>:368:10]
                          io_inst[20],
                          io_inst[30:21],
                          1'h0}
-                      : 32'h0;	// @[<stdin>:368:10, src/main/scala/chisel3/util/Mux.scala:141:16, src/src/core/ID/ImmGen.scala:16:21, :19:14, :20:14, :23:17, :25:14, :26:14, :27:14, :28:14, :32:17, :34:14, :35:11, :41:14, :42:14, :43:14, :51:{20,46,51,60}, :52:{20,46,51,60}, :53:{20,46}, :54:20, :55:{20,46}]
+                      : 32'h0;	// @[<stdin>:370:10, src/main/scala/chisel3/util/Mux.scala:141:16, src/src/core/ID/ImmGen.scala:16:21, :19:14, :20:14, :23:17, :25:14, :26:14, :27:14, :28:14, :32:17, :34:14, :35:11, :41:14, :42:14, :43:14, :51:{20,46,51,60}, :52:{20,46,51,60}, :53:{20,46}, :54:20, :55:{20,46}]
 endmodule
 
-module Branch(	// @[<stdin>:424:10]
+module Branch(	// @[<stdin>:426:10]
   input  [31:0] io_inst,	// @[src/src/core/ID/Branch.scala:8:14]
                 io_regData1,	// @[src/src/core/ID/Branch.scala:8:14]
                 io_regData2,	// @[src/src/core/ID/Branch.scala:8:14]
@@ -757,13 +758,13 @@ module Branch(	// @[<stdin>:424:10]
                                : _GEN == 10'h3E3 & io_regData1 >= io_regData2)
               ? _nextPC_T_3
               : _nextPC_T_1;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39, src/src/core/ID/Branch.scala:27:8, :30:25, :31:28, :33:17, :34:21, :38:17, :39:21, :43:17, :44:21, :48:17, :49:21, :53:18, :54:21, :59:21]
-  assign io_nextPCsel = nextPC != _nextPC_T_1;	// @[<stdin>:424:10, src/main/scala/chisel3/util/Lookup.scala:34:39, src/src/core/ID/Branch.scala:27:8, :68:28]
-  assign io_nextPC = nextPC;	// @[<stdin>:424:10, src/main/scala/chisel3/util/Lookup.scala:34:39]
+  assign io_nextPCsel = nextPC != _nextPC_T_1;	// @[<stdin>:426:10, src/main/scala/chisel3/util/Lookup.scala:34:39, src/src/core/ID/Branch.scala:27:8, :68:28]
+  assign io_nextPC = nextPC;	// @[<stdin>:426:10, src/main/scala/chisel3/util/Lookup.scala:34:39]
 endmodule
 
-module ID(	// @[<stdin>:506:10]
-  input         clock,	// @[<stdin>:507:11]
-                reset,	// @[<stdin>:508:11]
+module ID(	// @[<stdin>:508:10]
+  input         clock,	// @[<stdin>:509:11]
+                reset,	// @[<stdin>:510:11]
                 io_if2id_valid,	// @[src/src/core/ID/ID.scala:10:14]
   input  [31:0] io_if2id_bits_ifdata_pc,	// @[src/src/core/ID/ID.scala:10:14]
                 io_if2id_bits_ifdata_inst,	// @[src/src/core/ID/ID.scala:10:14]
@@ -825,53 +826,55 @@ module ID(	// @[<stdin>:506:10]
                 io_id2global_debugRegs_31	// @[src/src/core/ID/ID.scala:10:14]
 );
 
-  wire        _branch_io_nextPCsel;	// @[src/src/core/ID/ID.scala:63:22]
-  wire [31:0] _immGen_io_imm;	// @[src/src/core/ID/ID.scala:58:22]
-  wire [31:0] _forward_io_data1;	// @[src/src/core/ID/ID.scala:49:23]
-  wire [31:0] _forward_io_data2;	// @[src/src/core/ID/ID.scala:49:23]
-  wire [3:0]  _control_io_outControl_instType;	// @[src/src/core/ID/ID.scala:45:23]
-  reg         idValid;	// @[src/src/core/ID/ID.scala:23:27]
-  reg  [31:0] if2id_ifdata_pc;	// @[src/src/core/ID/ID.scala:39:22]
-  reg  [31:0] if2id_ifdata_inst;	// @[src/src/core/ID/ID.scala:39:22]
-  wire        branchSel = _branch_io_nextPCsel & idValid;	// @[src/src/core/ID/ID.scala:23:27, :63:22, :70:36]
-  always @(posedge clock) begin	// @[<stdin>:507:11]
-    if (reset) begin	// @[<stdin>:507:11]
-      idValid <= 1'h0;	// @[src/src/core/ID/ID.scala:23:27]
-      if2id_ifdata_pc <= 32'h0;	// @[src/src/core/ID/ID.scala:10:14, :39:22, :49:23]
-      if2id_ifdata_inst <= 32'h0;	// @[src/src/core/ID/ID.scala:10:14, :39:22, :49:23]
+  wire [31:0] _immGen_io_imm;	// @[src/src/core/ID/ID.scala:59:22]
+  wire [31:0] _forward_io_data1;	// @[src/src/core/ID/ID.scala:50:23]
+  wire [31:0] _forward_io_data2;	// @[src/src/core/ID/ID.scala:50:23]
+  wire [3:0]  _control_io_outControl_instType;	// @[src/src/core/ID/ID.scala:46:23]
+  reg         idValid;	// @[src/src/core/ID/ID.scala:24:27]
+  reg  [31:0] if2id_ifdata_pc;	// @[src/src/core/ID/ID.scala:34:22]
+  reg  [31:0] if2id_ifdata_inst;	// @[src/src/core/ID/ID.scala:34:22]
+  always @(posedge clock) begin	// @[<stdin>:509:11]
+    if (reset) begin	// @[<stdin>:509:11]
+      idValid <= 1'h0;	// @[src/src/core/ID/ID.scala:24:27]
+      if2id_ifdata_pc <= 32'h0;	// @[src/src/core/ID/ID.scala:10:14, :34:22, :50:23]
+      if2id_ifdata_inst <= 32'h0;	// @[src/src/core/ID/ID.scala:10:14, :34:22, :50:23]
     end
-    else begin	// @[<stdin>:507:11]
-      idValid <= ~branchSel & io_if2id_valid;	// @[src/main/scala/chisel3/util/Mux.scala:141:16, src/src/core/ID/ID.scala:23:27, :70:36]
+    else begin	// @[<stdin>:509:11]
+      idValid <= io_if2id_valid;	// @[src/src/core/ID/ID.scala:24:27]
       if (io_if2id_valid) begin	// @[src/src/core/ID/ID.scala:10:14]
-        if2id_ifdata_pc <= io_if2id_bits_ifdata_pc;	// @[src/src/core/ID/ID.scala:39:22]
-        if2id_ifdata_inst <= io_if2id_bits_ifdata_inst;	// @[src/src/core/ID/ID.scala:39:22]
+        if2id_ifdata_pc <= io_if2id_bits_ifdata_pc;	// @[src/src/core/ID/ID.scala:34:22]
+        if2id_ifdata_inst <= io_if2id_bits_ifdata_inst;	// @[src/src/core/ID/ID.scala:34:22]
+      end
+      else begin	// @[src/src/core/ID/ID.scala:10:14]
+        if2id_ifdata_pc <= 32'h0;	// @[src/src/core/ID/ID.scala:10:14, :34:22, :50:23]
+        if2id_ifdata_inst <= 32'h0;	// @[src/src/core/ID/ID.scala:10:14, :34:22, :50:23]
       end
     end
   end // always @(posedge)
-  `ifdef ENABLE_INITIAL_REG_	// @[<stdin>:506:10]
-    `ifdef FIRRTL_BEFORE_INITIAL	// @[<stdin>:506:10]
-      `FIRRTL_BEFORE_INITIAL	// @[<stdin>:506:10]
+  `ifdef ENABLE_INITIAL_REG_	// @[<stdin>:508:10]
+    `ifdef FIRRTL_BEFORE_INITIAL	// @[<stdin>:508:10]
+      `FIRRTL_BEFORE_INITIAL	// @[<stdin>:508:10]
     `endif // FIRRTL_BEFORE_INITIAL
-    logic [31:0] _RANDOM[0:2];	// @[<stdin>:506:10]
-    initial begin	// @[<stdin>:506:10]
-      `ifdef INIT_RANDOM_PROLOG_	// @[<stdin>:506:10]
-        `INIT_RANDOM_PROLOG_	// @[<stdin>:506:10]
+    logic [31:0] _RANDOM[0:2];	// @[<stdin>:508:10]
+    initial begin	// @[<stdin>:508:10]
+      `ifdef INIT_RANDOM_PROLOG_	// @[<stdin>:508:10]
+        `INIT_RANDOM_PROLOG_	// @[<stdin>:508:10]
       `endif // INIT_RANDOM_PROLOG_
-      `ifdef RANDOMIZE_REG_INIT	// @[<stdin>:506:10]
+      `ifdef RANDOMIZE_REG_INIT	// @[<stdin>:508:10]
         for (logic [1:0] i = 2'h0; i < 2'h3; i += 2'h1) begin
-          _RANDOM[i] = `RANDOM;	// @[<stdin>:506:10]
-        end	// @[<stdin>:506:10]
-        idValid = _RANDOM[2'h0][0];	// @[<stdin>:506:10, src/src/core/ID/ID.scala:23:27]
-        if2id_ifdata_pc = {_RANDOM[2'h0][31:1], _RANDOM[2'h1][0]};	// @[<stdin>:506:10, src/src/core/ID/ID.scala:23:27, :39:22]
-        if2id_ifdata_inst = {_RANDOM[2'h1][31:1], _RANDOM[2'h2][0]};	// @[<stdin>:506:10, src/src/core/ID/ID.scala:39:22]
+          _RANDOM[i] = `RANDOM;	// @[<stdin>:508:10]
+        end	// @[<stdin>:508:10]
+        idValid = _RANDOM[2'h0][0];	// @[<stdin>:508:10, src/src/core/ID/ID.scala:24:27]
+        if2id_ifdata_pc = {_RANDOM[2'h0][31:1], _RANDOM[2'h1][0]};	// @[<stdin>:508:10, src/src/core/ID/ID.scala:24:27, :34:22]
+        if2id_ifdata_inst = {_RANDOM[2'h1][31:1], _RANDOM[2'h2][0]};	// @[<stdin>:508:10, src/src/core/ID/ID.scala:34:22]
       `endif // RANDOMIZE_REG_INIT
     end // initial
-    `ifdef FIRRTL_AFTER_INITIAL	// @[<stdin>:506:10]
-      `FIRRTL_AFTER_INITIAL	// @[<stdin>:506:10]
+    `ifdef FIRRTL_AFTER_INITIAL	// @[<stdin>:508:10]
+      `FIRRTL_AFTER_INITIAL	// @[<stdin>:508:10]
     `endif // FIRRTL_AFTER_INITIAL
   `endif // ENABLE_INITIAL_REG_
-  Control control (	// @[src/src/core/ID/ID.scala:45:23]
-    .io_inst                  (if2id_ifdata_inst),	// @[src/src/core/ID/ID.scala:39:22]
+  Control control (	// @[src/src/core/ID/ID.scala:46:23]
+    .io_inst                  (if2id_ifdata_inst),	// @[src/src/core/ID/ID.scala:34:22]
     .io_outControl_instType   (_control_io_outControl_instType),
     .io_outControl_src1Op     (io_id2exe_bits_iddata_control_src1Op),
     .io_outControl_src2Op     (io_id2exe_bits_iddata_control_src2Op),
@@ -882,7 +885,7 @@ module ID(	// @[<stdin>:506:10]
     .io_outControl_wbOp       (io_id2exe_bits_iddata_control_wbOp),
     .io_outControl_halt       (io_id2exe_bits_iddata_control_halt)
   );
-  Forward forward (	// @[src/src/core/ID/ID.scala:49:23]
+  Forward forward (	// @[src/src/core/ID/ID.scala:50:23]
     .clock                (clock),
     .io_exeForward_enable (io_exeForward_enable),
     .io_exeForward_wAddr  (io_exeForward_wAddr),
@@ -893,8 +896,8 @@ module ID(	// @[<stdin>:506:10]
     .io_writeBack_enable  (io_writeBack_enable),
     .io_writeBack_wAddr   (io_writeBack_wAddr),
     .io_writeBack_wData   (io_writeBack_wData),
-    .io_addr1             (if2id_ifdata_inst[19:15]),	// @[src/src/core/ID/ID.scala:39:22, :50:32]
-    .io_addr2             (if2id_ifdata_inst[24:20]),	// @[src/src/core/ID/ID.scala:39:22, :51:32]
+    .io_addr1             (if2id_ifdata_inst[19:15]),	// @[src/src/core/ID/ID.scala:34:22, :51:32]
+    .io_addr2             (if2id_ifdata_inst[24:20]),	// @[src/src/core/ID/ID.scala:34:22, :52:32]
     .io_data1             (_forward_io_data1),
     .io_data2             (_forward_io_data2),
     .io_debugRegs_1       (io_id2global_debugRegs_1),
@@ -929,30 +932,29 @@ module ID(	// @[<stdin>:506:10]
     .io_debugRegs_30      (io_id2global_debugRegs_30),
     .io_debugRegs_31      (io_id2global_debugRegs_31)
   );
-  ImmGen immGen (	// @[src/src/core/ID/ID.scala:58:22]
-    .io_inst     (if2id_ifdata_inst),	// @[src/src/core/ID/ID.scala:39:22]
-    .io_instType (_control_io_outControl_instType),	// @[src/src/core/ID/ID.scala:45:23]
+  ImmGen immGen (	// @[src/src/core/ID/ID.scala:59:22]
+    .io_inst     (if2id_ifdata_inst),	// @[src/src/core/ID/ID.scala:34:22]
+    .io_instType (_control_io_outControl_instType),	// @[src/src/core/ID/ID.scala:46:23]
     .io_imm      (_immGen_io_imm)
   );
-  Branch branch (	// @[src/src/core/ID/ID.scala:63:22]
-    .io_inst      (if2id_ifdata_inst),	// @[src/src/core/ID/ID.scala:39:22]
-    .io_regData1  (_forward_io_data1),	// @[src/src/core/ID/ID.scala:49:23]
-    .io_regData2  (_forward_io_data2),	// @[src/src/core/ID/ID.scala:49:23]
-    .io_imm       (_immGen_io_imm),	// @[src/src/core/ID/ID.scala:58:22]
-    .io_pc        (if2id_ifdata_pc),	// @[src/src/core/ID/ID.scala:39:22]
-    .io_nextPCsel (_branch_io_nextPCsel),
+  Branch branch (	// @[src/src/core/ID/ID.scala:64:22]
+    .io_inst      (if2id_ifdata_inst),	// @[src/src/core/ID/ID.scala:34:22]
+    .io_regData1  (_forward_io_data1),	// @[src/src/core/ID/ID.scala:50:23]
+    .io_regData2  (_forward_io_data2),	// @[src/src/core/ID/ID.scala:50:23]
+    .io_imm       (_immGen_io_imm),	// @[src/src/core/ID/ID.scala:59:22]
+    .io_pc        (if2id_ifdata_pc),	// @[src/src/core/ID/ID.scala:34:22]
+    .io_nextPCsel (io_id2global_branch_branchSel),
     .io_nextPC    (io_id2global_branch_branchTarget)
   );
-  assign io_id2exe_valid = idValid;	// @[<stdin>:506:10, src/src/core/ID/ID.scala:23:27]
-  assign io_id2exe_bits_ifdata_pc = if2id_ifdata_pc;	// @[<stdin>:506:10, src/src/core/ID/ID.scala:39:22]
-  assign io_id2exe_bits_ifdata_inst = if2id_ifdata_inst;	// @[<stdin>:506:10, src/src/core/ID/ID.scala:39:22]
-  assign io_id2exe_bits_iddata_reg1 = _forward_io_data1;	// @[<stdin>:506:10, src/src/core/ID/ID.scala:49:23]
-  assign io_id2exe_bits_iddata_reg2 = _forward_io_data2;	// @[<stdin>:506:10, src/src/core/ID/ID.scala:49:23]
-  assign io_id2exe_bits_iddata_imm = _immGen_io_imm;	// @[<stdin>:506:10, src/src/core/ID/ID.scala:58:22]
-  assign io_id2global_branch_branchSel = branchSel;	// @[<stdin>:506:10, src/src/core/ID/ID.scala:70:36]
+  assign io_id2exe_valid = idValid;	// @[<stdin>:508:10, src/src/core/ID/ID.scala:24:27]
+  assign io_id2exe_bits_ifdata_pc = if2id_ifdata_pc;	// @[<stdin>:508:10, src/src/core/ID/ID.scala:34:22]
+  assign io_id2exe_bits_ifdata_inst = if2id_ifdata_inst;	// @[<stdin>:508:10, src/src/core/ID/ID.scala:34:22]
+  assign io_id2exe_bits_iddata_reg1 = _forward_io_data1;	// @[<stdin>:508:10, src/src/core/ID/ID.scala:50:23]
+  assign io_id2exe_bits_iddata_reg2 = _forward_io_data2;	// @[<stdin>:508:10, src/src/core/ID/ID.scala:50:23]
+  assign io_id2exe_bits_iddata_imm = _immGen_io_imm;	// @[<stdin>:508:10, src/src/core/ID/ID.scala:59:22]
 endmodule
 
-module ALU(	// @[<stdin>:577:10]
+module ALU(	// @[<stdin>:583:10]
   input  [6:0]  io_aluOp,	// @[src/src/core/EXE/ALU.scala:15:14]
   input  [31:0] io_src1,	// @[src/src/core/EXE/ALU.scala:15:14]
                 io_src2,	// @[src/src/core/EXE/ALU.scala:15:14]
@@ -986,10 +988,10 @@ module ALU(	// @[<stdin>:577:10]
                                               ? $signed($signed(io_src1) >>> _GEN)
                                               : io_aluOp == 7'hB
                                                   ? io_src1 - io_src2
-                                                  : 32'h0;	// @[<stdin>:577:10, src/main/scala/chisel3/util/Mux.scala:141:16, src/src/core/EXE/ALU.scala:20:17, :21:17, :22:{17,48}, :23:{17,42,58}, :24:{17,59}, :25:{17,48}, :26:{17,47}, :27:{17,48}, :28:{17,55}, :29:{17,55}, :30:{17,55}, :31:{17,48}]
+                                                  : 32'h0;	// @[<stdin>:583:10, src/main/scala/chisel3/util/Mux.scala:141:16, src/src/core/EXE/ALU.scala:20:17, :21:17, :22:{17,48}, :23:{17,42,58}, :24:{17,59}, :25:{17,48}, :26:{17,47}, :27:{17,48}, :28:{17,55}, :29:{17,55}, :30:{17,55}, :31:{17,48}]
 endmodule
 
-module MemWrap(	// @[<stdin>:629:10]
+module MemWrap(	// @[<stdin>:635:10]
   input  [31:0] io_dataMem_readData,	// @[src/src/core/EXE/Memwrap.scala:11:14]
   input         io_valid,	// @[src/src/core/EXE/Memwrap.scala:11:14]
   input  [2:0]  io_control_memOp,	// @[src/src/core/EXE/Memwrap.scala:11:14]
@@ -1015,27 +1017,27 @@ module MemWrap(	// @[<stdin>:629:10]
   wire [62:0] _GEN_0 = {58'h0, io_addr[1:0], 3'h0};	// @[src/src/core/EXE/Memwrap.scala:33:82, :48:{75,81}]
   wire [62:0] _io_dataMem_writeData_T_5 = _GEN << _GEN_0;	// @[src/src/core/EXE/Memwrap.scala:48:75]
   wire [62:0] _io_dataMem_writeData_T_11 = _GEN << _GEN_0;	// @[src/src/core/EXE/Memwrap.scala:48:75, :52:75]
-  assign io_dataMem_addr = io_addr;	// @[<stdin>:629:10]
-  assign io_dataMem_writeEn = io_control_memWriteEn & io_valid;	// @[<stdin>:629:10, src/src/core/EXE/Memwrap.scala:27:44]
+  assign io_dataMem_addr = io_addr;	// @[<stdin>:635:10]
+  assign io_dataMem_writeEn = io_control_memWriteEn & io_valid;	// @[<stdin>:635:10, src/src/core/EXE/Memwrap.scala:27:44]
   assign io_dataMem_writeData =
     _io_dataMem_writeData_T | _io_dataMem_writeData_T_1
       ? _io_dataMem_writeData_T_5[31:0]
       : _io_dataMem_writeData_T_6 | _io_dataMem_writeData_T_7
           ? _io_dataMem_writeData_T_11[31:0]
-          : _io_dataMem_writeData_T_12 ? io_writeData : 32'h0;	// @[<stdin>:629:10, src/main/scala/chisel3/util/Mux.scala:141:16, src/src/core/EXE/Memwrap.scala:33:{22,49}, :37:{22,49}, :41:22, :48:{32,75}, :52:{32,75}]
-  assign io_dataMem_readEn = io_control_memReadEn & io_valid;	// @[<stdin>:629:10, src/src/core/EXE/Memwrap.scala:26:42]
+          : _io_dataMem_writeData_T_12 ? io_writeData : 32'h0;	// @[<stdin>:635:10, src/main/scala/chisel3/util/Mux.scala:141:16, src/src/core/EXE/Memwrap.scala:33:{22,49}, :37:{22,49}, :41:22, :48:{32,75}, :52:{32,75}]
+  assign io_dataMem_readEn = io_control_memReadEn & io_valid;	// @[<stdin>:635:10, src/src/core/EXE/Memwrap.scala:26:42]
   assign io_dataMem_mark =
     _io_dataMem_writeData_T | _io_dataMem_writeData_T_1
       ? 4'h1 << io_addr[1:0]
       : _io_dataMem_writeData_T_6 | _io_dataMem_writeData_T_7
           ? _mark_T_9[3:0]
-          : {4{_io_dataMem_writeData_T_12}};	// @[<stdin>:629:10, src/main/scala/chisel3/util/Mux.scala:141:16, src/src/core/EXE/Memwrap.scala:33:{22,32,49,75,82}, :37:{22,32,49,75}, :41:22]
-  assign io_readData = io_dataMem_readData;	// @[<stdin>:629:10]
+          : {4{_io_dataMem_writeData_T_12}};	// @[<stdin>:635:10, src/main/scala/chisel3/util/Mux.scala:141:16, src/src/core/EXE/Memwrap.scala:33:{22,32,49,75,82}, :37:{22,32,49,75}, :41:22]
+  assign io_readData = io_dataMem_readData;	// @[<stdin>:635:10]
 endmodule
 
-module EXE(	// @[<stdin>:673:10]
-  input         clock,	// @[<stdin>:674:11]
-                reset,	// @[<stdin>:675:11]
+module EXE(	// @[<stdin>:679:10]
+  input         clock,	// @[<stdin>:680:11]
+                reset,	// @[<stdin>:681:11]
   input  [31:0] io_dataMem_readData,	// @[src/src/core/EXE/EXE.scala:11:14]
   input         io_id2exe_valid,	// @[src/src/core/EXE/EXE.scala:11:14]
   input  [31:0] io_id2exe_bits_ifdata_pc,	// @[src/src/core/EXE/EXE.scala:11:14]
@@ -1110,15 +1112,15 @@ module EXE(	// @[<stdin>:673:10]
         casez_tmp_0 = id2exe_iddata_imm;	// @[src/main/scala/chisel3/util/Mux.scala:141:16, src/src/core/EXE/EXE.scala:29:23, :52:23, :53:23, :54:23]
     endcase	// @[src/main/scala/chisel3/util/Mux.scala:141:16, src/src/core/EXE/EXE.scala:29:23, :52:23, :53:23, :54:23]
   end // always_comb
-  always @(posedge clock) begin	// @[<stdin>:674:11]
-    if (reset) begin	// @[<stdin>:674:11]
+  always @(posedge clock) begin	// @[<stdin>:680:11]
+    if (reset) begin	// @[<stdin>:680:11]
       wbValid <= 1'h0;	// @[src/src/core/EXE/EXE.scala:19:27]
       id2exe_ifdata_pc <= 32'h0;	// @[src/src/core/EXE/EXE.scala:29:{23,36}]
       id2exe_ifdata_inst <= 32'h0;	// @[src/src/core/EXE/EXE.scala:29:{23,36}]
       id2exe_iddata_control_src1Op <= 2'h0;	// @[src/src/core/EXE/EXE.scala:29:{23,36}]
       id2exe_iddata_control_src2Op <= 2'h0;	// @[src/src/core/EXE/EXE.scala:29:{23,36}]
       id2exe_iddata_control_aluOp <= 7'h0;	// @[src/src/core/EXE/EXE.scala:29:{23,36}]
-      id2exe_iddata_control_memOp <= 3'h0;	// @[<stdin>:673:10, src/src/core/EXE/EXE.scala:29:23]
+      id2exe_iddata_control_memOp <= 3'h0;	// @[<stdin>:679:10, src/src/core/EXE/EXE.scala:29:23]
       id2exe_iddata_control_memReadEn <= 1'h0;	// @[src/src/core/EXE/EXE.scala:19:27, :29:23]
       id2exe_iddata_control_memWriteEn <= 1'h0;	// @[src/src/core/EXE/EXE.scala:19:27, :29:23]
       id2exe_iddata_control_wbOp <= 2'h0;	// @[src/src/core/EXE/EXE.scala:29:{23,36}]
@@ -1127,7 +1129,7 @@ module EXE(	// @[<stdin>:673:10]
       id2exe_iddata_reg2 <= 32'h0;	// @[src/src/core/EXE/EXE.scala:29:{23,36}]
       id2exe_iddata_imm <= 32'h0;	// @[src/src/core/EXE/EXE.scala:29:{23,36}]
     end
-    else begin	// @[<stdin>:674:11]
+    else begin	// @[<stdin>:680:11]
       wbValid <= io_id2exe_valid;	// @[src/src/core/EXE/EXE.scala:19:27]
       if (io_id2exe_valid) begin	// @[src/src/core/EXE/EXE.scala:11:14]
         id2exe_ifdata_pc <= io_id2exe_bits_ifdata_pc;	// @[src/src/core/EXE/EXE.scala:29:23]
@@ -1146,37 +1148,37 @@ module EXE(	// @[<stdin>:673:10]
       end
     end
   end // always @(posedge)
-  `ifdef ENABLE_INITIAL_REG_	// @[<stdin>:673:10]
-    `ifdef FIRRTL_BEFORE_INITIAL	// @[<stdin>:673:10]
-      `FIRRTL_BEFORE_INITIAL	// @[<stdin>:673:10]
+  `ifdef ENABLE_INITIAL_REG_	// @[<stdin>:679:10]
+    `ifdef FIRRTL_BEFORE_INITIAL	// @[<stdin>:679:10]
+      `FIRRTL_BEFORE_INITIAL	// @[<stdin>:679:10]
     `endif // FIRRTL_BEFORE_INITIAL
-    logic [31:0] _RANDOM[0:5];	// @[<stdin>:673:10]
-    initial begin	// @[<stdin>:673:10]
-      `ifdef INIT_RANDOM_PROLOG_	// @[<stdin>:673:10]
-        `INIT_RANDOM_PROLOG_	// @[<stdin>:673:10]
+    logic [31:0] _RANDOM[0:5];	// @[<stdin>:679:10]
+    initial begin	// @[<stdin>:679:10]
+      `ifdef INIT_RANDOM_PROLOG_	// @[<stdin>:679:10]
+        `INIT_RANDOM_PROLOG_	// @[<stdin>:679:10]
       `endif // INIT_RANDOM_PROLOG_
-      `ifdef RANDOMIZE_REG_INIT	// @[<stdin>:673:10]
+      `ifdef RANDOMIZE_REG_INIT	// @[<stdin>:679:10]
         for (logic [2:0] i = 3'h0; i < 3'h6; i += 3'h1) begin
-          _RANDOM[i] = `RANDOM;	// @[<stdin>:673:10]
-        end	// @[<stdin>:673:10]
-        wbValid = _RANDOM[3'h0][0];	// @[<stdin>:673:10, src/src/core/EXE/EXE.scala:19:27]
-        id2exe_ifdata_pc = {_RANDOM[3'h0][31:1], _RANDOM[3'h1][0]};	// @[<stdin>:673:10, src/src/core/EXE/EXE.scala:19:27, :29:23]
-        id2exe_ifdata_inst = {_RANDOM[3'h1][31:1], _RANDOM[3'h2][0]};	// @[<stdin>:673:10, src/src/core/EXE/EXE.scala:29:23]
-        id2exe_iddata_control_src1Op = _RANDOM[3'h2][6:5];	// @[<stdin>:673:10, src/src/core/EXE/EXE.scala:29:23]
-        id2exe_iddata_control_src2Op = _RANDOM[3'h2][8:7];	// @[<stdin>:673:10, src/src/core/EXE/EXE.scala:29:23]
-        id2exe_iddata_control_aluOp = _RANDOM[3'h2][15:9];	// @[<stdin>:673:10, src/src/core/EXE/EXE.scala:29:23]
-        id2exe_iddata_control_memOp = _RANDOM[3'h2][18:16];	// @[<stdin>:673:10, src/src/core/EXE/EXE.scala:29:23]
-        id2exe_iddata_control_memReadEn = _RANDOM[3'h2][19];	// @[<stdin>:673:10, src/src/core/EXE/EXE.scala:29:23]
-        id2exe_iddata_control_memWriteEn = _RANDOM[3'h2][20];	// @[<stdin>:673:10, src/src/core/EXE/EXE.scala:29:23]
-        id2exe_iddata_control_wbOp = _RANDOM[3'h2][22:21];	// @[<stdin>:673:10, src/src/core/EXE/EXE.scala:29:23]
-        id2exe_iddata_control_halt = _RANDOM[3'h2][23];	// @[<stdin>:673:10, src/src/core/EXE/EXE.scala:29:23]
-        id2exe_iddata_reg1 = {_RANDOM[3'h2][31:24], _RANDOM[3'h3][23:0]};	// @[<stdin>:673:10, src/src/core/EXE/EXE.scala:29:23]
-        id2exe_iddata_reg2 = {_RANDOM[3'h3][31:24], _RANDOM[3'h4][23:0]};	// @[<stdin>:673:10, src/src/core/EXE/EXE.scala:29:23]
-        id2exe_iddata_imm = {_RANDOM[3'h4][31:24], _RANDOM[3'h5][23:0]};	// @[<stdin>:673:10, src/src/core/EXE/EXE.scala:29:23]
+          _RANDOM[i] = `RANDOM;	// @[<stdin>:679:10]
+        end	// @[<stdin>:679:10]
+        wbValid = _RANDOM[3'h0][0];	// @[<stdin>:679:10, src/src/core/EXE/EXE.scala:19:27]
+        id2exe_ifdata_pc = {_RANDOM[3'h0][31:1], _RANDOM[3'h1][0]};	// @[<stdin>:679:10, src/src/core/EXE/EXE.scala:19:27, :29:23]
+        id2exe_ifdata_inst = {_RANDOM[3'h1][31:1], _RANDOM[3'h2][0]};	// @[<stdin>:679:10, src/src/core/EXE/EXE.scala:29:23]
+        id2exe_iddata_control_src1Op = _RANDOM[3'h2][6:5];	// @[<stdin>:679:10, src/src/core/EXE/EXE.scala:29:23]
+        id2exe_iddata_control_src2Op = _RANDOM[3'h2][8:7];	// @[<stdin>:679:10, src/src/core/EXE/EXE.scala:29:23]
+        id2exe_iddata_control_aluOp = _RANDOM[3'h2][15:9];	// @[<stdin>:679:10, src/src/core/EXE/EXE.scala:29:23]
+        id2exe_iddata_control_memOp = _RANDOM[3'h2][18:16];	// @[<stdin>:679:10, src/src/core/EXE/EXE.scala:29:23]
+        id2exe_iddata_control_memReadEn = _RANDOM[3'h2][19];	// @[<stdin>:679:10, src/src/core/EXE/EXE.scala:29:23]
+        id2exe_iddata_control_memWriteEn = _RANDOM[3'h2][20];	// @[<stdin>:679:10, src/src/core/EXE/EXE.scala:29:23]
+        id2exe_iddata_control_wbOp = _RANDOM[3'h2][22:21];	// @[<stdin>:679:10, src/src/core/EXE/EXE.scala:29:23]
+        id2exe_iddata_control_halt = _RANDOM[3'h2][23];	// @[<stdin>:679:10, src/src/core/EXE/EXE.scala:29:23]
+        id2exe_iddata_reg1 = {_RANDOM[3'h2][31:24], _RANDOM[3'h3][23:0]};	// @[<stdin>:679:10, src/src/core/EXE/EXE.scala:29:23]
+        id2exe_iddata_reg2 = {_RANDOM[3'h3][31:24], _RANDOM[3'h4][23:0]};	// @[<stdin>:679:10, src/src/core/EXE/EXE.scala:29:23]
+        id2exe_iddata_imm = {_RANDOM[3'h4][31:24], _RANDOM[3'h5][23:0]};	// @[<stdin>:679:10, src/src/core/EXE/EXE.scala:29:23]
       `endif // RANDOMIZE_REG_INIT
     end // initial
-    `ifdef FIRRTL_AFTER_INITIAL	// @[<stdin>:673:10]
-      `FIRRTL_AFTER_INITIAL	// @[<stdin>:673:10]
+    `ifdef FIRRTL_AFTER_INITIAL	// @[<stdin>:679:10]
+      `FIRRTL_AFTER_INITIAL	// @[<stdin>:679:10]
     `endif // FIRRTL_AFTER_INITIAL
   `endif // ENABLE_INITIAL_REG_
   ALU alu (	// @[src/src/core/EXE/EXE.scala:39:19]
@@ -1200,20 +1202,20 @@ module EXE(	// @[<stdin>:673:10]
     .io_dataMem_mark       (io_dataMem_mark),
     .io_readData           (io_exe2global_globalmem_memData)
   );
-  assign io_exe2mem_valid = wbValid;	// @[<stdin>:673:10, src/src/core/EXE/EXE.scala:19:27]
-  assign io_exe2mem_bits_ifdata_pc = id2exe_ifdata_pc;	// @[<stdin>:673:10, src/src/core/EXE/EXE.scala:29:23]
-  assign io_exe2mem_bits_ifdata_inst = id2exe_ifdata_inst;	// @[<stdin>:673:10, src/src/core/EXE/EXE.scala:29:23]
-  assign io_exe2mem_bits_iddata_control_wbOp = id2exe_iddata_control_wbOp;	// @[<stdin>:673:10, src/src/core/EXE/EXE.scala:29:23]
-  assign io_exe2mem_bits_iddata_control_halt = id2exe_iddata_control_halt;	// @[<stdin>:673:10, src/src/core/EXE/EXE.scala:29:23]
-  assign io_exe2mem_bits_exedata_aluResult = _alu_io_out;	// @[<stdin>:673:10, src/src/core/EXE/EXE.scala:39:19]
-  assign io_exe2global_forward_enable = id2exe_iddata_control_wbOp == 2'h1 & wbValid;	// @[<stdin>:673:10, src/src/core/EXE/EXE.scala:19:27, :29:23, :44:23, :79:{49,73}]
-  assign io_exe2global_forward_wAddr = id2exe_ifdata_inst[11:7];	// @[<stdin>:673:10, src/src/core/EXE/EXE.scala:29:23, :80:39]
-  assign io_exe2global_forward_wData = _alu_io_out;	// @[<stdin>:673:10, src/src/core/EXE/EXE.scala:39:19]
+  assign io_exe2mem_valid = wbValid;	// @[<stdin>:679:10, src/src/core/EXE/EXE.scala:19:27]
+  assign io_exe2mem_bits_ifdata_pc = id2exe_ifdata_pc;	// @[<stdin>:679:10, src/src/core/EXE/EXE.scala:29:23]
+  assign io_exe2mem_bits_ifdata_inst = id2exe_ifdata_inst;	// @[<stdin>:679:10, src/src/core/EXE/EXE.scala:29:23]
+  assign io_exe2mem_bits_iddata_control_wbOp = id2exe_iddata_control_wbOp;	// @[<stdin>:679:10, src/src/core/EXE/EXE.scala:29:23]
+  assign io_exe2mem_bits_iddata_control_halt = id2exe_iddata_control_halt;	// @[<stdin>:679:10, src/src/core/EXE/EXE.scala:29:23]
+  assign io_exe2mem_bits_exedata_aluResult = _alu_io_out;	// @[<stdin>:679:10, src/src/core/EXE/EXE.scala:39:19]
+  assign io_exe2global_forward_enable = id2exe_iddata_control_wbOp == 2'h1 & wbValid;	// @[<stdin>:679:10, src/src/core/EXE/EXE.scala:19:27, :29:23, :44:23, :79:{49,73}]
+  assign io_exe2global_forward_wAddr = id2exe_ifdata_inst[11:7];	// @[<stdin>:679:10, src/src/core/EXE/EXE.scala:29:23, :80:39]
+  assign io_exe2global_forward_wData = _alu_io_out;	// @[<stdin>:679:10, src/src/core/EXE/EXE.scala:39:19]
 endmodule
 
-module MEM(	// @[<stdin>:756:10]
-  input         clock,	// @[<stdin>:757:11]
-                reset,	// @[<stdin>:758:11]
+module MEM(	// @[<stdin>:764:10]
+  input         clock,	// @[<stdin>:765:11]
+                reset,	// @[<stdin>:766:11]
                 io_exe2mem_valid,	// @[src/src/core/MEM/MEM.scala:11:14]
   input  [31:0] io_exe2mem_bits_ifdata_pc,	// @[src/src/core/MEM/MEM.scala:11:14]
                 io_exe2mem_bits_ifdata_inst,	// @[src/src/core/MEM/MEM.scala:11:14]
@@ -1239,8 +1241,8 @@ module MEM(	// @[<stdin>:756:10]
   reg [1:0]  exe2mem_iddata_control_wbOp;	// @[src/src/core/MEM/MEM.scala:31:24]
   reg        exe2mem_iddata_control_halt;	// @[src/src/core/MEM/MEM.scala:31:24]
   reg [31:0] exe2mem_exedata_aluResult;	// @[src/src/core/MEM/MEM.scala:31:24]
-  always @(posedge clock) begin	// @[<stdin>:757:11]
-    if (reset) begin	// @[<stdin>:757:11]
+  always @(posedge clock) begin	// @[<stdin>:765:11]
+    if (reset) begin	// @[<stdin>:765:11]
       wbValid <= 1'h0;	// @[src/src/core/MEM/MEM.scala:21:27]
       exe2mem_ifdata_pc <= 32'h0;	// @[src/src/core/MEM/MEM.scala:31:{24,37}]
       exe2mem_ifdata_inst <= 32'h0;	// @[src/src/core/MEM/MEM.scala:31:{24,37}]
@@ -1248,7 +1250,7 @@ module MEM(	// @[<stdin>:756:10]
       exe2mem_iddata_control_halt <= 1'h0;	// @[src/src/core/MEM/MEM.scala:21:27, :31:24]
       exe2mem_exedata_aluResult <= 32'h0;	// @[src/src/core/MEM/MEM.scala:31:{24,37}]
     end
-    else begin	// @[<stdin>:757:11]
+    else begin	// @[<stdin>:765:11]
       wbValid <= io_exe2mem_valid;	// @[src/src/core/MEM/MEM.scala:21:27]
       if (io_exe2mem_valid) begin	// @[src/src/core/MEM/MEM.scala:11:14]
         exe2mem_ifdata_pc <= io_exe2mem_bits_ifdata_pc;	// @[src/src/core/MEM/MEM.scala:31:24]
@@ -1259,49 +1261,49 @@ module MEM(	// @[<stdin>:756:10]
       end
     end
   end // always @(posedge)
-  `ifdef ENABLE_INITIAL_REG_	// @[<stdin>:756:10]
-    `ifdef FIRRTL_BEFORE_INITIAL	// @[<stdin>:756:10]
-      `FIRRTL_BEFORE_INITIAL	// @[<stdin>:756:10]
+  `ifdef ENABLE_INITIAL_REG_	// @[<stdin>:764:10]
+    `ifdef FIRRTL_BEFORE_INITIAL	// @[<stdin>:764:10]
+      `FIRRTL_BEFORE_INITIAL	// @[<stdin>:764:10]
     `endif // FIRRTL_BEFORE_INITIAL
-    logic [31:0] _RANDOM[0:6];	// @[<stdin>:756:10]
-    initial begin	// @[<stdin>:756:10]
-      `ifdef INIT_RANDOM_PROLOG_	// @[<stdin>:756:10]
-        `INIT_RANDOM_PROLOG_	// @[<stdin>:756:10]
+    logic [31:0] _RANDOM[0:6];	// @[<stdin>:764:10]
+    initial begin	// @[<stdin>:764:10]
+      `ifdef INIT_RANDOM_PROLOG_	// @[<stdin>:764:10]
+        `INIT_RANDOM_PROLOG_	// @[<stdin>:764:10]
       `endif // INIT_RANDOM_PROLOG_
-      `ifdef RANDOMIZE_REG_INIT	// @[<stdin>:756:10]
+      `ifdef RANDOMIZE_REG_INIT	// @[<stdin>:764:10]
         for (logic [2:0] i = 3'h0; i < 3'h7; i += 3'h1) begin
-          _RANDOM[i] = `RANDOM;	// @[<stdin>:756:10]
-        end	// @[<stdin>:756:10]
-        wbValid = _RANDOM[3'h0][0];	// @[<stdin>:756:10, src/src/core/MEM/MEM.scala:21:27]
-        exe2mem_ifdata_pc = {_RANDOM[3'h0][31:1], _RANDOM[3'h1][0]};	// @[<stdin>:756:10, src/src/core/MEM/MEM.scala:21:27, :31:24]
-        exe2mem_ifdata_inst = {_RANDOM[3'h1][31:1], _RANDOM[3'h2][0]};	// @[<stdin>:756:10, src/src/core/MEM/MEM.scala:31:24]
-        exe2mem_iddata_control_wbOp = _RANDOM[3'h2][22:21];	// @[<stdin>:756:10, src/src/core/MEM/MEM.scala:31:24]
-        exe2mem_iddata_control_halt = _RANDOM[3'h2][23];	// @[<stdin>:756:10, src/src/core/MEM/MEM.scala:31:24]
-        exe2mem_exedata_aluResult = {_RANDOM[3'h5][31:24], _RANDOM[3'h6][23:0]};	// @[<stdin>:756:10, src/src/core/MEM/MEM.scala:31:24]
+          _RANDOM[i] = `RANDOM;	// @[<stdin>:764:10]
+        end	// @[<stdin>:764:10]
+        wbValid = _RANDOM[3'h0][0];	// @[<stdin>:764:10, src/src/core/MEM/MEM.scala:21:27]
+        exe2mem_ifdata_pc = {_RANDOM[3'h0][31:1], _RANDOM[3'h1][0]};	// @[<stdin>:764:10, src/src/core/MEM/MEM.scala:21:27, :31:24]
+        exe2mem_ifdata_inst = {_RANDOM[3'h1][31:1], _RANDOM[3'h2][0]};	// @[<stdin>:764:10, src/src/core/MEM/MEM.scala:31:24]
+        exe2mem_iddata_control_wbOp = _RANDOM[3'h2][22:21];	// @[<stdin>:764:10, src/src/core/MEM/MEM.scala:31:24]
+        exe2mem_iddata_control_halt = _RANDOM[3'h2][23];	// @[<stdin>:764:10, src/src/core/MEM/MEM.scala:31:24]
+        exe2mem_exedata_aluResult = {_RANDOM[3'h5][31:24], _RANDOM[3'h6][23:0]};	// @[<stdin>:764:10, src/src/core/MEM/MEM.scala:31:24]
       `endif // RANDOMIZE_REG_INIT
     end // initial
-    `ifdef FIRRTL_AFTER_INITIAL	// @[<stdin>:756:10]
-      `FIRRTL_AFTER_INITIAL	// @[<stdin>:756:10]
+    `ifdef FIRRTL_AFTER_INITIAL	// @[<stdin>:764:10]
+      `FIRRTL_AFTER_INITIAL	// @[<stdin>:764:10]
     `endif // FIRRTL_AFTER_INITIAL
   `endif // ENABLE_INITIAL_REG_
-  assign io_mem2wb_valid = wbValid;	// @[<stdin>:756:10, src/src/core/MEM/MEM.scala:21:27]
-  assign io_mem2wb_bits_ifdata_pc = exe2mem_ifdata_pc;	// @[<stdin>:756:10, src/src/core/MEM/MEM.scala:31:24]
-  assign io_mem2wb_bits_ifdata_inst = exe2mem_ifdata_inst;	// @[<stdin>:756:10, src/src/core/MEM/MEM.scala:31:24]
-  assign io_mem2wb_bits_iddata_control_wbOp = exe2mem_iddata_control_wbOp;	// @[<stdin>:756:10, src/src/core/MEM/MEM.scala:31:24]
-  assign io_mem2wb_bits_iddata_control_halt = exe2mem_iddata_control_halt;	// @[<stdin>:756:10, src/src/core/MEM/MEM.scala:31:24]
-  assign io_mem2wb_bits_exedata_aluResult = exe2mem_exedata_aluResult;	// @[<stdin>:756:10, src/src/core/MEM/MEM.scala:31:24]
-  assign io_mem2wb_bits_memdata_memData = io_globalmem_memData;	// @[<stdin>:756:10]
-  assign io_mem2global_forward_enable = (|exe2mem_iddata_control_wbOp) & wbValid;	// @[<stdin>:756:10, src/src/core/MEM/MEM.scala:21:27, :31:24, :47:{49,73}]
-  assign io_mem2global_forward_wAddr = exe2mem_ifdata_inst[11:7];	// @[<stdin>:756:10, src/src/core/MEM/MEM.scala:31:24, :48:39]
+  assign io_mem2wb_valid = wbValid;	// @[<stdin>:764:10, src/src/core/MEM/MEM.scala:21:27]
+  assign io_mem2wb_bits_ifdata_pc = exe2mem_ifdata_pc;	// @[<stdin>:764:10, src/src/core/MEM/MEM.scala:31:24]
+  assign io_mem2wb_bits_ifdata_inst = exe2mem_ifdata_inst;	// @[<stdin>:764:10, src/src/core/MEM/MEM.scala:31:24]
+  assign io_mem2wb_bits_iddata_control_wbOp = exe2mem_iddata_control_wbOp;	// @[<stdin>:764:10, src/src/core/MEM/MEM.scala:31:24]
+  assign io_mem2wb_bits_iddata_control_halt = exe2mem_iddata_control_halt;	// @[<stdin>:764:10, src/src/core/MEM/MEM.scala:31:24]
+  assign io_mem2wb_bits_exedata_aluResult = exe2mem_exedata_aluResult;	// @[<stdin>:764:10, src/src/core/MEM/MEM.scala:31:24]
+  assign io_mem2wb_bits_memdata_memData = io_globalmem_memData;	// @[<stdin>:764:10]
+  assign io_mem2global_forward_enable = (|exe2mem_iddata_control_wbOp) & wbValid;	// @[<stdin>:764:10, src/src/core/MEM/MEM.scala:21:27, :31:24, :47:{49,73}]
+  assign io_mem2global_forward_wAddr = exe2mem_ifdata_inst[11:7];	// @[<stdin>:764:10, src/src/core/MEM/MEM.scala:31:24, :48:39]
   assign io_mem2global_forward_wData =
     exe2mem_iddata_control_wbOp == 2'h1
       ? exe2mem_exedata_aluResult
-      : exe2mem_iddata_control_wbOp == 2'h2 ? io_globalmem_memData : 32'h0;	// @[<stdin>:756:10, src/main/scala/chisel3/util/Mux.scala:141:16, src/src/core/MEM/MEM.scala:31:{24,37}, :52:21, :53:21]
+      : exe2mem_iddata_control_wbOp == 2'h2 ? io_globalmem_memData : 32'h0;	// @[<stdin>:764:10, src/main/scala/chisel3/util/Mux.scala:141:16, src/src/core/MEM/MEM.scala:31:{24,37}, :52:21, :53:21]
 endmodule
 
-module WB(	// @[<stdin>:809:10]
-  input         clock,	// @[<stdin>:810:11]
-                reset,	// @[<stdin>:811:11]
+module WB(	// @[<stdin>:817:10]
+  input         clock,	// @[<stdin>:818:11]
+                reset,	// @[<stdin>:819:11]
                 io_mem2wb_valid,	// @[src/src/core/WB/WB.scala:11:14]
   input  [31:0] io_mem2wb_bits_ifdata_pc,	// @[src/src/core/WB/WB.scala:11:14]
                 io_mem2wb_bits_ifdata_inst,	// @[src/src/core/WB/WB.scala:11:14]
@@ -1327,8 +1329,8 @@ module WB(	// @[<stdin>:809:10]
   reg [31:0] mem2wb_memdata_memData;	// @[src/src/core/WB/WB.scala:25:23]
   reg [31:0] io_wb2global_debug_inst_REG;	// @[src/src/core/WB/WB.scala:46:38]
   reg        io_wb2global_debug_halt_REG;	// @[src/src/core/WB/WB.scala:47:38]
-  always @(posedge clock) begin	// @[<stdin>:810:11]
-    if (reset) begin	// @[<stdin>:810:11]
+  always @(posedge clock) begin	// @[<stdin>:818:11]
+    if (reset) begin	// @[<stdin>:818:11]
       wbValid <= 1'h0;	// @[src/src/core/WB/WB.scala:18:26]
       mem2wb_ifdata_pc <= 32'h0;	// @[src/src/core/WB/WB.scala:25:{23,36}]
       mem2wb_ifdata_inst <= 32'h0;	// @[src/src/core/WB/WB.scala:25:{23,36}]
@@ -1337,7 +1339,7 @@ module WB(	// @[<stdin>:809:10]
       mem2wb_exedata_aluResult <= 32'h0;	// @[src/src/core/WB/WB.scala:25:{23,36}]
       mem2wb_memdata_memData <= 32'h0;	// @[src/src/core/WB/WB.scala:25:{23,36}]
     end
-    else begin	// @[<stdin>:810:11]
+    else begin	// @[<stdin>:818:11]
       wbValid <= io_mem2wb_valid;	// @[src/src/core/WB/WB.scala:18:26]
       if (io_mem2wb_valid) begin	// @[src/src/core/WB/WB.scala:11:14]
         mem2wb_ifdata_pc <= io_mem2wb_bits_ifdata_pc;	// @[src/src/core/WB/WB.scala:25:23]
@@ -1351,49 +1353,49 @@ module WB(	// @[<stdin>:809:10]
     io_wb2global_debug_inst_REG <= mem2wb_ifdata_inst;	// @[src/src/core/WB/WB.scala:25:23, :46:38]
     io_wb2global_debug_halt_REG <= mem2wb_iddata_control_halt;	// @[src/src/core/WB/WB.scala:25:23, :47:38]
   end // always @(posedge)
-  `ifdef ENABLE_INITIAL_REG_	// @[<stdin>:809:10]
-    `ifdef FIRRTL_BEFORE_INITIAL	// @[<stdin>:809:10]
-      `FIRRTL_BEFORE_INITIAL	// @[<stdin>:809:10]
+  `ifdef ENABLE_INITIAL_REG_	// @[<stdin>:817:10]
+    `ifdef FIRRTL_BEFORE_INITIAL	// @[<stdin>:817:10]
+      `FIRRTL_BEFORE_INITIAL	// @[<stdin>:817:10]
     `endif // FIRRTL_BEFORE_INITIAL
-    logic [31:0] _RANDOM[0:8];	// @[<stdin>:809:10]
-    initial begin	// @[<stdin>:809:10]
-      `ifdef INIT_RANDOM_PROLOG_	// @[<stdin>:809:10]
-        `INIT_RANDOM_PROLOG_	// @[<stdin>:809:10]
+    logic [31:0] _RANDOM[0:8];	// @[<stdin>:817:10]
+    initial begin	// @[<stdin>:817:10]
+      `ifdef INIT_RANDOM_PROLOG_	// @[<stdin>:817:10]
+        `INIT_RANDOM_PROLOG_	// @[<stdin>:817:10]
       `endif // INIT_RANDOM_PROLOG_
-      `ifdef RANDOMIZE_REG_INIT	// @[<stdin>:809:10]
+      `ifdef RANDOMIZE_REG_INIT	// @[<stdin>:817:10]
         for (logic [3:0] i = 4'h0; i < 4'h9; i += 4'h1) begin
-          _RANDOM[i] = `RANDOM;	// @[<stdin>:809:10]
-        end	// @[<stdin>:809:10]
-        wbValid = _RANDOM[4'h0][0];	// @[<stdin>:809:10, src/src/core/WB/WB.scala:18:26]
-        mem2wb_ifdata_pc = {_RANDOM[4'h0][31:1], _RANDOM[4'h1][0]};	// @[<stdin>:809:10, src/src/core/WB/WB.scala:18:26, :25:23]
-        mem2wb_ifdata_inst = {_RANDOM[4'h1][31:1], _RANDOM[4'h2][0]};	// @[<stdin>:809:10, src/src/core/WB/WB.scala:25:23]
-        mem2wb_iddata_control_wbOp = _RANDOM[4'h2][22:21];	// @[<stdin>:809:10, src/src/core/WB/WB.scala:25:23]
-        mem2wb_iddata_control_halt = _RANDOM[4'h2][23];	// @[<stdin>:809:10, src/src/core/WB/WB.scala:25:23]
-        mem2wb_exedata_aluResult = {_RANDOM[4'h5][31:24], _RANDOM[4'h6][23:0]};	// @[<stdin>:809:10, src/src/core/WB/WB.scala:25:23]
-        mem2wb_memdata_memData = {_RANDOM[4'h6][31:24], _RANDOM[4'h7][23:0]};	// @[<stdin>:809:10, src/src/core/WB/WB.scala:25:23]
-        io_wb2global_debug_inst_REG = {_RANDOM[4'h7][31:24], _RANDOM[4'h8][23:0]};	// @[<stdin>:809:10, src/src/core/WB/WB.scala:25:23, :46:38]
-        io_wb2global_debug_halt_REG = _RANDOM[4'h8][24];	// @[<stdin>:809:10, src/src/core/WB/WB.scala:46:38, :47:38]
+          _RANDOM[i] = `RANDOM;	// @[<stdin>:817:10]
+        end	// @[<stdin>:817:10]
+        wbValid = _RANDOM[4'h0][0];	// @[<stdin>:817:10, src/src/core/WB/WB.scala:18:26]
+        mem2wb_ifdata_pc = {_RANDOM[4'h0][31:1], _RANDOM[4'h1][0]};	// @[<stdin>:817:10, src/src/core/WB/WB.scala:18:26, :25:23]
+        mem2wb_ifdata_inst = {_RANDOM[4'h1][31:1], _RANDOM[4'h2][0]};	// @[<stdin>:817:10, src/src/core/WB/WB.scala:25:23]
+        mem2wb_iddata_control_wbOp = _RANDOM[4'h2][22:21];	// @[<stdin>:817:10, src/src/core/WB/WB.scala:25:23]
+        mem2wb_iddata_control_halt = _RANDOM[4'h2][23];	// @[<stdin>:817:10, src/src/core/WB/WB.scala:25:23]
+        mem2wb_exedata_aluResult = {_RANDOM[4'h5][31:24], _RANDOM[4'h6][23:0]};	// @[<stdin>:817:10, src/src/core/WB/WB.scala:25:23]
+        mem2wb_memdata_memData = {_RANDOM[4'h6][31:24], _RANDOM[4'h7][23:0]};	// @[<stdin>:817:10, src/src/core/WB/WB.scala:25:23]
+        io_wb2global_debug_inst_REG = {_RANDOM[4'h7][31:24], _RANDOM[4'h8][23:0]};	// @[<stdin>:817:10, src/src/core/WB/WB.scala:25:23, :46:38]
+        io_wb2global_debug_halt_REG = _RANDOM[4'h8][24];	// @[<stdin>:817:10, src/src/core/WB/WB.scala:46:38, :47:38]
       `endif // RANDOMIZE_REG_INIT
     end // initial
-    `ifdef FIRRTL_AFTER_INITIAL	// @[<stdin>:809:10]
-      `FIRRTL_AFTER_INITIAL	// @[<stdin>:809:10]
+    `ifdef FIRRTL_AFTER_INITIAL	// @[<stdin>:817:10]
+      `FIRRTL_AFTER_INITIAL	// @[<stdin>:817:10]
     `endif // FIRRTL_AFTER_INITIAL
   `endif // ENABLE_INITIAL_REG_
-  assign io_wb2global_debug_valid = wbValid;	// @[<stdin>:809:10, src/src/core/WB/WB.scala:18:26]
-  assign io_wb2global_debug_pc = mem2wb_ifdata_pc;	// @[<stdin>:809:10, src/src/core/WB/WB.scala:25:23]
-  assign io_wb2global_debug_inst = io_wb2global_debug_inst_REG;	// @[<stdin>:809:10, src/src/core/WB/WB.scala:46:38]
-  assign io_wb2global_debug_halt = io_wb2global_debug_halt_REG;	// @[<stdin>:809:10, src/src/core/WB/WB.scala:47:38]
-  assign io_wb2global_writeBack_enable = wbValid & (|mem2wb_iddata_control_wbOp);	// @[<stdin>:809:10, src/src/core/WB/WB.scala:18:26, :25:23, :34:{44,60}]
-  assign io_wb2global_writeBack_wAddr = mem2wb_ifdata_inst[11:7];	// @[<stdin>:809:10, src/src/core/WB/WB.scala:25:23, :29:23]
+  assign io_wb2global_debug_valid = wbValid;	// @[<stdin>:817:10, src/src/core/WB/WB.scala:18:26]
+  assign io_wb2global_debug_pc = mem2wb_ifdata_pc;	// @[<stdin>:817:10, src/src/core/WB/WB.scala:25:23]
+  assign io_wb2global_debug_inst = io_wb2global_debug_inst_REG;	// @[<stdin>:817:10, src/src/core/WB/WB.scala:46:38]
+  assign io_wb2global_debug_halt = io_wb2global_debug_halt_REG;	// @[<stdin>:817:10, src/src/core/WB/WB.scala:47:38]
+  assign io_wb2global_writeBack_enable = wbValid & (|mem2wb_iddata_control_wbOp);	// @[<stdin>:817:10, src/src/core/WB/WB.scala:18:26, :25:23, :34:{44,60}]
+  assign io_wb2global_writeBack_wAddr = mem2wb_ifdata_inst[11:7];	// @[<stdin>:817:10, src/src/core/WB/WB.scala:25:23, :29:23]
   assign io_wb2global_writeBack_wData =
     mem2wb_iddata_control_wbOp == 2'h1
       ? mem2wb_exedata_aluResult
-      : mem2wb_iddata_control_wbOp == 2'h2 ? mem2wb_memdata_memData : 32'h0;	// @[<stdin>:809:10, src/main/scala/chisel3/util/Mux.scala:141:16, src/src/core/WB/WB.scala:25:{23,36}, :39:21, :40:21]
+      : mem2wb_iddata_control_wbOp == 2'h2 ? mem2wb_memdata_memData : 32'h0;	// @[<stdin>:817:10, src/main/scala/chisel3/util/Mux.scala:141:16, src/src/core/WB/WB.scala:25:{23,36}, :39:21, :40:21]
 endmodule
 
-module CPUTop(	// @[<stdin>:864:10]
-  input         clock,	// @[<stdin>:865:11]
-                reset,	// @[<stdin>:866:11]
+module CPUTop(	// @[<stdin>:872:10]
+  input         clock,	// @[<stdin>:873:11]
+                reset,	// @[<stdin>:874:11]
   input  [31:0] io_inst_readData,	// @[src/src/core/CPUTop.scala:22:14]
                 io_data_readData,	// @[src/src/core/CPUTop.scala:22:14]
   output [31:0] io_inst_addr,	// @[src/src/core/CPUTop.scala:22:14]
@@ -1503,6 +1505,7 @@ module CPUTop(	// @[<stdin>:864:10]
     .reset                     (reset),
     .io_preif2if_bits_nextPC   (_preifStage_io_preif2if_bits_nextPC),	// @[src/src/core/CPUTop.scala:28:26]
     .io_preif2if_bits_instData (_preifStage_io_preif2if_bits_instData),	// @[src/src/core/CPUTop.scala:28:26]
+    .io_branch_branchSel       (_idStage_io_id2global_branch_branchSel),	// @[src/src/core/CPUTop.scala:30:26]
     .io_if2id_valid            (_ifStage_io_if2id_valid),
     .io_if2id_bits_ifdata_pc   (_ifStage_io_if2id_bits_ifdata_pc),
     .io_if2id_bits_ifdata_inst (_ifStage_io_if2id_bits_ifdata_inst),
@@ -1663,10 +1666,10 @@ module CPUTop(	// @[<stdin>:864:10]
     .io_wb2global_writeBack_wAddr       (_wbStage_io_wb2global_writeBack_wAddr),
     .io_wb2global_writeBack_wData       (_wbStage_io_wb2global_writeBack_wData)
   );
-  assign io_inst_writeEn = 1'h0;	// @[<stdin>:864:10, src/src/core/CPUTop.scala:28:26]
-  assign io_inst_writeData = 32'h0;	// @[<stdin>:864:10, src/src/core/CPUTop.scala:28:26, :30:26]
-  assign io_inst_readEn = 1'h1;	// @[<stdin>:864:10, src/src/core/CPUTop.scala:28:26, :29:26, :30:26, :31:26, :32:26, :33:26]
-  assign io_inst_mark = 4'hF;	// @[<stdin>:864:10, src/src/core/CPUTop.scala:28:26]
-  assign io_debug_regs_0 = 32'h0;	// @[<stdin>:864:10, src/src/core/CPUTop.scala:28:26, :30:26]
+  assign io_inst_writeEn = 1'h0;	// @[<stdin>:872:10, src/src/core/CPUTop.scala:28:26]
+  assign io_inst_writeData = 32'h0;	// @[<stdin>:872:10, src/src/core/CPUTop.scala:28:26, :30:26]
+  assign io_inst_readEn = 1'h1;	// @[<stdin>:872:10, src/src/core/CPUTop.scala:28:26, :29:26, :30:26, :31:26, :32:26, :33:26]
+  assign io_inst_mark = 4'hF;	// @[<stdin>:872:10, src/src/core/CPUTop.scala:28:26]
+  assign io_debug_regs_0 = 32'h0;	// @[<stdin>:872:10, src/src/core/CPUTop.scala:28:26, :30:26]
 endmodule
 

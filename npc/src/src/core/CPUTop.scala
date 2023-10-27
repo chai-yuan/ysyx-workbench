@@ -43,11 +43,15 @@ class CPUTop extends Module {
   memStage.io.mem2wb <> wbStage.io.mem2wb
 
   // global
-  preifStage.io.pc      := ifStage.io.if2global.pc
-  preifStage.io.branch  := idStage.io.id2global.branch
-  idStage.io.writeBack  := wbStage.io.wb2global.writeBack
-  idStage.io.exeForward := exeStage.io.exe2global.forward
-  idStage.io.memForward := memStage.io.mem2global.forward
+  preifStage.io.pc     := ifStage.io.if2global.pc
+  preifStage.io.branch := idStage.io.id2global.branch
+  ifStage.io.branch    := idStage.io.id2global.branch
+
+  idStage.io.writeBack        := wbStage.io.wb2global.writeBack
+  idStage.io.exeForward       := exeStage.io.exe2global.forward
+  idStage.io.memForward       := memStage.io.mem2global.forward
+  idStage.io.exeMemReadEnable := exeStage.io.exe2global.exeMemReadEnable
+
   memStage.io.globalmem := exeStage.io.exe2global.globalmem
 
   // debug

@@ -4,12 +4,14 @@ import chisel3._
 import chisel3.util._
 import config.Config
 import core.MemBundle
+import core.ID._
 
 class IF extends Module {
   val io = IO(new Bundle {
     val preif2if  = Flipped(Decoupled(new PreIF2IFBundle))
     val if2id     = Decoupled(new IF2IDBundle)
     val if2global = new IF2GlobalBundle
+    val branch    = Flipped(new BranchBundle)
   })
 
   // pipeline ctrl
@@ -18,7 +20,7 @@ class IF extends Module {
   val idAllowin = io.if2id.ready
   val ifAllowin = !ifValid || (readyGo && idAllowin)
   ifValid := Mux(ifAllowin, io.preif2if.valid, ifValid)
-  val idValid = ifValid && readyGo
+  val idValid = ifValid && readyGo && !io.branch.branchSel
 
   io.if2id.valid    := idValid
   io.preif2if.ready := ifAllowin

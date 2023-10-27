@@ -9,6 +9,7 @@ class DataMemGlobalBundle extends Bundle {
 }
 
 class EXE2GlobalBundle extends Bundle {
-  val globalmem = new DataMemGlobalBundle
-  val forward   = new WriteBackBundle
+  val globalmem        = new DataMemGlobalBundle
+  val forward          = new WriteBackBundle
+  val exeMemReadEnable = Output(Bool())
 }

@@ -12,9 +12,10 @@ class ID extends Module {
     val id2exe    = Decoupled(new ID2EXEBundle)
     val id2global = new ID2GlobalBundle
     // global
-    val exeForward = Flipped(new WriteBackBundle)
-    val memForward = Flipped(new WriteBackBundle)
-    val writeBack  = Flipped(new WriteBackBundle)
+    val exeForward       = Flipped(new WriteBackBundle)
+    val memForward       = Flipped(new WriteBackBundle)
+    val writeBack        = Flipped(new WriteBackBundle)
+    val exeMemReadEnable = Input(Bool())
   })
   val branchSel = Wire(Bool())
 
@@ -23,13 +24,7 @@ class ID extends Module {
   val idValid    = RegInit(false.B)
   val exeAllowin = io.id2exe.ready
   val idAllowin  = !idValid || (readyGo && exeAllowin)
-  idValid := MuxCase(
-    idValid,
-    Seq(
-      (branchSel) -> (false.B),
-      (idAllowin) -> (io.if2id.valid)
-    )
-  )
+  idValid := Mux(idAllowin, io.if2id.valid, idValid)
   val exeValid = idValid && readyGo
 
   io.id2exe.valid := exeValid
@@ -37,7 +32,13 @@ class ID extends Module {
 
   // from if data
   val if2id = RegInit(0.U.asTypeOf(new IF2IDBundle))
-  if2id := Mux(io.if2id.valid && idAllowin, io.if2id.bits, if2id)
+  if2id := MuxCase(
+    if2id,
+    Seq(
+      (io.if2id.valid && idAllowin) -> (io.if2id.bits),
+      (!io.if2id.valid && idAllowin) -> (0.U.asTypeOf(new IF2IDBundle))
+    )
+  )
   val pc   = if2id.ifdata.pc
   val inst = if2id.ifdata.inst
 
@@ -67,7 +68,7 @@ class ID extends Module {
   branch.io.imm      := imm
   branch.io.pc       := pc
 
-  branchSel := branch.io.nextPCsel && idValid
+  branchSel := branch.io.nextPCsel
   val branchTarget = branch.io.nextPC
 
   // to exe data

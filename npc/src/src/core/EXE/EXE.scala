@@ -79,4 +79,6 @@ class EXE extends Module {
   io.exe2global.forward.enable := (control.wbOp === WriteBackOp.WB_ALU) && exeValid
   io.exe2global.forward.wAddr  := inst(11, 7)
   io.exe2global.forward.wData  := aluResult
+
+  io.exe2global.exeMemReadEnable := control.memReadEn && exeValid
 }
