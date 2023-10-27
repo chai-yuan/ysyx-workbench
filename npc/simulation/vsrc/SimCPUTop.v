@@ -153,8 +153,8 @@ module SimInstMem (
     always @(posedge clk) begin
         if (readEn && !reset) begin
             verilog_pmem_read(addr, read_data);
+            readData <= read_data;
         end
-        readData <= read_data;
     end
 endmodule
 
@@ -179,8 +179,8 @@ module SimDataMem (
         end
         if (readEn && !reset) begin
             verilog_pmem_read(addr, read_data);
+            readData <= read_data;
         end
-        readData <= read_data;
     end
     
 endmodule

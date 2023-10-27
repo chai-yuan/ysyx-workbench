@@ -249,17 +249,20 @@ endmodule
 
 module PreIF(	// @[<stdin>:3:10]
   input  [31:0] io_instMem_readData,	// @[src/src/core/IF/PreIF.scala:9:14]
-                io_pc,	// @[src/src/core/IF/PreIF.scala:9:14]
+  input         io_preif2if_ready,	// @[src/src/core/IF/PreIF.scala:9:14]
+  input  [31:0] io_pc,	// @[src/src/core/IF/PreIF.scala:9:14]
   input         io_branch_branchSel,	// @[src/src/core/IF/PreIF.scala:9:14]
   input  [31:0] io_branch_branchTarget,	// @[src/src/core/IF/PreIF.scala:9:14]
   output [31:0] io_instMem_addr,	// @[src/src/core/IF/PreIF.scala:9:14]
-                io_preif2if_bits_nextPC,	// @[src/src/core/IF/PreIF.scala:9:14]
+  output        io_instMem_readEn,	// @[src/src/core/IF/PreIF.scala:9:14]
+  output [31:0] io_preif2if_bits_nextPC,	// @[src/src/core/IF/PreIF.scala:9:14]
                 io_preif2if_bits_instData	// @[src/src/core/IF/PreIF.scala:9:14]
 );
 
   wire [31:0] preif2if_nextPC =
     io_branch_branchSel ? io_branch_branchTarget : io_pc + 32'h4;	// @[src/main/scala/chisel3/util/Mux.scala:141:16, src/src/core/IF/PreIF.scala:25:8]
   assign io_instMem_addr = preif2if_nextPC;	// @[<stdin>:3:10, src/main/scala/chisel3/util/Mux.scala:141:16]
+  assign io_instMem_readEn = io_preif2if_ready;	// @[<stdin>:3:10]
   assign io_preif2if_bits_nextPC = preif2if_nextPC;	// @[<stdin>:3:10, src/main/scala/chisel3/util/Mux.scala:141:16]
   assign io_preif2if_bits_instData = io_instMem_readData;	// @[<stdin>:3:10]
 endmodule
@@ -271,15 +274,16 @@ module IF(	// @[<stdin>:22:10]
                 io_preif2if_bits_instData,	// @[src/src/core/IF/IF.scala:10:14]
   input         io_if2id_ready,	// @[src/src/core/IF/IF.scala:10:14]
                 io_branch_branchSel,	// @[src/src/core/IF/IF.scala:10:14]
-  output        io_if2id_valid,	// @[src/src/core/IF/IF.scala:10:14]
+  output        io_preif2if_ready,	// @[src/src/core/IF/IF.scala:10:14]
+                io_if2id_valid,	// @[src/src/core/IF/IF.scala:10:14]
   output [31:0] io_if2id_bits_ifdata_pc,	// @[src/src/core/IF/IF.scala:10:14]
                 io_if2id_bits_ifdata_inst,	// @[src/src/core/IF/IF.scala:10:14]
                 io_if2global_pc	// @[src/src/core/IF/IF.scala:10:14]
 );
 
   reg         ifValid;	// @[src/src/core/IF/IF.scala:19:26]
-  reg  [31:0] pc;	// @[src/src/core/IF/IF.scala:31:19]
   wire        ifAllowin = ~ifValid | io_if2id_ready;	// @[src/src/core/IF/IF.scala:19:26, :21:{19,28}]
+  reg  [31:0] pc;	// @[src/src/core/IF/IF.scala:31:19]
   always @(posedge clock) begin	// @[<stdin>:23:11]
     if (reset) begin	// @[<stdin>:23:11]
       ifValid <= 1'h0;	// @[<stdin>:22:10, src/src/core/IF/IF.scala:19:26]
@@ -312,6 +316,7 @@ module IF(	// @[<stdin>:22:10]
       `FIRRTL_AFTER_INITIAL	// @[<stdin>:22:10]
     `endif // FIRRTL_AFTER_INITIAL
   `endif // ENABLE_INITIAL_REG_
+  assign io_preif2if_ready = ifAllowin;	// @[<stdin>:22:10, src/src/core/IF/IF.scala:21:28]
   assign io_if2id_valid = ifValid & ~io_branch_branchSel;	// @[<stdin>:22:10, src/src/core/IF/IF.scala:19:26, :23:{36,39}]
   assign io_if2id_bits_ifdata_pc = pc;	// @[<stdin>:22:10, src/src/core/IF/IF.scala:31:19]
   assign io_if2id_bits_ifdata_inst = io_preif2if_bits_instData;	// @[<stdin>:22:10]
@@ -1533,6 +1538,7 @@ module CPUTop(	// @[<stdin>:934:10]
   wire [31:0] _idStage_io_id2exe_bits_iddata_imm;	// @[src/src/core/CPUTop.scala:30:26]
   wire        _idStage_io_id2global_branch_branchSel;	// @[src/src/core/CPUTop.scala:30:26]
   wire [31:0] _idStage_io_id2global_branch_branchTarget;	// @[src/src/core/CPUTop.scala:30:26]
+  wire        _ifStage_io_preif2if_ready;	// @[src/src/core/CPUTop.scala:29:26]
   wire        _ifStage_io_if2id_valid;	// @[src/src/core/CPUTop.scala:29:26]
   wire [31:0] _ifStage_io_if2id_bits_ifdata_pc;	// @[src/src/core/CPUTop.scala:29:26]
   wire [31:0] _ifStage_io_if2id_bits_ifdata_inst;	// @[src/src/core/CPUTop.scala:29:26]
@@ -1541,10 +1547,12 @@ module CPUTop(	// @[<stdin>:934:10]
   wire [31:0] _preifStage_io_preif2if_bits_instData;	// @[src/src/core/CPUTop.scala:28:26]
   PreIF preifStage (	// @[src/src/core/CPUTop.scala:28:26]
     .io_instMem_readData       (io_inst_readData),
+    .io_preif2if_ready         (_ifStage_io_preif2if_ready),	// @[src/src/core/CPUTop.scala:29:26]
     .io_pc                     (_ifStage_io_if2global_pc),	// @[src/src/core/CPUTop.scala:29:26]
     .io_branch_branchSel       (_idStage_io_id2global_branch_branchSel),	// @[src/src/core/CPUTop.scala:30:26]
     .io_branch_branchTarget    (_idStage_io_id2global_branch_branchTarget),	// @[src/src/core/CPUTop.scala:30:26]
     .io_instMem_addr           (io_inst_addr),
+    .io_instMem_readEn         (io_inst_readEn),
     .io_preif2if_bits_nextPC   (_preifStage_io_preif2if_bits_nextPC),
     .io_preif2if_bits_instData (_preifStage_io_preif2if_bits_instData)
   );
@@ -1555,6 +1563,7 @@ module CPUTop(	// @[<stdin>:934:10]
     .io_preif2if_bits_instData (_preifStage_io_preif2if_bits_instData),	// @[src/src/core/CPUTop.scala:28:26]
     .io_if2id_ready            (_idStage_io_if2id_ready),	// @[src/src/core/CPUTop.scala:30:26]
     .io_branch_branchSel       (_idStage_io_id2global_branch_branchSel),	// @[src/src/core/CPUTop.scala:30:26]
+    .io_preif2if_ready         (_ifStage_io_preif2if_ready),
     .io_if2id_valid            (_ifStage_io_if2id_valid),
     .io_if2id_bits_ifdata_pc   (_ifStage_io_if2id_bits_ifdata_pc),
     .io_if2id_bits_ifdata_inst (_ifStage_io_if2id_bits_ifdata_inst),
@@ -1720,7 +1729,6 @@ module CPUTop(	// @[<stdin>:934:10]
   );
   assign io_inst_writeEn = 1'h0;	// @[<stdin>:934:10, src/src/core/CPUTop.scala:28:26]
   assign io_inst_writeData = 32'h0;	// @[<stdin>:934:10, src/src/core/CPUTop.scala:28:26, :30:26]
-  assign io_inst_readEn = 1'h1;	// @[<stdin>:934:10, src/src/core/CPUTop.scala:28:26, :29:26, :30:26, :31:26, :32:26, :33:26]
   assign io_inst_mark = 4'hF;	// @[<stdin>:934:10, src/src/core/CPUTop.scala:28:26]
   assign io_debug_regs_0 = 32'h0;	// @[<stdin>:934:10, src/src/core/CPUTop.scala:28:26, :30:26]
 endmodule
