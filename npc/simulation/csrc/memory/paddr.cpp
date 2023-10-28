@@ -58,6 +58,7 @@ void pmem_read(int raddr, word_t* rdata) {
         Device* device = &devices[i];
         if (device->low <= raddr && device->high > raddr) {
             mem_read(device->space, raddr - device->low, rdata);
+            device->callback(raddr - device->low, false);
             return;
         }
     }
@@ -75,7 +76,7 @@ void pmem_write(int waddr, word_t wdata, char wmask) {
         Device* device = &devices[i];
         if (device->low <= waddr && device->high > waddr) {
             mem_write(device->space, waddr - devices->low, wdata, wmask);
-            device->callback(waddr - device->low, 4);
+            device->callback(waddr - device->low, true);
             return;
         }
     }
