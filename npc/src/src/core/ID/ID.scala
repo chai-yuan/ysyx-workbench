@@ -5,6 +5,7 @@ import chisel3.util._
 import config.Config
 import core.IF.IF2IDBundle
 import core.WB.WriteBackBundle
+import core.EXE.EXEMemLoadBundle
 
 class ID extends Module {
   val io = IO(new Bundle {
@@ -12,15 +13,16 @@ class ID extends Module {
     val id2exe    = Decoupled(new ID2EXEBundle)
     val id2global = new ID2GlobalBundle
     // global
-    val exeForward       = Flipped(new WriteBackBundle)
-    val memForward       = Flipped(new WriteBackBundle)
-    val writeBack        = Flipped(new WriteBackBundle)
-    val exeMemReadEnable = Input(Bool())
+    val exeForward = Flipped(new WriteBackBundle)
+    val memForward = Flipped(new WriteBackBundle)
+    val writeBack  = Flipped(new WriteBackBundle)
+    val exeMemLoad = Flipped(new EXEMemLoadBundle)
   })
-  val branchSel = Wire(Bool())
+  val branchSel    = Wire(Bool())
+  val memLoadStall = Wire(Bool())
 
   // pipeline ctrl
-  val readyGo    = !io.exeMemReadEnable
+  val readyGo    = !memLoadStall
   val idValid    = RegInit(false.B)
   val exeAllowin = io.id2exe.ready
   val idAllowin  = !idValid || (readyGo && exeAllowin)
@@ -41,6 +43,11 @@ class ID extends Module {
   )
   val pc   = if2id.ifdata.pc
   val inst = if2id.ifdata.inst
+
+  // stall
+  memLoadStall := io.exeMemLoad.loadEn &&
+    ((inst(19, 15) === io.exeMemLoad.loadAddr) ||
+      (inst(24, 20) === io.exeMemLoad.loadAddr))
 
   // control
   val control = Module(new Control)

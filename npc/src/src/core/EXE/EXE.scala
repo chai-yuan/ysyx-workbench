@@ -86,5 +86,6 @@ class EXE extends Module {
   io.exe2global.forward.wAddr  := inst(11, 7)
   io.exe2global.forward.wData  := aluResult
 
-  io.exe2global.exeMemReadEnable := control.memReadEn && exeValid
+  io.exe2global.exeMemLoad.loadEn   := control.memReadEn
+  io.exe2global.exeMemLoad.loadAddr := inst(11, 7)
 }
