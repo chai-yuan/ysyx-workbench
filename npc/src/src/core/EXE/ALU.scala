@@ -17,8 +17,7 @@ class ALU extends Module {
   io.out := MuxCase(
     0.U(32.W),
     Seq(
-      (io.aluOp === AluOp.ALU_NOP) -> (0.U(32.W)).asUInt,
-      (io.aluOp === AluOp.ALU_PSV) -> (io.src1).asUInt,
+      (io.aluOp === AluOp.ALU_NOP) -> (io.src1).asUInt,
       (io.aluOp === AluOp.ALU_ADD) -> (io.src1 + io.src2).asUInt,
       (io.aluOp === AluOp.ALU_SLT) -> Mux(io.src1.asSInt < io.src2.asSInt, 1.U(32.W), 0.U(32.W)).asUInt,
       (io.aluOp === AluOp.ALU_SLTU) -> Mux(io.src1.asUInt < io.src2.asUInt, 1.U(32.W), 0.U(32.W)).asUInt,

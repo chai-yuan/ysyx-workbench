@@ -53,11 +53,6 @@ class Control extends Module {
     io.inst,
     AluOp.ALU_NOP,
     Seq(
-      LUI -> AluOp.ALU_PSV,
-      CSRRW -> AluOp.ALU_PSV,
-      CSRRS -> AluOp.ALU_PSV,
-      JAL -> AluOp.ALU_PSV,
-      JALR -> AluOp.ALU_PSV,
       AUIPC -> AluOp.ALU_ADD,
       SB -> AluOp.ALU_ADD,
       SH -> AluOp.ALU_ADD,
