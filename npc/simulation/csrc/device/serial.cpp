@@ -3,9 +3,13 @@
 
 static uint8_t serial_buf[8];
 
+static void serial_putc(char ch) {
+    putc(ch, stderr);
+}
+
 void serial_callback(uint32_t offset, bool is_write) {
     if (is_write) {
-        putc(serial_buf[0], stderr);
+        serial_putc(serial_buf[0]);
     }
 }
 

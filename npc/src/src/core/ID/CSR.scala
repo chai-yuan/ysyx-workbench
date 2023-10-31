@@ -16,7 +16,7 @@ class CSR extends Module {
 
   val mepc    = RegInit(0.U(32.W))
   val mcause  = RegInit(0.U(32.W))
-  val mstatus = RegInit(0.U(32.W))
+  val mstatus = RegInit("h1800".U(32.W))
   val mtvec   = RegInit(0.U(32.W))
 
   val inst    = io.inst
@@ -61,8 +61,7 @@ class CSR extends Module {
   mstatus := MuxCase(
     mstatus,
     Seq(
-      (isZicsr && csrAddr === CSRCodes.CSR_MSTATUS) -> (newVal),
-      (inst === Inst.ECALL) -> "h1800".U
+      (isZicsr && csrAddr === CSRCodes.CSR_MSTATUS) -> (newVal)
     )
   )
   mtvec := MuxCase(
