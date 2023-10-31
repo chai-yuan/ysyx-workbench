@@ -13,7 +13,7 @@ LLVM_CXXFLAGS = $(shell llvm-config-11 --cxxflags)
 LLVM_LIBS = $(shell llvm-config-11 --libs)
 
 # verilator
-TOP_NAME := SimCPUTop
+TOP_NAME := CPUTop
 
 VERILATOR_FLAGS := -I$(VSRCS_DIR) --top $(TOP_NAME) -Wno-lint -Wno-style -Wno-UNUSED
 VERILATOR_FLAGS += --trace --debug --cc --exe --build

@@ -8,20 +8,12 @@ import core.ID._
 import core.EXE._
 import core.MEM._
 import core.WB._
-
-class MemBundle extends Bundle {
-  val addr      = Output(UInt(32.W))
-  val writeEn   = Output(Bool())
-  val writeData = Output(UInt(32.W))
-  val readEn    = Output(Bool())
-  val readData  = Input(UInt(32.W))
-  val mark      = Output(UInt(4.W))
-}
+import memory.SRAMBundle
 
 class CoreTop extends Module {
   val io = IO(new Bundle {
-    val inst  = new MemBundle
-    val data  = new MemBundle
+    val inst  = Flipped(new SRAMBundle)
+    val data  = Flipped(new SRAMBundle)
     val debug = new DebugBundle
   })
 

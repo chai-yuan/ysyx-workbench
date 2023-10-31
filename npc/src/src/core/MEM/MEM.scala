@@ -3,7 +3,6 @@ package core.MEM
 import chisel3._
 import chisel3.util._
 import core.EXE._
-import core.MemBundle
 import core.ID.ControlBundle
 import config.WriteBackOp
 

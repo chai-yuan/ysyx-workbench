@@ -3,11 +3,11 @@ package core.IF
 import chisel3._
 import chisel3.util._
 import core.ID.BranchBundle
-import core.MemBundle
+import memory.SRAMBundle
 
 class PreIF extends Module {
   val io = IO(new Bundle {
-    val instMem  = new MemBundle
+    val instMem  = Flipped(new SRAMBundle)
     val preif2if = Decoupled(new PreIF2IFBundle)
     val pc       = Input(UInt(32.W))
     val branch   = Flipped(new BranchBundle)
@@ -30,14 +30,15 @@ class PreIF extends Module {
 
   // to if data
   val preif2if = Wire(new PreIF2IFBundle)
-  preif2if.instData := io.instMem.readData
+  preif2if.instData := io.instMem.rdata
   preif2if.nextPC   := nextPC
 
   io.preif2if.bits <> preif2if
   // instmem
-  io.instMem.writeEn   := false.B
-  io.instMem.writeData := 0.U
-  io.instMem.readEn    := ifAllowin
-  io.instMem.addr      := nextPC
-  io.instMem.mark      := "b1111".U
+  io.instMem.wen   := false.B
+  io.instMem.waddr := 0.U
+  io.instMem.wdata := 0.U
+  io.instMem.ren   := ifAllowin
+  io.instMem.raddr := nextPC
+  io.instMem.wmask := "b1111".U
 }

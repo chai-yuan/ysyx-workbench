@@ -3,14 +3,14 @@ package core.EXE
 import chisel3._
 import chisel3.util._
 import core.ID._
-import core.MemBundle
 import config.AluSrcOp
 import config.WriteBackOp
 import core.MEM.DataMemWriteWrap
+import memory.SRAMBundle
 
 class EXE extends Module {
   val io = IO(new Bundle {
-    val dataMem    = new MemBundle
+    val dataMem    = Flipped(new SRAMBundle)
     val id2exe     = Flipped(Decoupled(new ID2EXEBundle))
     val exe2mem    = Decoupled(new EXE2MEMBundle)
     val exe2global = new EXE2GlobalBundle

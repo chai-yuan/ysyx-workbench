@@ -28,6 +28,7 @@ class SRAM extends Module {
 
   // 使用dpic接入到仿真器
   val dpicRAM = Module(new DPIC_RAM)
+  dpicRAM.io.reset := reset
 
   dpicRAM.io.ren   := io.ren
   dpicRAM.io.raddr := io.raddr

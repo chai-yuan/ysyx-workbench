@@ -3,15 +3,19 @@ package core
 import chisel3._
 import chisel3.util._
 import debug.DebugBundle
-import core.IF._
-import core.ID._
-import core.EXE._
-import core.MEM._
-import core.WB._
+import memory.SRAM
 
 class CPUTop extends Module {
   val io = IO(new Bundle {
     val debug = new DebugBundle
   })
 
+  val core    = Module(new CoreTop)
+  val instRAM = Module(new SRAM)
+  val dataRAM = Module(new SRAM)
+
+  core.io.inst <> instRAM.io
+  core.io.data <> dataRAM.io
+
+  core.io.debug <> io.debug
 }

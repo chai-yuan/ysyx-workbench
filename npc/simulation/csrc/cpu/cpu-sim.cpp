@@ -4,7 +4,7 @@
 #include <memory/paddr.h>
 #include <trace.h>
 
-VSimCPUTop* sim_cpu;
+VCPUTop* sim_cpu;
 VerilatedContext* contextp;
 VerilatedVcdC* tfp;
 
@@ -16,7 +16,7 @@ void sim_init() {
 
     contextp = new VerilatedContext();
     tfp = new VerilatedVcdC();
-    sim_cpu = new VSimCPUTop();
+    sim_cpu = new VCPUTop();
     IFDEF(CONFIG_VTRACE, vtrace_init("debug.vcd"));
     clk_cycle = 0;
     inst = 0;
@@ -30,13 +30,19 @@ void sim_init() {
 
 void sim_reset() {
     sim_cpu->clock = 0;
+    sim_cpu->reset = 1;
     sim_cpu->eval();
+    IFDEF(CONFIG_VTRACE, dump_wave());
+    sim_cpu->clock = 1;
+    sim_cpu->reset = 1;
+    sim_cpu->eval();
+    IFDEF(CONFIG_VTRACE, dump_wave());
+    sim_cpu->clock = 0;
     sim_cpu->reset = 1;
     sim_cpu->eval();
     IFDEF(CONFIG_VTRACE, dump_wave());
 
     sim_cpu->clock = 1;
-    sim_cpu->eval();
     sim_cpu->reset = 0;
     sim_cpu->eval();
     IFDEF(CONFIG_VTRACE, dump_wave());

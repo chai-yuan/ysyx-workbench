@@ -3,7 +3,6 @@ package core.IF
 import chisel3._
 import chisel3.util._
 import config.Config
-import core.MemBundle
 import core.ID._
 
 class IF extends Module {
