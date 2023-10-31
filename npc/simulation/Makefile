@@ -3,7 +3,7 @@ CSRCS_DIR := $(NPC_HOME)/simulation/csrc
 INCLUDE_DIR := $(NPC_HOME)/simulation/include
 OBJ_DIR := ./obj_dir
 
-VSRCS += $(shell find $(abspath $(VSRCS_DIR)) -name "*.v")
+VSRCS += $(shell find $(abspath $(VSRCS_DIR)) -name "*.sv")
 CSRCS += $(shell find $(abspath $(CSRCS_DIR)) -name "*.cpp" -or -name "*.c") 
 HSRCS += $(shell find $(abspath $(INCLUDE_DIR)) -name "*.h")
 HSRCS += $(shell find $(abspath $(OBJ_DIR)) -name "*.h")

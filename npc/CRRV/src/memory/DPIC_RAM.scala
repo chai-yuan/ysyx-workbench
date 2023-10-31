@@ -18,7 +18,7 @@ class DPIC_RAM extends BlackBox with HasBlackBoxInline {
   })
 
   setInline(
-    "dpic_ram.v",
+    "DPIC_RAM.sv",
     """
       |module DPIC_RAM (
       |    input reset,
