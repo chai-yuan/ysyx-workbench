@@ -5,7 +5,7 @@ static uint8_t serial_buf[8];
 
 void serial_callback(uint32_t offset, bool is_write) {
     if (is_write) {
-        putchar(serial_buf[0]);
+        putc(serial_buf[0], stderr);
     }
 }
 
