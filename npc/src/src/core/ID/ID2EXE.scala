@@ -10,7 +10,8 @@ class IDDataBundle extends Bundle {
 
   val reg1 = Output(UInt(32.W))
   val reg2 = Output(UInt(32.W))
-  val imm = Output(UInt(32.W))
+  val imm  = Output(UInt(32.W))
+  val csr  = Output(UInt(32.W))
 }
 
 class ID2EXEBundle extends Bundle {

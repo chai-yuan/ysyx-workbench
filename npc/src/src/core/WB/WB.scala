@@ -6,6 +6,7 @@ import config.Config
 import core.MEM.MEM2WBBundle
 import config.WriteBackOp
 import core.ID.ControlBundle
+import config.MemOp
 
 class WB extends Module {
   val io = IO(new Bundle {
@@ -47,8 +48,11 @@ class WB extends Module {
     )
   )
 
-  io.wb2global.debug.valid := wbValid
-  io.wb2global.debug.pc    := mem2wb.ifdata.pc
-  io.wb2global.debug.inst  := RegNext(inst)
-  io.wb2global.debug.halt  := RegNext(control.halt)
+  val device = (control.memOp =/= MemOp.MEM_NOP) &&
+    (aluResult > "hA000_0000".U)
+  io.wb2global.debug.valid  := wbValid
+  io.wb2global.debug.pc     := mem2wb.ifdata.pc
+  io.wb2global.debug.inst   := RegNext(inst)
+  io.wb2global.debug.device := RegNext(device) // 判断是否访问设备
+  io.wb2global.debug.halt   := RegNext(control.halt)
 }

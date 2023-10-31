@@ -59,9 +59,13 @@ void sim_exec() {
     clk_cycle++;
     update_cpu_state();
     // difftest
-    if (sim_cpu->io_debug_wbDebug_valid && cpu.pc != 0x80000000) {
+    if (sim_cpu->io_debug_wbDebug_valid) {
         valid_cycle++;
-        IFDEF(CONFIG_DIFFTEST, difftest_step(cpu.pc, 0));
+#ifdef CONFIG_DIFFTEST
+        if (cpu.pc == 0x80000000 || sim_cpu->io_debug_wbDebug_device)
+            difftest_skip_ref();
+        difftest_step(cpu.pc, 0);
+#endif
     }
 
     // halt

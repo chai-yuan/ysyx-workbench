@@ -1,4 +1,5 @@
 #include <cpu/cpu.h>
+#include <cpu/difftest.h>
 #include <device/device.h>
 #include <memory/paddr.h>
 

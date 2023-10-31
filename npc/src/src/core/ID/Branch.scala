@@ -11,16 +11,18 @@ class Branch extends Module {
     val regData2 = Input(UInt(32.W))
     val imm      = Input(UInt(32.W))
     val pc       = Input(UInt(32.W))
+    val csrData  = Input(UInt(32.W))
 
     val nextPCsel = Output(Bool())
     val nextPC    = Output(UInt(32.W))
   })
 
-  val inst = io.inst
-  val imm  = io.imm
-  val reg1 = io.regData1
-  val reg2 = io.regData2
-  val pc   = io.pc
+  val inst    = io.inst
+  val imm     = io.imm
+  val reg1    = io.regData1
+  val reg2    = io.regData2
+  val pc      = io.pc
+  val csrData = io.csrData
 
   val nextPC = Lookup(
     inst,
@@ -55,12 +57,14 @@ class Branch extends Module {
         pc.asUInt + imm.asUInt,
         pc.asUInt + 4.U
       ),
-      (BGEU -> Mux(
+      BGEU -> Mux(
         reg1.asUInt >= reg2.asUInt,
         pc.asUInt + imm.asUInt,
         pc.asUInt + 4.U
-      ))
+      ),
       // ---
+      ECALL -> csrData,
+      MRET -> csrData
     )
   )
 

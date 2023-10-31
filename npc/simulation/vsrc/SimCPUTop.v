@@ -38,6 +38,7 @@ module SimCPUTop(	// @[<stdin>:711:10]
   output        io_debug_wbDebug_valid,	// @[src/src/core/CPUTop.scala:22:14]
   output [31:0] io_debug_wbDebug_pc,	// @[src/src/core/CPUTop.scala:22:14]
   output [31:0] io_debug_wbDebug_inst,	// @[src/src/core/CPUTop.scala:22:14]
+  output        io_debug_wbDebug_device,	// @[src/src/core/CPUTop.scala:22:14]
   output        io_debug_wbDebug_halt	// @[src/src/core/CPUTop.scala:22:14]
 );
 
@@ -130,6 +131,7 @@ module SimCPUTop(	// @[<stdin>:711:10]
     .io_debug_wbDebug_valid(io_debug_wbDebug_valid),
     .io_debug_wbDebug_pc(io_debug_wbDebug_pc),
     .io_debug_wbDebug_inst(io_debug_wbDebug_inst),
+    .io_debug_wbDebug_device(io_debug_wbDebug_device),
     .io_debug_wbDebug_halt(io_debug_wbDebug_halt)
   );
 

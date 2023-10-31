@@ -8,11 +8,12 @@ object Config {
 }
 
 object AluSrcOp {
-  def AluSrcOpWidth = 2.W
+  def AluSrcOpWidth = 3.W
   val SrcReg        = 0.U(AluSrcOpWidth)
   val SrcPC         = 1.U(AluSrcOpWidth)
   val SrcSeqPC      = 2.U(AluSrcOpWidth)
   val SrcImm        = 3.U(AluSrcOpWidth)
+  val SrcCSR        = 4.U(AluSrcOpWidth)
 }
 
 object AluOp {

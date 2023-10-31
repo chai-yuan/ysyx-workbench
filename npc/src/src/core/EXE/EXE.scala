@@ -41,6 +41,7 @@ class EXE extends Module {
   val regData1 = id2exe.iddata.reg1
   val regData2 = id2exe.iddata.reg2
   val imm      = id2exe.iddata.imm
+  val csr      = id2exe.iddata.csr
 
   // alu
   val alu = Module(new ALU)
@@ -50,7 +51,8 @@ class EXE extends Module {
     Seq(
       (control.src1Op === AluSrcOp.SrcPC) -> (pc),
       (control.src1Op === AluSrcOp.SrcSeqPC) -> (pc + 4.U),
-      (control.src1Op === AluSrcOp.SrcImm) -> (imm)
+      (control.src1Op === AluSrcOp.SrcImm) -> (imm),
+      (control.src1Op === AluSrcOp.SrcCSR) -> (csr)
     )
   )
   alu.io.src2 := MuxCase(

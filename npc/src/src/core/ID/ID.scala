@@ -67,6 +67,13 @@ class ID extends Module {
   immGen.io.inst     := inst
   immGen.io.instType := outControl.instType
   val imm = immGen.io.imm
+  // csr
+  val csr = Module(new CSR)
+  csr.io.inst    := inst
+  csr.io.pc      := pc
+  csr.io.csrAddr := imm
+  csr.io.src1    := regData1
+  val csrData = csr.io.csrRead
   // branch
   val branch = Module(new Branch)
   branch.io.inst     := inst
@@ -74,6 +81,7 @@ class ID extends Module {
   branch.io.regData2 := regData2
   branch.io.imm      := imm
   branch.io.pc       := pc
+  branch.io.csrData  := csrData
 
   branchSel := branch.io.nextPCsel
   val branchTarget = branch.io.nextPC
@@ -85,6 +93,7 @@ class ID extends Module {
   id2exeData.iddata.reg1    := regData1
   id2exeData.iddata.reg2    := regData2
   id2exeData.iddata.imm     := imm
+  id2exeData.iddata.csr     := csrData
 
   io.id2exe.bits := id2exeData
   // id2global

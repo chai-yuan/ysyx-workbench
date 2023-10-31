@@ -5,17 +5,31 @@
 static Context* (*user_handler)(Event, Context*) = NULL;
 
 Context* __am_irq_handle(Context *c) {
-  if (user_handler) {
-    Event ev = {0};
-    switch (c->mcause) {
-      default: ev.event = EVENT_ERROR; break;
+    if (user_handler) {
+        Event ev = {0};
+
+        switch (c->mcause) {
+            case 0xb:
+                if (c->GPR1 == -1) {
+                    ev.event = EVENT_YIELD;
+                    c->mepc = c->mepc + 4;
+                } else if (c->GPR1 >= 0) {
+                    ev.event = EVENT_SYSCALL;
+                    c->mepc = c->mepc + 4;
+                } else {
+                    ev.event = EVENT_ERROR;
+                }
+                break;
+            default:
+                ev.event = EVENT_ERROR;
+                break;
+        }
+
+        c = user_handler(ev, c);
+        assert(c != NULL);
     }
 
-    c = user_handler(ev, c);
-    assert(c != NULL);
-  }
-
-  return c;
+    return c;
 }
 
 extern void __am_asm_trap(void);

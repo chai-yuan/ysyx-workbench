@@ -37,7 +37,8 @@ class Control extends Module {
     Seq(
       (inst === AUIPC) -> (AluSrcOp.SrcPC),
       (inst === JAL || inst === JALR) -> (AluSrcOp.SrcSeqPC),
-      (inst === LUI) -> (AluSrcOp.SrcImm)
+      (inst === LUI) -> (AluSrcOp.SrcImm),
+      (inst === CSRRS || inst === CSRRW) -> (AluSrcOp.SrcCSR)
     )
   )
   io.outControl.src2Op := MuxCase(
@@ -107,7 +108,8 @@ class Control extends Module {
     Seq(
       (opcode === "b0000011".U) -> (WriteBackOp.WB_MEM),
       (opcode === "b0010011".U || opcode === "b0110011".U) -> (WriteBackOp.WB_ALU),
-      (inst === JAL || inst === JALR || inst === LUI || inst === AUIPC) -> (WriteBackOp.WB_ALU)
+      (inst === JAL || inst === JALR || inst === LUI || inst === AUIPC) -> (WriteBackOp.WB_ALU),
+      (inst === CSRRS || inst === CSRRW) -> (WriteBackOp.WB_ALU)
     )
   )
 
