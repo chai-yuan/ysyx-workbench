@@ -18,7 +18,7 @@ class MemBundle extends Bundle {
   val mark      = Output(UInt(4.W))
 }
 
-class CPUTop extends Module {
+class CoreTop extends Module {
   val io = IO(new Bundle {
     val inst  = new MemBundle
     val data  = new MemBundle
