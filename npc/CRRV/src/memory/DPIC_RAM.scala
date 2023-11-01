@@ -5,6 +5,7 @@ import chisel3.util._
 
 class DPIC_RAM extends BlackBox with HasBlackBoxInline {
   val io = IO(new Bundle {
+    val clock = Input(Clock())
     val reset = Input(Bool())
 
     val ren   = Input(Bool())
@@ -21,6 +22,7 @@ class DPIC_RAM extends BlackBox with HasBlackBoxInline {
     "DPIC_RAM.sv",
     """
       |module DPIC_RAM (
+      |    input clock,
       |    input reset,
       |    input ren,
       |    input [31:0] raddr,
@@ -32,7 +34,7 @@ class DPIC_RAM extends BlackBox with HasBlackBoxInline {
       |);
       |    import "DPI-C" function void verilog_pmem_read(input int raddr, output int rdata);
       |    import "DPI-C" function void verilog_pmem_write(input int waddr, input int wdata, input byte wmask);
-      |    always @(*) begin
+      |    always @(posedge clock) begin
       |        if (wen && !reset) begin
       |            verilog_pmem_write(waddr, wdata, wmask);
       |        end
