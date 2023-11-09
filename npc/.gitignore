@@ -12,6 +12,8 @@
 !.scalafmt.conf
 !build.sc
 !README.md
+!firtool
+!firtool.elf.strip
 build/
 
 # mill
