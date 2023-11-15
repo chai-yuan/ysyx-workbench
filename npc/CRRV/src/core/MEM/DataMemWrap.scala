@@ -79,7 +79,7 @@ class DataMemReadWrap extends Module {
 
   val control     = io.control
   val addr        = io.addr
-  val rawReadData = io.dataMemR.data
+  val rawReadData = Mux(io.dataMemR.valid, io.dataMemR.data, 0.U)
 
   val shiftData = rawReadData >> (Cat(addr(1, 0), 0.U(3.W)))
   io.readData := MuxCase(
@@ -93,7 +93,7 @@ class DataMemReadWrap extends Module {
     )
   )
 
-  io.stall          := io.dataMemR.valid
+  io.stall          := (control.memReadEn && !io.dataMemR.valid)
   io.dataMemR.ready := io.allowin
   io.dataMemB.ready := true.B
 }

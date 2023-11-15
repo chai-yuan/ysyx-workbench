@@ -21,7 +21,7 @@ class EXE extends Module {
   })
   val memWriteStall = Wire(Bool())
   // pipeline ctrl
-  val readyGo    = memWriteStall
+  val readyGo    = !memWriteStall
   val exeValid   = RegInit(false.B)
   val memAllowin = io.exe2mem.ready
   val exeAllowin = !exeValid || (readyGo && memAllowin)

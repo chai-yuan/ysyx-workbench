@@ -19,7 +19,7 @@ class MEM extends Module {
   })
   val memReadStall = Wire(Bool())
   // pipeline ctrl
-  val readyGo    = memReadStall
+  val readyGo    = !memReadStall
   val memValid   = RegInit(false.B)
   val wbAllowin  = io.mem2wb.ready
   val memAllowin = !memValid || (readyGo && wbAllowin)
