@@ -4,9 +4,12 @@ import chisel3._
 import chisel3.util._
 import config.Config
 import core.ID._
+import memory.ReadBundle
 
 class IF extends Module {
   val io = IO(new Bundle {
+    val instMem = new ReadBundle
+
     val preif2if  = Flipped(Decoupled(new PreIF2IFBundle))
     val if2id     = Decoupled(new IF2IDBundle)
     val if2global = new IF2GlobalBundle
@@ -14,7 +17,7 @@ class IF extends Module {
   })
 
   // pipeline ctrl
-  val readyGo   = true.B
+  val readyGo   = io.instMem.valid
   val ifValid   = RegInit(false.B)
   val idAllowin = io.if2id.ready
   val ifAllowin = !ifValid || (readyGo && idAllowin)
@@ -29,7 +32,10 @@ class IF extends Module {
 
   val pc = RegInit(Config.PCinit)
   pc := Mux(io.preif2if.valid && ifAllowin, preif2if.nextPC, pc)
-  val inst = preif2if.instData
+
+  // instMem 
+  val inst   = io.instMem.data
+  io.instMem.ready := idAllowin
 
   // to id data
   val if2id = Wire(new IF2IDBundle)

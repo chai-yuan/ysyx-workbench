@@ -8,11 +8,12 @@ import core.ID._
 import core.EXE._
 import core.MEM._
 import core.WB._
+import memory.AXIliteBundle
 import memory.SRAMBundle
 
 class CoreTop extends Module {
   val io = IO(new Bundle {
-    val inst  = Flipped(new SRAMBundle)
+    val inst  = new AXIliteBundle
     val data  = Flipped(new SRAMBundle)
     val debug = new DebugBundle
   })
@@ -24,7 +25,8 @@ class CoreTop extends Module {
   val memStage   = Module(new MEM)
   val wbStage    = Module(new WB)
 
-  preifStage.io.instMem <> io.inst
+  preifStage.io.instMem <> io.inst.ar
+  ifStage.io.instMem <> io.inst.r
   exeStage.io.dataMem <> io.data
 
   // pipeline
@@ -49,4 +51,12 @@ class CoreTop extends Module {
   // debug
   io.debug.regs    := idStage.io.id2global.debugRegs
   io.debug.wbDebug := wbStage.io.wb2global.debug
+
+  // 不使用端口
+  io.inst.aw.valid := false.B
+  io.inst.aw.addr  := 0.U
+  io.inst.w.valid  := false.B
+  io.inst.w.data   := 0.U
+  io.inst.w.strb   := 0.U
+  io.inst.b.ready  := false.B
 }

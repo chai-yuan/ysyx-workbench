@@ -4,6 +4,7 @@ import chisel3._
 import chisel3.util._
 import debug.DebugBundle
 import memory.SRAM
+import memory.AXIliteRAM
 
 class CPUTop extends Module {
   val io = IO(new Bundle {
@@ -11,7 +12,7 @@ class CPUTop extends Module {
   })
 
   val core    = Module(new CoreTop)
-  val instRAM = Module(new SRAM)
+  val instRAM = Module(new AXIliteRAM)
   val dataRAM = Module(new SRAM)
 
   core.io.inst <> instRAM.io

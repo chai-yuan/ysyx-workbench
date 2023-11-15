@@ -3,23 +3,26 @@ package core.IF
 import chisel3._
 import chisel3.util._
 import core.ID.BranchBundle
-import memory.SRAMBundle
+import memory.AddrBundle
+import ujson.False
 
 class PreIF extends Module {
   val io = IO(new Bundle {
-    val instMem  = Flipped(new SRAMBundle)
+    val instMem  = new AddrBundle
     val preif2if = Decoupled(new PreIF2IFBundle)
     val pc       = Input(UInt(32.W))
     val branch   = Flipped(new BranchBundle)
   })
+  val arvalid = io.preif2if.ready
+  val arready = io.instMem.ready
 
   // pipeline ctrl
-  val readyGo   = true.B
+  val readyGo   = arvalid && arready // 地址发送成功
   val ifValid   = readyGo
   val ifAllowin = io.preif2if.ready
   io.preif2if.valid := ifValid
 
-  // ---
+  // nextPC
   val pc = io.pc
   val nextPC = MuxCase(
     pc + 4.U,
@@ -28,17 +31,21 @@ class PreIF extends Module {
     )
   )
 
-  // to if data
-  val preif2if = Wire(new PreIF2IFBundle)
-  preif2if.instData := io.instMem.rdata
-  preif2if.nextPC   := nextPC
-
-  io.preif2if.bits <> preif2if
   // instmem
-  io.instMem.wen   := false.B
-  io.instMem.waddr := 0.U
-  io.instMem.wdata := 0.U
-  io.instMem.ren   := ifAllowin
-  io.instMem.raddr := nextPC
-  io.instMem.wmask := "b1111".U
+  val nextPCReg = RegInit(0.U(32.W))
+  nextPCReg := MuxCase(
+    nextPCReg,
+    Seq(
+      // 握手失败，将地址储存下来
+      (arvalid && !arready && nextPCReg === 0.U) -> (nextPC),
+      // 握手成功，清空地址缓存
+      (arvalid && arready) -> (0.U(32.W))
+    )
+  )
+  val raddr = Mux(nextPCReg === 0.U, nextPC, nextPCReg) // 获得应该发送的地址
+  io.instMem.valid := arvalid
+  io.instMem.addr  := raddr
+
+  // to if data
+  io.preif2if.bits.nextPC   := raddr
 }
