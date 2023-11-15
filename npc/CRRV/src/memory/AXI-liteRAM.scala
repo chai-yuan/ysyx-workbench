@@ -14,7 +14,7 @@ class AddrBundle extends Bundle {
 class ReadBundle extends Bundle {
   val valid = Input(Bool())
   val ready = Output(Bool())
-  val data  = Input(Bool())
+  val data  = Input(UInt(32.W))
   val resp  = Input(UInt(2.W))
 }
 
@@ -48,13 +48,15 @@ class AXIliteRAM extends Module {
   val rvalid = Wire(Bool())
   val rready = Wire(Bool())
 
-  val arvalid = io.ar.valid
-  val arready = !(rvalid && !rready) // 如果发送数据还没有被读取，就不接受新地址，可以添加随机延迟
-  val raddr   = Mux(arvalid && arready, io.ar.addr, 0.U) // 获得地址
+  val arvalid  = io.ar.valid
+  val arready  = !(rvalid && !rready) // 如果发送数据还没有被读取，就不接受新地址，可以添加随机延迟
+  val raddrReg = RegInit(0.U(32.W))
+  raddrReg := Mux(arvalid && arready, io.ar.addr, raddrReg)
+  val raddr = Mux(arvalid && arready, io.ar.addr, raddrReg) // 获得地址
 
   rvalid := RegNext(raddr =/= 0.U) // 当收到有效地址的一周期后，便可以返回数据，可以添加延迟
   rready := io.r.ready
-  val rdata  = sram.io.rdata
+  val rdata = sram.io.rdata
 
   io.ar.ready := arready
   io.r.valid  := rvalid
