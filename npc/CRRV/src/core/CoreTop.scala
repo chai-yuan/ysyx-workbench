@@ -14,7 +14,7 @@ import memory.SRAMBundle
 class CoreTop extends Module {
   val io = IO(new Bundle {
     val inst  = new AXIliteBundle
-    val data  = Flipped(new SRAMBundle)
+    val data  = new AXIliteBundle
     val debug = new DebugBundle
   })
 
@@ -27,7 +27,12 @@ class CoreTop extends Module {
 
   preifStage.io.instMem <> io.inst.ar
   ifStage.io.instMem <> io.inst.r
-  exeStage.io.dataMem <> io.data
+
+  exeStage.io.dataMemAR <> io.data.ar
+  exeStage.io.dataMemAW <> io.data.aw
+  exeStage.io.dataMemW <> io.data.w
+  memStage.io.dataMemR <> io.data.r
+  memStage.io.dataMemB <> io.data.b
 
   // pipeline
   preifStage.io.preif2if <> ifStage.io.preif2if
@@ -45,8 +50,6 @@ class CoreTop extends Module {
   idStage.io.exeForward := exeStage.io.exe2global.forward
   idStage.io.memForward := memStage.io.mem2global.forward
   idStage.io.exeMemLoad := exeStage.io.exe2global.exeMemLoad
-
-  memStage.io.globalmem := exeStage.io.exe2global.globalmem
 
   // debug
   io.debug.regs    := idStage.io.id2global.debugRegs

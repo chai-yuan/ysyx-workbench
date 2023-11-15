@@ -6,17 +6,22 @@ import core.ID._
 import config.AluSrcOp
 import config.WriteBackOp
 import core.MEM.DataMemWriteWrap
-import memory.SRAMBundle
+import memory.WriteBundle
+import memory.AddrBundle
 
 class EXE extends Module {
   val io = IO(new Bundle {
-    val dataMem    = Flipped(new SRAMBundle)
+    val dataMemAR = new AddrBundle
+    val dataMemAW = new AddrBundle
+    val dataMemW  = new WriteBundle
+
     val id2exe     = Flipped(Decoupled(new ID2EXEBundle))
     val exe2mem    = Decoupled(new EXE2MEMBundle)
     val exe2global = new EXE2GlobalBundle
   })
+  val memWriteStall = Wire(Bool())
   // pipeline ctrl
-  val readyGo    = true.B
+  val readyGo    = memWriteStall
   val exeValid   = RegInit(false.B)
   val memAllowin = io.exe2mem.ready
   val exeAllowin = !exeValid || (readyGo && memAllowin)
@@ -67,11 +72,13 @@ class EXE extends Module {
 
   // mem
   val writeMemWrap = Module(new DataMemWriteWrap)
-  writeMemWrap.io.dataMem <> io.dataMem
+  writeMemWrap.io.dataMemAR <> io.dataMemAR
+  writeMemWrap.io.dataMemAW <> io.dataMemAW
+  writeMemWrap.io.dataMemW <> io.dataMemW
   writeMemWrap.io.control   := control
   writeMemWrap.io.addr      := aluResult
   writeMemWrap.io.writeData := regData2
-  val rawReadData = writeMemWrap.io.rawReadData
+  memWriteStall             := writeMemWrap.io.stall
 
   // to mem data
   val exe2mem = Wire(new EXE2MEMBundle)
@@ -82,8 +89,6 @@ class EXE extends Module {
   io.exe2mem.bits := exe2mem
 
   // exe2global
-  io.exe2global.globalmem.memData := rawReadData
-
   io.exe2global.forward.enable := (control.wbOp === WriteBackOp.WB_ALU) && exeValid
   io.exe2global.forward.wAddr  := inst(11, 7)
   io.exe2global.forward.wData  := aluResult

@@ -13,7 +13,7 @@ class CPUTop extends Module {
 
   val core    = Module(new CoreTop)
   val instRAM = Module(new AXIliteRAM)
-  val dataRAM = Module(new SRAM)
+  val dataRAM = Module(new AXIliteRAM)
 
   core.io.inst <> instRAM.io
   core.io.data <> dataRAM.io

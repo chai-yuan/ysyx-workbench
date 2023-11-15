@@ -5,18 +5,21 @@ import chisel3.util._
 import core.EXE._
 import core.ID.ControlBundle
 import config.WriteBackOp
+import memory.ReadBundle
+import memory.WriteBackBundle
 
 class MEM extends Module {
   val io = IO(new Bundle {
+    val dataMemR = new ReadBundle
+    val dataMemB = new WriteBackBundle
+
     val exe2mem    = Flipped(Decoupled(new EXE2MEMBundle))
     val mem2wb     = Decoupled(new MEM2WBBundle)
     val mem2global = new MEM2GlobalBundle
-    // global
-    val globalmem = Flipped(new DataMemGlobalBundle)
   })
-
+  val memReadStall = Wire(Bool())
   // pipeline ctrl
-  val readyGo    = true.B
+  val readyGo    = memReadStall
   val memValid   = RegInit(false.B)
   val wbAllowin  = io.mem2wb.ready
   val memAllowin = !memValid || (readyGo && wbAllowin)
@@ -40,9 +43,13 @@ class MEM extends Module {
 
   // mem wrap
   val memReadWrap = Module(new DataMemReadWrap)
+  memReadWrap.io.dataMemR <> io.dataMemR
+  memReadWrap.io.dataMemB <> io.dataMemB
   memReadWrap.io.control     := control
-  memReadWrap.io.rawReadData := io.globalmem.memData
   memReadWrap.io.addr        := exe2mem.exedata.aluResult
+  memReadWrap.io.allowin := wbAllowin
+  
+  memReadStall := memReadWrap.io.stall
   val memData = memReadWrap.io.readData
 
   // to wb data
