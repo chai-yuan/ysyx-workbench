@@ -2,6 +2,7 @@ package memory
 
 import chisel3._
 import chisel3.util._
+import chisel3.util.random.LFSR
 import config.GenConfig
 import scala.reflect.internal.Mode
 
@@ -42,6 +43,13 @@ class AXIliteBundle extends Bundle {
 class AXIliteRAM extends Module {
   val io = IO(Flipped(new AXIliteBundle))
 
+  val randomDelay = Wire(UInt(4.W))
+  if(config.GenConfig.randomMemDelayEnable){
+    randomDelay := LFSR(4)
+  }else{
+    randomDelay := 0.U
+  }
+
   val sram = Module(new SRAM)
 
   // read
@@ -49,7 +57,7 @@ class AXIliteRAM extends Module {
   val rready = Wire(Bool())
 
   val arvalid  = io.ar.valid
-  val arready  = !(rvalid && !rready) // 如果发送数据还没有被读取，就不接受新地址，可以添加随机延迟
+  val arready  = !(rvalid && !rready) && (randomDelay(0) === false.B) // 如果发送数据还没有被读取，就不接受新地址，可以添加随机延迟
   val raddrReg = RegInit(0.U(32.W))
   raddrReg := Mux(arvalid && arready, io.ar.addr, raddrReg)
   val raddr = Mux(arvalid && arready, io.ar.addr, raddrReg) // 获得地址
@@ -69,8 +77,8 @@ class AXIliteRAM extends Module {
   // write 待完善不同时发送地址和数据
   val awvalid = io.aw.valid
   val wvalid  = io.w.valid
-  val awready = awvalid // 随时准备就绪，可以添加随机延迟
-  val wready  = wvalid
+  val awready = awvalid  // 随时准备就绪，可以添加随机延迟
+  val wready  = wvalid  
 
   val waddr = Mux(awvalid && awready, io.aw.addr, 0.U)
   val wdata = Mux(wvalid && wready, io.w.data, 0.U)
