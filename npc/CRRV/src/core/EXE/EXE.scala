@@ -21,9 +21,9 @@ class EXE extends Module {
   val memAllowin = io.exe2mem.ready
   val exeAllowin = !exeValid || (readyGo && memAllowin)
   exeValid := Mux(exeAllowin, io.id2exe.valid, exeValid)
-  val wbValid = exeValid && readyGo
+  val memValid = exeValid && readyGo
 
-  io.exe2mem.valid := wbValid
+  io.exe2mem.valid := memValid
   io.id2exe.ready  := exeAllowin
 
   // from if data
