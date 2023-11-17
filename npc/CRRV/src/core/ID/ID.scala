@@ -45,7 +45,6 @@ class ID extends Module {
   val inst = if2id.ifdata.inst
 
   // stall
-  //memLoadStall := io.exeMemLoad.loadEn
   memLoadStall := io.exeMemLoad.loadEn &&
     ((inst(19, 15) === io.exeMemLoad.loadAddr) ||
       (inst(24, 20) === io.exeMemLoad.loadAddr))
@@ -84,7 +83,7 @@ class ID extends Module {
   branch.io.pc       := pc
   branch.io.csrData  := csrData
 
-  branchSel := branch.io.nextPCsel
+  branchSel := branch.io.nextPCsel && !memLoadStall
   val branchTarget = branch.io.nextPC
 
   // to exe data

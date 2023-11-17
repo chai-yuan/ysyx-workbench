@@ -23,14 +23,13 @@ class PreIF extends Module {
   io.preif2if.valid := ifValid
 
   // nextPC
-  val branchPCReg = RegInit(0.U(32.W))
-  branchPCReg := MuxCase(
-    branchPCReg,
+  val branchReg = RegInit(0.U(32.W))
+  val nextPCReg = RegInit(0.U(32.W))
+  branchReg := MuxCase(
+    branchReg,
     Seq(
-      // 握手失败，将地址储存下来
-      (arvalid && !arready && io.branch.branchSel) -> (io.branch.branchTarget),
-      // 握手成功，清空地址缓存
-      (arvalid && arready) -> (0.U(32.W))
+      (io.branch.branchSel && nextPCReg =/= 0.U) -> (io.branch.branchTarget),
+      (nextPCReg === 0.U) -> (0.U)
     )
   )
 
@@ -39,15 +38,22 @@ class PreIF extends Module {
     pc + 4.U,
     Seq(
       (io.branch.branchSel) -> (io.branch.branchTarget),
-      (branchPCReg =/= 0.U) -> (branchPCReg)
+      (branchReg =/= 0.U) -> (branchReg)
     )
   )
 
+  nextPCReg := MuxCase(
+    nextPCReg,
+    Seq(
+      (arvalid && !arready && nextPCReg === 0.U) -> (nextPC),
+      (arvalid && arready) -> (0.U)
+    )
+  )
   // instmem
-  val raddr = nextPC
+  val raddr = Mux(nextPCReg === 0.U, nextPC, nextPCReg)
   io.instMem.valid := arvalid
   io.instMem.addr  := raddr
 
   // to if data
-  io.preif2if.bits.nextPC   := nextPC
+  io.preif2if.bits.nextPC := raddr
 }

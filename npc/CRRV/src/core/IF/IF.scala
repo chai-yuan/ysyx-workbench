@@ -15,6 +15,8 @@ class IF extends Module {
     val if2global = new IF2GlobalBundle
     val branch    = Flipped(new BranchBundle)
   })
+  val branchFlushReg = RegInit(false.B)
+  val branchFlush    = io.branch.branchSel || branchFlushReg
 
   // pipeline ctrl
   val readyGo   = io.instMem.valid
@@ -22,19 +24,27 @@ class IF extends Module {
   val idAllowin = io.if2id.ready
   val ifAllowin = !ifValid || (readyGo && idAllowin)
   ifValid := Mux(ifAllowin, io.preif2if.valid, ifValid)
-  val idValid = ifValid && readyGo && !io.branch.branchSel
+  val idValid = ifValid && readyGo && !branchFlush
 
   io.if2id.valid    := idValid
   io.preif2if.ready := ifAllowin
 
+  branchFlushReg := MuxCase(
+    branchFlushReg,
+    Seq(
+      // 数据没有到齐，或者branch信号不能维持
+      (!(readyGo && ifValid) && !branchFlushReg) -> (io.branch.branchSel),
+      (readyGo && ifValid && idAllowin) -> (false.B)
+    )
+  )
   // from preif data
   val preif2if = io.preif2if.bits
 
   val pc = RegInit(Config.PCinit)
   pc := Mux(io.preif2if.valid && ifAllowin, preif2if.nextPC, pc)
 
-  // instMem 
-  val inst   = io.instMem.data
+  // instMem
+  val inst = io.instMem.data
   io.instMem.ready := idAllowin
 
   // to id data
