@@ -62,7 +62,7 @@ class AXIliteRAM extends Module {
   raddrReg := Mux(arvalid && arready, io.ar.addr, raddrReg)
   val raddr = Mux(arvalid && arready, io.ar.addr, raddrReg) // 获得地址
 
-  rvalid := RegNext(raddr =/= 0.U) // 当收到有效地址的一周期后，便可以返回数据，可以添加延迟
+  rvalid := RegNext(raddr =/= 0.U) && (randomDelay(1) === false.B)// 当收到有效地址的一周期后，便可以返回数据，可以添加延迟
   rready := io.r.ready
   val rdata = sram.io.rdata
 
