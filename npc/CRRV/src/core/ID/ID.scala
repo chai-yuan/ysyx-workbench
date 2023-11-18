@@ -83,7 +83,8 @@ class ID extends Module {
   branch.io.pc       := pc
   branch.io.csrData  := csrData
 
-  branchSel := branch.io.nextPCsel && !memLoadStall
+  // 当当前的流水线能够正常流入下一级的时候，生成的跳转信号才有效
+  branchSel := branch.io.nextPCsel && (readyGo && exeAllowin)
   val branchTarget = branch.io.nextPC
 
   // to exe data

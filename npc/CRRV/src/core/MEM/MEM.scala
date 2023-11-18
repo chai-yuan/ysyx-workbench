@@ -62,7 +62,7 @@ class MEM extends Module {
   io.mem2wb.bits := mem2wbData
 
   // mem2global
-  io.mem2global.forward.enable := (control.wbOp =/= WriteBackOp.WB_NOP) && memValid
+  io.mem2global.forward.enable := (control.wbOp =/= WriteBackOp.WB_NOP) && wbValid
   io.mem2global.forward.wAddr  := inst(11, 7)
   io.mem2global.forward.wData := MuxCase(
     0.U,
