@@ -45,10 +45,10 @@ class MEM extends Module {
   val memReadWrap = Module(new DataMemReadWrap)
   memReadWrap.io.dataMemR <> io.dataMemR
   memReadWrap.io.dataMemB <> io.dataMemB
-  memReadWrap.io.control     := control
-  memReadWrap.io.addr        := exe2mem.exedata.aluResult
+  memReadWrap.io.control := control
+  memReadWrap.io.addr    := exe2mem.exedata.aluResult
   memReadWrap.io.allowin := wbAllowin
-  
+
   memReadStall := memReadWrap.io.stall
   val memData = memReadWrap.io.readData
 

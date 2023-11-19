@@ -58,6 +58,9 @@ class DataMemWriteWrap extends Module {
 
   io.dataMemW.strb := mask
 
+  val awreadyReg = RegInit(Bool())
+  val wreadyReg = RegInit(Bool())
+
   // 如果没有握手成功，那么等待
   io.stall := (io.dataMemAR.valid && !io.dataMemAR.ready) ||
     (io.dataMemAW.valid && !io.dataMemAW.ready) ||
@@ -94,6 +97,6 @@ class DataMemReadWrap extends Module {
   )
 
   io.stall          := (control.memReadEn && !io.dataMemR.valid)
-  io.dataMemR.ready := io.allowin
+  io.dataMemR.ready := io.dataMemR.valid && io.allowin
   io.dataMemB.ready := true.B
 }

@@ -12,8 +12,8 @@ class CPUTop extends Module {
   })
 
   val core    = Module(new CoreTop)
-  val instRAM = Module(new AXIliteRAM)
-  val dataRAM = Module(new AXIliteRAM)
+  val instRAM = Module(new AXIliteRAM(randomDelayEnable = false,randomSeed = 1))
+  val dataRAM = Module(new AXIliteRAM(randomDelayEnable = true,randomSeed = 2))
 
   core.io.inst <> instRAM.io
   core.io.data <> dataRAM.io
