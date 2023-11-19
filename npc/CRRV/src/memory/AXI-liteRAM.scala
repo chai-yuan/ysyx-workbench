@@ -84,7 +84,7 @@ class AXIliteRAM(randomDelayEnable: Boolean, randomSeed: BigInt = 1) extends Mod
   val awvalid  = io.aw.valid
   val wvalid   = io.w.valid
   val waddrReg = RegInit(0.U(32.W))
-  val wdataReg = RegInit(0.U(33.W)) // 多添加1个有效位
+  val wdataReg = RegInit(0.U(32.W))
   val wstrbReg = RegInit(0.U(4.W))
   val awready  = awvalid && !randomDelay(2) // 随时准备就绪，可以添加随机延迟
   val wready   = wvalid && !randomDelay(2)
@@ -99,7 +99,7 @@ class AXIliteRAM(randomDelayEnable: Boolean, randomSeed: BigInt = 1) extends Mod
   wdataReg := MuxCase(
     wdataReg,
     Seq(
-      (wvalid && wready) -> (Cat(1.U(1.W), io.w.data)),
+      (wvalid && wready) -> (io.w.data),
       (io.b.valid && io.b.ready) -> (0.U)
     )
   )
@@ -110,16 +110,16 @@ class AXIliteRAM(randomDelayEnable: Boolean, randomSeed: BigInt = 1) extends Mod
       (io.b.valid && io.b.ready) -> (0.U)
     )
   )
-  val waddr = Mux(awvalid && awready, io.aw.addr, waddrReg)
-  val wdata = Mux(wvalid && wready, io.w.data, wdataReg)
-  val wstrb = Mux(wvalid && wready, io.w.strb, wstrbReg)
+  val waddr = waddrReg
+  val wdata = wdataReg
+  val wstrb = wstrbReg
 
   io.aw.ready := awready
   io.w.ready  := wready
-  io.b.valid  := true.B // 不会发生异常
-  io.b.resp   := 0.U
+  io.b.valid  := (waddr =/= 0.U) && (wstrb =/= 0.U)
+  io.b.resp   := 0.U    // 不会发生异常
 
-  sram.io.wen   := waddr =/= 0.U
+  sram.io.wen   := (waddr =/= 0.U) && (wstrb =/= 0.U)
   sram.io.waddr := waddr
   sram.io.wdata := wdata
   sram.io.wmask := wstrb
