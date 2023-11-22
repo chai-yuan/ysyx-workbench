@@ -86,8 +86,8 @@ class AXIliteRAM(randomDelayEnable: Boolean, randomSeed: BigInt = 1) extends Mod
   val waddrReg = RegInit(0.U(32.W))
   val wdataReg = RegInit(0.U(32.W))
   val wstrbReg = RegInit(0.U(4.W))
-  val awready  = awvalid && !randomDelay(2) // 随时准备就绪，可以添加随机延迟
-  val wready   = wvalid && !randomDelay(2)
+  val awready  = (waddrReg === 0.U) && !randomDelay(2) // 随时准备就绪，可以添加随机延迟
+  val wready   = (wstrbReg === 0.U) && !randomDelay(3)
 
   waddrReg := MuxCase(
     waddrReg,

@@ -58,10 +58,31 @@ class DataMemWriteWrap extends Module {
 
   io.dataMemW.strb := mask
 
+  val awreadyReg = RegInit(false.B)
+  val wreadyReg = RegInit(false.B)
+  val writeReady = Wire(Bool())
+
+  awreadyReg := MuxCase(
+    awreadyReg,
+    Seq(
+        (io.dataMemAW.valid && io.dataMemAW.ready && !writeReady) -> (true.B),
+        (io.dataMemAW.valid && writeReady) -> (false.B)
+    )
+  )
+  wreadyReg := MuxCase(
+    wreadyReg,
+    Seq(
+        (io.dataMemW.valid && io.dataMemW.ready && !writeReady) -> (true.B),
+        (io.dataMemW.valid && writeReady) -> (false.B)
+    )
+  )
+  val awready = io.dataMemAW.ready || awreadyReg
+  val wready = io.dataMemW.ready || wreadyReg
+  writeReady := awready && wready
+
   // 如果没有握手成功，那么等待
   io.stall := (io.dataMemAR.valid && !io.dataMemAR.ready) ||
-    (io.dataMemAW.valid && !io.dataMemAW.ready) ||
-    (io.dataMemW.valid && !io.dataMemW.ready)
+    (control.memWriteEn && !(writeReady))
 }
 
 class DataMemReadWrap extends Module {
