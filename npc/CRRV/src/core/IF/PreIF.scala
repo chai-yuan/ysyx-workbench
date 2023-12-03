@@ -15,7 +15,7 @@ class PreIF extends Module {
   })
   val arvalid = io.preif2if.ready
   val arready = io.instMem.ready
-  val branch = io.branch
+  val branch  = io.branch
 
   // pipeline ctrl
   val readyGo   = arvalid && arready // 地址发送成功
@@ -26,7 +26,7 @@ class PreIF extends Module {
   // nextPC
   val branchReg = RegInit(0.U(32.W))
   val nextPCReg = RegInit(0.U(32.W))
-  val raddr = Wire(UInt(32.W))
+  val raddr     = Wire(UInt(32.W))
 
   branchReg := MuxCase(
     branchReg,
@@ -53,7 +53,7 @@ class PreIF extends Module {
     )
   )
   // instmem
-  raddr := Mux(nextPCReg === 0.U, nextPC, nextPCReg)
+  raddr            := Mux(nextPCReg === 0.U, nextPC, nextPCReg)
   io.instMem.valid := arvalid
   io.instMem.addr  := raddr
 

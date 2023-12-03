@@ -19,7 +19,7 @@ class EXE extends Module {
     val exe2mem    = Decoupled(new EXE2MEMBundle)
     val exe2global = new EXE2GlobalBundle
   })
-  val memWriteStall = Wire(Bool())
+  val memWriteStall = dontTouch(Wire(Bool()))
   // pipeline ctrl
   val readyGo    = !memWriteStall
   val exeValid   = RegInit(false.B)
