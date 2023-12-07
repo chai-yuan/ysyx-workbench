@@ -10,44 +10,51 @@ class AXI_Arbiter extends Module {
     val dataIn = Flipped(new AXIliteBundle)
     val out    = new AXIliteBundle
   })
-
-//   io.out.ar <> io.instIn.ar
-//   io.out.r <> io.instIn.r
-  // 指令读优先
+  // 循环访问
   val inst  = io.instIn
   val data  = io.dataIn
   val out   = io.out
-  val grant = RegInit(1.U(2.W))
-  grant := MuxCase(
-    grant,
+  val state = RegInit(0.U(2.W)) // instaddr instread dataaddr dataread
+  state := MuxCase(
+    state,
     Seq(
-      (data.ar.valid && out.ar.ready) -> ("b10".U),
-      (inst.ar.valid && out.ar.ready) -> ("b01".U)
+      (state === 0.U && !inst.ar.valid) -> (2.U),
+      (state === 2.U && !data.ar.valid) -> (0.U),
+      (state === 0.U && (inst.ar.valid && inst.ar.ready)) -> (1.U),
+      (state === 1.U && (inst.r.valid && inst.r.ready)) -> (2.U),
+      (state === 2.U && (data.ar.valid && data.ar.ready)) -> (3.U),
+      (state === 3.U && (data.r.valid && data.r.ready)) -> (0.U)
     )
   )
 
-  out.ar.valid := (Cat(data.ar.valid, inst.ar.valid) & grant).orR
+  out.ar.valid := MuxCase(
+    false.B,
+    Seq(
+      (state === 0.U) -> (inst.ar.valid),
+      (state === 2.U) -> (data.ar.valid)
+    )
+  )
   out.ar.addr := MuxCase(
     0.U,
     Seq(
-      (grant === "b01".U) -> (inst.ar.addr),
-      (grant === "b10".U) -> (data.ar.addr)
+      (state === 0.U) -> (inst.ar.addr),
+      (state === 2.U) -> (data.ar.addr)
     )
   )
-  inst.ar.ready := Mux(grant === "b01".U, out.ar.ready, false.B)
-  data.ar.ready := Mux(grant === "b10".U, out.ar.ready, false.B)
+  inst.ar.ready := (state === 0.U) && out.ar.ready
+  data.ar.ready := (state === 2.U) && out.ar.ready
 
-  inst.r.valid := Mux(grant === "b01".U, out.r.valid, false.B)
-  inst.r.data  := Mux(grant === "b01".U, out.r.data, 0.U)
-  inst.r.resp  := Mux(grant === "b01".U, out.r.resp, 0.U)
-  data.r.valid := Mux(grant === "b10".U, out.r.valid, false.B)
-  data.r.data  := Mux(grant === "b10".U, out.r.data, 0.U)
-  data.r.resp  := Mux(grant === "b10".U, out.r.resp, 0.U)
+  inst.r.valid := Mux(state === 1.U, out.r.valid, false.B)
+  inst.r.data  := Mux(state === 1.U, out.r.data, 0.U)
+  inst.r.resp  := Mux(state === 1.U, out.r.resp, 0.U)
+  data.r.valid := Mux(state === 3.U, out.r.valid, false.B)
+  data.r.data  := Mux(state === 3.U, out.r.data, 0.U)
+  data.r.resp  := Mux(state === 3.U, out.r.resp, 0.U)
   out.r.ready := MuxCase(
     false.B,
     Seq(
-      (grant === "b01".U) -> (inst.r.ready),
-      (grant === "b10".U) -> (data.r.ready)
+      (state === 1.U) -> (inst.r.ready),
+      (state === 3.U) -> (data.r.ready)
     )
   )
 
