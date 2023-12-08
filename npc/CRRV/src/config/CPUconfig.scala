@@ -1,10 +1,13 @@
-package core.define
+package config
 
 import chisel3._
 import chisel3.util._
 
-object CPUDefine {
-  val name = "CRRV4"
+/**
+  * 用于调整生成处理器的参数
+  */
+object CPUconfig{
+  val NAME = "CRRV4"
 
   val INST_WIDTH = 32
   val ADDR_WIDTH = 32

@@ -2,7 +2,7 @@ package io
 
 import chisel3._
 import chisel3.util._
-import core.define.CPUDefine._
+import config.CPUconfig._
 
 class RegReadIO extends Bundle{
     val addr = Output(UInt(5.W))
