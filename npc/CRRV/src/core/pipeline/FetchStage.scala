@@ -9,7 +9,7 @@ class FetchStage extends Module {
   val io = IO(new Bundle {
     val control = new FetchStageControlIO
     val instRom = new SimpleMemIO(ADDR_WIDTH, INST_WIDTH)
-    val if2id   = Output(new FetchStageIO)
+    val if2id   = Output(new IF2IDIO)
   })
 
   val pc = RegInit(RESET_PC)
@@ -31,8 +31,8 @@ class FetchStage extends Module {
   io.instRom.wen    := 0.U
   io.instRom.wdata  := 0.U
   // to id
-  io.if2id.instValid := io.instRom.valid
-  io.if2id.pc        := pc
+  io.if2id.IF.instValid := io.instRom.valid
+  io.if2id.IF.pc        := pc
 }
 
 class FetchStageControlIO extends Bundle {

@@ -16,8 +16,6 @@ class FetchStageIO extends PipelineStageIO {
 }
 
 class DecodeStageIO extends PipelineStageIO {
-  val IF = new FetchStageIO
-
   val aluOp = UInt(ALU_OP_WIDTH.W)
   val mduOp = UInt(MDU_OP_WIDTH.W)
   val src1  = UInt(DATA_WIDTH.W)
@@ -31,18 +29,34 @@ class DecodeStageIO extends PipelineStageIO {
 }
 
 class ExecuteStageIO extends PipelineStageIO {
-  val IF = new FetchStageIO
-  val ID = new DecodeStageIO
-
   val aluResult = UInt(DATA_WIDTH.W)
 }
 
 class MemoryStageIO extends PipelineStageIO {
+  val memRead     = Bool()
+  val memSign     = Bool()
+  val memReadAddr = UInt(ADDR_WIDTH.W)
+  val memReadLen  = UInt(LS_DATA_WIDTH.W)
+}
+
+class IF2IDIO extends PipelineStageIO {
+  val IF = new FetchStageIO
+}
+
+class ID2EXEIO extends PipelineStageIO {
+  val IF = new FetchStageIO
+  val ID = new DecodeStageIO
+}
+
+class EXE2MEMIO extends PipelineStageIO {
   val IF  = new FetchStageIO
   val ID  = new DecodeStageIO
   val EXE = new ExecuteStageIO
+}
 
-  val memRead     = Bool()
-  val memReadAddr = UInt(ADDR_WIDTH.W)
-  val memReadLen  = UInt(LS_DATA_WIDTH.W)
+class MEM2WBIO extends PipelineStageIO {
+  val IF  = new FetchStageIO
+  val ID  = new DecodeStageIO
+  val EXE = new ExecuteStageIO
+  val MEM = new MemoryStageIO
 }

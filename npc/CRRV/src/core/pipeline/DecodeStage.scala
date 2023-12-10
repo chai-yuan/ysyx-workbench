@@ -10,14 +10,15 @@ import io._
 
 class DecodeStage extends Module {
   val io = IO(new Bundle {
-    val if2id   = Input(new FetchStageIO)
+    val if2id   = Input(new IF2IDIO)
     val control = new DecodeStageControlIO
-    val id2exe  = Output(new DecodeStageIO)
+    val id2exe  = Output(new ID2EXEIO)
 
     val readInst = Input(UInt(INST_WIDTH.W))
     val regRead1 = new RegReadIO
     val regRead2 = new RegReadIO
   })
+  val if2id = io.if2id.IF
   // 对于上一条缓存指令，需要检测valid吗？
   val stallDelay = RegNext(io.control.stall)
   val lastInst   = Reg(UInt(INST_WIDTH.W))
@@ -25,11 +26,11 @@ class DecodeStage extends Module {
   val inst = MuxCase(
     io.readInst,
     Seq(
-      (!io.if2id.instValid) -> (NOP),
+      (!if2id.instValid) -> (NOP),
       (stallDelay) -> (lastInst)
     )
   )
-  //
+  // 译码
   val rd  = inst(11, 7)
   val rs1 = inst(19, 15)
   val rs2 = inst(24, 20)
@@ -45,27 +46,20 @@ class DecodeStage extends Module {
     mduOp :: excType :: Nil) = ListLookup(inst, DEFAULT, TABLE)
 
   // 生成ALU输入
-  def generateOpr(oprSel: UInt) =
-    MuxLookup(
-      oprSel,
-      0.S
-    ) {
-      Seq(
-        OPR_REG1 -> io.regRead1.data.asSInt,
-        OPR_REG2 -> io.regRead2.data.asSInt,
-        OPR_IMMI -> immI.asSInt,
-        OPR_IMMS -> immS.asSInt,
-        OPR_IMMU -> immU.asSInt,
-        OPR_IMMR -> rs2.zext,
-        OPR_PC -> io.if2id.pc.asSInt,
-        OPR_4 -> 4.S
-      )
-    }
-  //
-  val branchTaken = MuxLookup(
-    branchFlag,
-    false.B
-  )(
+  def generateOpr(oprSel: UInt) = MuxLookup(oprSel, 0.S)(
+    Seq(
+      OPR_REG1 -> io.regRead1.data.asSInt,
+      OPR_REG2 -> io.regRead2.data.asSInt,
+      OPR_IMMI -> immI.asSInt,
+      OPR_IMMS -> immS.asSInt,
+      OPR_IMMU -> immU.asSInt,
+      OPR_IMMR -> rs2.zext,
+      OPR_PC -> if2id.pc.asSInt,
+      OPR_4 -> 4.S
+    )
+  )
+  // 生成跳转信号
+  val branchTaken = MuxLookup(branchFlag, false.B)(
     Seq(
       BR_AL -> true.B,
       BR_EQ -> (io.regRead1.data === io.regRead2.data),
@@ -76,31 +70,31 @@ class DecodeStage extends Module {
       BR_GEU -> (io.regRead1.data >= io.regRead2.data)
     )
   )
-  val targetJAL    = (io.if2id.pc.asSInt + immJ.asSInt).asUInt
+  val targetJAL    = (if2id.pc.asSInt + immJ.asSInt).asUInt
   val targetJALR   = Cat((io.regRead1.data.asSInt + immI.asSInt)(ADDR_WIDTH - 1, 1), 0.U)
   val targetJ      = Mux(regEn1, targetJALR, targetJAL)
-  val targetB      = (io.if2id.pc.asSInt + immB.asSInt).asUInt
+  val targetB      = (if2id.pc.asSInt + immB.asSInt).asUInt
   val branchTarget = Mux(branchFlag === BR_AL, targetJ, targetB)
-  val branchMiss   = branchTaken //
-  val flushPC      = Mux(branchTaken, branchTarget, io.if2id.pc + 4.U)
-
+  val branchMiss   = branchTaken // 出现跳转后一定分支错误(没有添加分支预测)
+  val flushPC      = Mux(branchTaken, branchTarget, if2id.pc + 4.U)
+  // 流水线控制
   io.control.flushIF := !io.control.stall && branchMiss
   io.control.flushPc := flushPC
-
+  // 寄存器
   io.regRead1.en   := regEn1
   io.regRead2.en   := regEn2
   io.regRead1.addr := rs1
   io.regRead2.addr := rs2
-
-  io.id2exe.IF <> io.if2id
-  io.id2exe.aluOp    := aluOp
-  io.id2exe.mduOp    := mduOp
-  io.id2exe.src1     := generateOpr(aluSrc1Op).asUInt
-  io.id2exe.src2     := generateOpr(aluSrc2Op).asUInt
-  io.id2exe.lsuOp    := lsuOp
-  io.id2exe.lsuData  := io.regRead2.data
-  io.id2exe.regWen   := regWen
-  io.id2exe.regWaddr := rd
+  // 下一级流水线
+  io.id2exe.IF <> if2id
+  io.id2exe.ID.aluOp    := aluOp
+  io.id2exe.ID.mduOp    := mduOp
+  io.id2exe.ID.src1     := generateOpr(aluSrc1Op).asUInt
+  io.id2exe.ID.src2     := generateOpr(aluSrc2Op).asUInt
+  io.id2exe.ID.lsuOp    := lsuOp
+  io.id2exe.ID.lsuData  := io.regRead2.data
+  io.id2exe.ID.regWen   := regWen
+  io.id2exe.ID.regWaddr := rd
 }
 
 class DecodeStageControlIO extends Bundle {
