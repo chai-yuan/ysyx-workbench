@@ -5,7 +5,8 @@ import chisel3.util._
 import config.CPUconfig
 
 class DebugIO extends Bundle {
-  val pc   = Output(UInt(CPUconfig.ADDR_WIDTH.W))
-  val regs = Output(Vec(32, UInt(32.W)))
-  val skip = Output(Bool())
+  val pc       = Output(UInt(CPUconfig.ADDR_WIDTH.W))
+  val regWen   = Output(Bool())
+  val regWaddr = Output(UInt(5.W))
+  val regWdata = Output(UInt(CPUconfig.DATA_WIDTH.W))
 }

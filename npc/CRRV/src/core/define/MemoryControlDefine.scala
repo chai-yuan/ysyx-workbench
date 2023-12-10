@@ -29,18 +29,18 @@ val N = false.B
 
   // decode logic
   val DEFAULT =
-  //                               load                setEm                    fiTlb
-  //                          en wen |     width  signed |chkEm  amoOp    fi$ fd$ |fdTlb
-  //                           |  |  |       |        |  |  |      |        |  |  |  |
-                          List(N, N, N, LS_DATA_BYTE, N, N, N, AMO_OP_NOP,  N, N, N, N)
+  //                                               setEm                    fiTlb
+  //                          en wen      width  signed |chkEm  amoOp    fi$ fd$ |fdTlb
+  //                           |  |         |        |  |  |      |        |  |  |  |
+                          List(N, N, LS_DATA_BYTE, N, N, N, AMO_OP_NOP,  N, N, N, N)
   val TABLE = Array(
-    BitPat(LSU_LB)    ->  List(Y, N, Y, LS_DATA_BYTE, Y, N, N, AMO_OP_NOP,  N, N, N, N),
-    BitPat(LSU_LH)    ->  List(Y, N, Y, LS_DATA_HALF, Y, N, N, AMO_OP_NOP,  N, N, N, N),
-    BitPat(LSU_LW)    ->  List(Y, N, Y, LS_DATA_WORD, N, N, N, AMO_OP_NOP,  N, N, N, N),
-    BitPat(LSU_LBU)   ->  List(Y, N, Y, LS_DATA_BYTE, N, N, N, AMO_OP_NOP,  N, N, N, N),
-    BitPat(LSU_LHU)   ->  List(Y, N, Y, LS_DATA_HALF, N, N, N, AMO_OP_NOP,  N, N, N, N),
-    BitPat(LSU_SB)    ->  List(Y, Y, N, LS_DATA_BYTE, N, N, N, AMO_OP_NOP,  N, N, N, N),
-    BitPat(LSU_SH)    ->  List(Y, Y, N, LS_DATA_HALF, N, N, N, AMO_OP_NOP,  N, N, N, N),
-    BitPat(LSU_SW)    ->  List(Y, Y, N, LS_DATA_WORD, N, N, N, AMO_OP_NOP,  N, N, N, N),
+    BitPat(LSU_LB)    ->  List(Y, N, LS_DATA_BYTE, Y, N, N, AMO_OP_NOP,  N, N, N, N),
+    BitPat(LSU_LH)    ->  List(Y, N, LS_DATA_HALF, Y, N, N, AMO_OP_NOP,  N, N, N, N),
+    BitPat(LSU_LW)    ->  List(Y, N, LS_DATA_WORD, N, N, N, AMO_OP_NOP,  N, N, N, N),
+    BitPat(LSU_LBU)   ->  List(Y, N, LS_DATA_BYTE, N, N, N, AMO_OP_NOP,  N, N, N, N),
+    BitPat(LSU_LHU)   ->  List(Y, N, LS_DATA_HALF, N, N, N, AMO_OP_NOP,  N, N, N, N),
+    BitPat(LSU_SB)    ->  List(Y, Y, LS_DATA_BYTE, N, N, N, AMO_OP_NOP,  N, N, N, N),
+    BitPat(LSU_SH)    ->  List(Y, Y, LS_DATA_HALF, N, N, N, AMO_OP_NOP,  N, N, N, N),
+    BitPat(LSU_SW)    ->  List(Y, Y, LS_DATA_WORD, N, N, N, AMO_OP_NOP,  N, N, N, N),
   )
 }

@@ -21,7 +21,7 @@ class MemoryStage extends Module {
   val id2mem  = io.exe2mem.ID
   val exe2mem = io.exe2mem.EXE
 
-  val ((en: Bool) :: (wen: Bool) :: (load: Bool) :: width ::
+  val ((en: Bool) :: (wen: Bool) :: width ::
     (signed: Bool) :: (setExcMon: Bool) :: (checkExcMon: Bool) ::
     amoOp :: (flushIc: Bool) :: (flushDc: Bool) :: (flushIt: Bool) ::
     (flushDt: Bool) :: Nil) = ListLookup(id2mem.lsuOp, DEFAULT, TABLE)
@@ -59,15 +59,12 @@ class MemoryStage extends Module {
   io.regForward.en   := id2mem.regWen
   io.regForward.addr := id2mem.regWaddr
   io.regForward.data := exe2mem.aluResult
-  io.regForward.load := load
+  io.regForward.load := exe2mem.load
   // 下一级流水线
   io.mem2wb.IF <> if2mem
   io.mem2wb.ID <> id2mem
   io.mem2wb.EXE <> exe2mem
-  io.mem2wb.MEM.memRead     := load
-  io.mem2wb.MEM.memSign     := signed
-  io.mem2wb.MEM.memReadAddr := addr
-  io.mem2wb.MEM.memReadLen  := width
+  io.mem2wb.MEM.memAddr := addr
 }
 
 class MemoryStageControlIO extends Bundle {

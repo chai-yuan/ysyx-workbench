@@ -52,6 +52,7 @@ class ExecuteStage extends Module {
   // 下一级流水线
   io.exe2mem.IF <> if2exe
   io.exe2mem.ID <> id2exe
+  io.exe2mem.EXE.load      := load
   io.exe2mem.EXE.aluResult := result
 }
 

@@ -29,14 +29,12 @@ class DecodeStageIO extends PipelineStageIO {
 }
 
 class ExecuteStageIO extends PipelineStageIO {
+  val load      = Bool()
   val aluResult = UInt(DATA_WIDTH.W)
 }
 
 class MemoryStageIO extends PipelineStageIO {
-  val memRead     = Bool()
-  val memSign     = Bool()
-  val memReadAddr = UInt(ADDR_WIDTH.W)
-  val memReadLen  = UInt(LS_DATA_WIDTH.W)
+  val memAddr = UInt(DATA_WIDTH.W)
 }
 
 class IF2IDIO extends PipelineStageIO {
