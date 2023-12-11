@@ -4,17 +4,18 @@ import chisel3._
 import chisel3.util._
 import config.CPUconfig._
 import io._
+import memory.SimpleRAM
 
 class CPUTop extends Module {
   val io = IO(new Bundle {
-    val inst  = new SimpleMemIO(ADDR_WIDTH, INST_WIDTH)
-    val data  = new SimpleMemIO(ADDR_WIDTH, DATA_WIDTH)
     val debug = new DebugIO
   })
 
   val core = Module(new Core)
+  val inst = Module(new SimpleRAM)
+  val data = Module(new SimpleRAM)
 
-  core.io.inst <> io.inst
-  core.io.data <> io.data
+  core.io.inst <> inst.io
+  core.io.data <> data.io
   core.io.debug <> io.debug
 }
