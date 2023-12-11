@@ -69,7 +69,7 @@ void sim_exec() {
         valid_cycle++;
 
 #ifdef CONFIG_DIFFTEST
-        if (cpu.pc == 0x80000000 || sim_cpu->io_debug_skipIO)
+        if (sim_cpu->io_debug_skipIO)
             difftest_skip_ref();
         difftest_step(cpu.pc, 0);
 #endif

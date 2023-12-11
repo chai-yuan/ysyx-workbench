@@ -87,7 +87,8 @@ class DecodeStage extends Module {
   io.regRead2.addr := rs2
   // 下一级流水线
   io.id2exe.IF <> if2id
-  io.id2exe.ID.inst     := inst
+  io.id2exe.ID.inst     := inst     // 指令和下一个nextPC
+  io.id2exe.ID.nextpc   := flushPC  // 主要用于调试信号的生成
   io.id2exe.ID.aluOp    := aluOp
   io.id2exe.ID.mduOp    := mduOp
   io.id2exe.ID.src1     := generateOpr(aluSrc1Op).asUInt

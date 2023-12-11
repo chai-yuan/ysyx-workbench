@@ -16,7 +16,8 @@ class FetchStageIO extends PipelineStageIO {
 }
 
 class DecodeStageIO extends PipelineStageIO {
-  val inst = UInt(INST_WIDTH.W)
+  val inst   = UInt(INST_WIDTH.W)
+  val nextpc = UInt(ADDR_WIDTH.W)
 
   val aluOp = UInt(ALU_OP_WIDTH.W)
   val mduOp = UInt(MDU_OP_WIDTH.W)
