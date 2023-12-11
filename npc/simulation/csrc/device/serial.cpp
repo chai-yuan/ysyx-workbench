@@ -1,23 +1,14 @@
 #include <device/device.h>
 #include <memory/paddr.h>
 
-static uint8_t serial_buf[8];
-
-static void serial_putc(char ch) {
-    putc(ch, stderr);
+bool check_serial_addr(int addr){
+    return addr == CONFIG_SERIAL_MMIO;
 }
 
-void serial_callback(uint32_t offset, bool is_write) {
-    if (is_write) {
-        serial_putc(serial_buf[0]);
-    }
+void serial_read(int raddr, int* rdata) {
+    panic("can not read serial!\n");
 }
 
-Device init_serial() {
-    Device new_device;
-    new_device.low = CONFIG_SERIAL_MMIO;
-    new_device.high = new_device.low + sizeof(serial_buf);
-    new_device.space = serial_buf;
-    new_device.callback = serial_callback;
-    return new_device;
+void serial_write(int waddr, int wdata, char wmask){
+    printf("%c",(char)wdata);
 }

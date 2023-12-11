@@ -2,25 +2,17 @@
 #define device_H
 
 #include "common.h"
-#define DEVICE_NUM 2
 
 #define CONFIG_SERIAL_MMIO 0xa00003f8
 #define CONFIG_RTC_MMIO 0xa0000048
 #define CONFIG_FB_ADDR 0xa1000000
 
-typedef void (*callback_t)(uint32_t, bool);
+bool check_timer_addr(int addr);
+void timer_read(int raddr, int* rdata);
+void timer_write(int waddr, int wdata, char wmask);
 
-struct Device {
-    word_t low, high;
-    uint8_t* space;
-    callback_t callback;
-};
-
-extern Device devices[DEVICE_NUM];
-
-void init_device();
-
-Device init_serial();
-Device init_timer();
+bool check_serial_addr(int addr);
+void serial_read(int raddr, int* rdata);
+void serial_write(int waddr, int wdata, char wmask);
 
 #endif

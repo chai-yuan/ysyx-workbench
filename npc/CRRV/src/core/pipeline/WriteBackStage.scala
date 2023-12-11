@@ -43,7 +43,7 @@ class WriteBackStage extends Module {
   // debug
   io.debug.validInst := id2wb.inst =/= NOP && id2wb.inst =/= 0.U
   io.debug.halt      := id2wb.inst === EBREAK
-  io.debug.skipIO    := false.B
+  io.debug.skipIO    := (id2wb.lsuOp =/= LSU_NOP && mem2wb.memAddr < "h8000_0000".U)    
 
   io.debug.pc       := id2wb.nextpc     // 这里应传输更新后的pc
   io.debug.regWen   := id2wb.regWen

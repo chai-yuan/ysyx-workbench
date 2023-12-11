@@ -1,6 +1,7 @@
 #include <device/device.h>
 #include <memory/paddr.h>
 #include <sys/time.h>
+
 static uint64_t boot_time = 0;
 
 static uint64_t get_time_internal() {
@@ -19,20 +20,22 @@ uint64_t get_time() {
 
 static uint8_t timer_buf[8];
 
-void timer_callback(uint32_t offset, bool is_write) {
-    if (offset == 4 && !is_write) {
-        uint32_t* rtc_port_base = (uint32_t*)timer_buf;
+bool check_timer_addr(int addr) {
+    return addr == CONFIG_RTC_MMIO || addr == CONFIG_RTC_MMIO + 4;
+}
+
+void timer_read(int raddr, int* rdata) {
+    uint32_t* rtc_port_base = (uint32_t*)timer_buf;
+    if (raddr == CONFIG_RTC_MMIO + 4) {
         uint64_t us = get_time();
         rtc_port_base[0] = (uint32_t)us;
         rtc_port_base[1] = us >> 32;
+        *rdata = rtc_port_base[1];
+    } else if (raddr == CONFIG_RTC_MMIO) {
+        *rdata = rtc_port_base[0];
     }
 }
 
-Device init_timer() {
-    Device new_device;
-    new_device.low = CONFIG_RTC_MMIO;
-    new_device.high = new_device.low + sizeof(timer_buf);
-    new_device.space = timer_buf;
-    new_device.callback = timer_callback;
-    return new_device;
+void timer_write(int waddr, int wdata, char wmask) {
+    return;
 }
