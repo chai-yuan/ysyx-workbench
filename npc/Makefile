@@ -9,7 +9,7 @@ verilog:
 	$(call git_commit, "generate verilog")
 	mkdir -p $(BUILD_DIR)
 	mill -i __.test.runMain Elaborate -td $(BUILD_DIR)
-	cp $(BUILD_DIR)/sv-gen/*.sv ./simulation/vsrc/
+	cp $(BUILD_DIR)/verilog-gen/*.sv ./simulation/vsrc/
 
 help:
 	mill -i __.test.runMain Elaborate --help

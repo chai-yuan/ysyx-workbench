@@ -2,9 +2,10 @@ package core
 
 import chisel3._
 import chisel3.util._
-import io.SimpleMemIO
 import config.CPUconfig._
-import io.DebugIO
+import core.pipeline._
+import core.regfile._
+import io._
 
 class Core extends Module {
   val io = IO(new Bundle {
@@ -13,7 +14,77 @@ class Core extends Module {
     val debug = new DebugIO
   })
 
-  
+  val fetchStage     = Module(new FetchStage)
+  val if2id          = Module(new PipelineStage(new IF2IDIO))
+  val decodeStage    = Module(new DecodeStage)
+  val id2exe         = Module(new PipelineStage(new ID2EXEIO))
+  val executeStage   = Module(new ExecuteStage)
+  val exe2mem        = Module(new PipelineStage(new EXE2MEMIO))
+  val memoryStage    = Module(new MemoryStage)
+  val mem2wb         = Module(new PipelineStage(new MEM2WBIO))
+  val writeBackStage = Module(new WriteBackStage)
 
-  
+  val pipelineControl = Module(new PipelineControl)
+  val hazardResolver  = Module(new HazardResolver)
+  val regFile         = Module(new RegFile)
+
+  fetchStage.io.instRom <> io.inst
+  fetchStage.io.control.flush   := pipelineControl.io.flushIF
+  fetchStage.io.control.flushPC := pipelineControl.io.flushPc
+  fetchStage.io.control.stall   := pipelineControl.io.stallIF
+  if2id.io.flush                := pipelineControl.io.flushIF
+  if2id.io.stallPrev            := pipelineControl.io.stallIF
+  if2id.io.stallNext            := pipelineControl.io.stallID
+  if2id.io.prev <> fetchStage.io.if2id
+
+  decodeStage.io.if2id <> if2id.io.next
+  decodeStage.io.readInst      := io.inst.rdata
+  decodeStage.io.control.stall := pipelineControl.io.stallID
+  decodeStage.io.regRead1 <> hazardResolver.io.regRead1
+  decodeStage.io.regRead2 <> hazardResolver.io.regRead2
+  id2exe.io.flush     := pipelineControl.io.flushAll
+  id2exe.io.stallPrev := pipelineControl.io.stallID
+  id2exe.io.stallNext := pipelineControl.io.stallEXE
+  id2exe.io.prev <> decodeStage.io.id2exe
+
+  executeStage.io.id2exe <> id2exe.io.next
+  executeStage.io.control.flush := pipelineControl.io.flushAll
+  exe2mem.io.flush              := pipelineControl.io.flushAll
+  exe2mem.io.stallPrev          := pipelineControl.io.stallEXE
+  exe2mem.io.stallNext          := pipelineControl.io.stallMEM
+  exe2mem.io.prev <> executeStage.io.exe2mem
+
+  memoryStage.io.exe2mem <> exe2mem.io.next
+  memoryStage.io.control.flush := pipelineControl.io.flushAll
+  memoryStage.io.dataRam <> io.data
+  mem2wb.io.flush     := pipelineControl.io.flushAll
+  mem2wb.io.stallPrev := pipelineControl.io.stallMEM
+  mem2wb.io.stallNext := pipelineControl.io.stallWB
+  mem2wb.io.prev <> memoryStage.io.mem2wb
+
+  writeBackStage.io.mem2wb <> mem2wb.io.next
+  writeBackStage.io.readData := io.data.rdata
+  writeBackStage.io.debug <> io.debug
+
+  // register file
+  regFile.io.read1 <> hazardResolver.io.regFile1
+  regFile.io.read2 <> hazardResolver.io.regFile2
+  regFile.io.write.en   := writeBackStage.io.regForward.en
+  regFile.io.write.addr := writeBackStage.io.regForward.addr
+  regFile.io.write.data := writeBackStage.io.regForward.data
+
+  // hazard resolver
+  hazardResolver.io.exeForward <> executeStage.io.regForward
+  hazardResolver.io.memForward <> memoryStage.io.regForward
+  hazardResolver.io.wbForward <> writeBackStage.io.regForward
+
+  // pipeline controller
+  pipelineControl.io.ifStallReq      := fetchStage.io.control.stallReq
+  pipelineControl.io.exeStallReq     := executeStage.io.control.stallReq
+  pipelineControl.io.memStallReq     := memoryStage.io.control.stallReq
+  pipelineControl.io.idFlushReq      := decodeStage.io.control.flushIF
+  pipelineControl.io.idFlushTarget   := decodeStage.io.control.flushPc
+  pipelineControl.io.memFlushReq     := memoryStage.io.control.flushReq
+  pipelineControl.io.memFlushTarget  := memoryStage.io.control.flushReq
+  pipelineControl.io.loadHazardFlage := hazardResolver.io.loadHazardFlag
 }

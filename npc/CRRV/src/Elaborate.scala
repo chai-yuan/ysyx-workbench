@@ -6,12 +6,12 @@ object Elaborate extends App {
 
   val chiselStageOptions = Seq(
     chisel3.stage.ChiselGeneratorAnnotation(() => top),
-    CIRCTTargetAnnotation(CIRCTTarget.SystemVerilog)
+    CIRCTTargetAnnotation(CIRCTTarget.Verilog)
   )
 
   val firtoolOptions = Seq(
     FirtoolOption("--split-verilog"),
-    FirtoolOption("-o=build/sv-gen"),
+    FirtoolOption("-o=build/verilog-gen"),
     FirtoolOption("--disable-all-randomization")
   )
 
