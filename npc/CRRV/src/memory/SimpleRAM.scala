@@ -13,9 +13,9 @@ class SimpleRAM extends Module {
   simram.io.clock := clock
   simram.io.reset := reset
 
-  simram.io.ren   := io.enable
+  simram.io.ren   := io.enable && !io.wen.orR 
   simram.io.raddr := io.addr
-  io.rdata        := simram.io.rdata
+  io.rdata        := RegNext(simram.io.rdata)
 
   simram.io.wen   := io.enable
   simram.io.wmask := io.wen

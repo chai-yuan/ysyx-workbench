@@ -52,7 +52,7 @@ class MemoryStage extends Module {
   io.control.flushPc  := 0.U
   // 访问内存
   io.dataRam.enable := en
-  io.dataRam.wen    := writeEn
+  io.dataRam.wen    := Mux(wen, writeEn, 0.U)
   io.dataRam.addr   := Cat(addr(DATA_WIDTH - 1, 2), 0.U(2.W))
   io.dataRam.wdata  := writeData
   // 前递操作
