@@ -31,6 +31,7 @@ class CsrFile extends Module {
   }
   val readValid = true.B
   // 处理写入数据
+  val writeEn = dontTouch(io.write.op =/= CSR_NOP && io.write.op =/= CSR_R)
   val writeData = MuxLookup(io.write.op, 0.U)(
     Seq(
       CSR_W -> io.write.data,
@@ -39,18 +40,17 @@ class CsrFile extends Module {
       CSR_RC -> (readData & ~io.write.data)
     )
   )
-  val writeEn = io.write.op =/= CSR_NOP && io.write.op =/= CSR_R
   // 控制状态更新 异常更新优先
   when(io.write.exceptType =/= EXC_NONE) { // 异常更新
     when(io.write.exceptType === EXC_ECALL) {
-      mepc <= io.write.exceptPc
-      mcause <= 11.U(32.W)
+      mepc   := io.write.exceptPc
+      mcause := 11.U(32.W)
     }
   }.elsewhen(writeEn) { // 写入更新
-    when(io.write.addr === CSR_MSTATUS) { mstatus <= writeData }
-    when(io.write.addr === CSR_MTVEC) { mtvec <= writeData }
-    when(io.write.addr === CSR_MEPC) { mepc <= writeData }
-    when(io.write.addr === CSR_MCAUSE) { mcause <= writeData }
+    when(io.write.addr === CSR_MSTATUS) { mstatus := writeData }
+    when(io.write.addr === CSR_MTVEC) { mtvec := writeData }
+    when(io.write.addr === CSR_MEPC) { mepc := writeData }
+    when(io.write.addr === CSR_MCAUSE) { mcause := writeData }
   }
 
   io.read.valid := readValid
@@ -60,7 +60,7 @@ class CsrFile extends Module {
   io.csrInfo.trapEnterVec := mtvec
 }
 
-class CsrInfoIO extends Bundle{
-    val mepc         = Output(UInt(ADDR_WIDTH.W))
-    val trapEnterVec = Output(UInt(ADDR_WIDTH.W))
+class CsrInfoIO extends Bundle {
+  val mepc         = Output(UInt(ADDR_WIDTH.W))
+  val trapEnterVec = Output(UInt(ADDR_WIDTH.W))
 }

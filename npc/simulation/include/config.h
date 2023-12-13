@@ -12,5 +12,6 @@
 // #define CONFIG_VTRACE 1
 #define CONFIG_DEVICE 1
 // #define CONFIG_DISASM 1
+// #define CONFIG_LOOP_CHECK 1
 
 #endif

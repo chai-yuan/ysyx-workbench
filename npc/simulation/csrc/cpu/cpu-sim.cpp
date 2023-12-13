@@ -22,7 +22,6 @@ void sim_init() {
     inst = 0;
 
     sim_reset();
-
     update_cpu_state();
 
     Log("sim init end, pc = 0x%x", cpu.pc);
@@ -65,23 +64,30 @@ void sim_exec() {
     clk_cycle++;
 
     if (sim_cpu->io_debug_validInst) {
-        update_cpu_state();
         valid_cycle++;
-
+        cpu.pc = sim_cpu->io_debug_pc;
 #ifdef CONFIG_DIFFTEST
-        if (sim_cpu->io_debug_skipIO)
-            difftest_skip_ref();
-        difftest_step(cpu.pc, 0);
+        if (cpu.pc != 0x80000000u) {
+            difftest_step(cpu.pc, 0);
+            if (sim_cpu->io_debug_skipIO)
+                difftest_skip_ref();
+        }
 #endif
-
+        update_cpu_state();
         if (sim_cpu->io_debug_halt) {
             set_npc_state(NPC_END, cpu.pc, cpu.gpr[10]);
         }
     }
+
+#ifdef CONFIG_LOOP_CHECK
+    if (clk_cycle % 1000000 == 0) {
+        Log("now cycle : %u, inst : %u, pc : %x", clk_cycle, valid_cycle,
+            cpu.pc);
+    }
+#endif
 }
 
 void update_cpu_state() {
-    cpu.pc = sim_cpu->io_debug_pc;
     if (sim_cpu->io_debug_regWen && sim_cpu->io_debug_regWaddr != 0) {
         cpu.gpr[sim_cpu->io_debug_regWaddr] = sim_cpu->io_debug_regWdata;
     }
