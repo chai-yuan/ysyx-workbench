@@ -73,7 +73,7 @@ object OperationDefine {
   val CSR_RS       = 4.U(CSR_OP_WIDTH.W)
   val CSR_RC       = 5.U(CSR_OP_WIDTH.W)
 
-  // 异常操作符
+  // 异常类型
   val EXC_TYPE_WIDTH = log2Ceil(8)
   val EXC_NONE       = 0.U(EXC_TYPE_WIDTH.W)
   val EXC_ECALL      = 1.U(EXC_TYPE_WIDTH.W)

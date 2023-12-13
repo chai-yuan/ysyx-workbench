@@ -19,7 +19,7 @@ class DecodeStage extends Module {
     val regRead2 = new RegReadIO
   })
   val if2id = io.if2id.IF
-  // 对于上一条缓存指令，需要检测valid吗？
+
   val stallDelay = RegNext(io.control.stall)
   val lastInst   = Reg(UInt(INST_WIDTH.W))
   when(!stallDelay) { lastInst := io.readInst }

@@ -41,7 +41,7 @@ class WriteBackStage extends Module {
   io.regForward.data := regData
   io.regForward.load := exe2wb.load
   // debug
-  io.debug.validInst := id2wb.inst =/= NOP && id2wb.inst =/= 0.U
+  io.debug.validInst := if2wb.instValid
   io.debug.halt      := id2wb.inst === EBREAK
   io.debug.skipIO    := (id2wb.lsuOp =/= LSU_NOP && mem2wb.memAddr < "h8000_0000".U)    
 
