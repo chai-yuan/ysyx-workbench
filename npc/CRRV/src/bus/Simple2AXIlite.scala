@@ -6,13 +6,12 @@ import config.CPUconfig._
 import io._
 
 /**
-  * 
-  *
+ * 从Simple接口到AXI lite接口的转换器
   */
 class Simple2AXIlite extends Module {
   val io = IO(new Bundle {
     val simple  = Flipped(new SimpleMemIO(ADDR_WIDTH, DATA_WIDTH))
-    val axilite = new AXIliteMasterBundle(ADDR_WIDTH, DATA_WIDTH)
+    val axilite = new AXIliteMasterIO(ADDR_WIDTH, DATA_WIDTH)
   })
 
   val (sIdle :: sReadAddr :: sReadData
