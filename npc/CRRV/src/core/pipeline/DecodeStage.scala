@@ -77,6 +77,15 @@ class DecodeStage extends Module {
   val branchTarget = Mux(branchFlag === BR_AL, targetJ, targetB)
   val branchMiss   = branchTaken // 出现跳转后一定分支错误(没有添加分支预测)
   val flushPC      = Mux(branchTaken, branchTarget, if2id.pc + 4.U)
+  // CSR 信号
+  val csrOperation = MuxLookup(csrOp, CSR_NOP)(
+    Seq(
+      CSR_RW -> Mux(rd === 0.U, CSR_W, CSR_RW),
+      CSR_RS -> Mux(rs1 === 0.U, CSR_R, CSR_RS),
+      CSR_RC -> Mux(rs1 === 0.U, CSR_R, CSR_RC)
+    )
+  )
+  val csrWriteData = Mux(csrOperation === CSR_NOP, 0.U, Mux(regEn1, io.regRead1.data, rs1))
   // 流水线控制
   io.control.flushIF := !io.control.stall && branchMiss
   io.control.flushPc := flushPC
@@ -87,16 +96,20 @@ class DecodeStage extends Module {
   io.regRead2.addr := rs2
   // 下一级流水线
   io.id2exe.IF <> if2id
-  io.id2exe.ID.inst     := inst     // 指令和下一个nextPC
-  io.id2exe.ID.nextpc   := flushPC  // 主要用于调试信号的生成
-  io.id2exe.ID.aluOp    := aluOp
-  io.id2exe.ID.mduOp    := mduOp
-  io.id2exe.ID.src1     := generateOpr(aluSrc1Op).asUInt
-  io.id2exe.ID.src2     := generateOpr(aluSrc2Op).asUInt
-  io.id2exe.ID.lsuOp    := lsuOp
-  io.id2exe.ID.lsuData  := io.regRead2.data
-  io.id2exe.ID.regWen   := regWen
-  io.id2exe.ID.regWaddr := rd
+  io.id2exe.ID.inst         := inst // 指令和下一个nextPC
+  io.id2exe.ID.nextpc       := flushPC // 主要用于调试信号的生成
+  io.id2exe.ID.aluOp        := aluOp
+  io.id2exe.ID.mduOp        := mduOp
+  io.id2exe.ID.src1         := generateOpr(aluSrc1Op).asUInt
+  io.id2exe.ID.src2         := generateOpr(aluSrc2Op).asUInt
+  io.id2exe.ID.lsuOp        := lsuOp
+  io.id2exe.ID.lsuData      := io.regRead2.data
+  io.id2exe.ID.regWen       := regWen
+  io.id2exe.ID.regWaddr     := rd
+  io.id2exe.ID.csrOp        := csrOperation
+  io.id2exe.ID.csrAddr      := immI
+  io.id2exe.ID.csrWriteData := csrWriteData
+  io.id2exe.ID.exceptType   := excType
 }
 
 class DecodeStageControlIO extends Bundle {

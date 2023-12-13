@@ -26,6 +26,7 @@ class Core extends Module {
 
   val pipelineControl = Module(new PipelineControl)
   val hazardResolver  = Module(new HazardResolver)
+  val csrFile         = Module(new CsrFile)
   val regFile         = Module(new RegFile)
 
   fetchStage.io.instRom <> io.inst
@@ -49,9 +50,10 @@ class Core extends Module {
 
   executeStage.io.id2exe <> id2exe.io.next
   executeStage.io.control.flush := pipelineControl.io.flushAll
-  exe2mem.io.flush              := pipelineControl.io.flushAll
-  exe2mem.io.stallPrev          := pipelineControl.io.stallEXE
-  exe2mem.io.stallNext          := pipelineControl.io.stallMEM
+  executeStage.io.csrRead <> hazardResolver.io.csrRead
+  exe2mem.io.flush     := pipelineControl.io.flushAll
+  exe2mem.io.stallPrev := pipelineControl.io.stallEXE
+  exe2mem.io.stallNext := pipelineControl.io.stallMEM
   exe2mem.io.prev <> executeStage.io.exe2mem
 
   memoryStage.io.exe2mem <> exe2mem.io.next
@@ -73,18 +75,29 @@ class Core extends Module {
   regFile.io.write.addr := writeBackStage.io.regForward.addr
   regFile.io.write.data := writeBackStage.io.regForward.data
 
+  // csr file
+  csrFile.io.read <> hazardResolver.io.regCsr
+  csrFile.io.write <> writeBackStage.io.wb2csr
+
   // hazard resolver
   hazardResolver.io.exeForward <> executeStage.io.regForward
   hazardResolver.io.memForward <> memoryStage.io.regForward
   hazardResolver.io.wbForward <> writeBackStage.io.regForward
+  hazardResolver.io.memCsrStall <> memoryStage.io.memCsrStall
+  hazardResolver.io.wbCsrStall <> writeBackStage.io.wb2csr
 
   // pipeline controller
-  pipelineControl.io.ifStallReq      := fetchStage.io.control.stallReq
-  pipelineControl.io.exeStallReq     := executeStage.io.control.stallReq
-  pipelineControl.io.memStallReq     := memoryStage.io.control.stallReq
-  pipelineControl.io.idFlushReq      := decodeStage.io.control.flushIF
-  pipelineControl.io.idFlushTarget   := decodeStage.io.control.flushPc
-  pipelineControl.io.memFlushReq     := memoryStage.io.control.flushReq
-  pipelineControl.io.memFlushTarget  := memoryStage.io.control.flushReq
+  pipelineControl.io.ifStallReq     := fetchStage.io.control.stallReq
+  pipelineControl.io.exeStallReq    := executeStage.io.control.stallReq
+  pipelineControl.io.memStallReq    := memoryStage.io.control.stallReq
+  pipelineControl.io.idFlushReq     := decodeStage.io.control.flushIF
+  pipelineControl.io.idFlushTarget  := decodeStage.io.control.flushPc
+  pipelineControl.io.memFlushReq    := memoryStage.io.control.flushReq
+  pipelineControl.io.memFlushTarget := memoryStage.io.control.flushReq
+
+  pipelineControl.io.exceptType := writeBackStage.io.wb2csr.exceptType
+  pipelineControl.io.csrInfo <> csrFile.io.csrInfo
+
+  pipelineControl.io.csrHazardFlag   := hazardResolver.io.csrHazardFlag
   pipelineControl.io.loadHazardFlage := hazardResolver.io.loadHazardFlag
 }

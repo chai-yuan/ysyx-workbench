@@ -3,6 +3,8 @@ package core.pipeline
 import chisel3._
 import chisel3.util._
 import config.CPUconfig._
+import core.define.OperationDefine._
+import core.regfile.CsrInfoIO
 
 /**
   * 流水线控制模块
@@ -20,6 +22,10 @@ class PipelineControl extends Module {
     val memFlushTarget = Input(UInt(ADDR_WIDTH.W))
 
     val loadHazardFlage = Input(Bool())
+    val csrHazardFlag   = Input(Bool())
+
+    val exceptType = Input(UInt(EXC_TYPE_WIDTH.W))
+    val csrInfo    = Flipped(new CsrInfoIO)
 
     val stallIF  = Output(Bool())
     val stallID  = Output(Bool())
@@ -40,10 +46,25 @@ class PipelineControl extends Module {
       io.ifStallReq -> "b10000".U(5.W)
     )
   )
-
-  val flushAll = io.memFlushReq
+  // 异常
+  val excFlush = io.exceptType =/= EXC_NONE
+  val excPc = MuxLookup(io.exceptType, 0.U)(
+    Seq(
+      (EXC_ECALL) -> (io.csrInfo.trapEnterVec),
+      (EXC_MRET) -> (io.csrInfo.mepc)
+    )
+  )
+  // 生成清空信号
+  val flushAll = io.memFlushReq || excFlush
   val flushIF  = flushAll || io.idFlushReq
-  val flushPc  = Mux(io.memFlushReq, io.memFlushTarget, io.idFlushTarget)
+  val flushPc = MuxCase(
+    0.U,
+    Seq(
+      (excFlush) -> (excPc),
+      (io.memFlushReq) -> (io.memFlushTarget),
+      (io.idFlushReq) -> (io.idFlushTarget)
+    )
+  )
 
   io.stallIF  := stall(4)
   io.stallID  := stall(3)

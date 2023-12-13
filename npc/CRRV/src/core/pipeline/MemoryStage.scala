@@ -14,8 +14,9 @@ class MemoryStage extends Module {
     val control = new MemoryStageControlIO
     val mem2wb  = Output(new MEM2WBIO)
 
-    val dataRam    = new SimpleMemIO(ADDR_WIDTH, DATA_WIDTH)
-    val regForward = Output(new RegForwardIO)
+    val dataRam     = new SimpleMemIO(ADDR_WIDTH, DATA_WIDTH)
+    val memCsrStall = Output(new Csr2HazardResolverIO)
+    val regForward  = Output(new RegForwardIO)
   })
   val if2mem  = io.exe2mem.IF
   val id2mem  = io.exe2mem.ID
@@ -27,7 +28,7 @@ class MemoryStage extends Module {
     (flushDt: Bool) :: Nil) = ListLookup(id2mem.lsuOp, DEFAULT, TABLE)
 
   // 写数据
-  val addr = exe2mem.aluResult
+  val addr = exe2mem.exeResult
   val data = id2mem.lsuData
   val writeEn = MuxLookup(width, 0.U)(
     Seq(
@@ -55,10 +56,13 @@ class MemoryStage extends Module {
   io.dataRam.wen    := Mux(wen, writeEn, 0.U)
   io.dataRam.addr   := Cat(addr(DATA_WIDTH - 1, 2), 0.U(2.W))
   io.dataRam.wdata  := writeData
+  // CSR
+  io.memCsrStall.op   := id2mem.csrOp
+  io.memCsrStall.addr := id2mem.csrAddr
   // 前递操作
   io.regForward.en   := id2mem.regWen
   io.regForward.addr := id2mem.regWaddr
-  io.regForward.data := exe2mem.aluResult
+  io.regForward.data := exe2mem.exeResult
   io.regForward.load := exe2mem.load
   // 下一级流水线
   io.mem2wb.IF <> if2mem

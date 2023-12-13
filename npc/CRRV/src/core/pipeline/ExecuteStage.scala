@@ -14,6 +14,7 @@ class ExecuteStage extends Module {
     val control = new ExecuteStageControlIO
     val exe2mem = Output(new EXE2MEMIO)
 
+    val csrRead    = new CsrReadIO
     val regForward = Output(new RegForwardIO)
   })
   val if2exe = io.id2exe.IF
@@ -22,9 +23,10 @@ class ExecuteStage extends Module {
   val src1  = id2exe.src1
   val src2  = id2exe.src2
   val shamt = src2(4, 0)
-
+  // ALU
   val aluResult = MuxLookup(id2exe.aluOp, 0.U)(
     Seq(
+      ALU_NOP -> 0.U,
       ALU_ADD -> (src1 + src2),
       ALU_SUB -> (src1 - src2),
       ALU_XOR -> (src1 ^ src2),
@@ -37,13 +39,26 @@ class ExecuteStage extends Module {
       ALU_SRA -> (src1.asSInt >> shamt).asUInt
     )
   )
+  // MDU
   val mduResult = 0.U // TODO:之后再支持乘除法
-
-  val result = aluResult
-  val load   = id2exe.lsuOp =/= LSU_NOP && id2exe.regWen
+  // CSR
+  val csrResult = io.csrRead.data
+  // 生成EXE段结果
+  val result = MuxCase(
+    0.U,
+    Seq(
+      (id2exe.aluOp =/= ALU_NOP) -> (aluResult),
+      (id2exe.mduOp =/= MDU_NOP) -> (mduResult),
+      (id2exe.csrOp =/= CSR_NOP) -> (csrResult)
+    )
+  )
+  val load = id2exe.lsuOp =/= LSU_NOP && id2exe.regWen
 
   // 流水线控制
   io.control.stallReq := false.B
+  // CSR 读取
+  io.csrRead.op   := io.id2exe.ID.csrOp
+  io.csrRead.addr := io.id2exe.ID.csrAddr
   // 前递操作
   io.regForward.en   := id2exe.regWen
   io.regForward.addr := id2exe.regWaddr
@@ -53,7 +68,7 @@ class ExecuteStage extends Module {
   io.exe2mem.IF <> if2exe
   io.exe2mem.ID <> id2exe
   io.exe2mem.EXE.load      := load
-  io.exe2mem.EXE.aluResult := result
+  io.exe2mem.EXE.exeResult := result
 }
 
 class ExecuteStageControlIO extends Bundle {

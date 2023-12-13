@@ -12,9 +12,8 @@ class CsrFile extends Module {
   val io = IO(new Bundle {
     val read  = Flipped(new CsrReadIO)
     val write = Flipped(new CsrWriteIO)
-    // 对外暴露的CSR状态
-    val mepc         = Output(UInt(ADDR_WIDTH.W))
-    val trapEnterVec = Output(UInt(ADDR_WIDTH.W))
+
+    val csrInfo = new CsrInfoIO
   })
 
   val mstatus = RegInit("h1800".U(32.W))
@@ -57,6 +56,11 @@ class CsrFile extends Module {
   io.read.valid := readValid
   io.read.data  := readData
 
-  io.mepc         := mepc
-  io.trapEnterVec := mtvec
+  io.csrInfo.mepc         := mepc
+  io.csrInfo.trapEnterVec := mtvec
+}
+
+class CsrInfoIO extends Bundle{
+    val mepc         = Output(UInt(ADDR_WIDTH.W))
+    val trapEnterVec = Output(UInt(ADDR_WIDTH.W))
 }

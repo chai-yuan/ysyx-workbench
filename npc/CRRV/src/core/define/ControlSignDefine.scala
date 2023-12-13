@@ -15,7 +15,7 @@ object ControlSignDefine {
         N,          // 寄存器写
         OPR_ZERO,   // ALU操作数1
         OPR_ZERO,   // ALU操作数2
-        ALU_ADD,    // ALU操作符
+        ALU_NOP,    // ALU操作符
         BR_NOP,     // 跳转条件
         LSU_NOP,    // 访存操作符
         CSR_NOP,    // CSR操作符

@@ -12,7 +12,9 @@ class WriteBackStage extends Module {
   val io = IO(new Bundle {
     val mem2wb = Input(new MEM2WBIO)
 
-    val readData   = Input(UInt(DATA_WIDTH.W))
+    val readData = Input(UInt(DATA_WIDTH.W))
+
+    val wb2csr     = new CsrWriteIO
     val regForward = Output(new RegForwardIO)
     val debug      = new DebugIO
   })
@@ -33,8 +35,14 @@ class WriteBackStage extends Module {
     )
   )
 
-  val regData = Mux(id2wb.lsuOp =/= LSU_NOP, readData, exe2wb.aluResult)
+  val regData = Mux(id2wb.lsuOp =/= LSU_NOP, readData, exe2wb.exeResult)
 
+  // csr
+  io.wb2csr.op         := id2wb.csrOp
+  io.wb2csr.addr       := id2wb.csrAddr
+  io.wb2csr.data       := id2wb.csrWriteData
+  io.wb2csr.exceptType := id2wb.exceptType
+  io.wb2csr.exceptPc   := if2wb.pc
   // 写入寄存器组
   io.regForward.en   := id2wb.regWen
   io.regForward.addr := id2wb.regWaddr
@@ -43,9 +51,9 @@ class WriteBackStage extends Module {
   // debug
   io.debug.validInst := if2wb.instValid
   io.debug.halt      := id2wb.inst === EBREAK
-  io.debug.skipIO    := (id2wb.lsuOp =/= LSU_NOP && mem2wb.memAddr < "h8000_0000".U)    
+  io.debug.skipIO    := (id2wb.lsuOp =/= LSU_NOP && mem2wb.memAddr < "h8000_0000".U)
 
-  io.debug.pc       := id2wb.nextpc     // 这里应传输更新后的pc
+  io.debug.pc       := id2wb.nextpc // 这里应传输更新后的pc
   io.debug.regWen   := id2wb.regWen
   io.debug.regWaddr := id2wb.regWaddr
   io.debug.regWdata := regData

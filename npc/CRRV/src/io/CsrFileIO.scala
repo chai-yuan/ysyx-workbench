@@ -29,8 +29,7 @@ class CsrWriteIO extends Bundle {
 /**
   * 用于报告CSR写入，用于解决流水线冲突
   */
-class Csr2HazardResolver extends Bundle {
-  val op   = Output(UInt(CSR_OP_WIDTH.W))
-  val addr = Output(UInt(CSR_ADDR_WIDTH.W))
-  val data = Output(UInt(DATA_WIDTH.W))
+class Csr2HazardResolverIO extends Bundle {
+  val op   = UInt(CSR_OP_WIDTH.W)
+  val addr = UInt(CSR_ADDR_WIDTH.W)
 }

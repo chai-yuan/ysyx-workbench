@@ -5,6 +5,7 @@ import chisel3.util._
 import config.CPUconfig._
 import core.define.OperationDefine._
 import core.define.MemoryControlDefine._
+import core.define.CsrDefine._
 
 class PipelineStageIO extends Bundle {
   def default() = 0.U.asTypeOf(this)
@@ -29,11 +30,16 @@ class DecodeStageIO extends PipelineStageIO {
 
   val regWen   = Bool()
   val regWaddr = UInt(5.W)
+
+  val csrOp        = UInt(CSR_OP_WIDTH.W)
+  val csrAddr      = UInt(CSR_ADDR_WIDTH.W)
+  val csrWriteData = UInt(DATA_WIDTH.W)
+  val exceptType   = UInt(EXC_TYPE_WIDTH.W)
 }
 
 class ExecuteStageIO extends PipelineStageIO {
   val load      = Bool()
-  val aluResult = UInt(DATA_WIDTH.W)
+  val exeResult = UInt(DATA_WIDTH.W)
 }
 
 class MemoryStageIO extends PipelineStageIO {
