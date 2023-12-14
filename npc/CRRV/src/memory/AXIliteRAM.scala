@@ -3,12 +3,20 @@ package memory
 import chisel3._
 import chisel3.util._
 import io.SimpleMemIO
+import chisel3.util.random.LFSR
 import config.CPUconfig._
 import sim.DPIC_RAM
 import io.AXIliteMasterIO
 
-class AXIliteRAM extends Module {
+class AXIliteRAM(randomDelayEnable: Boolean) extends Module {
   val io = IO(Flipped(new AXIliteMasterIO(ADDR_WIDTH, DATA_WIDTH)))
+
+  val randomDelay = Wire(UInt(4.W))
+  if (randomDelayEnable) {
+    randomDelay := LFSR(4, true.B)
+  } else {
+    randomDelay := 0.U
+  }
 
   val ram = Module(new DPIC_RAM)
   ram.io.clock := clock
@@ -49,8 +57,8 @@ class AXIliteRAM extends Module {
   io.r.data    := ram.io.rdata
   io.r.resp    := 0.U
   // 随机化延迟
-  io.ar.ready := readState === sReadAddr && true.B
-  io.r.valid  := readState === sReadData && true.B
+  io.ar.ready := readState === sReadAddr && randomDelay(0)
+  io.r.valid  := readState === sReadData && randomDelay(1)
 
   val waddr = Reg(UInt(ADDR_WIDTH.W))
   val wdata = Reg(UInt(DATA_WIDTH.W))
@@ -87,6 +95,6 @@ class AXIliteRAM extends Module {
   io.b.valid   := true.B
   io.b.resp    := 0.U
   // 随机化延迟
-  io.aw.ready := writeState === sWriteAddr && true.B
-  io.w.ready  := writeState === sWriteData && true.B
+  io.aw.ready := writeState === sWriteAddr && randomDelay(2)
+  io.w.ready  := writeState === sWriteData && randomDelay(3)
 }
