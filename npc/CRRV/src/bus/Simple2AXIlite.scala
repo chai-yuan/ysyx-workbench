@@ -6,7 +6,7 @@ import config.CPUconfig._
 import io._
 
 /**
- * 从Simple接口到AXI lite接口的转换器
+  * 从Simple接口到AXI lite接口的转换器
   */
 class Simple2AXIlite extends Module {
   val io = IO(new Bundle {
@@ -16,15 +16,17 @@ class Simple2AXIlite extends Module {
 
   val (sIdle :: sReadAddr :: sReadData
     :: sWriteAddr :: sWriteData
-    :: sReadEnd :: sWriteEnd :: Nil) = Enum(7)
-  val state                          = RegInit(sIdle)
+    :: sEnd :: Nil) = Enum(6)
+  val state         = RegInit(sIdle)
 
   val rdata = Reg(UInt(DATA_WIDTH.W))
+  val addr  = Reg(UInt(ADDR_WIDTH.W))
 
   switch(state) {
     is(sIdle) {
       when(io.simple.enable) {
         state := Mux(io.simple.wen =/= 0.U, sWriteAddr, sReadAddr)
+        addr  := io.simple.addr
       }
     }
     is(sReadAddr) {
@@ -35,7 +37,7 @@ class Simple2AXIlite extends Module {
     is(sReadData) {
       when(io.axilite.r.valid) {
         rdata := io.axilite.r.data
-        state := sReadEnd
+        state := sEnd
       }
     }
     is(sWriteAddr) {
@@ -45,25 +47,22 @@ class Simple2AXIlite extends Module {
     }
     is(sWriteData) {
       when(io.axilite.w.ready) {
-        state := sWriteEnd
+        state := sEnd
       }
     }
-    is(sReadEnd) {
-      state := sIdle
-    }
-    is(sWriteEnd) {
+    is(sEnd) {
       state := sIdle
     }
   }
-
-  io.simple.valid := state === sWriteEnd || io.axilite.r.valid
+  // 如果地址有变动，则需要重新发送读写
+  io.simple.valid := (state === sEnd) && (addr === io.simple.addr)
   io.simple.rdata := rdata
 
   io.axilite.ar.valid := state === sReadAddr
-  io.axilite.ar.addr  := io.simple.addr
+  io.axilite.ar.addr  := addr
   io.axilite.r.ready  := true.B
   io.axilite.aw.valid := state === sWriteAddr
-  io.axilite.aw.addr  := io.simple.addr
+  io.axilite.aw.addr  := addr
   io.axilite.w.valid  := state === sWriteData
   io.axilite.w.data   := io.simple.wdata
   io.axilite.w.strb   := io.simple.wen

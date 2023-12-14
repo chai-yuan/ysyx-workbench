@@ -8,6 +8,7 @@ test:
 verilog:
 	$(call git_commit, "generate verilog")
 	mkdir -p $(BUILD_DIR)
+	mkdir -p ./simulation/vsrc/
 	mill -i __.test.runMain Elaborate -td $(BUILD_DIR)
 	cp $(BUILD_DIR)/verilog-gen/*.sv ./simulation/vsrc/
 
@@ -28,6 +29,7 @@ checkformat:
 
 clean:
 	-rm -rf $(BUILD_DIR)
+	-rm -rf ./simulation/vsrc/
 
 .PHONY: test verilog help compile bsp reformat checkformat clean
 
