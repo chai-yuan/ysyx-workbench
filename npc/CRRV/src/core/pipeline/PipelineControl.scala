@@ -40,10 +40,10 @@ class PipelineControl extends Module {
   val stall = MuxCase(
     0.U,
     Seq(
-      io.memStallReq -> "b11110".U(5.W),
-      io.exeStallReq -> "b11100".U(5.W),
-      io.loadHazardFlage -> "b11000".U(5.W),
-      io.ifStallReq -> "b10000".U(5.W)
+      (io.memStallReq) -> "b11110".U(5.W),
+      (io.exeStallReq || io.csrHazardFlag) -> "b11100".U(5.W),
+      (io.loadHazardFlage) -> "b11000".U(5.W),
+      (io.ifStallReq) -> "b10000".U(5.W)
     )
   )
   // 异常
