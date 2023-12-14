@@ -39,12 +39,12 @@ class Simple2AXIlite extends Module {
       }
     }
     is(sWriteAddr) {
-      when(io.axilite.ar.ready) {
+      when(io.axilite.aw.ready) {
         state := sWriteData
       }
     }
     is(sWriteData) {
-      when(io.axilite.r.ready) {
+      when(io.axilite.w.ready) {
         state := sWriteEnd
       }
     }

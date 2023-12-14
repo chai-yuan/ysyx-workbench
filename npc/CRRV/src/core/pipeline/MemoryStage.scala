@@ -45,8 +45,7 @@ class MemoryStage extends Module {
     )
   }
   // 暂停信号
-  val memStall = !io.dataRam.valid
-
+  val memStall = (!io.dataRam.valid) && en
   // 流水线控制
   io.control.stallReq := memStall
   io.control.flushReq := false.B
