@@ -57,8 +57,8 @@ class AXIliteRAM(randomDelayEnable: Boolean) extends Module {
   io.r.data    := ram.io.rdata
   io.r.resp    := 0.U
   // 随机化延迟
-  io.ar.ready := readState === sReadAddr && randomDelay(0)
-  io.r.valid  := readState === sReadData && randomDelay(1)
+  io.ar.ready := readState === sReadAddr && !randomDelay(0)
+  io.r.valid  := readState === sReadData && !randomDelay(1)
 
   val waddr = Reg(UInt(ADDR_WIDTH.W))
   val wdata = Reg(UInt(DATA_WIDTH.W))
@@ -95,6 +95,6 @@ class AXIliteRAM(randomDelayEnable: Boolean) extends Module {
   io.b.valid   := true.B
   io.b.resp    := 0.U
   // 随机化延迟
-  io.aw.ready := writeState === sWriteAddr && randomDelay(2)
-  io.w.ready  := writeState === sWriteData && randomDelay(3)
+  io.aw.ready := writeState === sWriteAddr && !randomDelay(2)
+  io.w.ready  := writeState === sWriteData && !randomDelay(3)
 }

@@ -10,7 +10,8 @@
 - [x] 通过cpu test
 - [x] 通过yield和yield-os测试
 - [x] 运行rt-thread
-- [ ] 支持AXI lite总线 和 随机延迟
-- [ ] 仲裁器
+- [x] 支持AXI lite总线 和 随机延迟
+- [x] 仲裁器
+- [ ] 虚拟设备(串口和时钟)
 - [ ] 支持cache
 - [ ] 支持TLB MMU
