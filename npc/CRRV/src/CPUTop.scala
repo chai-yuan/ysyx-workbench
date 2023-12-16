@@ -17,7 +17,7 @@ class CPUTop extends Module {
   val core       = Module(new Core)
   val arbiter    = Module(new SimpleArbiter)
   val simple2axi = Module(new Simple2AXIlite)
-  val ram        = Module(new AXIliteRAM(true))
+  val ram        = Module(new AXIliteRAM(false))
 
   core.io.inst <> arbiter.io.simpleInst
   core.io.data <> arbiter.io.simpleData

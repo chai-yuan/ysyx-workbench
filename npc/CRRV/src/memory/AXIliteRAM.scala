@@ -92,7 +92,7 @@ class AXIliteRAM(randomDelayEnable: Boolean) extends Module {
   ram.io.waddr := waddr
   ram.io.wdata := wdata
   ram.io.wmask := wmask
-  io.b.valid   := true.B
+  io.b.valid   := writeState === sWriteEnd
   io.b.resp    := 0.U
   // 随机化延迟
   io.aw.ready := writeState === sWriteAddr && !randomDelay(2)
