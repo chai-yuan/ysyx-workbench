@@ -11,6 +11,7 @@ class AXIliteXbar extends Module {
     val in     = Flipped(new AXIliteMasterIO(ADDR_WIDTH, DATA_WIDTH))
     val ram    = new AXIliteMasterIO(ADDR_WIDTH, DATA_WIDTH)
     val serial = new AXIliteMasterIO(ADDR_WIDTH, DATA_WIDTH)
+    val clint  = new AXIliteMasterIO(ADDR_WIDTH, DATA_WIDTH)
   })
 
   val (sIdle :: sRead :: sWrite :: Nil) = Enum(3)
@@ -24,8 +25,8 @@ class AXIliteXbar extends Module {
       device := MuxCase(
         DEVICE_NONE,
         Seq(
-          (io.in.ar.addr(31,28) === "h8".U) -> (DEVICE_RAM),
-          (io.in.ar.addr(31,28) === "ha".U) -> (DEVICE_SERIAL)
+          (io.in.ar.addr(31, 28) === "h8".U) -> (DEVICE_RAM),
+          (io.in.ar.addr(31, 28) === "ha".U) -> (DEVICE_SERIAL)
         )
       )
     }
@@ -44,11 +45,14 @@ class AXIliteXbar extends Module {
   when(state =/= sIdle && device === DEVICE_RAM) {
     io.in <> io.ram
     io.serial.setAXIliteDefaults()
+    io.clint.setAXIliteDefaults()
   }.elsewhen(state =/= sIdle && device === DEVICE_SERIAL) {
     io.in <> io.serial
     io.ram.setAXIliteDefaults()
-  }.otherwise{
-    io.in <> io.ram
+    io.clint.setAXIliteDefaults()
+  }.otherwise {
+    io.in <> io.clint
+    io.ram.setAXIliteDefaults()
     io.serial.setAXIliteDefaults()
   }
 }

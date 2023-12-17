@@ -7,7 +7,6 @@ bool check_serial_addr(int addr) {
 }
 
 void serial_read(int raddr, int* rdata) {
-    panic("can not read serial!\n");
 }
 
 void serial_write(int waddr, int wdata, char wmask) {

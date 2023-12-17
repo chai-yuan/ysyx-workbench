@@ -37,5 +37,13 @@ void timer_read(int raddr, int* rdata) {
 }
 
 void timer_write(int waddr, int wdata, char wmask) {
-    return;
+    waddr = waddr & ~0x3u;
+    uint8_t* base_addr = &timer_buf[waddr-CONFIG_RTC_MMIO];
+
+    for (int i = 0; i < 4; i++) {
+        if (wmask & (1 << i)) {
+            base_addr[i] = wdata & 0xFF;
+        }
+        wdata >>= 8;
+    }
 }
