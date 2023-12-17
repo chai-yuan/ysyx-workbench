@@ -3,7 +3,6 @@ package io
 import chisel3._
 import chisel3.util._
 
-
 class AXIliteAddrIO(val addrWidth: Int) extends Bundle {
   val valid = Output(Bool())
   val ready = Input(Bool())
@@ -36,4 +35,16 @@ class AXIliteMasterIO(val addrWidth: Int, val dataWidth: Int) extends Bundle {
   val aw = new AXIliteAddrIO(addrWidth)
   val w  = new AXIliteWriteIO(dataWidth)
   val b  = new AXIliteWriteBackIO
+
+  def setAXIliteDefaults(): Unit = {
+    ar.valid := false.B
+    ar.addr  := 0.U
+    r.ready  := 0.U
+    aw.valid := false.B
+    aw.addr  := 0.U
+    w.valid  := false.B
+    w.data   := 0.U
+    w.strb   := 0.U
+    b.ready  := false.B
+  }
 }

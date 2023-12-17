@@ -1,26 +1,19 @@
-package memory
+package device
+
 
 import chisel3._
 import chisel3.util._
 import io.SimpleMemIO
-import chisel3.util.random.LFSR
 import config.CPUconfig._
-import sim.DPIC_ram
 import io.AXIliteMasterIO
+import sim.DPIC_serial
 
-class AXIliteRAM(randomDelayEnable: Boolean) extends Module {
+class AXIliteSerial extends Module {
   val io = IO(Flipped(new AXIliteMasterIO(ADDR_WIDTH, DATA_WIDTH)))
 
-  val randomDelay = Wire(UInt(4.W))
-  if (randomDelayEnable) {
-    randomDelay := LFSR(4, true.B)
-  } else {
-    randomDelay := 0.U
-  }
-
-  val ram = Module(new DPIC_ram)
-  ram.io.clock := clock
-  ram.io.reset := reset
+  val device = Module(new DPIC_serial)
+  device.io.clock := clock
+  device.io.reset := reset
 
   val (sIdle :: sReadAddr :: sReadData
     :: sWriteAddr :: sWriteData
@@ -52,13 +45,13 @@ class AXIliteRAM(randomDelayEnable: Boolean) extends Module {
     }
   }
 
-  ram.io.ren   := readState === sReadData
-  ram.io.raddr := raddr
-  io.r.data    := ram.io.rdata
+  device.io.ren   := readState === sReadData
+  device.io.raddr := raddr
+  io.r.data    := device.io.rdata
   io.r.resp    := 0.U
-  // 随机化延迟
-  io.ar.ready := readState === sReadAddr && !randomDelay(0)
-  io.r.valid  := readState === sReadData && !randomDelay(1)
+
+  io.ar.ready := readState === sReadAddr
+  io.r.valid  := readState === sReadData
 
   val waddr = Reg(UInt(ADDR_WIDTH.W))
   val wdata = Reg(UInt(DATA_WIDTH.W))
@@ -88,13 +81,13 @@ class AXIliteRAM(randomDelayEnable: Boolean) extends Module {
     }
   }
 
-  ram.io.wen   := writeState === sWriteEnd
-  ram.io.waddr := waddr
-  ram.io.wdata := wdata
-  ram.io.wmask := wmask
+  device.io.wen   := writeState === sWriteEnd
+  device.io.waddr := waddr
+  device.io.wdata := wdata
+  device.io.wmask := wmask
   io.b.valid   := writeState === sWriteEnd
   io.b.resp    := 0.U
-  // 随机化延迟
-  io.aw.ready := writeState === sWriteAddr && !randomDelay(2)
-  io.w.ready  := writeState === sWriteData && !randomDelay(3)
+
+  io.aw.ready := writeState === sWriteAddr
+  io.w.ready  := writeState === sWriteData
 }

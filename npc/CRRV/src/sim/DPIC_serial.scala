@@ -3,7 +3,7 @@ package sim
 import chisel3._
 import chisel3.util._
 
-class DPIC_ram extends BlackBox with HasBlackBoxInline {
+class DPIC_serial extends BlackBox with HasBlackBoxInline {
   val io = IO(new Bundle {
     val clock = Input(Clock())
     val reset = Input(Bool())
@@ -19,9 +19,9 @@ class DPIC_ram extends BlackBox with HasBlackBoxInline {
   })
 
   setInline(
-    "DPIC_ram.sv",
+    "DPIC_serial.sv",
     """
-      |module DPIC_ram (
+      |module DPIC_serial (
       |    input clock,
       |    input reset,
       |    input ren,
@@ -32,14 +32,14 @@ class DPIC_ram extends BlackBox with HasBlackBoxInline {
       |    input [31:0] wdata,
       |    input [3:0] wmask
       |);
-      |    import "DPI-C" function void verilog_pmem_read(input int raddr, output int rdata);
-      |    import "DPI-C" function void verilog_pmem_write(input int waddr, input int wdata, input byte wmask);
+      |    import "DPI-C" function void verilog_serial_read(input int raddr, output int rdata);
+      |    import "DPI-C" function void verilog_serial_write(input int waddr, input int wdata, input byte wmask);
       |    always @(posedge clock) begin
       |        if (wen && !reset) begin
-      |            verilog_pmem_write(waddr, wdata, wmask);
+      |            verilog_serial_write(waddr, wdata, wmask);
       |        end
       |        if (ren && !reset) begin
-      |            verilog_pmem_read(raddr, rdata);
+      |            verilog_serial_read(raddr, rdata);
       |        end
       |    end
       |endmodule

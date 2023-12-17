@@ -4,12 +4,12 @@ import chisel3._
 import chisel3.util._
 import io.SimpleMemIO
 import config.CPUconfig._
-import sim.DPIC_RAM
+import sim.DPIC_ram
 
 class SimpleRAM extends Module {
   val io = IO(Flipped(new SimpleMemIO(ADDR_WIDTH, DATA_WIDTH)))
 
-  val simram = Module(new DPIC_RAM)
+  val simram = Module(new DPIC_ram)
   simram.io.clock := clock
   simram.io.reset := reset
 
