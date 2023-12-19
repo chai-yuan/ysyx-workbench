@@ -27,9 +27,11 @@ static void exec_once() {
     memset(p, ' ', space_len);
     p += space_len;
 
-    void disassemble(char* str, int size, uint64_t pc, uint8_t* code, int nbyte);
+    void disassemble(char* str, int size, uint64_t pc, uint8_t* code,
+                     int nbyte);
     disassemble(p, logbuf + sizeof(logbuf) - p,
-                MUXDEF(CONFIG_ISA_x86, cpu.pc + 4, cpu.pc), (uint8_t*)&inst, ilen);
+                MUXDEF(CONFIG_ISA_x86, cpu.pc + 4, cpu.pc), (uint8_t*)&inst,
+                ilen);
 #endif
 
     printf("%s\n", logbuf);
@@ -40,7 +42,9 @@ void cpu_exec(uint64_t n) {
     switch (npc_state.state) {
         case NPC_END:
         case NPC_ABORT:
-            printf("Program execution has ended. To restart the program, exit NPC and run again.\n");
+            printf(
+                "Program execution has ended. To restart the program, exit NPC "
+                "and run again.\n");
             return;
         default:
             npc_state.state = NPC_RUNNING;
@@ -61,7 +65,11 @@ void cpu_exec(uint64_t n) {
         case NPC_END:
         case NPC_ABORT:
             Log("npc: %s at pc = " FMT_WORD,
-                (npc_state.state == NPC_ABORT ? ANSI_FMT("ABORT", ANSI_FG_RED) : (npc_state.halt_ret == 0 ? ANSI_FMT("HIT GOOD TRAP", ANSI_FG_GREEN) : ANSI_FMT("HIT BAD TRAP", ANSI_FG_RED))),
+                (npc_state.state == NPC_ABORT
+                     ? ANSI_FMT("ABORT", ANSI_FG_RED)
+                     : (npc_state.halt_ret == 0
+                            ? ANSI_FMT("HIT GOOD TRAP", ANSI_FG_GREEN)
+                            : ANSI_FMT("HIT BAD TRAP", ANSI_FG_RED))),
                 npc_state.halt_pc);
             // fall through
         case NPC_QUIT:
@@ -82,6 +90,8 @@ void set_npc_state(int state, vaddr_t pc, int halt_ret) {
 }
 
 void statistic() {
+    Log("----statistic----");
     Log("npc end at cycle : %d", clk_cycle);
+    Log("npc exec inst : %d", valid_cycle);
     Log("npc ipc : %f", (float)valid_cycle / (float)clk_cycle);
 }

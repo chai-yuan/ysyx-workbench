@@ -2,10 +2,6 @@
 #include <memory/paddr.h>
 #include <unistd.h>
 
-bool check_serial_addr(int addr) {
-    return addr == CONFIG_SERIAL_MMIO;
-}
-
 void serial_read(int raddr, int* rdata) {
 }
 

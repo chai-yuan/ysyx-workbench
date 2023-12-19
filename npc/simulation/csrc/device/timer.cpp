@@ -20,10 +20,6 @@ uint64_t get_time() {
 
 static uint8_t timer_buf[8];
 
-bool check_timer_addr(int addr) {
-    return addr == CONFIG_RTC_MMIO || addr == CONFIG_RTC_MMIO + 4;
-}
-
 void timer_read(int raddr, int* rdata) {
     uint32_t* rtc_port_base = (uint32_t*)timer_buf;
     if (raddr == CONFIG_RTC_MMIO + 4) {
