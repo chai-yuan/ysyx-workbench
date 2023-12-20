@@ -12,7 +12,7 @@ class RegFile extends Module {
     val read2 = Flipped(new RegReadIO)
     val write = Flipped(new RegWriteIO)
   })
-  val regfile = RegInit(VecInit(Seq.fill(REG_COUNT) { 0.U(DATA_WIDTH.W) }))
+  val regfile = Mem(32, UInt(DATA_WIDTH.W))
 
   io.read1.data := Mux(io.read1.addr =/= 0.U && io.read1.en, regfile(io.read1.addr), 0.U)
   io.read2.data := Mux(io.read2.addr =/= 0.U && io.read2.en, regfile(io.read2.addr), 0.U)

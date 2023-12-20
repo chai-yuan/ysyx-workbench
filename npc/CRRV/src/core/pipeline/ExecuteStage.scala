@@ -7,6 +7,7 @@ import core.define.InstructionDefine._
 import core.define.OperationDefine._
 import core.define.ControlSignDefine._
 import io._
+import core.muldiv.MDU
 
 class ExecuteStage extends Module {
   val io = IO(new Bundle {
@@ -40,7 +41,12 @@ class ExecuteStage extends Module {
     )
   )
   // MDU
-  val mduResult = 0.U // TODO:之后再支持乘除法
+  val mdu = Module(new MDU)
+  mdu.io.op    := id2exe.mduOp
+  mdu.io.flush := io.control.flush
+  mdu.io.opr1  := src1
+  mdu.io.opr2  := src2
+  val mduResult = mdu.io.result
   // CSR
   val csrResult = io.csrRead.data
   // 生成EXE段结果
@@ -55,7 +61,7 @@ class ExecuteStage extends Module {
   val load = id2exe.lsuOp =/= LSU_NOP && id2exe.regWen
 
   // 流水线控制
-  io.control.stallReq := false.B
+  io.control.stallReq := !mdu.io.valid
   // CSR 读取
   io.csrRead.op   := io.id2exe.ID.csrOp
   io.csrRead.addr := io.id2exe.ID.csrAddr
