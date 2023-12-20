@@ -6,6 +6,10 @@ import io._
 import config.CPUconfig._
 import core.define.OperationDefine._
 
+/**
+  * 除法器
+  * 使用迭代除法完成运算(TODO: 除零和溢出是否需要额外考虑?)
+  */
 class Divider extends Module {
   val io = IO(new Bundle {
     val en    = Input(Bool())
@@ -26,10 +30,41 @@ class Divider extends Module {
   val opr1         = Mux(opr1Neg, -io.opr1, io.opr1)
   val opr2         = Mux(opr2Neg, -io.opr2, io.opr2)
   // 进行无符号除法运算
-  val divresult = opr1.asUInt / opr2.asUInt
-  val remresult = opr1.asUInt % opr2.asUInt
+  val dividend                           = Reg(UInt((DATA_WIDTH * 2).W))
+  val divisor                            = Reg(UInt((DATA_WIDTH + 1).W))
+  val quotient                           = Reg(UInt(DATA_WIDTH.W))
+  val count                              = RegInit(0.U(6.W))
+  val (sIdle :: sWorking :: sEnd :: Nil) = Enum(3)
+  val state                              = RegInit(sIdle)
 
-  io.valid     := io.en && !io.flush
+  switch(state) {
+    is(sIdle) {
+      when(io.en && !io.flush) {
+        dividend := Cat(0.U(32.W), opr1)
+        divisor  := Cat(0.U(1.W), opr2)
+        quotient := 0.U
+        count    := 0.U
+        state    := sWorking
+      }
+    }
+    is(sWorking) {
+      when(count =/= DATA_WIDTH.U && !io.flush) {
+        val ans = dividend(DATA_WIDTH * 2 - 1, DATA_WIDTH - 1) - divisor
+        quotient := Cat(quotient(DATA_WIDTH - 2, 0), !ans(DATA_WIDTH))
+        dividend := Mux(ans(DATA_WIDTH), dividend << 1, Cat(ans, dividend(DATA_WIDTH - 2, 0)) << 1)
+        count    := count + 1.U
+      }.otherwise {
+        state := sEnd
+      }
+    }
+    is(sEnd) {
+      state := sIdle
+    }
+  }
+  val divresult = quotient
+  val remresult = dividend(DATA_WIDTH * 2 - 1, DATA_WIDTH)
+  // 输出结果
+  io.valid     := io.en && !io.flush && state === sEnd
   io.divresult := Mux(divResultNeg, -divresult, divresult)
   io.remresult := Mux(remResultNeg, -remresult, remresult)
 }
