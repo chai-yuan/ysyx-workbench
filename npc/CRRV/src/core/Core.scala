@@ -11,7 +11,7 @@ class Core extends Module {
   val io = IO(new Bundle {
     val inst  = new SimpleMemIO(ADDR_WIDTH, INST_WIDTH)
     val data  = new SimpleMemIO(ADDR_WIDTH, DATA_WIDTH)
-    val debug = new DebugIO
+    val debug = Output(new DebugIO)
   })
 
   val fetchStage     = Module(new FetchStage)
@@ -66,7 +66,7 @@ class Core extends Module {
 
   writeBackStage.io.mem2wb <> mem2wb.io.next
   writeBackStage.io.readData := io.data.rdata
-  writeBackStage.io.debug <> io.debug
+  io.debug                   := writeBackStage.io.debug
 
   // register file
   regFile.io.read1 <> hazardResolver.io.regFile1

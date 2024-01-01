@@ -15,8 +15,7 @@ class WriteBackStage extends Module {
     val readData   = Input(UInt(DATA_WIDTH.W))
     val wb2csr     = new CsrWriteIO
     val regForward = Output(new RegForwardIO)
-
-    val debug = new DebugIO
+    val debug      = Output(new DebugIO)
   })
   val if2wb  = io.mem2wb.IF
   val id2wb  = io.mem2wb.ID
@@ -49,9 +48,8 @@ class WriteBackStage extends Module {
   io.regForward.data := regData
   io.regForward.load := exe2wb.load
   // debug
-  io.debug.validInst := if2wb.instValid
-  io.debug.halt      := id2wb.inst === EBREAK
-  io.debug.skipIO    := (id2wb.lsuOp =/= LSU_NOP && mem2wb.memAddr > "ha000_0000".U)
+  io.debug.valid := if2wb.instValid
+  io.debug.halt  := id2wb.inst === EBREAK
 
   io.debug.pc       := if2wb.pc
   io.debug.regWen   := id2wb.regWen
