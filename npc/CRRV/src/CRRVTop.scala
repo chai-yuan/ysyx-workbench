@@ -10,7 +10,8 @@ import sim.Debug
 
 class CRRVTop extends Module {
   val io = IO(new Bundle {
-    val axi = new AXIliteMasterIO(ADDR_WIDTH, DATA_WIDTH)
+    val interrupt = Input(Bool())
+    val axi       = new AXIliteMasterIO(ADDR_WIDTH, DATA_WIDTH)
   })
   val core           = Module(new Core)
   val arbiter        = Module(new SimpleArbiter)

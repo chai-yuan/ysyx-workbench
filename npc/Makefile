@@ -10,7 +10,7 @@ verilog:
 	mkdir -p $(BUILD_DIR)
 	mkdir -p ./simulation/vsrc/
 	mill -i __.test.runMain Elaborate -td $(BUILD_DIR)
-	cp $(BUILD_DIR)/CRRVTop.v ../SoC-sim/soc/
+	cp $(BUILD_DIR)/CRRVTop.v $(SIM_HOME)/soc/
 
 help:
 	mill -i __.test.runMain Elaborate --help
