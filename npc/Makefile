@@ -8,7 +8,6 @@ test:
 verilog:
 	$(call git_commit, "generate verilog")
 	mkdir -p $(BUILD_DIR)
-	mkdir -p ./simulation/vsrc/
 	mill -i __.test.runMain Elaborate -td $(BUILD_DIR)
 	cp $(BUILD_DIR)/CRRVTop.v $(SIM_HOME)/soc/
 
