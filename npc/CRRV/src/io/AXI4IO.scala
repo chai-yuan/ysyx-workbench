@@ -29,8 +29,6 @@ class AXI4WriteIO(val dataWidth: Int) extends AXI4Interface {
 }
 
 class AXI4WriteBackIO extends AXI4Interface {
-  val valid = Bool()
-  val ready = Bool()
   val resp  = UInt(2.W)
   val id    = UInt(4.W)
 }
