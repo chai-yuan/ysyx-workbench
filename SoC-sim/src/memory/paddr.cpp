@@ -10,6 +10,7 @@ void init_mem() {
 uint8_t* guest_to_host(paddr_t paddr) {
     return mrom_raw_data() + paddr - CONFIG_MBASE;
 }
+
 paddr_t host_to_guest(uint8_t* haddr) {
     return haddr - mrom_raw_data() + CONFIG_MBASE;
 }
@@ -19,7 +20,6 @@ static void out_of_bound(paddr_t addr) {
           ", " FMT_PADDR "] at pc = " FMT_WORD,
           addr, PMEM_LEFT, PMEM_RIGHT, cpu.pc);
 }
-
 
 inline void mem_read(uint8_t* mem, int raddr, word_t* rdata) {
     *rdata = *(uint32_t*)&mem[raddr];

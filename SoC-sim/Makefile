@@ -21,7 +21,8 @@ VERILATOR_FLAGS += --trace --debug --cc --exe --build --timing --timescale "1ns/
 BIN 		:= $(OBJ_DIR)/V$(TOP_NAME)
 
 # gcc
-CFLAGS 	:= -I$(INCLUDE_DIR) -g -Wall -Wextra
+CFLAGS 	:= -I$(INCLUDE_DIR) -g -Wall -Wextra 
+# CFLAGS	+= -DVL_PRINTF=printf
 # CFLAGS += -fPIE $(LLVM_CXXFLAGS)
 LDFLAGS := -ldl -lreadline
 # LDFLAGS += $(LLVM_LIBS)
