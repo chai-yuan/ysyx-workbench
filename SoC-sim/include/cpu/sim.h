@@ -10,8 +10,12 @@ void sim_reset();
 void sim_exit();
 void sim_exec();
 
+struct sim_statistic_t{
+    word_t clock_cycle,valid_cycle;
+};
+
 extern VysyxSoCFull* sim_soc;
-extern word_t clk_cycle, valid_cycle;
+extern sim_statistic_t sim_statistic;
 
 void statistic();
 

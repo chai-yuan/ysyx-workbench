@@ -1,14 +1,17 @@
 #include <cpu/cpu.h>
 #include <cpu/difftest.h>
 #include <memory/paddr.h>
+#include <device.h>
 
-static uint8_t* pmem = NULL;
+void init_mem() {
+    mrom_init();
+}
 
 uint8_t* guest_to_host(paddr_t paddr) {
-    return pmem + paddr - CONFIG_MBASE;
+    return mrom_raw_data() + paddr - CONFIG_MBASE;
 }
 paddr_t host_to_guest(uint8_t* haddr) {
-    return haddr - pmem + CONFIG_MBASE;
+    return haddr - mrom_raw_data() + CONFIG_MBASE;
 }
 
 static void out_of_bound(paddr_t addr) {
@@ -17,20 +20,6 @@ static void out_of_bound(paddr_t addr) {
           addr, PMEM_LEFT, PMEM_RIGHT, cpu.pc);
 }
 
-void init_mem() {
-    pmem = (uint8_t*)malloc(CONFIG_MSIZE);
-    assert(pmem);
-
-    word_t build_in_img[] = {0x00009117,  // auipc x2,0x9
-                             0x00300193,  // addi x3, x0, 3
-                             0x00200213,  // addi x4,x0,2
-                             0x404182b3,  // sub x5, x3, x4
-                             0x00100073, 0x00100073};
-    memcpy(pmem, build_in_img, sizeof(build_in_img));
-
-    Log("physical memory area [" FMT_PADDR ", " FMT_PADDR "]", PMEM_LEFT,
-        PMEM_RIGHT);
-}
 
 inline void mem_read(uint8_t* mem, int raddr, word_t* rdata) {
     *rdata = *(uint32_t*)&mem[raddr];
@@ -50,7 +39,6 @@ inline void mem_write(uint8_t* mem, int waddr, word_t wdata, char wmask) {
 void pmem_read(int raddr, word_t* rdata) {
     raddr = raddr & ~0x3u;
     if (in_pmem(raddr)) {
-        mem_read(pmem, raddr - CONFIG_MBASE, rdata);
         return;
     }
 #ifdef CONFIG_DEVICE
@@ -69,7 +57,6 @@ void pmem_read(int raddr, word_t* rdata) {
 void pmem_write(int waddr, word_t wdata, char wmask) {
     waddr = waddr & ~0x3u;
     if (in_pmem(waddr)) {
-        mem_write(pmem, waddr - CONFIG_MBASE, wdata, wmask);
         return;
     }
 #ifdef CONFIG_DEVICE

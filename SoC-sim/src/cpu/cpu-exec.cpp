@@ -5,7 +5,6 @@
 
 CPU_regs cpu;
 
-
 static void exec_once() {
     sim_exec();
 
@@ -92,7 +91,7 @@ void set_npc_state(int state, vaddr_t pc, int halt_ret) {
 
 void statistic() {
     Log("----statistic----");
-    Log("npc end at cycle : %d", clk_cycle);
-    Log("npc exec inst : %d", valid_cycle);
-    Log("npc ipc : %f", (float)valid_cycle / (float)clk_cycle);
+    Log("npc end at cycle : %d", sim_statistic.clock_cycle);
+    Log("npc exec inst : %d", sim_statistic.valid_cycle);
+    Log("npc ipc : %f", (float)sim_statistic.valid_cycle / (float)sim_statistic.clock_cycle);
 }
