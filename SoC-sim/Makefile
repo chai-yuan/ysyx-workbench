@@ -2,7 +2,7 @@ VSRCS_DIR 	:= $(SIM_HOME)/soc
 DIVIP_DIR	:= $(SIM_HOME)/perip
 
 CSRCS_DIR 	:= $(SIM_HOME)/src
-INCLUDE_DIR 	:= $(SIM_HOME)/include
+INCLUDE_DIR := $(SIM_HOME)/include
 OBJ_DIR 	:= $(SIM_HOME)/obj_dir
 
 VSRCS += $(shell find $(abspath $(VSRCS_DIR)) -name "*.v")
@@ -22,7 +22,6 @@ BIN 		:= $(OBJ_DIR)/V$(TOP_NAME)
 
 # gcc
 CFLAGS 	:= -I$(INCLUDE_DIR) -g -Wall -Wextra 
-# CFLAGS	+= -DVL_PRINTF=printf
 # CFLAGS += -fPIE $(LLVM_CXXFLAGS)
 LDFLAGS := -ldl -lreadline
 # LDFLAGS += $(LLVM_LIBS)
