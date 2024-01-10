@@ -4,21 +4,19 @@
 
 #define npc_trap(code) asm volatile("mv a0, %0; ebreak" : : "r"(code))
 
-// extern char _heap_start;
+extern char _heap_start,_heap_end;
 int main(const char* args);
 
-// extern char _pmem_start;
-// #define PMEM_SIZE (128 * 1024 * 1024)
-// #define PMEM_END ((uintptr_t) & _pmem_start + PMEM_SIZE)
-
-// Area heap = RANGE(&_heap_start, PMEM_END);
+Area heap = RANGE(&_heap_start, (&_heap_end));
 #ifndef MAINARGS
 #define MAINARGS ""
 #endif
 static const char mainargs[] = MAINARGS;
 
+#define UART_BASE 0x10000000L
+#define UART_TX   0
 void putch(char ch) {
-
+    *(volatile char *)(UART_BASE + UART_TX) = ch;
 }
 
 void halt(int code) {

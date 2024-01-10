@@ -14,5 +14,5 @@ object CPUconfig {
   val ADDR_WIDTH = 32
   val DATA_WIDTH = 32
   val REG_COUNT  = 32
-  val RESET_PC   = "h2000_000c".U(ADDR_WIDTH.W)
+  val RESET_PC   = "h2000_0000".U(ADDR_WIDTH.W)
 }

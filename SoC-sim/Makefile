@@ -1,9 +1,9 @@
-VSRCS_DIR 	:= $(SIM_HOME)/soc
-DIVIP_DIR	:= $(SIM_HOME)/perip
+VSRCS_DIR 	:= $(SOC_HOME)/soc
+DIVIP_DIR	:= $(SOC_HOME)/perip
 
-CSRCS_DIR 	:= $(SIM_HOME)/src
-INCLUDE_DIR := $(SIM_HOME)/include
-OBJ_DIR 	:= $(SIM_HOME)/obj_dir
+CSRCS_DIR 	:= $(SOC_HOME)/src
+INCLUDE_DIR := $(SOC_HOME)/include
+OBJ_DIR 	:= $(SOC_HOME)/obj_dir
 
 VSRCS += $(shell find $(abspath $(VSRCS_DIR)) -name "*.v")
 VSRCS += $(shell find $(abspath $(DIVIP_DIR)) -name "*.v")
@@ -15,7 +15,7 @@ HSRCS += $(shell find $(abspath $(OBJ_DIR)) -name "*.h")
 # verilator
 TOP_NAME := ysyxSoCFull
 
-VERILATOR_FLAGS := -I$(SIM_HOME)/perip/uart16550/rtl -I$(SIM_HOME)/perip/spi/rtl
+VERILATOR_FLAGS := -I$(SOC_HOME)/perip/uart16550/rtl -I$(SOC_HOME)/perip/spi/rtl
 VERILATOR_FLAGS += --top $(TOP_NAME) -Wno-lint -Wno-style -Wno-UNUSED
 VERILATOR_FLAGS += --trace --debug --cc --exe --build --no-timing --timescale "1ns/1ns"
 BIN 		:= $(OBJ_DIR)/V$(TOP_NAME)
