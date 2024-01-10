@@ -16,7 +16,7 @@ class Simple2AXI4 extends Module {
   })
 
   val (sIdle :: sReadAddr :: sReadData
-    :: sWriteAddr :: sWriteData
+    :: sWrite :: sWriteWait
     :: sEnd :: Nil) = Enum(6)
   val state         = RegInit(sIdle)
 
@@ -26,7 +26,7 @@ class Simple2AXI4 extends Module {
   switch(state) {
     is(sIdle) {
       when(io.simple.enable) {
-        state := Mux(io.simple.wen =/= 0.U, sWriteAddr, sReadAddr)
+        state := Mux(io.simple.wen =/= 0.U, sWrite, sReadAddr)
         addr  := io.simple.addr
       }
     }
@@ -41,12 +41,14 @@ class Simple2AXI4 extends Module {
         state := sEnd
       }
     }
-    is(sWriteAddr) {
-      when(io.axi.aw.ready) {
-        state := sWriteData
+    is(sWrite) {
+      when(io.axi.aw.ready && !io.axi.w.ready) {
+        state := sWriteWait
+      }.elsewhen(io.axi.aw.ready && io.axi.w.ready){
+        state := sEnd
       }
     }
-    is(sWriteData) {
+    is(sWriteWait) {
       when(io.axi.w.ready) {
         state := sEnd
       }
@@ -66,12 +68,12 @@ class Simple2AXI4 extends Module {
   io.axi.ar.bits.size  := dataSize.U
   io.axi.ar.bits.burst := 1.U // incrementing-address
   io.axi.r.ready       := true.B
-  io.axi.aw.valid      := state === sWriteAddr
+  io.axi.aw.valid      := state === sWrite
   io.axi.aw.bits.addr  := addr
   io.axi.aw.bits.size  := dataSize.U
-  io.axi.w.valid       := state === sWriteData
+  io.axi.w.valid       := state === sWrite || state === sWriteWait
   io.axi.w.bits.data   := io.simple.wdata
-  io.axi.w.bits.last   := state === sWriteData
+  io.axi.w.bits.last   := state === sWrite || state === sWriteWait
   io.axi.w.bits.strb   := io.simple.wen
   io.axi.b.ready       := true.B
 }

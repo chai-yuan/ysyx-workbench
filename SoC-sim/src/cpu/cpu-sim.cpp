@@ -29,14 +29,15 @@ void sim_reset() {
     sim_soc->reset = 1;
     sim_soc->eval();
     IFDEF(CONFIG_VTRACE, dump_wave());
-    sim_soc->clock = 1;
-    sim_soc->reset = 1;
-    sim_soc->eval();
-    IFDEF(CONFIG_VTRACE, dump_wave());
-    sim_soc->clock = 0;
-    sim_soc->reset = 1;
-    sim_soc->eval();
-    IFDEF(CONFIG_VTRACE, dump_wave());
+
+    for (int i = 0; i < 24; i++) {
+        sim_soc->clock = 1;
+        sim_soc->eval();
+        IFDEF(CONFIG_VTRACE, dump_wave());
+        sim_soc->clock = 0;
+        sim_soc->eval();
+        IFDEF(CONFIG_VTRACE, dump_wave());
+    }
 
     sim_soc->clock = 1;
     sim_soc->reset = 0;

@@ -2,10 +2,10 @@
 #define CONFIG_H_
 
 #define CONFIG_PC_RESET_OFFSET 0x0
-#define CONFIG_MSIZE 0x8000000
+#define CONFIG_MSIZE 0xfff
 #define CONFIG_MBASE 0x20000000
 #define CONFIG_ISA "riscv32"
-// #define CONFIG_ISA64 ""
+
 // #define CONFIG_DIFFTEST 1
 // #define CONFIG_ITRACE 1
 // #define CONFIG_MTRACE 1

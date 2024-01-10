@@ -17,7 +17,7 @@ TOP_NAME := ysyxSoCFull
 
 VERILATOR_FLAGS := -I$(SIM_HOME)/perip/uart16550/rtl -I$(SIM_HOME)/perip/spi/rtl
 VERILATOR_FLAGS += --top $(TOP_NAME) -Wno-lint -Wno-style -Wno-UNUSED
-VERILATOR_FLAGS += --trace --debug --cc --exe --build --timing --timescale "1ns/1ns"
+VERILATOR_FLAGS += --trace --debug --cc --exe --build --no-timing --timescale "1ns/1ns"
 BIN 		:= $(OBJ_DIR)/V$(TOP_NAME)
 
 # gcc

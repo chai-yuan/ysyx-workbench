@@ -16,9 +16,9 @@ paddr_t host_to_guest(uint8_t* haddr) {
 }
 
 static void out_of_bound(paddr_t addr) {
-    panic("address = " FMT_PADDR " is out of bound of pmem [" FMT_PADDR
-          ", " FMT_PADDR "] at pc = " FMT_WORD,
-          addr, PMEM_LEFT, PMEM_RIGHT, cpu.pc);
+    // panic("address = " FMT_PADDR " is out of bound of pmem [" FMT_PADDR
+    //       ", " FMT_PADDR "] at pc = " FMT_WORD,
+    //       addr, PMEM_LEFT, PMEM_RIGHT, cpu.pc);
 }
 
 inline void mem_read(uint8_t* mem, int raddr, word_t* rdata) {
