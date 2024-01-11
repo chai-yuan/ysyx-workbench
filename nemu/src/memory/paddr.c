@@ -29,13 +29,14 @@ static uint8_t mrom_mem[MROM_SIZE];
 static uint8_t sram_mem[SRAM_SIZE];
 
 uint8_t* guest_to_host(paddr_t paddr) {
-    if (paddr > CONFIG_MBASE) {
+    if (paddr >= CONFIG_MBASE) {
         return pmem + paddr - CONFIG_MBASE;
-    } else if (paddr > MROM_BASE) {
+    } else if (paddr >= MROM_BASE) {
         return mrom_mem + paddr - MROM_BASE;
-    } else if (paddr > SRAM_BASE) {
+    } else if (paddr >= SRAM_BASE) {
         return sram_mem + paddr - SRAM_BASE;
     }
+    panic("pmem addr error!");
 }
 
 paddr_t host_to_guest(uint8_t* haddr) {

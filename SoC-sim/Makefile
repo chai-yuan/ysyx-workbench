@@ -29,7 +29,7 @@ LDFLAGS := -ldl -lreadline
 IMG 	?=
 ARGS 	?=
 
-NPC_FLAGS += $(ARGS) $(IMG) 
+SOC_FLAGS += $(ARGS) $(IMG) 
 
 bin:$(CSRCS) $(VSRCS)
 	verilator $(VERILATOR_FLAGS) $(CSRCS) $(VSRCS) \
@@ -37,9 +37,9 @@ bin:$(CSRCS) $(VSRCS)
 	$(addprefix -LDFLAGS , $(LDFLAGS))
 
 run:bin
-	$(call git_commit, "npc simulation")
-	@echo $(NPC_FLAGS) 
-	$(BIN) $(NPC_FLAGS)
+	$(call git_commit, "soc simulation")
+	@echo $(SOC_FLAGS) 
+	$(BIN) $(SOC_FLAGS)
 
 
 clean:

@@ -60,27 +60,4 @@ void sim_exec() {
     IFDEF(CONFIG_VTRACE, dump_wave());
 
     sim_statistic.clock_cycle++;
-
-    //     if (sim_cpu->io_debug_validInst) {
-    //         valid_cycle++;
-    //         cpu.pc = sim_cpu->io_debug_pc;
-    // #ifdef CONFIG_DIFFTEST
-    //         if (cpu.pc != 0x80000000u) {
-    //             difftest_step(cpu.pc, 0);
-    //             if (sim_cpu->io_debug_skipIO)
-    //                 difftest_skip_ref();
-    //         }
-    // #endif
-    //         update_cpu_state();
-    //         if (sim_cpu->io_debug_halt) {
-    //             set_npc_state(NPC_END, cpu.pc, cpu.gpr[10]);
-    //         }
-    //     }
-
-    // #ifdef CONFIG_LOOP_CHECK
-    //     if (clk_cycle % 1000000 == 0) {
-    //         Log("now cycle : %u, inst : %u, pc : %x", clk_cycle, valid_cycle,
-    //             cpu.pc);
-    //     }
-    // #endif
 }

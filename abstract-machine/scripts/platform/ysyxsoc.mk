@@ -8,8 +8,8 @@ LDFLAGS   += --gc-sections -e _start
 CFLAGS += -DMAINARGS=\"$(mainargs)\"
 .PHONY: $(AM_HOME)/am/src/riscv/ysyxsoc/trm.c
 
-# SOCFLAGS += -d $(NEMU_HOME)/build/riscv32-nemu-interpreter-so
-SOCFLAGS +=
+SOCFLAGS += -d $(NEMU_HOME)/build/riscv32-nemu-interpreter-so
+# SOCFLAGS +=
 
 image: $(IMAGE).elf
 	@$(OBJDUMP) -d -M no-aliases $(IMAGE).elf > $(IMAGE).txt
