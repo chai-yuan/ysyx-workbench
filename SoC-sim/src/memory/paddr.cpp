@@ -30,25 +30,10 @@ static void out_of_bound(paddr_t addr) {
           addr, cpu.pc);
 }
 
-inline void mem_read(uint8_t* mem, int raddr, word_t* rdata) {
-    *rdata = *(uint32_t*)&mem[raddr];
-}
-
-inline void mem_write(uint8_t* mem, int waddr, word_t wdata, char wmask) {
-    uint8_t* base_addr = &mem[waddr];
-
-    for (int i = 0; i < 4; i++) {
-        if (wmask & (1 << i)) {
-            base_addr[i] = wdata & 0xFF;
-        }
-        wdata >>= 8;
-    }
-}
-
 void pmem_read(int raddr, word_t* rdata) {
     raddr = raddr & ~0x3u;
     if (in_pmem(raddr)) {
-        mem_read(raw_mem, raddr - mem_base, rdata);
+        *rdata = *((word_t*)guest_to_host(raddr));
         return;
     }
     out_of_bound(raddr);
@@ -57,7 +42,13 @@ void pmem_read(int raddr, word_t* rdata) {
 void pmem_write(int waddr, word_t wdata, char wmask) {
     waddr = waddr & ~0x3u;
     if (in_pmem(waddr)) {
-        mem_write(raw_mem, waddr - mem_base, wdata, wmask);
+        uint8_t* base_addr = guest_to_host(waddr);
+        for (int i = 0; i < 4; i++) {
+            if (wmask & (1 << i)) {
+                base_addr[i] = wdata & 0xFF;
+            }
+            wdata >>= 8;
+        }        
         return;
     }
     out_of_bound(waddr);
