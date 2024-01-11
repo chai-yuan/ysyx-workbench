@@ -33,11 +33,11 @@ class AXI4WriteBackIO extends AXI4Interface {
   val id    = UInt(4.W)
 }
 
-class AXI4MasterIO(val addrWidth: Int, val dataWidth: Int) extends AXI4Interface {
+class AXI4MasterIO(val addrWidth: Int) extends AXI4Interface {
   val ar = Decoupled(new AXI4AddrIO(addrWidth))
-  val r  = Flipped(Decoupled(new AXI4ReadIO(dataWidth)))
+  val r  = Flipped(Decoupled(new AXI4ReadIO(64)))
   val aw = Decoupled(new AXI4AddrIO(addrWidth))
-  val w  = Decoupled(new AXI4WriteIO(dataWidth))
+  val w  = Decoupled(new AXI4WriteIO(64))
   val b  = Flipped(Decoupled(new AXI4WriteBackIO))
 
   override def init() = {

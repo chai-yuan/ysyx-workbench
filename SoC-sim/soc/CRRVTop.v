@@ -1607,10 +1607,10 @@ endmodule
 module Core(	// @[<stdin>:1847:10]
   input         clock,	// @[<stdin>:1848:11]
                 reset,	// @[<stdin>:1849:11]
-                io_inst_valid,	// @[CRRV/src/core/Core.scala:11:14]
   input  [31:0] io_inst_rdata,	// @[CRRV/src/core/Core.scala:11:14]
-  input         io_data_valid,	// @[CRRV/src/core/Core.scala:11:14]
+  input         io_inst_valid,	// @[CRRV/src/core/Core.scala:11:14]
   input  [31:0] io_data_rdata,	// @[CRRV/src/core/Core.scala:11:14]
+  input         io_data_valid,	// @[CRRV/src/core/Core.scala:11:14]
   output [31:0] io_inst_addr,	// @[CRRV/src/core/Core.scala:11:14]
   output        io_data_enable,	// @[CRRV/src/core/Core.scala:11:14]
   output [31:0] io_data_addr,	// @[CRRV/src/core/Core.scala:11:14]
@@ -2114,13 +2114,13 @@ module SimpleArbiter(	// @[<stdin>:1959:10]
   input  [31:0] io_simpleData_addr,	// @[CRRV/src/bus/SimpleArbiter.scala:13:14]
   input  [3:0]  io_simpleData_wen,	// @[CRRV/src/bus/SimpleArbiter.scala:13:14]
   input  [31:0] io_simpleData_wdata,	// @[CRRV/src/bus/SimpleArbiter.scala:13:14]
+                io_simpleOut_rdata,	// @[CRRV/src/bus/SimpleArbiter.scala:13:14]
   input         io_simpleOut_valid,	// @[CRRV/src/bus/SimpleArbiter.scala:13:14]
-  input  [31:0] io_simpleOut_rdata,	// @[CRRV/src/bus/SimpleArbiter.scala:13:14]
-  output        io_simpleInst_valid,	// @[CRRV/src/bus/SimpleArbiter.scala:13:14]
   output [31:0] io_simpleInst_rdata,	// @[CRRV/src/bus/SimpleArbiter.scala:13:14]
-  output        io_simpleData_valid,	// @[CRRV/src/bus/SimpleArbiter.scala:13:14]
+  output        io_simpleInst_valid,	// @[CRRV/src/bus/SimpleArbiter.scala:13:14]
   output [31:0] io_simpleData_rdata,	// @[CRRV/src/bus/SimpleArbiter.scala:13:14]
-  output        io_simpleOut_enable,	// @[CRRV/src/bus/SimpleArbiter.scala:13:14]
+  output        io_simpleData_valid,	// @[CRRV/src/bus/SimpleArbiter.scala:13:14]
+                io_simpleOut_enable,	// @[CRRV/src/bus/SimpleArbiter.scala:13:14]
   output [31:0] io_simpleOut_addr,	// @[CRRV/src/bus/SimpleArbiter.scala:13:14]
   output [3:0]  io_simpleOut_wen,	// @[CRRV/src/bus/SimpleArbiter.scala:13:14]
   output [31:0] io_simpleOut_wdata	// @[CRRV/src/bus/SimpleArbiter.scala:13:14]
@@ -2160,10 +2160,10 @@ module SimpleArbiter(	// @[<stdin>:1959:10]
     else	// @[<stdin>:1960:11]
       state <= casez_tmp;	// @[CRRV/src/bus/SimpleArbiter.scala:21:46, :23:17, :25:34]
   end // always @(posedge)
-  assign io_simpleInst_valid = _io_simpleInst_valid_output;	// @[<stdin>:1959:10, CRRV/src/bus/SimpleArbiter.scala:49:34]
   assign io_simpleInst_rdata = io_simpleOut_rdata;	// @[<stdin>:1959:10]
-  assign io_simpleData_valid = _io_simpleData_valid_output;	// @[<stdin>:1959:10, CRRV/src/bus/SimpleArbiter.scala:52:34]
+  assign io_simpleInst_valid = _io_simpleInst_valid_output;	// @[<stdin>:1959:10, CRRV/src/bus/SimpleArbiter.scala:49:34]
   assign io_simpleData_rdata = io_simpleOut_rdata;	// @[<stdin>:1959:10]
+  assign io_simpleData_valid = _io_simpleData_valid_output;	// @[<stdin>:1959:10, CRRV/src/bus/SimpleArbiter.scala:52:34]
   assign io_simpleOut_enable = selInst | selData & io_simpleData_enable;	// @[<stdin>:1959:10, CRRV/src/bus/SimpleArbiter.scala:46:35, :47:35, src/main/scala/chisel3/util/Mux.scala:141:16]
   assign io_simpleOut_addr = selData ? io_simpleData_addr : io_simpleInst_addr;	// @[<stdin>:1959:10, CRRV/src/bus/SimpleArbiter.scala:47:35, :63:28]
   assign io_simpleOut_wen = selData ? io_simpleData_wen : 4'h0;	// @[<stdin>:1959:10, CRRV/src/bus/SimpleArbiter.scala:13:14, :47:35, :62:28]
@@ -2179,19 +2179,19 @@ module Simple2AXI4(	// @[<stdin>:2013:10]
   input  [31:0] io_simple_wdata,	// @[CRRV/src/bus/Simple2AXI4.scala:13:14]
   input         io_axi_ar_ready,	// @[CRRV/src/bus/Simple2AXI4.scala:13:14]
                 io_axi_r_valid,	// @[CRRV/src/bus/Simple2AXI4.scala:13:14]
-  input  [31:0] io_axi_r_bits_data,	// @[CRRV/src/bus/Simple2AXI4.scala:13:14]
+  input  [63:0] io_axi_r_bits_data,	// @[CRRV/src/bus/Simple2AXI4.scala:13:14]
   input         io_axi_r_bits_last,	// @[CRRV/src/bus/Simple2AXI4.scala:13:14]
                 io_axi_aw_ready,	// @[CRRV/src/bus/Simple2AXI4.scala:13:14]
                 io_axi_w_ready,	// @[CRRV/src/bus/Simple2AXI4.scala:13:14]
-  output        io_simple_valid,	// @[CRRV/src/bus/Simple2AXI4.scala:13:14]
   output [31:0] io_simple_rdata,	// @[CRRV/src/bus/Simple2AXI4.scala:13:14]
-  output        io_axi_ar_valid,	// @[CRRV/src/bus/Simple2AXI4.scala:13:14]
+  output        io_simple_valid,	// @[CRRV/src/bus/Simple2AXI4.scala:13:14]
+                io_axi_ar_valid,	// @[CRRV/src/bus/Simple2AXI4.scala:13:14]
   output [31:0] io_axi_ar_bits_addr,	// @[CRRV/src/bus/Simple2AXI4.scala:13:14]
   output        io_axi_aw_valid,	// @[CRRV/src/bus/Simple2AXI4.scala:13:14]
   output [31:0] io_axi_aw_bits_addr,	// @[CRRV/src/bus/Simple2AXI4.scala:13:14]
   output        io_axi_w_valid,	// @[CRRV/src/bus/Simple2AXI4.scala:13:14]
-  output [31:0] io_axi_w_bits_data,	// @[CRRV/src/bus/Simple2AXI4.scala:13:14]
-  output [3:0]  io_axi_w_bits_strb,	// @[CRRV/src/bus/Simple2AXI4.scala:13:14]
+  output [63:0] io_axi_w_bits_data,	// @[CRRV/src/bus/Simple2AXI4.scala:13:14]
+  output [7:0]  io_axi_w_bits_strb,	// @[CRRV/src/bus/Simple2AXI4.scala:13:14]
   output        io_axi_w_bits_last	// @[CRRV/src/bus/Simple2AXI4.scala:13:14]
 );
 
@@ -2200,31 +2200,31 @@ module Simple2AXI4(	// @[<stdin>:2013:10]
   reg  [31:0] rdata;	// @[CRRV/src/bus/Simple2AXI4.scala:23:18]
   reg  [31:0] addr;	// @[CRRV/src/bus/Simple2AXI4.scala:24:18]
   wire        _GEN = io_axi_r_valid & io_axi_r_bits_last;	// @[CRRV/src/bus/Simple2AXI4.scala:39:27]
-  always_comb begin	// @[CRRV/src/bus/Simple2AXI4.scala:21:30, :26:17, :28:30, :34:29, :39:50, :45:48, :52:28, :57:13]
-    casez (state)	// @[CRRV/src/bus/Simple2AXI4.scala:21:30, :26:17, :28:30, :34:29, :39:50, :45:48, :52:28, :57:13]
+  always_comb begin	// @[CRRV/src/bus/Simple2AXI4.scala:21:30, :26:17, :28:30, :34:29, :39:50, :46:48, :53:28, :58:13]
+    casez (state)	// @[CRRV/src/bus/Simple2AXI4.scala:21:30, :26:17, :28:30, :34:29, :39:50, :46:48, :53:28, :58:13]
       3'b000:
-        casez_tmp = io_simple_enable ? {1'h0, |io_simple_wen, 1'h1} : state;	// @[CRRV/src/bus/Simple2AXI4.scala:21:30, :26:17, :28:30, :29:{15,21,36}, :34:29, :39:50, :45:48, :52:28, :57:13]
+        casez_tmp = io_simple_enable ? {1'h0, |io_simple_wen, 1'h1} : state;	// @[CRRV/src/bus/Simple2AXI4.scala:21:30, :26:17, :28:30, :29:{15,21,36}, :34:29, :39:50, :46:48, :53:28, :58:13]
       3'b001:
-        casez_tmp = io_axi_ar_ready ? 3'h2 : state;	// @[CRRV/src/bus/Simple2AXI4.scala:21:30, :26:17, :28:30, :34:29, :35:15, :39:50, :45:48, :52:28, :57:13]
+        casez_tmp = io_axi_ar_ready ? 3'h2 : state;	// @[CRRV/src/bus/Simple2AXI4.scala:21:30, :26:17, :28:30, :34:29, :35:15, :39:50, :46:48, :53:28, :58:13]
       3'b010:
-        casez_tmp = _GEN ? 3'h5 : state;	// @[CRRV/src/bus/Simple2AXI4.scala:21:30, :26:17, :28:30, :34:29, :39:{27,50}, :41:15, :45:48, :52:28, :57:13]
+        casez_tmp = _GEN ? 3'h5 : state;	// @[CRRV/src/bus/Simple2AXI4.scala:21:30, :26:17, :28:30, :34:29, :39:{27,50}, :42:15, :46:48, :53:28, :58:13]
       3'b011:
         casez_tmp =
           io_axi_aw_ready & ~io_axi_w_ready
             ? 3'h4
-            : io_axi_aw_ready & io_axi_w_ready ? 3'h5 : state;	// @[CRRV/src/bus/Simple2AXI4.scala:21:30, :26:17, :28:30, :34:29, :39:50, :41:15, :45:{28,31,48}, :46:15, :47:{34,52}, :48:15, :52:28, :57:13]
+            : io_axi_aw_ready & io_axi_w_ready ? 3'h5 : state;	// @[CRRV/src/bus/Simple2AXI4.scala:21:30, :26:17, :28:30, :34:29, :39:50, :41:26, :42:15, :46:{28,31,48}, :47:15, :48:{34,53}, :49:15, :53:28, :58:13]
       3'b100:
-        casez_tmp = io_axi_w_ready ? 3'h5 : state;	// @[CRRV/src/bus/Simple2AXI4.scala:21:30, :26:17, :28:30, :34:29, :39:50, :41:15, :45:48, :52:28, :53:15, :57:13]
+        casez_tmp = io_axi_w_ready ? 3'h5 : state;	// @[CRRV/src/bus/Simple2AXI4.scala:21:30, :26:17, :28:30, :34:29, :39:50, :42:15, :46:48, :53:28, :54:15, :58:13]
       3'b101:
-        casez_tmp = 3'h0;	// @[CRRV/src/bus/Simple2AXI4.scala:21:30, :26:17, :28:30, :34:29, :39:50, :45:48, :52:28, :57:13]
+        casez_tmp = 3'h0;	// @[CRRV/src/bus/Simple2AXI4.scala:21:30, :26:17, :28:30, :34:29, :39:50, :46:48, :53:28, :58:13]
       3'b110:
-        casez_tmp = state;	// @[CRRV/src/bus/Simple2AXI4.scala:21:30, :26:17, :28:30, :34:29, :39:50, :45:48, :52:28, :57:13]
+        casez_tmp = state;	// @[CRRV/src/bus/Simple2AXI4.scala:21:30, :26:17, :28:30, :34:29, :39:50, :46:48, :53:28, :58:13]
       default:
-        casez_tmp = state;	// @[CRRV/src/bus/Simple2AXI4.scala:21:30, :26:17, :28:30, :34:29, :39:50, :45:48, :52:28, :57:13]
-    endcase	// @[CRRV/src/bus/Simple2AXI4.scala:21:30, :26:17, :28:30, :34:29, :39:50, :45:48, :52:28, :57:13]
+        casez_tmp = state;	// @[CRRV/src/bus/Simple2AXI4.scala:21:30, :26:17, :28:30, :34:29, :39:50, :46:48, :53:28, :58:13]
+    endcase	// @[CRRV/src/bus/Simple2AXI4.scala:21:30, :26:17, :28:30, :34:29, :39:50, :46:48, :53:28, :58:13]
   end // always_comb
-  wire        _io_axi_w_bits_last_T = state == 3'h3;	// @[CRRV/src/bus/Simple2AXI4.scala:21:30, :29:21, :71:33]
-  wire        _io_axi_w_bits_last_T_1 = state == 3'h4;	// @[CRRV/src/bus/Simple2AXI4.scala:21:30, :46:15, :74:53]
+  wire        _io_axi_w_bits_last_T = state == 3'h3;	// @[CRRV/src/bus/Simple2AXI4.scala:21:30, :29:21, :72:33]
+  wire        _io_axi_w_bits_last_T_1 = state == 3'h4;	// @[CRRV/src/bus/Simple2AXI4.scala:21:30, :41:26, :75:53]
   wire        _GEN_0 = state == 3'h0;	// @[CRRV/src/bus/Simple2AXI4.scala:21:30, :26:17]
   always @(posedge clock) begin	// @[<stdin>:2014:11]
     if (reset)	// @[<stdin>:2014:11]
@@ -2233,28 +2233,32 @@ module Simple2AXI4(	// @[<stdin>:2013:10]
       state <= casez_tmp;	// @[CRRV/src/bus/Simple2AXI4.scala:21:30, :26:17, :28:30]
     if (_GEN_0 | state == 3'h1 | ~(state == 3'h2 & _GEN)) begin	// @[CRRV/src/bus/Simple2AXI4.scala:21:30, :23:18, :26:17, :29:21, :35:15, :39:{27,50}, :40:15]
     end
-    else	// @[CRRV/src/bus/Simple2AXI4.scala:23:18, :26:17]
-      rdata <= io_axi_r_bits_data;	// @[CRRV/src/bus/Simple2AXI4.scala:23:18]
+    else if (addr[2:0] == 3'h4)	// @[CRRV/src/bus/Simple2AXI4.scala:24:18, :41:{19,26}]
+      rdata <= io_axi_r_bits_data[63:32];	// @[CRRV/src/bus/Simple2AXI4.scala:23:18, :41:58]
+    else	// @[CRRV/src/bus/Simple2AXI4.scala:41:26]
+      rdata <= io_axi_r_bits_data[31:0];	// @[CRRV/src/bus/Simple2AXI4.scala:23:18, :41:86]
     if (_GEN_0 & io_simple_enable)	// @[CRRV/src/bus/Simple2AXI4.scala:24:18, :26:17, :28:30, :30:15]
       addr <= io_simple_addr;	// @[CRRV/src/bus/Simple2AXI4.scala:24:18]
   end // always @(posedge)
-  assign io_simple_valid = state == 3'h5 & addr == io_simple_addr;	// @[<stdin>:2013:10, CRRV/src/bus/Simple2AXI4.scala:21:30, :24:18, :41:15, :61:{29,39,48}]
   assign io_simple_rdata = rdata;	// @[<stdin>:2013:10, CRRV/src/bus/Simple2AXI4.scala:23:18]
-  assign io_axi_ar_valid = state == 3'h1;	// @[<stdin>:2013:10, CRRV/src/bus/Simple2AXI4.scala:21:30, :29:21, :66:33]
+  assign io_simple_valid = state == 3'h5 & addr == io_simple_addr;	// @[<stdin>:2013:10, CRRV/src/bus/Simple2AXI4.scala:21:30, :24:18, :42:15, :62:{29,39,48}]
+  assign io_axi_ar_valid = state == 3'h1;	// @[<stdin>:2013:10, CRRV/src/bus/Simple2AXI4.scala:21:30, :29:21, :67:33]
   assign io_axi_ar_bits_addr = addr;	// @[<stdin>:2013:10, CRRV/src/bus/Simple2AXI4.scala:24:18]
-  assign io_axi_aw_valid = _io_axi_w_bits_last_T;	// @[<stdin>:2013:10, CRRV/src/bus/Simple2AXI4.scala:71:33]
+  assign io_axi_aw_valid = _io_axi_w_bits_last_T;	// @[<stdin>:2013:10, CRRV/src/bus/Simple2AXI4.scala:72:33]
   assign io_axi_aw_bits_addr = addr;	// @[<stdin>:2013:10, CRRV/src/bus/Simple2AXI4.scala:24:18]
-  assign io_axi_w_valid = _io_axi_w_bits_last_T | _io_axi_w_bits_last_T_1;	// @[<stdin>:2013:10, CRRV/src/bus/Simple2AXI4.scala:71:33, :74:{44,53}]
-  assign io_axi_w_bits_data = io_simple_wdata;	// @[<stdin>:2013:10]
-  assign io_axi_w_bits_strb = io_simple_wen;	// @[<stdin>:2013:10]
-  assign io_axi_w_bits_last = _io_axi_w_bits_last_T | _io_axi_w_bits_last_T_1;	// @[<stdin>:2013:10, CRRV/src/bus/Simple2AXI4.scala:71:33, :74:53, :76:44]
+  assign io_axi_w_valid = _io_axi_w_bits_last_T | _io_axi_w_bits_last_T_1;	// @[<stdin>:2013:10, CRRV/src/bus/Simple2AXI4.scala:72:33, :75:{44,53}]
+  assign io_axi_w_bits_data =
+    addr[2:0] == 3'h4 ? {io_simple_wdata, 32'h0} : {32'h0, io_simple_wdata};	// @[<stdin>:2013:10, CRRV/src/bus/Simple2AXI4.scala:24:18, :41:26, :76:{30,35,42,73}]
+  assign io_axi_w_bits_strb =
+    addr[2:0] == 3'h4 ? {io_simple_wen, 4'h0} : {4'h0, io_simple_wen};	// @[<stdin>:2013:10, CRRV/src/bus/Simple2AXI4.scala:24:18, :29:36, :41:26, :76:35, :78:{30,42,71}]
+  assign io_axi_w_bits_last = _io_axi_w_bits_last_T | _io_axi_w_bits_last_T_1;	// @[<stdin>:2013:10, CRRV/src/bus/Simple2AXI4.scala:72:33, :75:53, :77:44]
 endmodule
 
 // external module Debug
 
-module CRRVTop(	// @[<stdin>:2120:10]
-  input         clock,	// @[<stdin>:2121:11]
-                reset,	// @[<stdin>:2122:11]
+module CRRVTop(	// @[<stdin>:2133:10]
+  input         clock,	// @[<stdin>:2134:11]
+                reset,	// @[<stdin>:2135:11]
                 io_interrupt,	// @[CRRV/src/CRRVTop.scala:11:14]
                 io_master_awready,	// @[CRRV/src/CRRVTop.scala:11:14]
                 io_master_wready,	// @[CRRV/src/CRRVTop.scala:11:14]
@@ -2316,14 +2320,12 @@ module CRRVTop(	// @[<stdin>:2120:10]
   output [3:0]  io_slave_rid	// @[CRRV/src/CRRVTop.scala:11:14]
 );
 
-  wire        _simple2axi_io_simple_valid;	// @[CRRV/src/CRRVTop.scala:15:26]
   wire [31:0] _simple2axi_io_simple_rdata;	// @[CRRV/src/CRRVTop.scala:15:26]
-  wire [31:0] _simple2axi_io_axi_w_bits_data;	// @[CRRV/src/CRRVTop.scala:15:26]
-  wire [3:0]  _simple2axi_io_axi_w_bits_strb;	// @[CRRV/src/CRRVTop.scala:15:26]
-  wire        _arbiter_io_simpleInst_valid;	// @[CRRV/src/CRRVTop.scala:14:26]
+  wire        _simple2axi_io_simple_valid;	// @[CRRV/src/CRRVTop.scala:15:26]
   wire [31:0] _arbiter_io_simpleInst_rdata;	// @[CRRV/src/CRRVTop.scala:14:26]
-  wire        _arbiter_io_simpleData_valid;	// @[CRRV/src/CRRVTop.scala:14:26]
+  wire        _arbiter_io_simpleInst_valid;	// @[CRRV/src/CRRVTop.scala:14:26]
   wire [31:0] _arbiter_io_simpleData_rdata;	// @[CRRV/src/CRRVTop.scala:14:26]
+  wire        _arbiter_io_simpleData_valid;	// @[CRRV/src/CRRVTop.scala:14:26]
   wire        _arbiter_io_simpleOut_enable;	// @[CRRV/src/CRRVTop.scala:14:26]
   wire [31:0] _arbiter_io_simpleOut_addr;	// @[CRRV/src/CRRVTop.scala:14:26]
   wire [3:0]  _arbiter_io_simpleOut_wen;	// @[CRRV/src/CRRVTop.scala:14:26]
@@ -2342,10 +2344,10 @@ module CRRVTop(	// @[<stdin>:2120:10]
   Core core (	// @[CRRV/src/CRRVTop.scala:13:26]
     .clock             (clock),
     .reset             (reset),
-    .io_inst_valid     (_arbiter_io_simpleInst_valid),	// @[CRRV/src/CRRVTop.scala:14:26]
     .io_inst_rdata     (_arbiter_io_simpleInst_rdata),	// @[CRRV/src/CRRVTop.scala:14:26]
-    .io_data_valid     (_arbiter_io_simpleData_valid),	// @[CRRV/src/CRRVTop.scala:14:26]
+    .io_inst_valid     (_arbiter_io_simpleInst_valid),	// @[CRRV/src/CRRVTop.scala:14:26]
     .io_data_rdata     (_arbiter_io_simpleData_rdata),	// @[CRRV/src/CRRVTop.scala:14:26]
+    .io_data_valid     (_arbiter_io_simpleData_valid),	// @[CRRV/src/CRRVTop.scala:14:26]
     .io_inst_addr      (_core_io_inst_addr),
     .io_data_enable    (_core_io_data_enable),
     .io_data_addr      (_core_io_data_addr),
@@ -2366,12 +2368,12 @@ module CRRVTop(	// @[<stdin>:2120:10]
     .io_simpleData_addr   (_core_io_data_addr),	// @[CRRV/src/CRRVTop.scala:13:26]
     .io_simpleData_wen    (_core_io_data_wen),	// @[CRRV/src/CRRVTop.scala:13:26]
     .io_simpleData_wdata  (_core_io_data_wdata),	// @[CRRV/src/CRRVTop.scala:13:26]
-    .io_simpleOut_valid   (_simple2axi_io_simple_valid),	// @[CRRV/src/CRRVTop.scala:15:26]
     .io_simpleOut_rdata   (_simple2axi_io_simple_rdata),	// @[CRRV/src/CRRVTop.scala:15:26]
-    .io_simpleInst_valid  (_arbiter_io_simpleInst_valid),
+    .io_simpleOut_valid   (_simple2axi_io_simple_valid),	// @[CRRV/src/CRRVTop.scala:15:26]
     .io_simpleInst_rdata  (_arbiter_io_simpleInst_rdata),
-    .io_simpleData_valid  (_arbiter_io_simpleData_valid),
+    .io_simpleInst_valid  (_arbiter_io_simpleInst_valid),
     .io_simpleData_rdata  (_arbiter_io_simpleData_rdata),
+    .io_simpleData_valid  (_arbiter_io_simpleData_valid),
     .io_simpleOut_enable  (_arbiter_io_simpleOut_enable),
     .io_simpleOut_addr    (_arbiter_io_simpleOut_addr),
     .io_simpleOut_wen     (_arbiter_io_simpleOut_wen),
@@ -2386,19 +2388,19 @@ module CRRVTop(	// @[<stdin>:2120:10]
     .io_simple_wdata     (_arbiter_io_simpleOut_wdata),	// @[CRRV/src/CRRVTop.scala:14:26]
     .io_axi_ar_ready     (io_master_arready),
     .io_axi_r_valid      (io_master_rvalid),
-    .io_axi_r_bits_data  (io_master_rdata[31:0]),	// @[CRRV/src/CRRVTop.scala:59:25]
+    .io_axi_r_bits_data  (io_master_rdata),
     .io_axi_r_bits_last  (io_master_rlast),
     .io_axi_aw_ready     (io_master_awready),
     .io_axi_w_ready      (io_master_wready),
-    .io_simple_valid     (_simple2axi_io_simple_valid),
     .io_simple_rdata     (_simple2axi_io_simple_rdata),
+    .io_simple_valid     (_simple2axi_io_simple_valid),
     .io_axi_ar_valid     (io_master_arvalid),
     .io_axi_ar_bits_addr (io_master_araddr),
     .io_axi_aw_valid     (io_master_awvalid),
     .io_axi_aw_bits_addr (io_master_awaddr),
     .io_axi_w_valid      (io_master_wvalid),
-    .io_axi_w_bits_data  (_simple2axi_io_axi_w_bits_data),
-    .io_axi_w_bits_strb  (_simple2axi_io_axi_w_bits_strb),
+    .io_axi_w_bits_data  (io_master_wdata),
+    .io_axi_w_bits_strb  (io_master_wstrb),
     .io_axi_w_bits_last  (io_master_wlast)
   );
   Debug debug (	// @[CRRV/src/CRRVTop.scala:16:26]
@@ -2411,28 +2413,26 @@ module CRRVTop(	// @[<stdin>:2120:10]
     .debug_regWaddr (_core_io_debug_regWaddr),	// @[CRRV/src/CRRVTop.scala:13:26]
     .debug_regWdata (_core_io_debug_regWdata)	// @[CRRV/src/CRRVTop.scala:13:26]
   );
-  assign io_master_awid = 4'h0;	// @[<stdin>:2120:10, CRRV/src/CRRVTop.scala:13:26, :14:26, :15:26]
-  assign io_master_awlen = 8'h0;	// @[<stdin>:2120:10, CRRV/src/CRRVTop.scala:15:26]
-  assign io_master_awsize = 3'h2;	// @[<stdin>:2120:10, CRRV/src/CRRVTop.scala:15:26]
-  assign io_master_awburst = 2'h0;	// @[<stdin>:2120:10, CRRV/src/CRRVTop.scala:15:26]
-  assign io_master_wdata = {32'h0, _simple2axi_io_axi_w_bits_data};	// @[<stdin>:2120:10, CRRV/src/CRRVTop.scala:15:26, :39:21]
-  assign io_master_wstrb = {4'h0, _simple2axi_io_axi_w_bits_strb};	// @[<stdin>:2120:10, CRRV/src/CRRVTop.scala:13:26, :14:26, :15:26, :40:21]
-  assign io_master_bready = 1'h1;	// @[<stdin>:2120:10, CRRV/src/CRRVTop.scala:13:26, :14:26, :15:26]
-  assign io_master_arid = 4'h0;	// @[<stdin>:2120:10, CRRV/src/CRRVTop.scala:13:26, :14:26, :15:26]
-  assign io_master_arlen = 8'h0;	// @[<stdin>:2120:10, CRRV/src/CRRVTop.scala:15:26]
-  assign io_master_arsize = 3'h2;	// @[<stdin>:2120:10, CRRV/src/CRRVTop.scala:15:26]
-  assign io_master_arburst = 2'h1;	// @[<stdin>:2120:10, CRRV/src/CRRVTop.scala:15:26]
-  assign io_master_rready = 1'h1;	// @[<stdin>:2120:10, CRRV/src/CRRVTop.scala:13:26, :14:26, :15:26]
-  assign io_slave_awready = 1'h0;	// @[<stdin>:2120:10, CRRV/src/CRRVTop.scala:63:20]
-  assign io_slave_wready = 1'h0;	// @[<stdin>:2120:10, CRRV/src/CRRVTop.scala:63:20]
-  assign io_slave_bvalid = 1'h0;	// @[<stdin>:2120:10, CRRV/src/CRRVTop.scala:63:20]
-  assign io_slave_bresp = 2'h0;	// @[<stdin>:2120:10, CRRV/src/CRRVTop.scala:15:26]
-  assign io_slave_bid = 4'h0;	// @[<stdin>:2120:10, CRRV/src/CRRVTop.scala:13:26, :14:26, :15:26]
-  assign io_slave_arready = 1'h0;	// @[<stdin>:2120:10, CRRV/src/CRRVTop.scala:63:20]
-  assign io_slave_rvalid = 1'h0;	// @[<stdin>:2120:10, CRRV/src/CRRVTop.scala:63:20]
-  assign io_slave_rresp = 2'h0;	// @[<stdin>:2120:10, CRRV/src/CRRVTop.scala:15:26]
-  assign io_slave_rdata = 64'h0;	// @[<stdin>:2120:10, CRRV/src/CRRVTop.scala:71:20]
-  assign io_slave_rlast = 1'h0;	// @[<stdin>:2120:10, CRRV/src/CRRVTop.scala:63:20]
-  assign io_slave_rid = 4'h0;	// @[<stdin>:2120:10, CRRV/src/CRRVTop.scala:13:26, :14:26, :15:26]
+  assign io_master_awid = 4'h0;	// @[<stdin>:2133:10, CRRV/src/CRRVTop.scala:13:26, :14:26, :15:26]
+  assign io_master_awlen = 8'h0;	// @[<stdin>:2133:10, CRRV/src/CRRVTop.scala:15:26]
+  assign io_master_awsize = 3'h2;	// @[<stdin>:2133:10, CRRV/src/CRRVTop.scala:15:26]
+  assign io_master_awburst = 2'h0;	// @[<stdin>:2133:10, CRRV/src/CRRVTop.scala:15:26]
+  assign io_master_bready = 1'h1;	// @[<stdin>:2133:10, CRRV/src/CRRVTop.scala:13:26, :14:26, :15:26]
+  assign io_master_arid = 4'h0;	// @[<stdin>:2133:10, CRRV/src/CRRVTop.scala:13:26, :14:26, :15:26]
+  assign io_master_arlen = 8'h0;	// @[<stdin>:2133:10, CRRV/src/CRRVTop.scala:15:26]
+  assign io_master_arsize = 3'h2;	// @[<stdin>:2133:10, CRRV/src/CRRVTop.scala:15:26]
+  assign io_master_arburst = 2'h1;	// @[<stdin>:2133:10, CRRV/src/CRRVTop.scala:15:26]
+  assign io_master_rready = 1'h1;	// @[<stdin>:2133:10, CRRV/src/CRRVTop.scala:13:26, :14:26, :15:26]
+  assign io_slave_awready = 1'h0;	// @[<stdin>:2133:10, CRRV/src/CRRVTop.scala:63:20]
+  assign io_slave_wready = 1'h0;	// @[<stdin>:2133:10, CRRV/src/CRRVTop.scala:63:20]
+  assign io_slave_bvalid = 1'h0;	// @[<stdin>:2133:10, CRRV/src/CRRVTop.scala:63:20]
+  assign io_slave_bresp = 2'h0;	// @[<stdin>:2133:10, CRRV/src/CRRVTop.scala:15:26]
+  assign io_slave_bid = 4'h0;	// @[<stdin>:2133:10, CRRV/src/CRRVTop.scala:13:26, :14:26, :15:26]
+  assign io_slave_arready = 1'h0;	// @[<stdin>:2133:10, CRRV/src/CRRVTop.scala:63:20]
+  assign io_slave_rvalid = 1'h0;	// @[<stdin>:2133:10, CRRV/src/CRRVTop.scala:63:20]
+  assign io_slave_rresp = 2'h0;	// @[<stdin>:2133:10, CRRV/src/CRRVTop.scala:15:26]
+  assign io_slave_rdata = 64'h0;	// @[<stdin>:2133:10, CRRV/src/CRRVTop.scala:71:20]
+  assign io_slave_rlast = 1'h0;	// @[<stdin>:2133:10, CRRV/src/CRRVTop.scala:63:20]
+  assign io_slave_rid = 4'h0;	// @[<stdin>:2133:10, CRRV/src/CRRVTop.scala:13:26, :14:26, :15:26]
 endmodule
 

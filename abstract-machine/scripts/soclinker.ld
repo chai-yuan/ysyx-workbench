@@ -1,7 +1,7 @@
 _mrom_start = 0x20000000;
 _mrom_end   = 0x20000fff;
 _sram_start = 0x0f000000;
-_sram_end   = 0x0fffffff;
+_sram_end   = 0x0f001fff;
 
 _pmem_start = _mrom_start;
 _stack_top  = _sram_start;

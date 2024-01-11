@@ -12,7 +12,7 @@ import io._
 class Simple2AXI4 extends Module {
   val io = IO(new Bundle {
     val simple = Flipped(new SimpleMemIO(ADDR_WIDTH, DATA_WIDTH))
-    val axi    = new AXI4MasterIO(ADDR_WIDTH, DATA_WIDTH)
+    val axi    = new AXI4MasterIO(ADDR_WIDTH)
   })
 
   val (sIdle :: sReadAddr :: sReadData
@@ -37,14 +37,15 @@ class Simple2AXI4 extends Module {
     }
     is(sReadData) {
       when(io.axi.r.valid && io.axi.r.bits.last) {
-        rdata := io.axi.r.bits.data
+        rdata :=
+          Mux(addr(2, 0) === "b100".U, io.axi.r.bits.data(63, 32), io.axi.r.bits.data(31, 0))
         state := sEnd
       }
     }
     is(sWrite) {
       when(io.axi.aw.ready && !io.axi.w.ready) {
         state := sWriteWait
-      }.elsewhen(io.axi.aw.ready && io.axi.w.ready){
+      }.elsewhen(io.axi.aw.ready && io.axi.w.ready) {
         state := sEnd
       }
     }
@@ -72,8 +73,8 @@ class Simple2AXI4 extends Module {
   io.axi.aw.bits.addr  := addr
   io.axi.aw.bits.size  := dataSize.U
   io.axi.w.valid       := state === sWrite || state === sWriteWait
-  io.axi.w.bits.data   := io.simple.wdata
+  io.axi.w.bits.data   := Mux(addr(2, 0) === "b100".U, (io.simple.wdata << 32.U), io.simple.wdata)
   io.axi.w.bits.last   := state === sWrite || state === sWriteWait
-  io.axi.w.bits.strb   := io.simple.wen
+  io.axi.w.bits.strb   := Mux(addr(2, 0) === "b100".U, (io.simple.wen << 4.U), io.simple.wen)
   io.axi.b.ready       := true.B
 }
