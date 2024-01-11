@@ -2,13 +2,13 @@
  * Copyright (c) 2014-2022 Zihao Yu, Nanjing University
  *
  * NEMU is licensed under Mulan PSL v2.
- * You can use this software according to the terms and conditions of the Mulan PSL v2.
- * You may obtain a copy of Mulan PSL v2 at:
+ * You can use this software according to the terms and conditions of the Mulan
+ *PSL v2. You may obtain a copy of Mulan PSL v2 at:
  *          http://license.coscl.org.cn/MulanPSL2
  *
- * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
- * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
- * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY
+ *KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ *NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  *
  * See the Mulan PSL v2 for more details.
  ***************************************************************************************/
@@ -24,9 +24,20 @@ static uint8_t* pmem = NULL;
 static uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};
 #endif
 
+// 模拟其他储存器
+static uint8_t mrom_mem[MROM_SIZE];
+static uint8_t sram_mem[SRAM_SIZE];
+
 uint8_t* guest_to_host(paddr_t paddr) {
-    return pmem + paddr - CONFIG_MBASE;
+    if(paddr > CONFIG_MBASE){
+        return pmem + paddr - CONFIG_MBASE;
+    }else if(paddr > MROM_BASE){
+        return mrom_mem + paddr - MROM_BASE;
+    }else if(paddr > SRAM_BASE){
+        return sram_mem + paddr - SRAM_BASE;
+    }
 }
+
 paddr_t host_to_guest(uint8_t* haddr) {
     return haddr - pmem + CONFIG_MBASE;
 }
@@ -41,7 +52,8 @@ static void pmem_write(paddr_t addr, int len, word_t data) {
 }
 
 static void out_of_bound(paddr_t addr) {
-    panic("address = " FMT_PADDR " is out of bound of pmem [" FMT_PADDR ", " FMT_PADDR "] at pc = " FMT_WORD,
+    panic("address = " FMT_PADDR " is out of bound of pmem [" FMT_PADDR
+          ", " FMT_PADDR "] at pc = " FMT_WORD,
           addr, PMEM_LEFT, PMEM_RIGHT, cpu.pc);
 }
 
@@ -57,7 +69,8 @@ void init_mem() {
         p[i] = rand();
     }
 #endif
-    Log("physical memory area [" FMT_PADDR ", " FMT_PADDR "]", PMEM_LEFT, PMEM_RIGHT);
+    Log("physical memory area [" FMT_PADDR ", " FMT_PADDR "]", PMEM_LEFT,
+        PMEM_RIGHT);
 }
 
 word_t paddr_read(paddr_t addr, int len) {
