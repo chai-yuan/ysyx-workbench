@@ -4,7 +4,6 @@
 void init_log(const char* log_file);
 void init_mem();
 void init_difftest(char* ref_so_file, long img_size, int port);
-void init_device();
 
 static void welcome() {
     Log("Build time: %s, %s", __TIME__, __DATE__);
@@ -34,9 +33,10 @@ static long load_img() {
     long size = ftell(fp);
 
     Log("The image is %s, size = %ld", img_file, size);
+    Log("Load image to 0x%x", mem_base);
 
     fseek(fp, 0, SEEK_SET);
-    int ret = fread(guest_to_host(RESET_VECTOR), size, 1, fp);
+    int ret = fread(guest_to_host(mem_base), size, 1, fp);
     assert(ret == 1);
 
     fclose(fp);
@@ -74,8 +74,11 @@ static int parse_args(int argc, char* argv[]) {
                 printf("Usage: %s [OPTION...] IMAGE [args]\n\n", argv[0]);
                 printf("\t-b,--batch              run with batch mode\n");
                 printf("\t-l,--log=FILE           output log to FILE\n");
-                printf("\t-d,--diff=REF_SO        run DiffTest with reference REF_SO\n");
-                printf("\t-p,--port=PORT          run DiffTest with port PORT\n");
+                printf(
+                    "\t-d,--diff=REF_SO        run DiffTest with reference "
+                    "REF_SO\n");
+                printf(
+                    "\t-p,--port=PORT          run DiffTest with port PORT\n");
                 printf("\n");
                 exit(0);
         }
@@ -97,7 +100,8 @@ void init_monitor(int argc, char* argv[]) {
     long img_size = load_img();
 
     /* Initialize differential testing. */
-    IFDEF(CONFIG_DIFFTEST, init_difftest(diff_so_file, img_size, difftest_port));
+    IFDEF(CONFIG_DIFFTEST,
+          init_difftest(diff_so_file, img_size, difftest_port));
 
     /* Display welcome message. */
     welcome();

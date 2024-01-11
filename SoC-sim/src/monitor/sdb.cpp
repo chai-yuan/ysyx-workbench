@@ -66,6 +66,8 @@ static int cmd_x(char* args) {
     sscanf(slen, "%d", &len);
     sscanf(saddr, "%x", &addr);
 
+    Log("read len %d,addr %x",len,addr);
+
     for (int i = 0; i < len; i++) {
         word_t rdata;
         pmem_read(addr, &rdata);

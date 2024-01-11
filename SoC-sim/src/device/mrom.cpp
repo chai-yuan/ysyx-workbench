@@ -7,10 +7,6 @@
 
 static uint8_t mrom_data[MROM_END - MROM_BASE];
 
-void mrom_init() {
-    Log("Use MROM");
-}
-
 uint8_t* mrom_raw_data() {
     return mrom_data;
 }
