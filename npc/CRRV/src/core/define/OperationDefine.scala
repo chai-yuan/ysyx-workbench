@@ -77,7 +77,9 @@ object OperationDefine {
   // 异常类型
   val EXC_TYPE_WIDTH = log2Ceil(8)
   val EXC_NONE       = 0.U(EXC_TYPE_WIDTH.W)
-  val EXC_ECALL      = 1.U(EXC_TYPE_WIDTH.W)
-  val EXC_MRET       = 2.U(EXC_TYPE_WIDTH.W)
-  val EXC_ILLEG      = 7.U(EXC_TYPE_WIDTH.W) // 非法指令
+  val EXC_ECALL      = 1.U(EXC_TYPE_WIDTH.W)  // 系统调用
+  val EXC_MRET       = 2.U(EXC_TYPE_WIDTH.W)  // 返回
+  // 自定义的一些异常，并没有按照规范实现
+  val EXC_MEME       = 6.U(EXC_TYPE_WIDTH.W)  // 访问内存错误
+  val EXC_ILLEG      = 7.U(EXC_TYPE_WIDTH.W)  // 非法指令
 }
