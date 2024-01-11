@@ -11,11 +11,20 @@ module Debug (
 );
     import "DPI-C" function void debug_sim_halt();
 
+    import "DPI-C" function void debug_update_cpu(int pc,
+                                            int regWen,
+                                            int regWaddr,
+                                            int regWdata);
+
     wire valid = !reset && debug_valid;
 
     always @(posedge clock) begin
-        if(valid && debug_halt) begin
-            debug_sim_halt();
+        if(valid) begin
+            debug_update_cpu(debug_pc, debug_regWen, debug_regWaddr, debug_regWdata);
+
+            if(debug_halt)begin
+                debug_sim_halt();
+            end
         end
     end
 
