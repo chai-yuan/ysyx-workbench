@@ -4,10 +4,12 @@
 
 #define npc_trap(code) asm volatile("mv a0, %0; ebreak" : : "r"(code))
 
-extern char _heap_start,_heap_end;
+extern char _heap_start, _heap_end;
+extern char _etext, _bdata, _edata;
+
 int main(const char* args);
 
-Area heap = RANGE(&_heap_start, (&_heap_end));
+Area heap = RANGE(&_heap_start, &_heap_end);
 #ifndef MAINARGS
 #define MAINARGS ""
 #endif
@@ -25,7 +27,17 @@ void halt(int code) {
         ;
 }
 
+/* 将储存这mrom当中的一些数据拷贝到sram当中执行 */
+inline void bootloader() {
+    // 确定拷贝的目标地址
+    char *bdata_p = &_bdata, *edata_p = &_edata;
+    for(char *text_p = &_etext; bdata_p != edata_p; text_p++,bdata_p++){
+        *bdata_p = *text_p; // 从mrom拷贝到sram
+    }
+}
+
 void _trm_init() {
+    bootloader();
     int ret = main(mainargs);
     halt(ret);
 }
