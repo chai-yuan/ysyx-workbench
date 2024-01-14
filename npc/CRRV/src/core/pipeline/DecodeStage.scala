@@ -14,7 +14,7 @@ class DecodeStage extends Module {
     val control = new DecodeStageControlIO
     val id2exe  = Output(new ID2EXEIO)
 
-    val readInst = Input(UInt(INST_WIDTH.W))
+    val read     = new SimpleInIO(INST_WIDTH)
     val regRead1 = new RegReadIO
     val regRead2 = new RegReadIO
   })
@@ -22,9 +22,9 @@ class DecodeStage extends Module {
 
   val stallDelay = RegNext(io.control.stall)
   val lastInst   = Reg(UInt(INST_WIDTH.W))
-  when(!stallDelay) { lastInst := io.readInst }
+  when(!stallDelay) { lastInst := io.read.rdata }
   val inst = MuxCase(
-    io.readInst,
+    io.read.rdata,
     Seq(
       (!if2id.instValid) -> (NOP),
       (stallDelay) -> (lastInst)

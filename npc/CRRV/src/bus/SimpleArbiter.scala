@@ -11,9 +11,9 @@ import io._
   */
 class SimpleArbiter extends Module {
   val io = IO(new Bundle {
-    val simpleInst = Flipped(new SimpleMemIO(ADDR_WIDTH, DATA_WIDTH))
-    val simpleData = Flipped(new SimpleMemIO(ADDR_WIDTH, DATA_WIDTH))
-    val simpleOut  = new SimpleMemIO(ADDR_WIDTH, DATA_WIDTH)
+    val simpleInst = Flipped(new SimpleIO(ADDR_WIDTH, DATA_WIDTH))
+    val simpleData = Flipped(new SimpleIO(ADDR_WIDTH, DATA_WIDTH))
+    val simpleOut  = new SimpleIO(ADDR_WIDTH, DATA_WIDTH)
   })
 
   val (sIdle :: sInst :: sData
@@ -22,16 +22,16 @@ class SimpleArbiter extends Module {
 
   switch(state) {
     is(sIdle) {
-      when(io.simpleData.enable) { state := sData }
-        .elsewhen(io.simpleInst.enable) { state := sInst }
+      when(io.simpleData.out.valid) { state := sData }
+        .elsewhen(io.simpleInst.out.valid) { state := sInst }
     }
     is(sInst) {
-      when(io.simpleInst.valid) {
+      when(io.simpleInst.out.fire) {
         state := sInstEnd
       }
     }
     is(sData) {
-      when(io.simpleData.valid) {
+      when(io.simpleData.out.fire) {
         state := sDataEnd
       }
     }
@@ -46,21 +46,15 @@ class SimpleArbiter extends Module {
   val selInst = (state === sInst) || (state === sInstEnd)
   val selData = (state === sData) || (state === sDataEnd)
 
-  io.simpleInst.valid := selInst && io.simpleOut.valid
-  io.simpleInst.rdata := io.simpleOut.rdata
+  io.simpleInst.out.ready := selInst && io.simpleOut.out.ready
+  io.simpleInst.in.rdata  := io.simpleOut.in.rdata
 
-  io.simpleData.valid := selData && io.simpleOut.valid
-  io.simpleData.rdata := io.simpleOut.rdata
+  io.simpleData.out.ready := selData && io.simpleOut.out.ready
+  io.simpleData.in.rdata  := io.simpleOut.in.rdata
 
-  io.simpleOut.enable := MuxCase(
-    false.B,
-    Seq(
-      (selInst) -> (io.simpleInst.enable),
-      (selData) -> (io.simpleData.enable)
-    )
-  )
-  io.simpleOut.wen   := Mux(selData, io.simpleData.wen, io.simpleInst.wen)
-  io.simpleOut.addr  := Mux(selData, io.simpleData.addr, io.simpleInst.addr)
-  io.simpleOut.wdata := Mux(selData, io.simpleData.wdata, io.simpleInst.wdata)
-
+  io.simpleOut.out.valid        := state === sInst || state === sData
+  io.simpleOut.out.bits.size    := Mux(selData, io.simpleData.out.bits.size, io.simpleInst.out.bits.size)
+  io.simpleOut.out.bits.addr    := Mux(selData, io.simpleData.out.bits.addr, io.simpleInst.out.bits.addr)
+  io.simpleOut.out.bits.writeEn := Mux(selData, io.simpleData.out.bits.writeEn, io.simpleInst.out.bits.writeEn)
+  io.simpleOut.out.bits.wdata   := Mux(selData, io.simpleData.out.bits.wdata, io.simpleInst.out.bits.wdata)
 }

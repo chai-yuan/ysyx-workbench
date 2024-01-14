@@ -30,9 +30,9 @@ module FetchStage(	// @[<stdin>:3:10]
                 io_control_flush,	// @[CRRV/src/core/pipeline/FetchStage.scala:9:14]
   input  [31:0] io_control_flushPC,	// @[CRRV/src/core/pipeline/FetchStage.scala:9:14]
   input         io_control_stall,	// @[CRRV/src/core/pipeline/FetchStage.scala:9:14]
-                io_instRom_valid,	// @[CRRV/src/core/pipeline/FetchStage.scala:9:14]
+                io_instRom_ready,	// @[CRRV/src/core/pipeline/FetchStage.scala:9:14]
   output        io_control_stallReq,	// @[CRRV/src/core/pipeline/FetchStage.scala:9:14]
-  output [31:0] io_instRom_addr,	// @[CRRV/src/core/pipeline/FetchStage.scala:9:14]
+  output [31:0] io_instRom_bits_addr,	// @[CRRV/src/core/pipeline/FetchStage.scala:9:14]
   output        io_if2id_IF_instValid,	// @[CRRV/src/core/pipeline/FetchStage.scala:9:14]
   output [31:0] io_if2id_IF_pc	// @[CRRV/src/core/pipeline/FetchStage.scala:9:14]
 );
@@ -48,15 +48,15 @@ module FetchStage(	// @[<stdin>:3:10]
     else	// @[CRRV/src/core/pipeline/FetchStage.scala:9:14]
       pc <= pc + 32'h4;	// @[CRRV/src/core/pipeline/FetchStage.scala:15:19, :18:8]
   end // always @(posedge)
-  assign io_control_stallReq = ~io_instRom_valid;	// @[<stdin>:3:10, CRRV/src/core/pipeline/FetchStage.scala:27:26]
-  assign io_instRom_addr = pc;	// @[<stdin>:3:10, CRRV/src/core/pipeline/FetchStage.scala:15:19]
-  assign io_if2id_IF_instValid = io_instRom_valid;	// @[<stdin>:3:10]
+  assign io_control_stallReq = ~io_instRom_ready;	// @[<stdin>:3:10, CRRV/src/core/pipeline/FetchStage.scala:27:26]
+  assign io_instRom_bits_addr = pc;	// @[<stdin>:3:10, CRRV/src/core/pipeline/FetchStage.scala:15:19]
+  assign io_if2id_IF_instValid = io_instRom_ready;	// @[<stdin>:3:10]
   assign io_if2id_IF_pc = pc;	// @[<stdin>:3:10, CRRV/src/core/pipeline/FetchStage.scala:15:19]
 endmodule
 
-module PipelineStage(	// @[<stdin>:24:10]
-  input         clock,	// @[<stdin>:25:11]
-                reset,	// @[<stdin>:26:11]
+module PipelineStage(	// @[<stdin>:25:10]
+  input         clock,	// @[<stdin>:26:11]
+                reset,	// @[<stdin>:27:11]
                 io_flush,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
                 io_stallPrev,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
                 io_stallNext,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
@@ -69,12 +69,12 @@ module PipelineStage(	// @[<stdin>:24:10]
   reg         pipelineReg_IF_instValid;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28]
   reg  [31:0] pipelineReg_IF_pc;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28]
   wire        _GEN = io_flush | io_stallPrev & ~io_stallNext;	// @[CRRV/src/core/pipeline/PipelineStage.scala:24:{17,34,37}]
-  always @(posedge clock) begin	// @[<stdin>:25:11]
-    if (reset) begin	// @[<stdin>:25:11]
+  always @(posedge clock) begin	// @[<stdin>:26:11]
+    if (reset) begin	// @[<stdin>:26:11]
       pipelineReg_IF_instValid <= 1'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
       pipelineReg_IF_pc <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
     end
-    else begin	// @[<stdin>:25:11]
+    else begin	// @[<stdin>:26:11]
       pipelineReg_IF_instValid <=
         ~_GEN & (io_stallPrev ? pipelineReg_IF_instValid : io_prev_IF_instValid);	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, :24:{17,53}, :25:17, :26:29, :27:17]
       if (_GEN)	// @[CRRV/src/core/pipeline/PipelineStage.scala:24:17]
@@ -85,16 +85,16 @@ module PipelineStage(	// @[<stdin>:24:10]
         pipelineReg_IF_pc <= io_prev_IF_pc;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28]
     end
   end // always @(posedge)
-  assign io_next_IF_instValid = pipelineReg_IF_instValid;	// @[<stdin>:24:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_IF_pc = pipelineReg_IF_pc;	// @[<stdin>:24:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_IF_instValid = pipelineReg_IF_instValid;	// @[<stdin>:25:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_IF_pc = pipelineReg_IF_pc;	// @[<stdin>:25:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
 endmodule
 
-module DecodeStage(	// @[<stdin>:48:10]
-  input         clock,	// @[<stdin>:49:11]
+module DecodeStage(	// @[<stdin>:49:10]
+  input         clock,	// @[<stdin>:50:11]
                 io_if2id_IF_instValid,	// @[CRRV/src/core/pipeline/DecodeStage.scala:12:14]
   input  [31:0] io_if2id_IF_pc,	// @[CRRV/src/core/pipeline/DecodeStage.scala:12:14]
   input         io_control_stall,	// @[CRRV/src/core/pipeline/DecodeStage.scala:12:14]
-  input  [31:0] io_readInst,	// @[CRRV/src/core/pipeline/DecodeStage.scala:12:14]
+  input  [31:0] io_read_rdata,	// @[CRRV/src/core/pipeline/DecodeStage.scala:12:14]
                 io_regRead1_data,	// @[CRRV/src/core/pipeline/DecodeStage.scala:12:14]
                 io_regRead2_data,	// @[CRRV/src/core/pipeline/DecodeStage.scala:12:14]
   output        io_control_flushIF,	// @[CRRV/src/core/pipeline/DecodeStage.scala:12:14]
@@ -124,7 +124,7 @@ module DecodeStage(	// @[<stdin>:48:10]
   reg         stallDelay;	// @[CRRV/src/core/pipeline/DecodeStage.scala:23:27]
   reg  [31:0] lastInst;	// @[CRRV/src/core/pipeline/DecodeStage.scala:24:23]
   wire [31:0] inst =
-    io_if2id_IF_instValid ? (stallDelay ? lastInst : io_readInst) : 32'h13;	// @[CRRV/src/core/pipeline/DecodeStage.scala:23:27, :24:23, src/main/scala/chisel3/util/Mux.scala:141:16]
+    io_if2id_IF_instValid ? (stallDelay ? lastInst : io_read_rdata) : 32'h13;	// @[CRRV/src/core/pipeline/DecodeStage.scala:23:27, :24:23, src/main/scala/chisel3/util/Mux.scala:141:16]
   wire [31:0] immU = {inst[31:12], 12'h0};	// @[CRRV/src/core/pipeline/DecodeStage.scala:41:{17,22}, src/main/scala/chisel3/util/Mux.scala:141:16]
   wire [16:0] _GEN = {inst[31:25], inst[14:12], inst[6:0]};	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, src/main/scala/chisel3/util/Mux.scala:141:16]
   wire        _GEN_0 = _GEN == 17'h33;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38]
@@ -335,14 +335,14 @@ module DecodeStage(	// @[<stdin>:48:10]
           : csrOp == 3'h3 ? {2'h1, |(inst[11:7])} : 3'h0;	// @[CRRV/src/core/pipeline/DecodeStage.scala:34:17, :81:47, :83:{20,24}, :84:{20,25}, :85:20, src/main/scala/chisel3/util/Lookup.scala:34:39, src/main/scala/chisel3/util/Mux.scala:141:16]
   wire [31:0] _GEN_75 = {_GEN_73, inst[31:25], inst[11:7]};	// @[CRRV/src/core/pipeline/DecodeStage.scala:34:17, :39:22, :49:57, :74:51, src/main/scala/chisel3/util/Mux.scala:141:16]
   wire [31:0] _GEN_76 = {27'h0, inst[24:20]};	// @[CRRV/src/core/pipeline/DecodeStage.scala:36:17, :49:57, src/main/scala/chisel3/util/Lookup.scala:31:38, src/main/scala/chisel3/util/Mux.scala:141:16]
-  always @(posedge clock) begin	// @[<stdin>:49:11]
+  always @(posedge clock) begin	// @[<stdin>:50:11]
     stallDelay <= io_control_stall;	// @[CRRV/src/core/pipeline/DecodeStage.scala:23:27]
     if (stallDelay) begin	// @[CRRV/src/core/pipeline/DecodeStage.scala:23:27]
     end
     else	// @[CRRV/src/core/pipeline/DecodeStage.scala:23:27]
-      lastInst <= io_readInst;	// @[CRRV/src/core/pipeline/DecodeStage.scala:24:23]
+      lastInst <= io_read_rdata;	// @[CRRV/src/core/pipeline/DecodeStage.scala:24:23]
   end // always @(posedge)
-  assign io_control_flushIF = ~io_control_stall & casez_tmp;	// @[<stdin>:48:10, CRRV/src/core/pipeline/DecodeStage.scala:62:51, :90:{25,43}]
+  assign io_control_flushIF = ~io_control_stall & casez_tmp;	// @[<stdin>:49:10, CRRV/src/core/pipeline/DecodeStage.scala:62:51, :90:{25,43}]
   assign io_control_flushPc =
     casez_tmp
       ? (_branchTarget_T
@@ -351,10 +351,10 @@ module DecodeStage(	// @[<stdin>:48:10]
                 : io_if2id_IF_pc
                   + {{12{inst[31]}}, inst[19:12], inst[20], inst[30:21], 1'h0})
            : io_if2id_IF_pc + {{20{inst[31]}}, inst[7], inst[30:25], inst[11:8], 1'h0})
-      : io_if2id_IF_pc + 32'h4;	// @[<stdin>:48:10, CRRV/src/core/pipeline/DecodeStage.scala:23:27, :40:{22,32,41,55}, :42:{32,46,56}, :49:57, :62:51, :73:39, :74:{25,51,65}, :75:25, :76:39, :77:25, :79:{25,62}, src/main/scala/chisel3/util/Lookup.scala:34:39, src/main/scala/chisel3/util/Mux.scala:141:16]
-  assign io_id2exe_IF_instValid = io_if2id_IF_instValid;	// @[<stdin>:48:10]
-  assign io_id2exe_IF_pc = io_if2id_IF_pc;	// @[<stdin>:48:10]
-  assign io_id2exe_ID_inst = inst;	// @[<stdin>:48:10, src/main/scala/chisel3/util/Mux.scala:141:16]
+      : io_if2id_IF_pc + 32'h4;	// @[<stdin>:49:10, CRRV/src/core/pipeline/DecodeStage.scala:23:27, :40:{22,32,41,55}, :42:{32,46,56}, :49:57, :62:51, :73:39, :74:{25,51,65}, :75:25, :76:39, :77:25, :79:{25,62}, src/main/scala/chisel3/util/Lookup.scala:34:39, src/main/scala/chisel3/util/Mux.scala:141:16]
+  assign io_id2exe_IF_instValid = io_if2id_IF_instValid;	// @[<stdin>:49:10]
+  assign io_id2exe_IF_pc = io_if2id_IF_pc;	// @[<stdin>:49:10]
+  assign io_id2exe_ID_inst = inst;	// @[<stdin>:49:10, src/main/scala/chisel3/util/Mux.scala:141:16]
   assign io_id2exe_ID_aluOp =
     _GEN_0 | _GEN_2
       ? 4'h1
@@ -385,7 +385,7 @@ module DecodeStage(	// @[<stdin>:48:10]
                                                       : _GEN_71
                                                           ? 4'h0
                                                           : {3'h0,
-                                                             _GEN_52 | _GEN_53 | _GEN_54};	// @[<stdin>:48:10, src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
+                                                             _GEN_52 | _GEN_53 | _GEN_54};	// @[<stdin>:49:10, src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
   assign io_id2exe_ID_mduOp =
     _GEN_0 | _GEN_2 | _GEN_3 | _GEN_4 | _GEN_5 | _GEN_6 | _GEN_7 | _GEN_8 | _GEN_9
     | _GEN_10 | _GEN_11 | _GEN_12 | _GEN_13 | _GEN_14 | _GEN_15 | _GEN_16 | _GEN_17
@@ -403,7 +403,7 @@ module DecodeStage(	// @[<stdin>:48:10]
                       ? 4'h4
                       : _GEN_48
                           ? 4'h5
-                          : _GEN_49 ? 4'h6 : _GEN_50 ? 4'h7 : {_GEN_51, 3'h0};	// @[<stdin>:48:10, src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
+                          : _GEN_49 ? 4'h6 : _GEN_50 ? 4'h7 : {_GEN_51, 3'h0};	// @[<stdin>:49:10, src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
   assign io_id2exe_ID_src1 =
     aluSrc1Op == 4'h8
       ? 32'h4
@@ -419,7 +419,7 @@ module DecodeStage(	// @[<stdin>:48:10]
                           ? _GEN_74
                           : aluSrc1Op == 4'h2
                               ? io_regRead2_data
-                              : aluSrc1Op == 4'h1 ? io_regRead1_data : 32'h0;	// @[<stdin>:48:10, CRRV/src/core/pipeline/DecodeStage.scala:41:17, :49:57, :74:51, src/main/scala/chisel3/util/Lookup.scala:34:39]
+                              : aluSrc1Op == 4'h1 ? io_regRead1_data : 32'h0;	// @[<stdin>:49:10, CRRV/src/core/pipeline/DecodeStage.scala:41:17, :49:57, :74:51, src/main/scala/chisel3/util/Lookup.scala:34:39]
   assign io_id2exe_ID_src2 =
     aluSrc2Op == 4'h8
       ? 32'h4
@@ -435,7 +435,7 @@ module DecodeStage(	// @[<stdin>:48:10]
                           ? _GEN_74
                           : aluSrc2Op == 4'h2
                               ? io_regRead2_data
-                              : aluSrc2Op == 4'h1 ? io_regRead1_data : 32'h0;	// @[<stdin>:48:10, CRRV/src/core/pipeline/DecodeStage.scala:41:17, :49:57, :74:51, src/main/scala/chisel3/util/Lookup.scala:34:39]
+                              : aluSrc2Op == 4'h1 ? io_regRead1_data : 32'h0;	// @[<stdin>:49:10, CRRV/src/core/pipeline/DecodeStage.scala:41:17, :49:57, :74:51, src/main/scala/chisel3/util/Lookup.scala:34:39]
   assign io_id2exe_ID_lsuOp =
     _GEN_0 | _GEN_2 | _GEN_3 | _GEN_4 | _GEN_5 | _GEN_6 | _GEN_7 | _GEN_8 | _GEN_9
     | _GEN_10 | _GEN_11 | _GEN_12 | _GEN_13 | _GEN_14 | _GEN_15 | _GEN_16 | _GEN_17
@@ -452,17 +452,17 @@ module DecodeStage(	// @[<stdin>:48:10]
                       ? 4'h4
                       : _GEN_34
                           ? 4'h5
-                          : _GEN_35 ? 4'h6 : _GEN_36 ? 4'h7 : {_GEN_37, 3'h0};	// @[<stdin>:48:10, src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
-  assign io_id2exe_ID_lsuData = io_regRead2_data;	// @[<stdin>:48:10]
+                          : _GEN_35 ? 4'h6 : _GEN_36 ? 4'h7 : {_GEN_37, 3'h0};	// @[<stdin>:49:10, src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
+  assign io_id2exe_ID_lsuData = io_regRead2_data;	// @[<stdin>:49:10]
   assign io_id2exe_ID_regWen =
     _GEN_67 | ~_GEN_58
     & (_GEN_64 | ~_GEN_62
-       & (_GEN_38 | _GEN_39 | _GEN_40 | _GEN_41 | _GEN_42 | _GEN_43 | _GEN_55 | _GEN_51));	// @[<stdin>:48:10, src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
-  assign io_id2exe_ID_regWaddr = inst[11:7];	// @[<stdin>:48:10, CRRV/src/core/pipeline/DecodeStage.scala:34:17, src/main/scala/chisel3/util/Mux.scala:141:16]
-  assign io_id2exe_ID_csrOp = csrOperation;	// @[<stdin>:48:10, CRRV/src/core/pipeline/DecodeStage.scala:81:47]
-  assign io_id2exe_ID_csrAddr = inst[31:20];	// @[<stdin>:48:10, CRRV/src/core/pipeline/DecodeStage.scala:38:18, src/main/scala/chisel3/util/Mux.scala:141:16]
+       & (_GEN_38 | _GEN_39 | _GEN_40 | _GEN_41 | _GEN_42 | _GEN_43 | _GEN_55 | _GEN_51));	// @[<stdin>:49:10, src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
+  assign io_id2exe_ID_regWaddr = inst[11:7];	// @[<stdin>:49:10, CRRV/src/core/pipeline/DecodeStage.scala:34:17, src/main/scala/chisel3/util/Mux.scala:141:16]
+  assign io_id2exe_ID_csrOp = csrOperation;	// @[<stdin>:49:10, CRRV/src/core/pipeline/DecodeStage.scala:81:47]
+  assign io_id2exe_ID_csrAddr = inst[31:20];	// @[<stdin>:49:10, CRRV/src/core/pipeline/DecodeStage.scala:38:18, src/main/scala/chisel3/util/Mux.scala:141:16]
   assign io_id2exe_ID_csrWriteData =
-    csrOperation == 3'h0 ? 32'h0 : regEn1 ? io_regRead1_data : {27'h0, inst[19:15]};	// @[<stdin>:48:10, CRRV/src/core/pipeline/DecodeStage.scala:35:17, :49:57, :81:47, :88:{25,39,60}, src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39, src/main/scala/chisel3/util/Mux.scala:141:16]
+    csrOperation == 3'h0 ? 32'h0 : regEn1 ? io_regRead1_data : {27'h0, inst[19:15]};	// @[<stdin>:49:10, CRRV/src/core/pipeline/DecodeStage.scala:35:17, :49:57, :81:47, :88:{25,39,60}, src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39, src/main/scala/chisel3/util/Mux.scala:141:16]
   assign io_id2exe_ID_exceptType =
     _GEN_0 | _GEN_2 | _GEN_3 | _GEN_4 | _GEN_5 | _GEN_6 | _GEN_7 | _GEN_8 | _GEN_9
     | _GEN_10 | _GEN_11 | _GEN_12 | _GEN_13 | _GEN_14 | _GEN_15 | _GEN_16 | _GEN_17
@@ -470,9 +470,9 @@ module DecodeStage(	// @[<stdin>:48:10]
     | _GEN_26 | _GEN_27 | _GEN_28 | _GEN_29 | _GEN_30 | _GEN_31 | _GEN_32 | _GEN_33
     | _GEN_34 | _GEN_35 | _GEN_36 | _GEN_37 | _GEN_71
       ? 3'h0
-      : _GEN_52 ? 3'h1 : _GEN_53 ? 3'h0 : _GEN_54 ? 3'h2 : 3'h7;	// @[<stdin>:48:10, src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
-  assign io_regRead1_en = regEn1;	// @[<stdin>:48:10, src/main/scala/chisel3/util/Lookup.scala:34:39]
-  assign io_regRead1_addr = inst[19:15];	// @[<stdin>:48:10, CRRV/src/core/pipeline/DecodeStage.scala:35:17, src/main/scala/chisel3/util/Mux.scala:141:16]
+      : _GEN_52 ? 3'h1 : _GEN_53 ? 3'h0 : _GEN_54 ? 3'h2 : 3'h7;	// @[<stdin>:49:10, src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
+  assign io_regRead1_en = regEn1;	// @[<stdin>:49:10, src/main/scala/chisel3/util/Lookup.scala:34:39]
+  assign io_regRead1_addr = inst[19:15];	// @[<stdin>:49:10, CRRV/src/core/pipeline/DecodeStage.scala:35:17, src/main/scala/chisel3/util/Mux.scala:141:16]
   assign io_regRead2_en =
     _GEN_0 | ~_GEN_2
     & (_GEN_3 | ~_GEN_59
@@ -485,13 +485,13 @@ module DecodeStage(	// @[<stdin>:48:10]
                          & (_GEN_18 | ~_GEN_19
                             & (_GEN_20 | ~_GEN_21
                                & (_GEN_58 | ~_GEN_64
-                                  & (_GEN_62 | ~_GEN_61 & _GEN_56)))))))))));	// @[<stdin>:48:10, src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
-  assign io_regRead2_addr = inst[24:20];	// @[<stdin>:48:10, CRRV/src/core/pipeline/DecodeStage.scala:36:17, src/main/scala/chisel3/util/Mux.scala:141:16]
+                                  & (_GEN_62 | ~_GEN_61 & _GEN_56)))))))))));	// @[<stdin>:49:10, src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
+  assign io_regRead2_addr = inst[24:20];	// @[<stdin>:49:10, CRRV/src/core/pipeline/DecodeStage.scala:36:17, src/main/scala/chisel3/util/Mux.scala:141:16]
 endmodule
 
-module PipelineStage_1(	// @[<stdin>:927:10]
-  input         clock,	// @[<stdin>:928:11]
-                reset,	// @[<stdin>:929:11]
+module PipelineStage_1(	// @[<stdin>:928:10]
+  input         clock,	// @[<stdin>:929:11]
+                reset,	// @[<stdin>:930:11]
                 io_flush,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
                 io_stallPrev,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
                 io_stallNext,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
@@ -543,8 +543,8 @@ module PipelineStage_1(	// @[<stdin>:927:10]
   reg  [31:0] pipelineReg_ID_csrWriteData;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28]
   reg  [2:0]  pipelineReg_ID_exceptType;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28]
   wire        _GEN = io_flush | io_stallPrev & ~io_stallNext;	// @[CRRV/src/core/pipeline/PipelineStage.scala:24:{17,34,37}]
-  always @(posedge clock) begin	// @[<stdin>:928:11]
-    if (reset) begin	// @[<stdin>:928:11]
+  always @(posedge clock) begin	// @[<stdin>:929:11]
+    if (reset) begin	// @[<stdin>:929:11]
       pipelineReg_IF_instValid <= 1'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
       pipelineReg_IF_pc <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
       pipelineReg_ID_inst <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
@@ -561,7 +561,7 @@ module PipelineStage_1(	// @[<stdin>:927:10]
       pipelineReg_ID_csrWriteData <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
       pipelineReg_ID_exceptType <= 3'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
     end
-    else begin	// @[<stdin>:928:11]
+    else begin	// @[<stdin>:929:11]
       pipelineReg_IF_instValid <=
         ~_GEN & (io_stallPrev ? pipelineReg_IF_instValid : io_prev_IF_instValid);	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, :24:{17,53}, :25:17, :26:29, :27:17]
       if (_GEN) begin	// @[CRRV/src/core/pipeline/PipelineStage.scala:24:17]
@@ -600,26 +600,26 @@ module PipelineStage_1(	// @[<stdin>:927:10]
         ~_GEN & (io_stallPrev ? pipelineReg_ID_regWen : io_prev_ID_regWen);	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, :24:{17,53}, :25:17, :26:29, :27:17]
     end
   end // always @(posedge)
-  assign io_next_IF_instValid = pipelineReg_IF_instValid;	// @[<stdin>:927:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_IF_pc = pipelineReg_IF_pc;	// @[<stdin>:927:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_ID_inst = pipelineReg_ID_inst;	// @[<stdin>:927:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_ID_aluOp = pipelineReg_ID_aluOp;	// @[<stdin>:927:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_ID_mduOp = pipelineReg_ID_mduOp;	// @[<stdin>:927:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_ID_src1 = pipelineReg_ID_src1;	// @[<stdin>:927:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_ID_src2 = pipelineReg_ID_src2;	// @[<stdin>:927:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_ID_lsuOp = pipelineReg_ID_lsuOp;	// @[<stdin>:927:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_ID_lsuData = pipelineReg_ID_lsuData;	// @[<stdin>:927:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_ID_regWen = pipelineReg_ID_regWen;	// @[<stdin>:927:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_ID_regWaddr = pipelineReg_ID_regWaddr;	// @[<stdin>:927:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_ID_csrOp = pipelineReg_ID_csrOp;	// @[<stdin>:927:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_ID_csrAddr = pipelineReg_ID_csrAddr;	// @[<stdin>:927:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_ID_csrWriteData = pipelineReg_ID_csrWriteData;	// @[<stdin>:927:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_ID_exceptType = pipelineReg_ID_exceptType;	// @[<stdin>:927:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_IF_instValid = pipelineReg_IF_instValid;	// @[<stdin>:928:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_IF_pc = pipelineReg_IF_pc;	// @[<stdin>:928:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_ID_inst = pipelineReg_ID_inst;	// @[<stdin>:928:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_ID_aluOp = pipelineReg_ID_aluOp;	// @[<stdin>:928:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_ID_mduOp = pipelineReg_ID_mduOp;	// @[<stdin>:928:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_ID_src1 = pipelineReg_ID_src1;	// @[<stdin>:928:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_ID_src2 = pipelineReg_ID_src2;	// @[<stdin>:928:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_ID_lsuOp = pipelineReg_ID_lsuOp;	// @[<stdin>:928:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_ID_lsuData = pipelineReg_ID_lsuData;	// @[<stdin>:928:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_ID_regWen = pipelineReg_ID_regWen;	// @[<stdin>:928:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_ID_regWaddr = pipelineReg_ID_regWaddr;	// @[<stdin>:928:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_ID_csrOp = pipelineReg_ID_csrOp;	// @[<stdin>:928:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_ID_csrAddr = pipelineReg_ID_csrAddr;	// @[<stdin>:928:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_ID_csrWriteData = pipelineReg_ID_csrWriteData;	// @[<stdin>:928:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_ID_exceptType = pipelineReg_ID_exceptType;	// @[<stdin>:928:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
 endmodule
 
-module Multiplier(	// @[<stdin>:979:10]
-  input         clock,	// @[<stdin>:980:11]
-                reset,	// @[<stdin>:981:11]
+module Multiplier(	// @[<stdin>:980:10]
+  input         clock,	// @[<stdin>:981:11]
+                reset,	// @[<stdin>:982:11]
                 io_en,	// @[CRRV/src/core/muldiv/Multiplier.scala:14:14]
                 io_flush,	// @[CRRV/src/core/muldiv/Multiplier.scala:14:14]
                 io_opr1Sign,	// @[CRRV/src/core/muldiv/Multiplier.scala:14:14]
@@ -674,7 +674,7 @@ module Multiplier(	// @[<stdin>:979:10]
   end // always_comb
   wire        _GEN_3 = state == 2'h0;	// @[CRRV/src/core/muldiv/Multiplier.scala:34:51, :36:17]
   wire        _GEN_4 = state == 2'h1 & _GEN_0;	// @[CRRV/src/core/muldiv/Multiplier.scala:31:47, :34:51, :36:17, :43:19, :47:{41,55}, :48:19]
-  always @(posedge clock) begin	// @[<stdin>:980:11]
+  always @(posedge clock) begin	// @[<stdin>:981:11]
     if (_GEN_3) begin	// @[CRRV/src/core/muldiv/Multiplier.scala:36:17]
       if (_GEN) begin	// @[CRRV/src/core/muldiv/Multiplier.scala:38:18]
         opr1 <= {{32{io_opr1Sign & io_opr1[31]}}, io_opr1};	// @[CRRV/src/core/muldiv/Multiplier.scala:26:{21,42}, :29:47, :39:{25,30}]
@@ -687,11 +687,11 @@ module Multiplier(	// @[<stdin>:979:10]
       opr2 <= {2'h0, opr2[34:2]};	// @[CRRV/src/core/muldiv/Multiplier.scala:30:47, :34:51, :61:{15,23}]
       mulResutl <= mulResutl + casez_tmp[63:0];	// @[CRRV/src/core/muldiv/Multiplier.scala:31:47, :48:{32,60}]
     end
-    if (reset) begin	// @[<stdin>:980:11]
+    if (reset) begin	// @[<stdin>:981:11]
       count <= 6'h0;	// @[CRRV/src/core/muldiv/Multiplier.scala:32:51]
       state <= 2'h0;	// @[CRRV/src/core/muldiv/Multiplier.scala:34:51]
     end
-    else begin	// @[<stdin>:980:11]
+    else begin	// @[<stdin>:981:11]
       if (_GEN_3) begin	// @[CRRV/src/core/muldiv/Multiplier.scala:36:17]
         if (_GEN)	// @[CRRV/src/core/muldiv/Multiplier.scala:38:18]
           count <= 6'h0;	// @[CRRV/src/core/muldiv/Multiplier.scala:32:51]
@@ -701,13 +701,13 @@ module Multiplier(	// @[<stdin>:979:10]
       state <= casez_tmp_0;	// @[CRRV/src/core/muldiv/Multiplier.scala:34:51, :36:17, :38:32]
     end
   end // always @(posedge)
-  assign io_valid = io_en & ~io_flush & state == 2'h2;	// @[<stdin>:979:10, CRRV/src/core/muldiv/Multiplier.scala:34:51, :48:60, :75:{25,35,44}]
-  assign io_result = mulResutl;	// @[<stdin>:979:10, CRRV/src/core/muldiv/Multiplier.scala:31:47]
+  assign io_valid = io_en & ~io_flush & state == 2'h2;	// @[<stdin>:980:10, CRRV/src/core/muldiv/Multiplier.scala:34:51, :48:60, :75:{25,35,44}]
+  assign io_result = mulResutl;	// @[<stdin>:980:10, CRRV/src/core/muldiv/Multiplier.scala:31:47]
 endmodule
 
-module Divider(	// @[<stdin>:1069:10]
-  input         clock,	// @[<stdin>:1070:11]
-                reset,	// @[<stdin>:1071:11]
+module Divider(	// @[<stdin>:1070:10]
+  input         clock,	// @[<stdin>:1071:11]
+                reset,	// @[<stdin>:1072:11]
                 io_en,	// @[CRRV/src/core/muldiv/Divider.scala:14:14]
                 io_flush,	// @[CRRV/src/core/muldiv/Divider.scala:14:14]
                 io_sign,	// @[CRRV/src/core/muldiv/Divider.scala:14:14]
@@ -743,7 +743,7 @@ module Divider(	// @[<stdin>:1069:10]
   wire [32:0] ans = dividend[63:31] - divisor;	// @[CRRV/src/core/muldiv/Divider.scala:33:47, :34:47, :52:{27,64}]
   wire        _GEN_1 = state == 2'h0;	// @[CRRV/src/core/muldiv/Divider.scala:38:51, :40:17]
   wire        _GEN_2 = state == 2'h1 & _GEN_0;	// @[CRRV/src/core/muldiv/Divider.scala:35:47, :38:51, :40:17, :47:18, :51:{35,49}, :53:18]
-  always @(posedge clock) begin	// @[<stdin>:1070:11]
+  always @(posedge clock) begin	// @[<stdin>:1071:11]
     if (_GEN_1) begin	// @[CRRV/src/core/muldiv/Divider.scala:40:17]
       if (_GEN) begin	// @[CRRV/src/core/muldiv/Divider.scala:42:18]
         dividend <= {32'h0, opr1Neg ? 32'h0 - io_opr1 : io_opr1};	// @[CRRV/src/core/muldiv/Divider.scala:26:30, :30:{25,35}, :33:47, :43:24]
@@ -756,11 +756,11 @@ module Divider(	// @[<stdin>:1069:10]
     end
     if (_GEN_1 & _GEN)	// @[CRRV/src/core/muldiv/Divider.scala:34:47, :40:17, :42:{18,32}, :44:18]
       divisor <= {1'h0, opr2Neg ? 32'h0 - io_opr2 : io_opr2};	// @[CRRV/src/core/muldiv/Divider.scala:27:30, :30:35, :31:{25,35}, :34:47, :43:24, :44:24]
-    if (reset) begin	// @[<stdin>:1070:11]
+    if (reset) begin	// @[<stdin>:1071:11]
       count <= 6'h0;	// @[CRRV/src/core/muldiv/Divider.scala:36:51]
       state <= 2'h0;	// @[CRRV/src/core/muldiv/Divider.scala:38:51]
     end
-    else begin	// @[<stdin>:1070:11]
+    else begin	// @[<stdin>:1071:11]
       if (_GEN_1) begin	// @[CRRV/src/core/muldiv/Divider.scala:40:17]
         if (_GEN)	// @[CRRV/src/core/muldiv/Divider.scala:42:18]
           count <= 6'h0;	// @[CRRV/src/core/muldiv/Divider.scala:36:51]
@@ -770,14 +770,14 @@ module Divider(	// @[<stdin>:1069:10]
       state <= casez_tmp;	// @[CRRV/src/core/muldiv/Divider.scala:38:51, :40:17, :42:32]
     end
   end // always @(posedge)
-  assign io_valid = io_en & ~io_flush & state == 2'h2;	// @[<stdin>:1069:10, CRRV/src/core/muldiv/Divider.scala:38:51, :57:15, :67:{28,38,47}]
-  assign io_divresult = opr1Neg ^ opr2Neg ? 32'h0 - quotient : quotient;	// @[<stdin>:1069:10, CRRV/src/core/muldiv/Divider.scala:26:30, :27:30, :28:30, :30:35, :35:47, :43:24, :68:{22,37}]
-  assign io_remresult = opr1Neg ? 32'h0 - dividend[63:32] : dividend[63:32];	// @[<stdin>:1069:10, CRRV/src/core/muldiv/Divider.scala:26:30, :30:35, :33:47, :43:24, :65:27, :69:{22,37}]
+  assign io_valid = io_en & ~io_flush & state == 2'h2;	// @[<stdin>:1070:10, CRRV/src/core/muldiv/Divider.scala:38:51, :57:15, :67:{28,38,47}]
+  assign io_divresult = opr1Neg ^ opr2Neg ? 32'h0 - quotient : quotient;	// @[<stdin>:1070:10, CRRV/src/core/muldiv/Divider.scala:26:30, :27:30, :28:30, :30:35, :35:47, :43:24, :68:{22,37}]
+  assign io_remresult = opr1Neg ? 32'h0 - dividend[63:32] : dividend[63:32];	// @[<stdin>:1070:10, CRRV/src/core/muldiv/Divider.scala:26:30, :30:35, :33:47, :43:24, :65:27, :69:{22,37}]
 endmodule
 
-module MDU(	// @[<stdin>:1153:10]
-  input         clock,	// @[<stdin>:1154:11]
-                reset,	// @[<stdin>:1155:11]
+module MDU(	// @[<stdin>:1154:10]
+  input         clock,	// @[<stdin>:1155:11]
+                reset,	// @[<stdin>:1156:11]
   input  [3:0]  io_op,	// @[CRRV/src/core/muldiv/MDU.scala:14:14]
   input         io_flush,	// @[CRRV/src/core/muldiv/MDU.scala:14:14]
   input  [31:0] io_opr1,	// @[CRRV/src/core/muldiv/MDU.scala:14:14]
@@ -828,7 +828,7 @@ module MDU(	// @[<stdin>:1153:10]
     .io_divresult (_divider_io_divresult),
     .io_remresult (_divider_io_remresult)
   );
-  assign io_valid = mulEnable ? _multiplier_io_valid : ~divEnable | _divider_io_valid;	// @[<stdin>:1153:10, CRRV/src/core/muldiv/MDU.scala:31:26, :41:23, src/main/scala/chisel3/util/Lookup.scala:34:39, src/main/scala/chisel3/util/Mux.scala:141:16]
+  assign io_valid = mulEnable ? _multiplier_io_valid : ~divEnable | _divider_io_valid;	// @[<stdin>:1154:10, CRRV/src/core/muldiv/MDU.scala:31:26, :41:23, src/main/scala/chisel3/util/Lookup.scala:34:39, src/main/scala/chisel3/util/Mux.scala:141:16]
   assign io_result =
     mulEnable
       ? (~_GEN & (_GEN_7 | _GEN_2)
@@ -838,12 +838,12 @@ module MDU(	// @[<stdin>:1153:10]
           ? (~(_GEN | _GEN_0 | _GEN_1 | _GEN_2 | _GEN_3 | _GEN_4) & (_GEN_5 | _GEN_6)
                ? _divider_io_remresult
                : _divider_io_divresult)
-          : 32'h0;	// @[<stdin>:1153:10, CRRV/src/core/muldiv/MDU.scala:31:26, :39:{8,36,90}, :41:23, :47:22, src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39, src/main/scala/chisel3/util/Mux.scala:141:16]
+          : 32'h0;	// @[<stdin>:1154:10, CRRV/src/core/muldiv/MDU.scala:31:26, :39:{8,36,90}, :41:23, :47:22, src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39, src/main/scala/chisel3/util/Mux.scala:141:16]
 endmodule
 
-module ExecuteStage(	// @[<stdin>:1251:10]
-  input         clock,	// @[<stdin>:1252:11]
-                reset,	// @[<stdin>:1253:11]
+module ExecuteStage(	// @[<stdin>:1252:10]
+  input         clock,	// @[<stdin>:1253:11]
+                reset,	// @[<stdin>:1254:11]
                 io_id2exe_IF_instValid,	// @[CRRV/src/core/pipeline/ExecuteStage.scala:13:14]
   input  [31:0] io_id2exe_IF_pc,	// @[CRRV/src/core/pipeline/ExecuteStage.scala:13:14]
                 io_id2exe_ID_inst,	// @[CRRV/src/core/pipeline/ExecuteStage.scala:13:14]
@@ -941,31 +941,31 @@ module ExecuteStage(	// @[<stdin>:1251:10]
     .io_valid  (_mdu_io_valid),
     .io_result (_mdu_io_result)
   );
-  assign io_control_stallReq = ~_mdu_io_valid;	// @[<stdin>:1251:10, CRRV/src/core/pipeline/ExecuteStage.scala:44:19, :64:26]
-  assign io_exe2mem_IF_instValid = io_id2exe_IF_instValid;	// @[<stdin>:1251:10]
-  assign io_exe2mem_IF_pc = io_id2exe_IF_pc;	// @[<stdin>:1251:10]
-  assign io_exe2mem_ID_inst = io_id2exe_ID_inst;	// @[<stdin>:1251:10]
-  assign io_exe2mem_ID_lsuOp = io_id2exe_ID_lsuOp;	// @[<stdin>:1251:10]
-  assign io_exe2mem_ID_lsuData = io_id2exe_ID_lsuData;	// @[<stdin>:1251:10]
-  assign io_exe2mem_ID_regWen = io_id2exe_ID_regWen;	// @[<stdin>:1251:10]
-  assign io_exe2mem_ID_regWaddr = io_id2exe_ID_regWaddr;	// @[<stdin>:1251:10]
-  assign io_exe2mem_ID_csrOp = io_id2exe_ID_csrOp;	// @[<stdin>:1251:10]
-  assign io_exe2mem_ID_csrAddr = io_id2exe_ID_csrAddr;	// @[<stdin>:1251:10]
-  assign io_exe2mem_ID_csrWriteData = io_id2exe_ID_csrWriteData;	// @[<stdin>:1251:10]
-  assign io_exe2mem_ID_exceptType = io_id2exe_ID_exceptType;	// @[<stdin>:1251:10]
-  assign io_exe2mem_EXE_load = load;	// @[<stdin>:1251:10, CRRV/src/core/pipeline/ExecuteStage.scala:61:39]
-  assign io_exe2mem_EXE_exeResult = _GEN_0;	// @[<stdin>:1251:10, src/main/scala/chisel3/util/Mux.scala:141:16]
-  assign io_csrRead_op = io_id2exe_ID_csrOp;	// @[<stdin>:1251:10]
-  assign io_csrRead_addr = io_id2exe_ID_csrAddr;	// @[<stdin>:1251:10]
-  assign io_regForward_en = io_id2exe_ID_regWen;	// @[<stdin>:1251:10]
-  assign io_regForward_addr = io_id2exe_ID_regWaddr;	// @[<stdin>:1251:10]
-  assign io_regForward_data = _GEN_0;	// @[<stdin>:1251:10, src/main/scala/chisel3/util/Mux.scala:141:16]
-  assign io_regForward_load = load;	// @[<stdin>:1251:10, CRRV/src/core/pipeline/ExecuteStage.scala:61:39]
+  assign io_control_stallReq = ~_mdu_io_valid;	// @[<stdin>:1252:10, CRRV/src/core/pipeline/ExecuteStage.scala:44:19, :64:26]
+  assign io_exe2mem_IF_instValid = io_id2exe_IF_instValid;	// @[<stdin>:1252:10]
+  assign io_exe2mem_IF_pc = io_id2exe_IF_pc;	// @[<stdin>:1252:10]
+  assign io_exe2mem_ID_inst = io_id2exe_ID_inst;	// @[<stdin>:1252:10]
+  assign io_exe2mem_ID_lsuOp = io_id2exe_ID_lsuOp;	// @[<stdin>:1252:10]
+  assign io_exe2mem_ID_lsuData = io_id2exe_ID_lsuData;	// @[<stdin>:1252:10]
+  assign io_exe2mem_ID_regWen = io_id2exe_ID_regWen;	// @[<stdin>:1252:10]
+  assign io_exe2mem_ID_regWaddr = io_id2exe_ID_regWaddr;	// @[<stdin>:1252:10]
+  assign io_exe2mem_ID_csrOp = io_id2exe_ID_csrOp;	// @[<stdin>:1252:10]
+  assign io_exe2mem_ID_csrAddr = io_id2exe_ID_csrAddr;	// @[<stdin>:1252:10]
+  assign io_exe2mem_ID_csrWriteData = io_id2exe_ID_csrWriteData;	// @[<stdin>:1252:10]
+  assign io_exe2mem_ID_exceptType = io_id2exe_ID_exceptType;	// @[<stdin>:1252:10]
+  assign io_exe2mem_EXE_load = load;	// @[<stdin>:1252:10, CRRV/src/core/pipeline/ExecuteStage.scala:61:39]
+  assign io_exe2mem_EXE_exeResult = _GEN_0;	// @[<stdin>:1252:10, src/main/scala/chisel3/util/Mux.scala:141:16]
+  assign io_csrRead_op = io_id2exe_ID_csrOp;	// @[<stdin>:1252:10]
+  assign io_csrRead_addr = io_id2exe_ID_csrAddr;	// @[<stdin>:1252:10]
+  assign io_regForward_en = io_id2exe_ID_regWen;	// @[<stdin>:1252:10]
+  assign io_regForward_addr = io_id2exe_ID_regWaddr;	// @[<stdin>:1252:10]
+  assign io_regForward_data = _GEN_0;	// @[<stdin>:1252:10, src/main/scala/chisel3/util/Mux.scala:141:16]
+  assign io_regForward_load = load;	// @[<stdin>:1252:10, CRRV/src/core/pipeline/ExecuteStage.scala:61:39]
 endmodule
 
-module PipelineStage_2(	// @[<stdin>:1323:10]
-  input         clock,	// @[<stdin>:1324:11]
-                reset,	// @[<stdin>:1325:11]
+module PipelineStage_2(	// @[<stdin>:1324:10]
+  input         clock,	// @[<stdin>:1325:11]
+                reset,	// @[<stdin>:1326:11]
                 io_flush,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
                 io_stallPrev,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
                 io_stallNext,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
@@ -1011,8 +1011,8 @@ module PipelineStage_2(	// @[<stdin>:1323:10]
   reg         pipelineReg_EXE_load;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28]
   reg  [31:0] pipelineReg_EXE_exeResult;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28]
   wire        _GEN = io_flush | io_stallPrev & ~io_stallNext;	// @[CRRV/src/core/pipeline/PipelineStage.scala:24:{17,34,37}]
-  always @(posedge clock) begin	// @[<stdin>:1324:11]
-    if (reset) begin	// @[<stdin>:1324:11]
+  always @(posedge clock) begin	// @[<stdin>:1325:11]
+    if (reset) begin	// @[<stdin>:1325:11]
       pipelineReg_IF_instValid <= 1'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
       pipelineReg_IF_pc <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
       pipelineReg_ID_inst <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
@@ -1027,7 +1027,7 @@ module PipelineStage_2(	// @[<stdin>:1323:10]
       pipelineReg_EXE_load <= 1'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
       pipelineReg_EXE_exeResult <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
     end
-    else begin	// @[<stdin>:1324:11]
+    else begin	// @[<stdin>:1325:11]
       pipelineReg_IF_instValid <=
         ~_GEN & (io_stallPrev ? pipelineReg_IF_instValid : io_prev_IF_instValid);	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, :24:{17,53}, :25:17, :26:29, :27:17]
       if (_GEN) begin	// @[CRRV/src/core/pipeline/PipelineStage.scala:24:17]
@@ -1062,22 +1062,22 @@ module PipelineStage_2(	// @[<stdin>:1323:10]
         ~_GEN & (io_stallPrev ? pipelineReg_EXE_load : io_prev_EXE_load);	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, :24:{17,53}, :25:17, :26:29, :27:17]
     end
   end // always @(posedge)
-  assign io_next_IF_instValid = pipelineReg_IF_instValid;	// @[<stdin>:1323:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_IF_pc = pipelineReg_IF_pc;	// @[<stdin>:1323:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_ID_inst = pipelineReg_ID_inst;	// @[<stdin>:1323:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_ID_lsuOp = pipelineReg_ID_lsuOp;	// @[<stdin>:1323:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_ID_lsuData = pipelineReg_ID_lsuData;	// @[<stdin>:1323:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_ID_regWen = pipelineReg_ID_regWen;	// @[<stdin>:1323:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_ID_regWaddr = pipelineReg_ID_regWaddr;	// @[<stdin>:1323:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_ID_csrOp = pipelineReg_ID_csrOp;	// @[<stdin>:1323:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_ID_csrAddr = pipelineReg_ID_csrAddr;	// @[<stdin>:1323:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_ID_csrWriteData = pipelineReg_ID_csrWriteData;	// @[<stdin>:1323:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_ID_exceptType = pipelineReg_ID_exceptType;	// @[<stdin>:1323:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_EXE_load = pipelineReg_EXE_load;	// @[<stdin>:1323:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_EXE_exeResult = pipelineReg_EXE_exeResult;	// @[<stdin>:1323:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_IF_instValid = pipelineReg_IF_instValid;	// @[<stdin>:1324:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_IF_pc = pipelineReg_IF_pc;	// @[<stdin>:1324:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_ID_inst = pipelineReg_ID_inst;	// @[<stdin>:1324:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_ID_lsuOp = pipelineReg_ID_lsuOp;	// @[<stdin>:1324:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_ID_lsuData = pipelineReg_ID_lsuData;	// @[<stdin>:1324:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_ID_regWen = pipelineReg_ID_regWen;	// @[<stdin>:1324:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_ID_regWaddr = pipelineReg_ID_regWaddr;	// @[<stdin>:1324:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_ID_csrOp = pipelineReg_ID_csrOp;	// @[<stdin>:1324:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_ID_csrAddr = pipelineReg_ID_csrAddr;	// @[<stdin>:1324:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_ID_csrWriteData = pipelineReg_ID_csrWriteData;	// @[<stdin>:1324:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_ID_exceptType = pipelineReg_ID_exceptType;	// @[<stdin>:1324:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_EXE_load = pipelineReg_EXE_load;	// @[<stdin>:1324:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_EXE_exeResult = pipelineReg_EXE_exeResult;	// @[<stdin>:1324:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
 endmodule
 
-module MemoryStage(	// @[<stdin>:1379:10]
+module MemoryStage(	// @[<stdin>:1380:10]
   input         io_exe2mem_IF_instValid,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
   input  [31:0] io_exe2mem_IF_pc,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
                 io_exe2mem_ID_inst,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
@@ -1091,7 +1091,7 @@ module MemoryStage(	// @[<stdin>:1379:10]
   input  [2:0]  io_exe2mem_ID_exceptType,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
   input         io_exe2mem_EXE_load,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
   input  [31:0] io_exe2mem_EXE_exeResult,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
-  input         io_dataRam_valid,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
+  input         io_dataRam_ready,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
   output        io_control_stallReq,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
                 io_mem2wb_IF_instValid,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
   output [31:0] io_mem2wb_IF_pc,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
@@ -1105,10 +1105,11 @@ module MemoryStage(	// @[<stdin>:1379:10]
   output [2:0]  io_mem2wb_ID_exceptType,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
   output [31:0] io_mem2wb_EXE_exeResult,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
                 io_mem2wb_MEM_memAddr,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
-  output        io_dataRam_enable,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
-  output [31:0] io_dataRam_addr,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
-  output [3:0]  io_dataRam_wen,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
-  output [31:0] io_dataRam_wdata,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
+  output        io_dataRam_valid,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
+  output [31:0] io_dataRam_bits_addr,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
+  output        io_dataRam_bits_writeEn,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
+  output [1:0]  io_dataRam_bits_size,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
+  output [31:0] io_dataRam_bits_wdata,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
   output [2:0]  io_memCsrStall_op,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
   output [11:0] io_memCsrStall_addr,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
   output        io_regForward_en,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
@@ -1117,8 +1118,7 @@ module MemoryStage(	// @[<stdin>:1379:10]
   output        io_regForward_load	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
 );
 
-  reg  [6:0]  casez_tmp;	// @[CRRV/src/core/pipeline/MemoryStage.scala:33:38]
-  reg  [31:0] casez_tmp_0;	// @[CRRV/src/core/pipeline/MemoryStage.scala:40:41]
+  reg  [31:0] casez_tmp;	// @[CRRV/src/core/pipeline/MemoryStage.scala:33:41]
   wire        _GEN = io_exe2mem_ID_lsuOp == 4'h1;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38]
   wire        _GEN_0 = io_exe2mem_ID_lsuOp == 4'h2;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38]
   wire        _GEN_1 = io_exe2mem_ID_lsuOp == 4'h3;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38]
@@ -1139,62 +1139,48 @@ module MemoryStage(	// @[<stdin>:1379:10]
               : _GEN_2
                   ? 2'h0
                   : _GEN_3 ? 2'h1 : _GEN_4 ? 2'h0 : _GEN_5 ? 2'h1 : {_GEN_6, 1'h0};	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
-  wire [6:0]  _GEN_8 = {5'h0, io_exe2mem_EXE_exeResult[1:0]};	// @[CRRV/src/core/pipeline/MemoryStage.scala:35:{39,46}]
-  always_comb begin	// @[CRRV/src/core/pipeline/MemoryStage.scala:33:38]
-    casez (width)	// @[CRRV/src/core/pipeline/MemoryStage.scala:33:38, src/main/scala/chisel3/util/Lookup.scala:34:39]
+  always_comb begin	// @[CRRV/src/core/pipeline/MemoryStage.scala:33:41]
+    casez (width)	// @[CRRV/src/core/pipeline/MemoryStage.scala:33:41, src/main/scala/chisel3/util/Lookup.scala:34:39]
       2'b00:
-        casez_tmp = 7'h1 << _GEN_8;	// @[CRRV/src/core/pipeline/MemoryStage.scala:33:38, :35:39]
+        casez_tmp = {4{io_exe2mem_ID_lsuData[7:0]}};	// @[CRRV/src/core/pipeline/MemoryStage.scala:33:41, :35:{26,31}]
       2'b01:
-        casez_tmp = 7'h3 << _GEN_8;	// @[CRRV/src/core/pipeline/MemoryStage.scala:33:38, :35:39, :36:39]
+        casez_tmp = {2{io_exe2mem_ID_lsuData[15:0]}};	// @[CRRV/src/core/pipeline/MemoryStage.scala:33:41, :36:{26,31}]
       2'b10:
-        casez_tmp = 7'hF;	// @[CRRV/src/core/pipeline/MemoryStage.scala:33:38]
+        casez_tmp = io_exe2mem_ID_lsuData;	// @[CRRV/src/core/pipeline/MemoryStage.scala:33:41]
       default:
-        casez_tmp = 7'h0;	// @[CRRV/src/core/pipeline/MemoryStage.scala:33:38]
-    endcase	// @[CRRV/src/core/pipeline/MemoryStage.scala:33:38, src/main/scala/chisel3/util/Lookup.scala:34:39]
+        casez_tmp = 32'h0;	// @[CRRV/src/core/pipeline/MemoryStage.scala:33:41]
+    endcase	// @[CRRV/src/core/pipeline/MemoryStage.scala:33:41, src/main/scala/chisel3/util/Lookup.scala:34:39]
   end // always_comb
-  always_comb begin	// @[CRRV/src/core/pipeline/MemoryStage.scala:33:38, :40:41]
-    casez (width)	// @[CRRV/src/core/pipeline/MemoryStage.scala:33:38, :40:41, src/main/scala/chisel3/util/Lookup.scala:34:39]
-      2'b00:
-        casez_tmp_0 = {4{io_exe2mem_ID_lsuData[7:0]}};	// @[CRRV/src/core/pipeline/MemoryStage.scala:33:38, :40:41, :42:{26,31}]
-      2'b01:
-        casez_tmp_0 = {2{io_exe2mem_ID_lsuData[15:0]}};	// @[CRRV/src/core/pipeline/MemoryStage.scala:33:38, :40:41, :43:{26,31}]
-      2'b10:
-        casez_tmp_0 = io_exe2mem_ID_lsuData;	// @[CRRV/src/core/pipeline/MemoryStage.scala:33:38, :40:41]
-      default:
-        casez_tmp_0 = 32'h0;	// @[CRRV/src/core/pipeline/MemoryStage.scala:33:38, :40:41]
-    endcase	// @[CRRV/src/core/pipeline/MemoryStage.scala:33:38, :40:41, src/main/scala/chisel3/util/Lookup.scala:34:39]
-  end // always_comb
-  assign io_control_stallReq = ~io_dataRam_valid & en;	// @[<stdin>:1379:10, CRRV/src/core/pipeline/MemoryStage.scala:48:{19,38}, src/main/scala/chisel3/util/Lookup.scala:34:39]
-  assign io_mem2wb_IF_instValid = io_exe2mem_IF_instValid;	// @[<stdin>:1379:10]
-  assign io_mem2wb_IF_pc = io_exe2mem_IF_pc;	// @[<stdin>:1379:10]
-  assign io_mem2wb_ID_inst = io_exe2mem_ID_inst;	// @[<stdin>:1379:10]
-  assign io_mem2wb_ID_lsuOp = io_exe2mem_ID_lsuOp;	// @[<stdin>:1379:10]
-  assign io_mem2wb_ID_regWen = io_exe2mem_ID_regWen;	// @[<stdin>:1379:10]
-  assign io_mem2wb_ID_regWaddr = io_exe2mem_ID_regWaddr;	// @[<stdin>:1379:10]
-  assign io_mem2wb_ID_csrOp = io_exe2mem_ID_csrOp;	// @[<stdin>:1379:10]
-  assign io_mem2wb_ID_csrAddr = io_exe2mem_ID_csrAddr;	// @[<stdin>:1379:10]
-  assign io_mem2wb_ID_csrWriteData = io_exe2mem_ID_csrWriteData;	// @[<stdin>:1379:10]
-  assign io_mem2wb_ID_exceptType = io_exe2mem_ID_exceptType;	// @[<stdin>:1379:10]
-  assign io_mem2wb_EXE_exeResult = io_exe2mem_EXE_exeResult;	// @[<stdin>:1379:10]
-  assign io_mem2wb_MEM_memAddr = io_exe2mem_EXE_exeResult;	// @[<stdin>:1379:10]
-  assign io_dataRam_enable = en;	// @[<stdin>:1379:10, src/main/scala/chisel3/util/Lookup.scala:34:39]
-  assign io_dataRam_addr = {io_exe2mem_EXE_exeResult[31:2], 2'h0};	// @[<stdin>:1379:10, CRRV/src/core/pipeline/MemoryStage.scala:56:{27,32}, src/main/scala/chisel3/util/Lookup.scala:34:39]
-  assign io_dataRam_wen =
-    ~(_GEN | _GEN_0 | _GEN_1 | _GEN_2 | _GEN_3) & (_GEN_7 | _GEN_6)
-      ? casez_tmp[3:0]
-      : 4'h0;	// @[<stdin>:1379:10, CRRV/src/core/pipeline/MemoryStage.scala:33:38, :55:27, src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
-  assign io_dataRam_wdata = casez_tmp_0;	// @[<stdin>:1379:10, CRRV/src/core/pipeline/MemoryStage.scala:40:41]
-  assign io_memCsrStall_op = io_exe2mem_ID_csrOp;	// @[<stdin>:1379:10]
-  assign io_memCsrStall_addr = io_exe2mem_ID_csrAddr;	// @[<stdin>:1379:10]
-  assign io_regForward_en = io_exe2mem_ID_regWen;	// @[<stdin>:1379:10]
-  assign io_regForward_addr = io_exe2mem_ID_regWaddr;	// @[<stdin>:1379:10]
-  assign io_regForward_data = io_exe2mem_EXE_exeResult;	// @[<stdin>:1379:10]
-  assign io_regForward_load = io_exe2mem_EXE_load;	// @[<stdin>:1379:10]
+  assign io_control_stallReq = ~io_dataRam_ready & en;	// @[<stdin>:1380:10, CRRV/src/core/pipeline/MemoryStage.scala:41:{19,38}, src/main/scala/chisel3/util/Lookup.scala:34:39]
+  assign io_mem2wb_IF_instValid = io_exe2mem_IF_instValid;	// @[<stdin>:1380:10]
+  assign io_mem2wb_IF_pc = io_exe2mem_IF_pc;	// @[<stdin>:1380:10]
+  assign io_mem2wb_ID_inst = io_exe2mem_ID_inst;	// @[<stdin>:1380:10]
+  assign io_mem2wb_ID_lsuOp = io_exe2mem_ID_lsuOp;	// @[<stdin>:1380:10]
+  assign io_mem2wb_ID_regWen = io_exe2mem_ID_regWen;	// @[<stdin>:1380:10]
+  assign io_mem2wb_ID_regWaddr = io_exe2mem_ID_regWaddr;	// @[<stdin>:1380:10]
+  assign io_mem2wb_ID_csrOp = io_exe2mem_ID_csrOp;	// @[<stdin>:1380:10]
+  assign io_mem2wb_ID_csrAddr = io_exe2mem_ID_csrAddr;	// @[<stdin>:1380:10]
+  assign io_mem2wb_ID_csrWriteData = io_exe2mem_ID_csrWriteData;	// @[<stdin>:1380:10]
+  assign io_mem2wb_ID_exceptType = io_exe2mem_ID_exceptType;	// @[<stdin>:1380:10]
+  assign io_mem2wb_EXE_exeResult = io_exe2mem_EXE_exeResult;	// @[<stdin>:1380:10]
+  assign io_mem2wb_MEM_memAddr = io_exe2mem_EXE_exeResult;	// @[<stdin>:1380:10]
+  assign io_dataRam_valid = en;	// @[<stdin>:1380:10, src/main/scala/chisel3/util/Lookup.scala:34:39]
+  assign io_dataRam_bits_addr = io_exe2mem_EXE_exeResult;	// @[<stdin>:1380:10]
+  assign io_dataRam_bits_writeEn =
+    ~(_GEN | _GEN_0 | _GEN_1 | _GEN_2 | _GEN_3) & (_GEN_7 | _GEN_6);	// @[<stdin>:1380:10, src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
+  assign io_dataRam_bits_size = width;	// @[<stdin>:1380:10, src/main/scala/chisel3/util/Lookup.scala:34:39]
+  assign io_dataRam_bits_wdata = casez_tmp;	// @[<stdin>:1380:10, CRRV/src/core/pipeline/MemoryStage.scala:33:41]
+  assign io_memCsrStall_op = io_exe2mem_ID_csrOp;	// @[<stdin>:1380:10]
+  assign io_memCsrStall_addr = io_exe2mem_ID_csrAddr;	// @[<stdin>:1380:10]
+  assign io_regForward_en = io_exe2mem_ID_regWen;	// @[<stdin>:1380:10]
+  assign io_regForward_addr = io_exe2mem_ID_regWaddr;	// @[<stdin>:1380:10]
+  assign io_regForward_data = io_exe2mem_EXE_exeResult;	// @[<stdin>:1380:10]
+  assign io_regForward_load = io_exe2mem_EXE_load;	// @[<stdin>:1380:10]
 endmodule
 
-module PipelineStage_3(	// @[<stdin>:1537:10]
-  input         clock,	// @[<stdin>:1538:11]
-                reset,	// @[<stdin>:1539:11]
+module PipelineStage_3(	// @[<stdin>:1526:10]
+  input         clock,	// @[<stdin>:1527:11]
+                reset,	// @[<stdin>:1528:11]
                 io_flush,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
                 io_stallPrev,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
                 io_stallNext,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
@@ -1237,8 +1223,8 @@ module PipelineStage_3(	// @[<stdin>:1537:10]
   reg  [31:0] pipelineReg_EXE_exeResult;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28]
   reg  [31:0] pipelineReg_MEM_memAddr;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28]
   wire        _GEN = io_flush | io_stallPrev & ~io_stallNext;	// @[CRRV/src/core/pipeline/PipelineStage.scala:24:{17,34,37}]
-  always @(posedge clock) begin	// @[<stdin>:1538:11]
-    if (reset) begin	// @[<stdin>:1538:11]
+  always @(posedge clock) begin	// @[<stdin>:1527:11]
+    if (reset) begin	// @[<stdin>:1527:11]
       pipelineReg_IF_instValid <= 1'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
       pipelineReg_IF_pc <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
       pipelineReg_ID_inst <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
@@ -1252,7 +1238,7 @@ module PipelineStage_3(	// @[<stdin>:1537:10]
       pipelineReg_EXE_exeResult <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
       pipelineReg_MEM_memAddr <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
     end
-    else begin	// @[<stdin>:1538:11]
+    else begin	// @[<stdin>:1527:11]
       pipelineReg_IF_instValid <=
         ~_GEN & (io_stallPrev ? pipelineReg_IF_instValid : io_prev_IF_instValid);	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, :24:{17,53}, :25:17, :26:29, :27:17]
       if (_GEN) begin	// @[CRRV/src/core/pipeline/PipelineStage.scala:24:17]
@@ -1285,21 +1271,21 @@ module PipelineStage_3(	// @[<stdin>:1537:10]
         ~_GEN & (io_stallPrev ? pipelineReg_ID_regWen : io_prev_ID_regWen);	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, :24:{17,53}, :25:17, :26:29, :27:17]
     end
   end // always @(posedge)
-  assign io_next_IF_instValid = pipelineReg_IF_instValid;	// @[<stdin>:1537:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_IF_pc = pipelineReg_IF_pc;	// @[<stdin>:1537:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_ID_inst = pipelineReg_ID_inst;	// @[<stdin>:1537:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_ID_lsuOp = pipelineReg_ID_lsuOp;	// @[<stdin>:1537:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_ID_regWen = pipelineReg_ID_regWen;	// @[<stdin>:1537:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_ID_regWaddr = pipelineReg_ID_regWaddr;	// @[<stdin>:1537:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_ID_csrOp = pipelineReg_ID_csrOp;	// @[<stdin>:1537:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_ID_csrAddr = pipelineReg_ID_csrAddr;	// @[<stdin>:1537:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_ID_csrWriteData = pipelineReg_ID_csrWriteData;	// @[<stdin>:1537:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_ID_exceptType = pipelineReg_ID_exceptType;	// @[<stdin>:1537:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_EXE_exeResult = pipelineReg_EXE_exeResult;	// @[<stdin>:1537:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_MEM_memAddr = pipelineReg_MEM_memAddr;	// @[<stdin>:1537:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_IF_instValid = pipelineReg_IF_instValid;	// @[<stdin>:1526:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_IF_pc = pipelineReg_IF_pc;	// @[<stdin>:1526:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_ID_inst = pipelineReg_ID_inst;	// @[<stdin>:1526:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_ID_lsuOp = pipelineReg_ID_lsuOp;	// @[<stdin>:1526:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_ID_regWen = pipelineReg_ID_regWen;	// @[<stdin>:1526:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_ID_regWaddr = pipelineReg_ID_regWaddr;	// @[<stdin>:1526:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_ID_csrOp = pipelineReg_ID_csrOp;	// @[<stdin>:1526:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_ID_csrAddr = pipelineReg_ID_csrAddr;	// @[<stdin>:1526:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_ID_csrWriteData = pipelineReg_ID_csrWriteData;	// @[<stdin>:1526:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_ID_exceptType = pipelineReg_ID_exceptType;	// @[<stdin>:1526:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_EXE_exeResult = pipelineReg_EXE_exeResult;	// @[<stdin>:1526:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_MEM_memAddr = pipelineReg_MEM_memAddr;	// @[<stdin>:1526:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
 endmodule
 
-module WriteBackStage(	// @[<stdin>:1595:10]
+module WriteBackStage(	// @[<stdin>:1584:10]
   input         io_mem2wb_IF_instValid,	// @[CRRV/src/core/pipeline/WriteBackStage.scala:12:14]
   input  [31:0] io_mem2wb_IF_pc,	// @[CRRV/src/core/pipeline/WriteBackStage.scala:12:14]
                 io_mem2wb_ID_inst,	// @[CRRV/src/core/pipeline/WriteBackStage.scala:12:14]
@@ -1312,7 +1298,7 @@ module WriteBackStage(	// @[<stdin>:1595:10]
   input  [2:0]  io_mem2wb_ID_exceptType,	// @[CRRV/src/core/pipeline/WriteBackStage.scala:12:14]
   input  [31:0] io_mem2wb_EXE_exeResult,	// @[CRRV/src/core/pipeline/WriteBackStage.scala:12:14]
                 io_mem2wb_MEM_memAddr,	// @[CRRV/src/core/pipeline/WriteBackStage.scala:12:14]
-                io_readData,	// @[CRRV/src/core/pipeline/WriteBackStage.scala:12:14]
+                io_read_rdata,	// @[CRRV/src/core/pipeline/WriteBackStage.scala:12:14]
   output [2:0]  io_wb2csr_op,	// @[CRRV/src/core/pipeline/WriteBackStage.scala:12:14]
   output [11:0] io_wb2csr_addr,	// @[CRRV/src/core/pipeline/WriteBackStage.scala:12:14]
   output [31:0] io_wb2csr_data,	// @[CRRV/src/core/pipeline/WriteBackStage.scala:12:14]
@@ -1329,7 +1315,7 @@ module WriteBackStage(	// @[<stdin>:1595:10]
   output [31:0] io_debug_regWdata	// @[CRRV/src/core/pipeline/WriteBackStage.scala:12:14]
 );
 
-  wire [31:0] shiftData = io_readData >> {27'h0, io_mem2wb_MEM_memAddr[1:0], 3'h0};	// @[CRRV/src/core/pipeline/WriteBackStage.scala:26:{31,38,43}]
+  wire [31:0] shiftData = io_read_rdata >> {27'h0, io_mem2wb_MEM_memAddr[1:0], 3'h0};	// @[CRRV/src/core/pipeline/WriteBackStage.scala:26:{33,40,45}]
   wire [31:0] regData =
     (|io_mem2wb_ID_lsuOp)
       ? (io_mem2wb_ID_lsuOp == 4'h3
@@ -1343,24 +1329,24 @@ module WriteBackStage(	// @[<stdin>:1595:10]
                        : io_mem2wb_ID_lsuOp == 4'h1
                            ? {{24{shiftData[7]}}, shiftData[7:0]}
                            : 32'h0)
-      : io_mem2wb_EXE_exeResult;	// @[CRRV/src/core/pipeline/WriteBackStage.scala:26:31, :27:45, :29:{21,26,40,55}, :30:22, :31:{21,26,40,56}, :32:22, :37:{20,33}]
-  assign io_wb2csr_op = io_mem2wb_ID_csrOp;	// @[<stdin>:1595:10]
-  assign io_wb2csr_addr = io_mem2wb_ID_csrAddr;	// @[<stdin>:1595:10]
-  assign io_wb2csr_data = io_mem2wb_ID_csrWriteData;	// @[<stdin>:1595:10]
-  assign io_wb2csr_exceptType = io_mem2wb_ID_exceptType;	// @[<stdin>:1595:10]
-  assign io_wb2csr_exceptPc = io_mem2wb_IF_pc;	// @[<stdin>:1595:10]
-  assign io_regForward_en = io_mem2wb_ID_regWen;	// @[<stdin>:1595:10]
-  assign io_regForward_addr = io_mem2wb_ID_regWaddr;	// @[<stdin>:1595:10]
-  assign io_regForward_data = regData;	// @[<stdin>:1595:10, CRRV/src/core/pipeline/WriteBackStage.scala:37:20]
-  assign io_debug_valid = io_mem2wb_IF_instValid;	// @[<stdin>:1595:10]
-  assign io_debug_halt = io_mem2wb_ID_inst == 32'h100073;	// @[<stdin>:1595:10, CRRV/src/core/pipeline/WriteBackStage.scala:52:32]
-  assign io_debug_pc = io_mem2wb_IF_pc;	// @[<stdin>:1595:10]
-  assign io_debug_regWen = io_mem2wb_ID_regWen;	// @[<stdin>:1595:10]
-  assign io_debug_regWaddr = io_mem2wb_ID_regWaddr;	// @[<stdin>:1595:10]
-  assign io_debug_regWdata = regData;	// @[<stdin>:1595:10, CRRV/src/core/pipeline/WriteBackStage.scala:37:20]
+      : io_mem2wb_EXE_exeResult;	// @[CRRV/src/core/pipeline/WriteBackStage.scala:26:33, :27:45, :29:{21,26,40,55}, :30:22, :31:{21,26,40,56}, :32:22, :37:{20,33}]
+  assign io_wb2csr_op = io_mem2wb_ID_csrOp;	// @[<stdin>:1584:10]
+  assign io_wb2csr_addr = io_mem2wb_ID_csrAddr;	// @[<stdin>:1584:10]
+  assign io_wb2csr_data = io_mem2wb_ID_csrWriteData;	// @[<stdin>:1584:10]
+  assign io_wb2csr_exceptType = io_mem2wb_ID_exceptType;	// @[<stdin>:1584:10]
+  assign io_wb2csr_exceptPc = io_mem2wb_IF_pc;	// @[<stdin>:1584:10]
+  assign io_regForward_en = io_mem2wb_ID_regWen;	// @[<stdin>:1584:10]
+  assign io_regForward_addr = io_mem2wb_ID_regWaddr;	// @[<stdin>:1584:10]
+  assign io_regForward_data = regData;	// @[<stdin>:1584:10, CRRV/src/core/pipeline/WriteBackStage.scala:37:20]
+  assign io_debug_valid = io_mem2wb_IF_instValid;	// @[<stdin>:1584:10]
+  assign io_debug_halt = io_mem2wb_ID_inst == 32'h100073;	// @[<stdin>:1584:10, CRRV/src/core/pipeline/WriteBackStage.scala:52:32]
+  assign io_debug_pc = io_mem2wb_IF_pc;	// @[<stdin>:1584:10]
+  assign io_debug_regWen = io_mem2wb_ID_regWen;	// @[<stdin>:1584:10]
+  assign io_debug_regWaddr = io_mem2wb_ID_regWaddr;	// @[<stdin>:1584:10]
+  assign io_debug_regWdata = regData;	// @[<stdin>:1584:10, CRRV/src/core/pipeline/WriteBackStage.scala:37:20]
 endmodule
 
-module PipelineControl(	// @[<stdin>:1647:10]
+module PipelineControl(	// @[<stdin>:1636:10]
   input         io_ifStallReq,	// @[CRRV/src/core/pipeline/PipelineControl.scala:14:14]
                 io_exeStallReq,	// @[CRRV/src/core/pipeline/PipelineControl.scala:14:14]
                 io_memStallReq,	// @[CRRV/src/core/pipeline/PipelineControl.scala:14:14]
@@ -1387,22 +1373,22 @@ module PipelineControl(	// @[<stdin>:1647:10]
       : io_exeStallReq | io_csrHazardFlag
           ? 5'h1C
           : io_loadHazardFlage ? 5'h18 : {io_ifStallReq, 4'h0};	// @[CRRV/src/core/pipeline/PipelineControl.scala:44:23, src/main/scala/chisel3/util/Mux.scala:141:16]
-  assign io_stallIF = stall[4];	// @[<stdin>:1647:10, CRRV/src/core/pipeline/PipelineControl.scala:69:23, src/main/scala/chisel3/util/Mux.scala:141:16]
-  assign io_stallID = stall[3];	// @[<stdin>:1647:10, CRRV/src/core/pipeline/PipelineControl.scala:70:23, src/main/scala/chisel3/util/Mux.scala:141:16]
-  assign io_stallEXE = stall[2];	// @[<stdin>:1647:10, CRRV/src/core/pipeline/PipelineControl.scala:71:23, src/main/scala/chisel3/util/Mux.scala:141:16]
-  assign io_stallMEM = stall[1];	// @[<stdin>:1647:10, CRRV/src/core/pipeline/PipelineControl.scala:72:23, src/main/scala/chisel3/util/Mux.scala:141:16]
-  assign io_stallWB = stall[0];	// @[<stdin>:1647:10, CRRV/src/core/pipeline/PipelineControl.scala:73:23, src/main/scala/chisel3/util/Mux.scala:141:16]
-  assign io_flushAll = |io_exceptType;	// @[<stdin>:1647:10, CRRV/src/core/pipeline/PipelineControl.scala:50:32]
-  assign io_flushIF = (|io_exceptType) | io_idFlushReq;	// @[<stdin>:1647:10, CRRV/src/core/pipeline/PipelineControl.scala:50:32, :59:27]
+  assign io_stallIF = stall[4];	// @[<stdin>:1636:10, CRRV/src/core/pipeline/PipelineControl.scala:69:23, src/main/scala/chisel3/util/Mux.scala:141:16]
+  assign io_stallID = stall[3];	// @[<stdin>:1636:10, CRRV/src/core/pipeline/PipelineControl.scala:70:23, src/main/scala/chisel3/util/Mux.scala:141:16]
+  assign io_stallEXE = stall[2];	// @[<stdin>:1636:10, CRRV/src/core/pipeline/PipelineControl.scala:71:23, src/main/scala/chisel3/util/Mux.scala:141:16]
+  assign io_stallMEM = stall[1];	// @[<stdin>:1636:10, CRRV/src/core/pipeline/PipelineControl.scala:72:23, src/main/scala/chisel3/util/Mux.scala:141:16]
+  assign io_stallWB = stall[0];	// @[<stdin>:1636:10, CRRV/src/core/pipeline/PipelineControl.scala:73:23, src/main/scala/chisel3/util/Mux.scala:141:16]
+  assign io_flushAll = |io_exceptType;	// @[<stdin>:1636:10, CRRV/src/core/pipeline/PipelineControl.scala:50:32]
+  assign io_flushIF = (|io_exceptType) | io_idFlushReq;	// @[<stdin>:1636:10, CRRV/src/core/pipeline/PipelineControl.scala:50:32, :59:27]
   assign io_flushPc =
     (|io_exceptType)
       ? (io_exceptType == 3'h2
            ? io_csrInfo_mepc
            : io_exceptType == 3'h1 ? io_csrInfo_trapEnterVec : 32'h0)
-      : io_idFlushReq ? io_idFlushTarget : 32'h0;	// @[<stdin>:1647:10, CRRV/src/core/pipeline/PipelineControl.scala:14:14, :50:32, :51:44, src/main/scala/chisel3/util/Mux.scala:141:16]
+      : io_idFlushReq ? io_idFlushTarget : 32'h0;	// @[<stdin>:1636:10, CRRV/src/core/pipeline/PipelineControl.scala:14:14, :50:32, :51:44, src/main/scala/chisel3/util/Mux.scala:141:16]
 endmodule
 
-module HazardResolver(	// @[<stdin>:1681:10]
+module HazardResolver(	// @[<stdin>:1670:10]
   input         io_regRead1_en,	// @[CRRV/src/core/pipeline/HazardResolver.scala:13:14]
   input  [4:0]  io_regRead1_addr,	// @[CRRV/src/core/pipeline/HazardResolver.scala:13:14]
   input         io_regRead2_en,	// @[CRRV/src/core/pipeline/HazardResolver.scala:13:14]
@@ -1448,7 +1434,7 @@ module HazardResolver(	// @[<stdin>:1681:10]
                : io_wbForward_en & io_regRead1_addr == io_wbForward_addr
                    ? io_wbForward_data
                    : io_regFile1_data)
-      : 32'h0;	// @[<stdin>:1681:10, CRRV/src/core/pipeline/HazardResolver.scala:33:{18,31,40}, :34:{29,42,66}, :35:19, :36:{35,48,72}, :37:19, :38:{34,47,70}, :39:19, :41:19, :44:17]
+      : 32'h0;	// @[<stdin>:1670:10, CRRV/src/core/pipeline/HazardResolver.scala:33:{18,31,40}, :34:{29,42,66}, :35:19, :36:{35,48,72}, :37:19, :38:{34,47,70}, :39:19, :41:19, :44:17]
   assign io_regRead2_data =
     io_regRead2_en & (|io_regRead2_addr)
       ? (io_exeForward_en & io_regRead2_addr == io_exeForward_addr
@@ -1458,29 +1444,29 @@ module HazardResolver(	// @[<stdin>:1681:10]
                : io_wbForward_en & io_regRead2_addr == io_wbForward_addr
                    ? io_wbForward_data
                    : io_regFile2_data)
-      : 32'h0;	// @[<stdin>:1681:10, CRRV/src/core/pipeline/HazardResolver.scala:33:{18,31,40}, :34:{29,42,66}, :35:19, :36:{35,48,72}, :37:19, :38:{34,47,70}, :39:19, :41:19, :44:17]
-  assign io_csrRead_data = io_regCsr_data;	// @[<stdin>:1681:10]
-  assign io_regFile1_en = io_regRead1_en;	// @[<stdin>:1681:10]
-  assign io_regFile1_addr = io_regRead1_addr;	// @[<stdin>:1681:10]
-  assign io_regFile2_en = io_regRead2_en;	// @[<stdin>:1681:10]
-  assign io_regFile2_addr = io_regRead2_addr;	// @[<stdin>:1681:10]
-  assign io_regCsr_addr = io_csrRead_addr;	// @[<stdin>:1681:10]
+      : 32'h0;	// @[<stdin>:1670:10, CRRV/src/core/pipeline/HazardResolver.scala:33:{18,31,40}, :34:{29,42,66}, :35:19, :36:{35,48,72}, :37:19, :38:{34,47,70}, :39:19, :41:19, :44:17]
+  assign io_csrRead_data = io_regCsr_data;	// @[<stdin>:1670:10]
+  assign io_regFile1_en = io_regRead1_en;	// @[<stdin>:1670:10]
+  assign io_regFile1_addr = io_regRead1_addr;	// @[<stdin>:1670:10]
+  assign io_regFile2_en = io_regRead2_en;	// @[<stdin>:1670:10]
+  assign io_regFile2_addr = io_regRead2_addr;	// @[<stdin>:1670:10]
+  assign io_regCsr_addr = io_csrRead_addr;	// @[<stdin>:1670:10]
   assign io_loadHazardFlag =
     io_regRead1_en
     & (io_exeForward_load & io_regRead1_addr == io_exeForward_addr | io_memForward_load
        & io_regRead1_addr == io_memForward_addr) | io_regRead2_en
     & (io_exeForward_load & io_regRead2_addr == io_exeForward_addr | io_memForward_load
-       & io_regRead2_addr == io_memForward_addr);	// @[<stdin>:1681:10, CRRV/src/core/pipeline/HazardResolver.scala:52:{38,51}, :53:{38,51}, :54:{13,25}, :78:36]
+       & io_regRead2_addr == io_memForward_addr);	// @[<stdin>:1670:10, CRRV/src/core/pipeline/HazardResolver.scala:52:{38,51}, :53:{38,51}, :54:{13,25}, :78:36]
   assign io_csrHazardFlag =
     (|io_csrRead_op) & io_csrRead_op != 3'h2
     & ((|io_memCsrStall_op) & io_memCsrStall_op != 3'h1
        & io_csrRead_addr == io_memCsrStall_addr | (|io_wbCsrStall_op)
-       & io_wbCsrStall_op != 3'h1 & io_csrRead_addr == io_wbCsrStall_addr);	// @[<stdin>:1681:10, CRRV/src/core/pipeline/HazardResolver.scala:58:{26,49}, :59:36, :60:{25,35}, :61:17, :62:34, :63:{24,34}, :64:17, :65:{12,23}]
+       & io_wbCsrStall_op != 3'h1 & io_csrRead_addr == io_wbCsrStall_addr);	// @[<stdin>:1670:10, CRRV/src/core/pipeline/HazardResolver.scala:58:{26,49}, :59:36, :60:{25,35}, :61:17, :62:34, :63:{24,34}, :64:17, :65:{12,23}]
 endmodule
 
-module CsrFile(	// @[<stdin>:1764:10]
-  input         clock,	// @[<stdin>:1765:11]
-                reset,	// @[<stdin>:1766:11]
+module CsrFile(	// @[<stdin>:1753:10]
+  input         clock,	// @[<stdin>:1754:11]
+                reset,	// @[<stdin>:1755:11]
   input  [11:0] io_read_addr,	// @[CRRV/src/core/regfile/CsrFile.scala:12:14]
   input  [2:0]  io_write_op,	// @[CRRV/src/core/regfile/CsrFile.scala:12:14]
   input  [11:0] io_write_addr,	// @[CRRV/src/core/regfile/CsrFile.scala:12:14]
@@ -1508,14 +1494,14 @@ module CsrFile(	// @[<stdin>:1764:10]
   wire        _GEN = io_write_op == 3'h3 | io_write_op == 3'h2;	// @[CRRV/src/core/regfile/CsrFile.scala:35:46]
   wire        _writeData_T_7 = io_write_op == 3'h4;	// @[CRRV/src/core/regfile/CsrFile.scala:35:46]
   wire        _writeData_T_9 = io_write_op == 3'h5;	// @[CRRV/src/core/regfile/CsrFile.scala:35:46]
-  always @(posedge clock) begin	// @[<stdin>:1765:11]
-    if (reset) begin	// @[<stdin>:1765:11]
+  always @(posedge clock) begin	// @[<stdin>:1754:11]
+    if (reset) begin	// @[<stdin>:1754:11]
       mstatus <= 32'h1800;	// @[CRRV/src/core/regfile/CsrFile.scala:19:24]
       mtvec <= 32'h0;	// @[CRRV/src/core/regfile/CsrFile.scala:20:24]
       mepc <= 32'h0;	// @[CRRV/src/core/regfile/CsrFile.scala:20:24, :21:24]
       mcause <= 32'h0;	// @[CRRV/src/core/regfile/CsrFile.scala:20:24, :22:24]
     end
-    else begin	// @[<stdin>:1765:11]
+    else begin	// @[<stdin>:1754:11]
       if ((|io_write_exceptType) | ~(writeEn & io_write_addr == 12'h300)) begin	// @[CRRV/src/core/regfile/CsrFile.scala:19:24, :24:47, :34:51, :44:{28,42}, :49:23, :50:{24,41,51}]
       end
       else if (_writeData_T_9)	// @[CRRV/src/core/regfile/CsrFile.scala:35:46]
@@ -1566,13 +1552,13 @@ module CsrFile(	// @[<stdin>:1764:10]
       end
     end
   end // always @(posedge)
-  assign io_read_data = readData;	// @[<stdin>:1764:10, CRRV/src/core/regfile/CsrFile.scala:24:47]
-  assign io_csrInfo_mepc = mepc;	// @[<stdin>:1764:10, CRRV/src/core/regfile/CsrFile.scala:21:24]
-  assign io_csrInfo_trapEnterVec = mtvec;	// @[<stdin>:1764:10, CRRV/src/core/regfile/CsrFile.scala:20:24]
+  assign io_read_data = readData;	// @[<stdin>:1753:10, CRRV/src/core/regfile/CsrFile.scala:24:47]
+  assign io_csrInfo_mepc = mepc;	// @[<stdin>:1753:10, CRRV/src/core/regfile/CsrFile.scala:21:24]
+  assign io_csrInfo_trapEnterVec = mtvec;	// @[<stdin>:1753:10, CRRV/src/core/regfile/CsrFile.scala:20:24]
 endmodule
 
-module RegFile(	// @[<stdin>:1824:10]
-  input         clock,	// @[<stdin>:1825:11]
+module RegFile(	// @[<stdin>:1813:10]
+  input         clock,	// @[<stdin>:1814:11]
                 io_read1_en,	// @[CRRV/src/core/regfile/RegFile.scala:10:14]
   input  [4:0]  io_read1_addr,	// @[CRRV/src/core/regfile/RegFile.scala:10:14]
   input         io_read2_en,	// @[CRRV/src/core/regfile/RegFile.scala:10:14]
@@ -1588,10 +1574,10 @@ module RegFile(	// @[<stdin>:1824:10]
   wire [31:0] _regfile_ext_R1_data;	// @[CRRV/src/core/regfile/RegFile.scala:15:20]
   regfile_combMem regfile_ext (	// @[CRRV/src/core/regfile/RegFile.scala:15:20]
     .R0_addr (io_read1_addr),
-    .R0_en   (1'h1),	// @[<stdin>:1824:10]
+    .R0_en   (1'h1),	// @[<stdin>:1813:10]
     .R0_clk  (clock),
     .R1_addr (io_read2_addr),
-    .R1_en   (1'h1),	// @[<stdin>:1824:10]
+    .R1_en   (1'h1),	// @[<stdin>:1813:10]
     .R1_clk  (clock),
     .W0_addr (io_write_addr),
     .W0_en   (io_write_en & (|io_write_addr)),	// @[CRRV/src/core/regfile/RegFile.scala:19:{20,37}]
@@ -1600,22 +1586,23 @@ module RegFile(	// @[<stdin>:1824:10]
     .R0_data (_regfile_ext_R0_data),
     .R1_data (_regfile_ext_R1_data)
   );
-  assign io_read1_data = (|io_read1_addr) & io_read1_en ? _regfile_ext_R0_data : 32'h0;	// @[<stdin>:1824:10, CRRV/src/core/regfile/RegFile.scala:15:20, :17:{23,38,46}, :18:23]
-  assign io_read2_data = (|io_read2_addr) & io_read2_en ? _regfile_ext_R1_data : 32'h0;	// @[<stdin>:1824:10, CRRV/src/core/regfile/RegFile.scala:15:20, :18:{23,38,46}]
+  assign io_read1_data = (|io_read1_addr) & io_read1_en ? _regfile_ext_R0_data : 32'h0;	// @[<stdin>:1813:10, CRRV/src/core/regfile/RegFile.scala:15:20, :17:{23,38,46}, :18:23]
+  assign io_read2_data = (|io_read2_addr) & io_read2_en ? _regfile_ext_R1_data : 32'h0;	// @[<stdin>:1813:10, CRRV/src/core/regfile/RegFile.scala:15:20, :18:{23,38,46}]
 endmodule
 
-module Core(	// @[<stdin>:1847:10]
-  input         clock,	// @[<stdin>:1848:11]
-                reset,	// @[<stdin>:1849:11]
-  input  [31:0] io_inst_rdata,	// @[CRRV/src/core/Core.scala:11:14]
-  input         io_inst_valid,	// @[CRRV/src/core/Core.scala:11:14]
-  input  [31:0] io_data_rdata,	// @[CRRV/src/core/Core.scala:11:14]
-  input         io_data_valid,	// @[CRRV/src/core/Core.scala:11:14]
-  output [31:0] io_inst_addr,	// @[CRRV/src/core/Core.scala:11:14]
-  output        io_data_enable,	// @[CRRV/src/core/Core.scala:11:14]
-  output [31:0] io_data_addr,	// @[CRRV/src/core/Core.scala:11:14]
-  output [3:0]  io_data_wen,	// @[CRRV/src/core/Core.scala:11:14]
-  output [31:0] io_data_wdata,	// @[CRRV/src/core/Core.scala:11:14]
+module Core(	// @[<stdin>:1836:10]
+  input         clock,	// @[<stdin>:1837:11]
+                reset,	// @[<stdin>:1838:11]
+                io_inst_out_ready,	// @[CRRV/src/core/Core.scala:11:14]
+  input  [31:0] io_inst_in_rdata,	// @[CRRV/src/core/Core.scala:11:14]
+  input         io_data_out_ready,	// @[CRRV/src/core/Core.scala:11:14]
+  input  [31:0] io_data_in_rdata,	// @[CRRV/src/core/Core.scala:11:14]
+  output [31:0] io_inst_out_bits_addr,	// @[CRRV/src/core/Core.scala:11:14]
+  output        io_data_out_valid,	// @[CRRV/src/core/Core.scala:11:14]
+  output [31:0] io_data_out_bits_addr,	// @[CRRV/src/core/Core.scala:11:14]
+  output        io_data_out_bits_writeEn,	// @[CRRV/src/core/Core.scala:11:14]
+  output [1:0]  io_data_out_bits_size,	// @[CRRV/src/core/Core.scala:11:14]
+  output [31:0] io_data_out_bits_wdata,	// @[CRRV/src/core/Core.scala:11:14]
   output        io_debug_valid,	// @[CRRV/src/core/Core.scala:11:14]
                 io_debug_halt,	// @[CRRV/src/core/Core.scala:11:14]
   output [31:0] io_debug_pc,	// @[CRRV/src/core/Core.scala:11:14]
@@ -1766,9 +1753,9 @@ module Core(	// @[<stdin>:1847:10]
     .io_control_flush      (_pipelineControl_io_flushIF),	// @[CRRV/src/core/Core.scala:27:31]
     .io_control_flushPC    (_pipelineControl_io_flushPc),	// @[CRRV/src/core/Core.scala:27:31]
     .io_control_stall      (_pipelineControl_io_stallIF),	// @[CRRV/src/core/Core.scala:27:31]
-    .io_instRom_valid      (io_inst_valid),
+    .io_instRom_ready      (io_inst_out_ready),
     .io_control_stallReq   (_fetchStage_io_control_stallReq),
-    .io_instRom_addr       (io_inst_addr),
+    .io_instRom_bits_addr  (io_inst_out_bits_addr),
     .io_if2id_IF_instValid (_fetchStage_io_if2id_IF_instValid),
     .io_if2id_IF_pc        (_fetchStage_io_if2id_IF_pc)
   );
@@ -1788,7 +1775,7 @@ module Core(	// @[<stdin>:1847:10]
     .io_if2id_IF_instValid     (_if2id_io_next_IF_instValid),	// @[CRRV/src/core/Core.scala:18:30]
     .io_if2id_IF_pc            (_if2id_io_next_IF_pc),	// @[CRRV/src/core/Core.scala:18:30]
     .io_control_stall          (_pipelineControl_io_stallID),	// @[CRRV/src/core/Core.scala:27:31]
-    .io_readInst               (io_inst_rdata),
+    .io_read_rdata             (io_inst_in_rdata),
     .io_regRead1_data          (_hazardResolver_io_regRead1_data),	// @[CRRV/src/core/Core.scala:28:31]
     .io_regRead2_data          (_hazardResolver_io_regRead2_data),	// @[CRRV/src/core/Core.scala:28:31]
     .io_control_flushIF        (_decodeStage_io_control_flushIF),
@@ -1938,7 +1925,7 @@ module Core(	// @[<stdin>:1847:10]
     .io_exe2mem_ID_exceptType   (_exe2mem_io_next_ID_exceptType),	// @[CRRV/src/core/Core.scala:22:30]
     .io_exe2mem_EXE_load        (_exe2mem_io_next_EXE_load),	// @[CRRV/src/core/Core.scala:22:30]
     .io_exe2mem_EXE_exeResult   (_exe2mem_io_next_EXE_exeResult),	// @[CRRV/src/core/Core.scala:22:30]
-    .io_dataRam_valid           (io_data_valid),
+    .io_dataRam_ready           (io_data_out_ready),
     .io_control_stallReq        (_memoryStage_io_control_stallReq),
     .io_mem2wb_IF_instValid     (_memoryStage_io_mem2wb_IF_instValid),
     .io_mem2wb_IF_pc            (_memoryStage_io_mem2wb_IF_pc),
@@ -1952,10 +1939,11 @@ module Core(	// @[<stdin>:1847:10]
     .io_mem2wb_ID_exceptType    (_memoryStage_io_mem2wb_ID_exceptType),
     .io_mem2wb_EXE_exeResult    (_memoryStage_io_mem2wb_EXE_exeResult),
     .io_mem2wb_MEM_memAddr      (_memoryStage_io_mem2wb_MEM_memAddr),
-    .io_dataRam_enable          (io_data_enable),
-    .io_dataRam_addr            (io_data_addr),
-    .io_dataRam_wen             (io_data_wen),
-    .io_dataRam_wdata           (io_data_wdata),
+    .io_dataRam_valid           (io_data_out_valid),
+    .io_dataRam_bits_addr       (io_data_out_bits_addr),
+    .io_dataRam_bits_writeEn    (io_data_out_bits_writeEn),
+    .io_dataRam_bits_size       (io_data_out_bits_size),
+    .io_dataRam_bits_wdata      (io_data_out_bits_wdata),
     .io_memCsrStall_op          (_memoryStage_io_memCsrStall_op),
     .io_memCsrStall_addr        (_memoryStage_io_memCsrStall_addr),
     .io_regForward_en           (_memoryStage_io_regForward_en),
@@ -2007,7 +1995,7 @@ module Core(	// @[<stdin>:1847:10]
     .io_mem2wb_ID_exceptType   (_mem2wb_io_next_ID_exceptType),	// @[CRRV/src/core/Core.scala:24:30]
     .io_mem2wb_EXE_exeResult   (_mem2wb_io_next_EXE_exeResult),	// @[CRRV/src/core/Core.scala:24:30]
     .io_mem2wb_MEM_memAddr     (_mem2wb_io_next_MEM_memAddr),	// @[CRRV/src/core/Core.scala:24:30]
-    .io_readData               (io_data_rdata),
+    .io_read_rdata             (io_data_in_rdata),
     .io_wb2csr_op              (_writeBackStage_io_wb2csr_op),
     .io_wb2csr_addr            (_writeBackStage_io_wb2csr_addr),
     .io_wb2csr_data            (_writeBackStage_io_wb2csr_data),
@@ -2106,159 +2094,183 @@ module Core(	// @[<stdin>:1847:10]
   );
 endmodule
 
-module SimpleArbiter(	// @[<stdin>:1959:10]
-  input         clock,	// @[<stdin>:1960:11]
-                reset,	// @[<stdin>:1961:11]
-  input  [31:0] io_simpleInst_addr,	// @[CRRV/src/bus/SimpleArbiter.scala:13:14]
-  input         io_simpleData_enable,	// @[CRRV/src/bus/SimpleArbiter.scala:13:14]
-  input  [31:0] io_simpleData_addr,	// @[CRRV/src/bus/SimpleArbiter.scala:13:14]
-  input  [3:0]  io_simpleData_wen,	// @[CRRV/src/bus/SimpleArbiter.scala:13:14]
-  input  [31:0] io_simpleData_wdata,	// @[CRRV/src/bus/SimpleArbiter.scala:13:14]
-                io_simpleOut_rdata,	// @[CRRV/src/bus/SimpleArbiter.scala:13:14]
-  input         io_simpleOut_valid,	// @[CRRV/src/bus/SimpleArbiter.scala:13:14]
-  output [31:0] io_simpleInst_rdata,	// @[CRRV/src/bus/SimpleArbiter.scala:13:14]
-  output        io_simpleInst_valid,	// @[CRRV/src/bus/SimpleArbiter.scala:13:14]
-  output [31:0] io_simpleData_rdata,	// @[CRRV/src/bus/SimpleArbiter.scala:13:14]
-  output        io_simpleData_valid,	// @[CRRV/src/bus/SimpleArbiter.scala:13:14]
-                io_simpleOut_enable,	// @[CRRV/src/bus/SimpleArbiter.scala:13:14]
-  output [31:0] io_simpleOut_addr,	// @[CRRV/src/bus/SimpleArbiter.scala:13:14]
-  output [3:0]  io_simpleOut_wen,	// @[CRRV/src/bus/SimpleArbiter.scala:13:14]
-  output [31:0] io_simpleOut_wdata	// @[CRRV/src/bus/SimpleArbiter.scala:13:14]
+module SimpleArbiter(	// @[<stdin>:1942:10]
+  input         clock,	// @[<stdin>:1943:11]
+                reset,	// @[<stdin>:1944:11]
+  input  [31:0] io_simpleInst_out_bits_addr,	// @[CRRV/src/bus/SimpleArbiter.scala:13:14]
+  input         io_simpleData_out_valid,	// @[CRRV/src/bus/SimpleArbiter.scala:13:14]
+  input  [31:0] io_simpleData_out_bits_addr,	// @[CRRV/src/bus/SimpleArbiter.scala:13:14]
+  input         io_simpleData_out_bits_writeEn,	// @[CRRV/src/bus/SimpleArbiter.scala:13:14]
+  input  [1:0]  io_simpleData_out_bits_size,	// @[CRRV/src/bus/SimpleArbiter.scala:13:14]
+  input  [31:0] io_simpleData_out_bits_wdata,	// @[CRRV/src/bus/SimpleArbiter.scala:13:14]
+  input         io_simpleOut_out_ready,	// @[CRRV/src/bus/SimpleArbiter.scala:13:14]
+  input  [31:0] io_simpleOut_in_rdata,	// @[CRRV/src/bus/SimpleArbiter.scala:13:14]
+  output        io_simpleInst_out_ready,	// @[CRRV/src/bus/SimpleArbiter.scala:13:14]
+  output [31:0] io_simpleInst_in_rdata,	// @[CRRV/src/bus/SimpleArbiter.scala:13:14]
+  output        io_simpleData_out_ready,	// @[CRRV/src/bus/SimpleArbiter.scala:13:14]
+  output [31:0] io_simpleData_in_rdata,	// @[CRRV/src/bus/SimpleArbiter.scala:13:14]
+  output        io_simpleOut_out_valid,	// @[CRRV/src/bus/SimpleArbiter.scala:13:14]
+  output [31:0] io_simpleOut_out_bits_addr,	// @[CRRV/src/bus/SimpleArbiter.scala:13:14]
+  output        io_simpleOut_out_bits_writeEn,	// @[CRRV/src/bus/SimpleArbiter.scala:13:14]
+  output [1:0]  io_simpleOut_out_bits_size,	// @[CRRV/src/bus/SimpleArbiter.scala:13:14]
+  output [31:0] io_simpleOut_out_bits_wdata	// @[CRRV/src/bus/SimpleArbiter.scala:13:14]
 );
 
-  wire       _io_simpleData_valid_output;	// @[CRRV/src/bus/SimpleArbiter.scala:52:34]
-  wire       _io_simpleInst_valid_output;	// @[CRRV/src/bus/SimpleArbiter.scala:49:34]
-  reg  [2:0] casez_tmp;	// @[CRRV/src/bus/SimpleArbiter.scala:23:17, :25:34]
+  wire       _io_simpleData_out_ready_output;	// @[CRRV/src/bus/SimpleArbiter.scala:52:38]
+  wire       _io_simpleInst_out_ready_output;	// @[CRRV/src/bus/SimpleArbiter.scala:49:38]
+  reg  [2:0] casez_tmp;	// @[CRRV/src/bus/SimpleArbiter.scala:23:17, :25:37]
   reg  [2:0] state;	// @[CRRV/src/bus/SimpleArbiter.scala:21:46]
-  always_comb begin	// @[CRRV/src/bus/SimpleArbiter.scala:21:46, :23:17, :25:34, :29:33, :34:33, :39:13, :42:13]
-    casez (state)	// @[CRRV/src/bus/SimpleArbiter.scala:21:46, :23:17, :25:34, :29:33, :34:33, :39:13, :42:13]
+  always_comb begin	// @[CRRV/src/bus/SimpleArbiter.scala:21:46, :23:17, :25:37, :29:36, :34:36, :39:13, :42:13]
+    casez (state)	// @[CRRV/src/bus/SimpleArbiter.scala:21:46, :23:17, :25:37, :29:36, :34:36, :39:13, :42:13]
       3'b000:
-        casez_tmp = io_simpleData_enable ? 3'h2 : 3'h1;	// @[CRRV/src/bus/SimpleArbiter.scala:21:46, :23:17, :25:{34,42}, :26:{41,49}, :29:33, :34:33, :39:13, :42:13]
+        casez_tmp = io_simpleData_out_valid ? 3'h2 : 3'h1;	// @[CRRV/src/bus/SimpleArbiter.scala:21:46, :23:17, :25:{37,45}, :26:{44,52}, :29:36, :34:36, :39:13, :42:13]
       3'b001:
-        casez_tmp = _io_simpleInst_valid_output ? 3'h3 : state;	// @[CRRV/src/bus/SimpleArbiter.scala:21:46, :23:17, :25:34, :29:33, :30:15, :34:33, :39:13, :42:13, :49:34]
+        casez_tmp = _io_simpleInst_out_ready_output ? 3'h3 : state;	// @[CRRV/src/bus/SimpleArbiter.scala:21:46, :23:17, :25:37, :29:36, :30:15, :34:36, :39:13, :42:13, :49:38]
       3'b010:
-        casez_tmp = _io_simpleData_valid_output ? 3'h4 : state;	// @[CRRV/src/bus/SimpleArbiter.scala:21:46, :23:17, :25:34, :29:33, :34:33, :35:15, :39:13, :42:13, :52:34]
+        casez_tmp =
+          _io_simpleData_out_ready_output & io_simpleData_out_valid ? 3'h4 : state;	// @[CRRV/src/bus/SimpleArbiter.scala:21:46, :23:17, :25:37, :29:36, :34:36, :35:15, :39:13, :42:13, :52:38, src/main/scala/chisel3/util/Decoupled.scala:52:35]
       3'b011:
-        casez_tmp = 3'h0;	// @[CRRV/src/bus/SimpleArbiter.scala:21:46, :23:17, :25:34, :29:33, :34:33, :39:13, :42:13]
+        casez_tmp = 3'h0;	// @[CRRV/src/bus/SimpleArbiter.scala:21:46, :23:17, :25:37, :29:36, :34:36, :39:13, :42:13]
       3'b100:
-        casez_tmp = 3'h0;	// @[CRRV/src/bus/SimpleArbiter.scala:21:46, :23:17, :25:34, :29:33, :34:33, :39:13, :42:13]
+        casez_tmp = 3'h0;	// @[CRRV/src/bus/SimpleArbiter.scala:21:46, :23:17, :25:37, :29:36, :34:36, :39:13, :42:13]
       3'b101:
-        casez_tmp = state;	// @[CRRV/src/bus/SimpleArbiter.scala:21:46, :23:17, :25:34, :29:33, :34:33, :39:13, :42:13]
+        casez_tmp = state;	// @[CRRV/src/bus/SimpleArbiter.scala:21:46, :23:17, :25:37, :29:36, :34:36, :39:13, :42:13]
       3'b110:
-        casez_tmp = state;	// @[CRRV/src/bus/SimpleArbiter.scala:21:46, :23:17, :25:34, :29:33, :34:33, :39:13, :42:13]
+        casez_tmp = state;	// @[CRRV/src/bus/SimpleArbiter.scala:21:46, :23:17, :25:37, :29:36, :34:36, :39:13, :42:13]
       default:
-        casez_tmp = state;	// @[CRRV/src/bus/SimpleArbiter.scala:21:46, :23:17, :25:34, :29:33, :34:33, :39:13, :42:13]
-    endcase	// @[CRRV/src/bus/SimpleArbiter.scala:21:46, :23:17, :25:34, :29:33, :34:33, :39:13, :42:13]
+        casez_tmp = state;	// @[CRRV/src/bus/SimpleArbiter.scala:21:46, :23:17, :25:37, :29:36, :34:36, :39:13, :42:13]
+    endcase	// @[CRRV/src/bus/SimpleArbiter.scala:21:46, :23:17, :25:37, :29:36, :34:36, :39:13, :42:13]
   end // always_comb
-  wire       selInst = state == 3'h1 | state == 3'h3;	// @[CRRV/src/bus/SimpleArbiter.scala:21:46, :26:{41,49}, :30:15, :46:{24,35,45}]
-  wire       selData = state == 3'h2 | state == 3'h4;	// @[CRRV/src/bus/SimpleArbiter.scala:21:46, :25:42, :35:15, :47:{24,35,45}]
-  assign _io_simpleInst_valid_output = selInst & io_simpleOut_valid;	// @[CRRV/src/bus/SimpleArbiter.scala:46:35, :49:34]
-  assign _io_simpleData_valid_output = selData & io_simpleOut_valid;	// @[CRRV/src/bus/SimpleArbiter.scala:47:35, :52:34]
-  always @(posedge clock) begin	// @[<stdin>:1960:11]
-    if (reset)	// @[<stdin>:1960:11]
+  wire       _io_simpleOut_out_valid_T = state == 3'h1;	// @[CRRV/src/bus/SimpleArbiter.scala:21:46, :26:{44,52}, :46:24]
+  wire       _io_simpleOut_out_valid_T_1 = state == 3'h2;	// @[CRRV/src/bus/SimpleArbiter.scala:21:46, :25:45, :47:24]
+  wire       selData = _io_simpleOut_out_valid_T_1 | state == 3'h4;	// @[CRRV/src/bus/SimpleArbiter.scala:21:46, :35:15, :47:{24,35,45}]
+  assign _io_simpleInst_out_ready_output =
+    (_io_simpleOut_out_valid_T | state == 3'h3) & io_simpleOut_out_ready;	// @[CRRV/src/bus/SimpleArbiter.scala:21:46, :30:15, :46:{24,35,45}, :49:38]
+  assign _io_simpleData_out_ready_output = selData & io_simpleOut_out_ready;	// @[CRRV/src/bus/SimpleArbiter.scala:47:35, :52:38]
+  always @(posedge clock) begin	// @[<stdin>:1943:11]
+    if (reset)	// @[<stdin>:1943:11]
       state <= 3'h0;	// @[CRRV/src/bus/SimpleArbiter.scala:21:46]
-    else	// @[<stdin>:1960:11]
-      state <= casez_tmp;	// @[CRRV/src/bus/SimpleArbiter.scala:21:46, :23:17, :25:34]
+    else	// @[<stdin>:1943:11]
+      state <= casez_tmp;	// @[CRRV/src/bus/SimpleArbiter.scala:21:46, :23:17, :25:37]
   end // always @(posedge)
-  assign io_simpleInst_rdata = io_simpleOut_rdata;	// @[<stdin>:1959:10]
-  assign io_simpleInst_valid = _io_simpleInst_valid_output;	// @[<stdin>:1959:10, CRRV/src/bus/SimpleArbiter.scala:49:34]
-  assign io_simpleData_rdata = io_simpleOut_rdata;	// @[<stdin>:1959:10]
-  assign io_simpleData_valid = _io_simpleData_valid_output;	// @[<stdin>:1959:10, CRRV/src/bus/SimpleArbiter.scala:52:34]
-  assign io_simpleOut_enable = selInst | selData & io_simpleData_enable;	// @[<stdin>:1959:10, CRRV/src/bus/SimpleArbiter.scala:46:35, :47:35, src/main/scala/chisel3/util/Mux.scala:141:16]
-  assign io_simpleOut_addr = selData ? io_simpleData_addr : io_simpleInst_addr;	// @[<stdin>:1959:10, CRRV/src/bus/SimpleArbiter.scala:47:35, :63:28]
-  assign io_simpleOut_wen = selData ? io_simpleData_wen : 4'h0;	// @[<stdin>:1959:10, CRRV/src/bus/SimpleArbiter.scala:13:14, :47:35, :62:28]
-  assign io_simpleOut_wdata = selData ? io_simpleData_wdata : 32'h0;	// @[<stdin>:1959:10, CRRV/src/bus/SimpleArbiter.scala:13:14, :47:35, :64:28]
+  assign io_simpleInst_out_ready = _io_simpleInst_out_ready_output;	// @[<stdin>:1942:10, CRRV/src/bus/SimpleArbiter.scala:49:38]
+  assign io_simpleInst_in_rdata = io_simpleOut_in_rdata;	// @[<stdin>:1942:10]
+  assign io_simpleData_out_ready = _io_simpleData_out_ready_output;	// @[<stdin>:1942:10, CRRV/src/bus/SimpleArbiter.scala:52:38]
+  assign io_simpleData_in_rdata = io_simpleOut_in_rdata;	// @[<stdin>:1942:10]
+  assign io_simpleOut_out_valid = _io_simpleOut_out_valid_T | _io_simpleOut_out_valid_T_1;	// @[<stdin>:1942:10, CRRV/src/bus/SimpleArbiter.scala:46:24, :47:24, :55:52]
+  assign io_simpleOut_out_bits_addr =
+    selData ? io_simpleData_out_bits_addr : io_simpleInst_out_bits_addr;	// @[<stdin>:1942:10, CRRV/src/bus/SimpleArbiter.scala:47:35, :57:39]
+  assign io_simpleOut_out_bits_writeEn = selData & io_simpleData_out_bits_writeEn;	// @[<stdin>:1942:10, CRRV/src/bus/SimpleArbiter.scala:47:35, :58:39]
+  assign io_simpleOut_out_bits_size = selData ? io_simpleData_out_bits_size : 2'h2;	// @[<stdin>:1942:10, CRRV/src/bus/SimpleArbiter.scala:13:14, :47:35, :56:39]
+  assign io_simpleOut_out_bits_wdata = selData ? io_simpleData_out_bits_wdata : 32'h0;	// @[<stdin>:1942:10, CRRV/src/bus/SimpleArbiter.scala:13:14, :47:35, :59:39]
 endmodule
 
-module Simple2AXI4(	// @[<stdin>:2013:10]
-  input         clock,	// @[<stdin>:2014:11]
-                reset,	// @[<stdin>:2015:11]
-                io_simple_enable,	// @[CRRV/src/bus/Simple2AXI4.scala:13:14]
-  input  [31:0] io_simple_addr,	// @[CRRV/src/bus/Simple2AXI4.scala:13:14]
-  input  [3:0]  io_simple_wen,	// @[CRRV/src/bus/Simple2AXI4.scala:13:14]
-  input  [31:0] io_simple_wdata,	// @[CRRV/src/bus/Simple2AXI4.scala:13:14]
-  input         io_axi_ar_ready,	// @[CRRV/src/bus/Simple2AXI4.scala:13:14]
-                io_axi_r_valid,	// @[CRRV/src/bus/Simple2AXI4.scala:13:14]
-  input  [63:0] io_axi_r_bits_data,	// @[CRRV/src/bus/Simple2AXI4.scala:13:14]
-  input         io_axi_r_bits_last,	// @[CRRV/src/bus/Simple2AXI4.scala:13:14]
-                io_axi_aw_ready,	// @[CRRV/src/bus/Simple2AXI4.scala:13:14]
-                io_axi_w_ready,	// @[CRRV/src/bus/Simple2AXI4.scala:13:14]
-  output [31:0] io_simple_rdata,	// @[CRRV/src/bus/Simple2AXI4.scala:13:14]
-  output        io_simple_valid,	// @[CRRV/src/bus/Simple2AXI4.scala:13:14]
-                io_axi_ar_valid,	// @[CRRV/src/bus/Simple2AXI4.scala:13:14]
-  output [31:0] io_axi_ar_bits_addr,	// @[CRRV/src/bus/Simple2AXI4.scala:13:14]
-  output        io_axi_aw_valid,	// @[CRRV/src/bus/Simple2AXI4.scala:13:14]
-  output [31:0] io_axi_aw_bits_addr,	// @[CRRV/src/bus/Simple2AXI4.scala:13:14]
-  output        io_axi_w_valid,	// @[CRRV/src/bus/Simple2AXI4.scala:13:14]
-  output [63:0] io_axi_w_bits_data,	// @[CRRV/src/bus/Simple2AXI4.scala:13:14]
-  output [7:0]  io_axi_w_bits_strb,	// @[CRRV/src/bus/Simple2AXI4.scala:13:14]
-  output        io_axi_w_bits_last	// @[CRRV/src/bus/Simple2AXI4.scala:13:14]
+module Simple2AXI4(	// @[<stdin>:2001:10]
+  input         clock,	// @[<stdin>:2002:11]
+                reset,	// @[<stdin>:2003:11]
+                io_simple_out_valid,	// @[CRRV/src/bus/Simple2AXI4.scala:14:14]
+  input  [31:0] io_simple_out_bits_addr,	// @[CRRV/src/bus/Simple2AXI4.scala:14:14]
+  input         io_simple_out_bits_writeEn,	// @[CRRV/src/bus/Simple2AXI4.scala:14:14]
+  input  [1:0]  io_simple_out_bits_size,	// @[CRRV/src/bus/Simple2AXI4.scala:14:14]
+  input  [31:0] io_simple_out_bits_wdata,	// @[CRRV/src/bus/Simple2AXI4.scala:14:14]
+  input         io_axi_ar_ready,	// @[CRRV/src/bus/Simple2AXI4.scala:14:14]
+                io_axi_r_valid,	// @[CRRV/src/bus/Simple2AXI4.scala:14:14]
+  input  [63:0] io_axi_r_bits_data,	// @[CRRV/src/bus/Simple2AXI4.scala:14:14]
+  input         io_axi_r_bits_last,	// @[CRRV/src/bus/Simple2AXI4.scala:14:14]
+                io_axi_aw_ready,	// @[CRRV/src/bus/Simple2AXI4.scala:14:14]
+                io_axi_w_ready,	// @[CRRV/src/bus/Simple2AXI4.scala:14:14]
+  output        io_simple_out_ready,	// @[CRRV/src/bus/Simple2AXI4.scala:14:14]
+  output [31:0] io_simple_in_rdata,	// @[CRRV/src/bus/Simple2AXI4.scala:14:14]
+  output        io_axi_ar_valid,	// @[CRRV/src/bus/Simple2AXI4.scala:14:14]
+  output [31:0] io_axi_ar_bits_addr,	// @[CRRV/src/bus/Simple2AXI4.scala:14:14]
+  output [2:0]  io_axi_ar_bits_size,	// @[CRRV/src/bus/Simple2AXI4.scala:14:14]
+  output        io_axi_aw_valid,	// @[CRRV/src/bus/Simple2AXI4.scala:14:14]
+  output [31:0] io_axi_aw_bits_addr,	// @[CRRV/src/bus/Simple2AXI4.scala:14:14]
+  output [2:0]  io_axi_aw_bits_size,	// @[CRRV/src/bus/Simple2AXI4.scala:14:14]
+  output        io_axi_w_valid,	// @[CRRV/src/bus/Simple2AXI4.scala:14:14]
+  output [63:0] io_axi_w_bits_data,	// @[CRRV/src/bus/Simple2AXI4.scala:14:14]
+  output [7:0]  io_axi_w_bits_strb,	// @[CRRV/src/bus/Simple2AXI4.scala:14:14]
+  output        io_axi_w_bits_last	// @[CRRV/src/bus/Simple2AXI4.scala:14:14]
 );
 
-  reg  [2:0]  casez_tmp;	// @[CRRV/src/bus/Simple2AXI4.scala:26:17, :28:30]
-  reg  [2:0]  state;	// @[CRRV/src/bus/Simple2AXI4.scala:21:30]
-  reg  [31:0] rdata;	// @[CRRV/src/bus/Simple2AXI4.scala:23:18]
-  reg  [31:0] addr;	// @[CRRV/src/bus/Simple2AXI4.scala:24:18]
-  wire        _GEN = io_axi_r_valid & io_axi_r_bits_last;	// @[CRRV/src/bus/Simple2AXI4.scala:39:27]
-  always_comb begin	// @[CRRV/src/bus/Simple2AXI4.scala:21:30, :26:17, :28:30, :34:29, :39:50, :46:48, :53:28, :58:13]
-    casez (state)	// @[CRRV/src/bus/Simple2AXI4.scala:21:30, :26:17, :28:30, :34:29, :39:50, :46:48, :53:28, :58:13]
+  reg  [2:0]  casez_tmp;	// @[CRRV/src/bus/Simple2AXI4.scala:27:17, :29:33]
+  reg  [14:0] casez_tmp_0;	// @[CRRV/src/bus/Simple2AXI4.scala:67:39]
+  reg  [2:0]  state;	// @[CRRV/src/bus/Simple2AXI4.scala:22:30]
+  reg  [63:0] rdata;	// @[CRRV/src/bus/Simple2AXI4.scala:24:18]
+  reg  [31:0] addr;	// @[CRRV/src/bus/Simple2AXI4.scala:25:18]
+  wire        _GEN = io_axi_r_valid & io_axi_r_bits_last;	// @[CRRV/src/bus/Simple2AXI4.scala:40:27]
+  always_comb begin	// @[CRRV/src/bus/Simple2AXI4.scala:22:30, :27:17, :29:33, :35:29, :40:50, :46:48, :53:28, :58:13]
+    casez (state)	// @[CRRV/src/bus/Simple2AXI4.scala:22:30, :27:17, :29:33, :35:29, :40:50, :46:48, :53:28, :58:13]
       3'b000:
-        casez_tmp = io_simple_enable ? {1'h0, |io_simple_wen, 1'h1} : state;	// @[CRRV/src/bus/Simple2AXI4.scala:21:30, :26:17, :28:30, :29:{15,21,36}, :34:29, :39:50, :46:48, :53:28, :58:13]
+        casez_tmp =
+          io_simple_out_valid ? {1'h0, io_simple_out_bits_writeEn, 1'h1} : state;	// @[CRRV/src/bus/Simple2AXI4.scala:22:30, :27:17, :29:33, :30:{15,21}, :35:29, :40:50, :46:48, :53:28, :58:13, :67:39]
       3'b001:
-        casez_tmp = io_axi_ar_ready ? 3'h2 : state;	// @[CRRV/src/bus/Simple2AXI4.scala:21:30, :26:17, :28:30, :34:29, :35:15, :39:50, :46:48, :53:28, :58:13]
+        casez_tmp = io_axi_ar_ready ? 3'h2 : state;	// @[CRRV/src/bus/Simple2AXI4.scala:22:30, :27:17, :29:33, :35:29, :36:15, :40:50, :46:48, :53:28, :58:13]
       3'b010:
-        casez_tmp = _GEN ? 3'h5 : state;	// @[CRRV/src/bus/Simple2AXI4.scala:21:30, :26:17, :28:30, :34:29, :39:{27,50}, :42:15, :46:48, :53:28, :58:13]
+        casez_tmp = _GEN ? 3'h5 : state;	// @[CRRV/src/bus/Simple2AXI4.scala:22:30, :27:17, :29:33, :35:29, :40:{27,50}, :42:15, :46:48, :53:28, :58:13]
       3'b011:
         casez_tmp =
           io_axi_aw_ready & ~io_axi_w_ready
             ? 3'h4
-            : io_axi_aw_ready & io_axi_w_ready ? 3'h5 : state;	// @[CRRV/src/bus/Simple2AXI4.scala:21:30, :26:17, :28:30, :34:29, :39:50, :41:26, :42:15, :46:{28,31,48}, :47:15, :48:{34,53}, :49:15, :53:28, :58:13]
+            : io_axi_aw_ready & io_axi_w_ready ? 3'h5 : state;	// @[CRRV/src/bus/Simple2AXI4.scala:22:30, :27:17, :29:33, :35:29, :40:50, :42:15, :46:{28,31,48}, :47:15, :48:{34,53}, :49:15, :53:28, :58:13]
       3'b100:
-        casez_tmp = io_axi_w_ready ? 3'h5 : state;	// @[CRRV/src/bus/Simple2AXI4.scala:21:30, :26:17, :28:30, :34:29, :39:50, :42:15, :46:48, :53:28, :54:15, :58:13]
+        casez_tmp = io_axi_w_ready ? 3'h5 : state;	// @[CRRV/src/bus/Simple2AXI4.scala:22:30, :27:17, :29:33, :35:29, :40:50, :42:15, :46:48, :53:28, :54:15, :58:13]
       3'b101:
-        casez_tmp = 3'h0;	// @[CRRV/src/bus/Simple2AXI4.scala:21:30, :26:17, :28:30, :34:29, :39:50, :46:48, :53:28, :58:13]
+        casez_tmp = 3'h0;	// @[CRRV/src/bus/Simple2AXI4.scala:22:30, :27:17, :29:33, :35:29, :40:50, :46:48, :53:28, :58:13]
       3'b110:
-        casez_tmp = state;	// @[CRRV/src/bus/Simple2AXI4.scala:21:30, :26:17, :28:30, :34:29, :39:50, :46:48, :53:28, :58:13]
+        casez_tmp = state;	// @[CRRV/src/bus/Simple2AXI4.scala:22:30, :27:17, :29:33, :35:29, :40:50, :46:48, :53:28, :58:13]
       default:
-        casez_tmp = state;	// @[CRRV/src/bus/Simple2AXI4.scala:21:30, :26:17, :28:30, :34:29, :39:50, :46:48, :53:28, :58:13]
-    endcase	// @[CRRV/src/bus/Simple2AXI4.scala:21:30, :26:17, :28:30, :34:29, :39:50, :46:48, :53:28, :58:13]
+        casez_tmp = state;	// @[CRRV/src/bus/Simple2AXI4.scala:22:30, :27:17, :29:33, :35:29, :40:50, :46:48, :53:28, :58:13]
+    endcase	// @[CRRV/src/bus/Simple2AXI4.scala:22:30, :27:17, :29:33, :35:29, :40:50, :46:48, :53:28, :58:13]
   end // always_comb
-  wire        _io_axi_w_bits_last_T = state == 3'h3;	// @[CRRV/src/bus/Simple2AXI4.scala:21:30, :29:21, :72:33]
-  wire        _io_axi_w_bits_last_T_1 = state == 3'h4;	// @[CRRV/src/bus/Simple2AXI4.scala:21:30, :41:26, :75:53]
-  wire        _GEN_0 = state == 3'h0;	// @[CRRV/src/bus/Simple2AXI4.scala:21:30, :26:17]
-  always @(posedge clock) begin	// @[<stdin>:2014:11]
-    if (reset)	// @[<stdin>:2014:11]
-      state <= 3'h0;	// @[CRRV/src/bus/Simple2AXI4.scala:21:30]
-    else	// @[<stdin>:2014:11]
-      state <= casez_tmp;	// @[CRRV/src/bus/Simple2AXI4.scala:21:30, :26:17, :28:30]
-    if (_GEN_0 | state == 3'h1 | ~(state == 3'h2 & _GEN)) begin	// @[CRRV/src/bus/Simple2AXI4.scala:21:30, :23:18, :26:17, :29:21, :35:15, :39:{27,50}, :40:15]
+  wire [14:0] _GEN_0 = {12'h0, addr[2:0]};	// @[CRRV/src/bus/Simple2AXI4.scala:25:18, :69:{30,37}]
+  always_comb begin	// @[CRRV/src/bus/Simple2AXI4.scala:67:39]
+    casez (io_simple_out_bits_size)	// @[CRRV/src/bus/Simple2AXI4.scala:67:39]
+      2'b00:
+        casez_tmp_0 = 15'h1 << _GEN_0;	// @[CRRV/src/bus/Simple2AXI4.scala:67:39, :69:30]
+      2'b01:
+        casez_tmp_0 = 15'h3 << _GEN_0;	// @[CRRV/src/bus/Simple2AXI4.scala:67:39, :69:30, :70:30]
+      2'b10:
+        casez_tmp_0 = 15'hF << _GEN_0;	// @[CRRV/src/bus/Simple2AXI4.scala:67:39, :69:30, :71:30]
+      default:
+        casez_tmp_0 = 15'h0;	// @[CRRV/src/bus/Simple2AXI4.scala:67:39]
+    endcase	// @[CRRV/src/bus/Simple2AXI4.scala:67:39]
+  end // always_comb
+  wire [2:0]  _GEN_1 = {1'h0, io_simple_out_bits_size};	// @[CRRV/src/bus/Simple2AXI4.scala:67:39, :78:24]
+  wire        _io_axi_w_bits_last_T = state == 3'h3;	// @[CRRV/src/bus/Simple2AXI4.scala:22:30, :30:21, :80:33]
+  wire        _io_axi_w_bits_last_T_1 = state == 3'h4;	// @[CRRV/src/bus/Simple2AXI4.scala:22:30, :47:15, :83:53]
+  wire        _GEN_2 = state == 3'h0;	// @[CRRV/src/bus/Simple2AXI4.scala:22:30, :27:17]
+  always @(posedge clock) begin	// @[<stdin>:2002:11]
+    if (reset)	// @[<stdin>:2002:11]
+      state <= 3'h0;	// @[CRRV/src/bus/Simple2AXI4.scala:22:30]
+    else	// @[<stdin>:2002:11]
+      state <= casez_tmp;	// @[CRRV/src/bus/Simple2AXI4.scala:22:30, :27:17, :29:33]
+    if (_GEN_2 | state == 3'h1 | ~(state == 3'h2 & _GEN)) begin	// @[CRRV/src/bus/Simple2AXI4.scala:22:30, :24:18, :27:17, :30:21, :36:15, :40:{27,50}, :41:15]
     end
-    else if (addr[2:0] == 3'h4)	// @[CRRV/src/bus/Simple2AXI4.scala:24:18, :41:{19,26}]
-      rdata <= io_axi_r_bits_data[63:32];	// @[CRRV/src/bus/Simple2AXI4.scala:23:18, :41:58]
-    else	// @[CRRV/src/bus/Simple2AXI4.scala:41:26]
-      rdata <= io_axi_r_bits_data[31:0];	// @[CRRV/src/bus/Simple2AXI4.scala:23:18, :41:86]
-    if (_GEN_0 & io_simple_enable)	// @[CRRV/src/bus/Simple2AXI4.scala:24:18, :26:17, :28:30, :30:15]
-      addr <= io_simple_addr;	// @[CRRV/src/bus/Simple2AXI4.scala:24:18]
+    else	// @[CRRV/src/bus/Simple2AXI4.scala:24:18, :27:17]
+      rdata <= io_axi_r_bits_data;	// @[CRRV/src/bus/Simple2AXI4.scala:24:18]
+    if (_GEN_2 & io_simple_out_valid)	// @[CRRV/src/bus/Simple2AXI4.scala:25:18, :27:17, :29:33, :31:15]
+      addr <= io_simple_out_bits_addr;	// @[CRRV/src/bus/Simple2AXI4.scala:25:18]
   end // always @(posedge)
-  assign io_simple_rdata = rdata;	// @[<stdin>:2013:10, CRRV/src/bus/Simple2AXI4.scala:23:18]
-  assign io_simple_valid = state == 3'h5 & addr == io_simple_addr;	// @[<stdin>:2013:10, CRRV/src/bus/Simple2AXI4.scala:21:30, :24:18, :42:15, :62:{29,39,48}]
-  assign io_axi_ar_valid = state == 3'h1;	// @[<stdin>:2013:10, CRRV/src/bus/Simple2AXI4.scala:21:30, :29:21, :67:33]
-  assign io_axi_ar_bits_addr = addr;	// @[<stdin>:2013:10, CRRV/src/bus/Simple2AXI4.scala:24:18]
-  assign io_axi_aw_valid = _io_axi_w_bits_last_T;	// @[<stdin>:2013:10, CRRV/src/bus/Simple2AXI4.scala:72:33]
-  assign io_axi_aw_bits_addr = addr;	// @[<stdin>:2013:10, CRRV/src/bus/Simple2AXI4.scala:24:18]
-  assign io_axi_w_valid = _io_axi_w_bits_last_T | _io_axi_w_bits_last_T_1;	// @[<stdin>:2013:10, CRRV/src/bus/Simple2AXI4.scala:72:33, :75:{44,53}]
-  assign io_axi_w_bits_data =
-    addr[2:0] == 3'h4 ? {io_simple_wdata, 32'h0} : {32'h0, io_simple_wdata};	// @[<stdin>:2013:10, CRRV/src/bus/Simple2AXI4.scala:24:18, :41:26, :76:{30,35,42,73}]
-  assign io_axi_w_bits_strb =
-    addr[2:0] == 3'h4 ? {io_simple_wen, 4'h0} : {4'h0, io_simple_wen};	// @[<stdin>:2013:10, CRRV/src/bus/Simple2AXI4.scala:24:18, :29:36, :41:26, :76:35, :78:{30,42,71}]
-  assign io_axi_w_bits_last = _io_axi_w_bits_last_T | _io_axi_w_bits_last_T_1;	// @[<stdin>:2013:10, CRRV/src/bus/Simple2AXI4.scala:72:33, :75:53, :77:44]
+  assign io_simple_out_ready = state == 3'h5 & addr == io_simple_out_bits_addr;	// @[<stdin>:2001:10, CRRV/src/bus/Simple2AXI4.scala:22:30, :25:18, :42:15, :62:{33,43,52}]
+  assign io_simple_in_rdata = addr[2] ? rdata[63:32] : rdata[31:0];	// @[<stdin>:2001:10, CRRV/src/bus/Simple2AXI4.scala:24:18, :25:18, :63:{29,34,44,59}]
+  assign io_axi_ar_valid = state == 3'h1;	// @[<stdin>:2001:10, CRRV/src/bus/Simple2AXI4.scala:22:30, :30:21, :76:33]
+  assign io_axi_ar_bits_addr = addr;	// @[<stdin>:2001:10, CRRV/src/bus/Simple2AXI4.scala:25:18]
+  assign io_axi_ar_bits_size = _GEN_1;	// @[<stdin>:2001:10, CRRV/src/bus/Simple2AXI4.scala:78:24]
+  assign io_axi_aw_valid = _io_axi_w_bits_last_T;	// @[<stdin>:2001:10, CRRV/src/bus/Simple2AXI4.scala:80:33]
+  assign io_axi_aw_bits_addr = addr;	// @[<stdin>:2001:10, CRRV/src/bus/Simple2AXI4.scala:25:18]
+  assign io_axi_aw_bits_size = _GEN_1;	// @[<stdin>:2001:10, CRRV/src/bus/Simple2AXI4.scala:78:24]
+  assign io_axi_w_valid = _io_axi_w_bits_last_T | _io_axi_w_bits_last_T_1;	// @[<stdin>:2001:10, CRRV/src/bus/Simple2AXI4.scala:80:33, :83:{44,53}]
+  assign io_axi_w_bits_data = {2{io_simple_out_bits_wdata}};	// @[<stdin>:2001:10, CRRV/src/bus/Simple2AXI4.scala:65:21]
+  assign io_axi_w_bits_strb = casez_tmp_0[7:0];	// @[<stdin>:2001:10, CRRV/src/bus/Simple2AXI4.scala:67:39, :86:24]
+  assign io_axi_w_bits_last = _io_axi_w_bits_last_T | _io_axi_w_bits_last_T_1;	// @[<stdin>:2001:10, CRRV/src/bus/Simple2AXI4.scala:80:33, :83:53, :85:44]
 endmodule
 
 // external module Debug
 
-module CRRVTop(	// @[<stdin>:2133:10]
-  input         clock,	// @[<stdin>:2134:11]
-                reset,	// @[<stdin>:2135:11]
+module CRRVTop(	// @[<stdin>:2123:10]
+  input         clock,	// @[<stdin>:2124:11]
+                reset,	// @[<stdin>:2125:11]
                 io_interrupt,	// @[CRRV/src/CRRVTop.scala:11:14]
                 io_master_awready,	// @[CRRV/src/CRRVTop.scala:11:14]
                 io_master_wready,	// @[CRRV/src/CRRVTop.scala:11:14]
@@ -2320,21 +2332,23 @@ module CRRVTop(	// @[<stdin>:2133:10]
   output [3:0]  io_slave_rid	// @[CRRV/src/CRRVTop.scala:11:14]
 );
 
-  wire [31:0] _simple2axi_io_simple_rdata;	// @[CRRV/src/CRRVTop.scala:15:26]
-  wire        _simple2axi_io_simple_valid;	// @[CRRV/src/CRRVTop.scala:15:26]
-  wire [31:0] _arbiter_io_simpleInst_rdata;	// @[CRRV/src/CRRVTop.scala:14:26]
-  wire        _arbiter_io_simpleInst_valid;	// @[CRRV/src/CRRVTop.scala:14:26]
-  wire [31:0] _arbiter_io_simpleData_rdata;	// @[CRRV/src/CRRVTop.scala:14:26]
-  wire        _arbiter_io_simpleData_valid;	// @[CRRV/src/CRRVTop.scala:14:26]
-  wire        _arbiter_io_simpleOut_enable;	// @[CRRV/src/CRRVTop.scala:14:26]
-  wire [31:0] _arbiter_io_simpleOut_addr;	// @[CRRV/src/CRRVTop.scala:14:26]
-  wire [3:0]  _arbiter_io_simpleOut_wen;	// @[CRRV/src/CRRVTop.scala:14:26]
-  wire [31:0] _arbiter_io_simpleOut_wdata;	// @[CRRV/src/CRRVTop.scala:14:26]
-  wire [31:0] _core_io_inst_addr;	// @[CRRV/src/CRRVTop.scala:13:26]
-  wire        _core_io_data_enable;	// @[CRRV/src/CRRVTop.scala:13:26]
-  wire [31:0] _core_io_data_addr;	// @[CRRV/src/CRRVTop.scala:13:26]
-  wire [3:0]  _core_io_data_wen;	// @[CRRV/src/CRRVTop.scala:13:26]
-  wire [31:0] _core_io_data_wdata;	// @[CRRV/src/CRRVTop.scala:13:26]
+  wire        _simple2axi_io_simple_out_ready;	// @[CRRV/src/CRRVTop.scala:15:26]
+  wire [31:0] _simple2axi_io_simple_in_rdata;	// @[CRRV/src/CRRVTop.scala:15:26]
+  wire        _arbiter_io_simpleInst_out_ready;	// @[CRRV/src/CRRVTop.scala:14:26]
+  wire [31:0] _arbiter_io_simpleInst_in_rdata;	// @[CRRV/src/CRRVTop.scala:14:26]
+  wire        _arbiter_io_simpleData_out_ready;	// @[CRRV/src/CRRVTop.scala:14:26]
+  wire [31:0] _arbiter_io_simpleData_in_rdata;	// @[CRRV/src/CRRVTop.scala:14:26]
+  wire        _arbiter_io_simpleOut_out_valid;	// @[CRRV/src/CRRVTop.scala:14:26]
+  wire [31:0] _arbiter_io_simpleOut_out_bits_addr;	// @[CRRV/src/CRRVTop.scala:14:26]
+  wire        _arbiter_io_simpleOut_out_bits_writeEn;	// @[CRRV/src/CRRVTop.scala:14:26]
+  wire [1:0]  _arbiter_io_simpleOut_out_bits_size;	// @[CRRV/src/CRRVTop.scala:14:26]
+  wire [31:0] _arbiter_io_simpleOut_out_bits_wdata;	// @[CRRV/src/CRRVTop.scala:14:26]
+  wire [31:0] _core_io_inst_out_bits_addr;	// @[CRRV/src/CRRVTop.scala:13:26]
+  wire        _core_io_data_out_valid;	// @[CRRV/src/CRRVTop.scala:13:26]
+  wire [31:0] _core_io_data_out_bits_addr;	// @[CRRV/src/CRRVTop.scala:13:26]
+  wire        _core_io_data_out_bits_writeEn;	// @[CRRV/src/CRRVTop.scala:13:26]
+  wire [1:0]  _core_io_data_out_bits_size;	// @[CRRV/src/CRRVTop.scala:13:26]
+  wire [31:0] _core_io_data_out_bits_wdata;	// @[CRRV/src/CRRVTop.scala:13:26]
   wire        _core_io_debug_valid;	// @[CRRV/src/CRRVTop.scala:13:26]
   wire        _core_io_debug_halt;	// @[CRRV/src/CRRVTop.scala:13:26]
   wire [31:0] _core_io_debug_pc;	// @[CRRV/src/CRRVTop.scala:13:26]
@@ -2342,66 +2356,72 @@ module CRRVTop(	// @[<stdin>:2133:10]
   wire [4:0]  _core_io_debug_regWaddr;	// @[CRRV/src/CRRVTop.scala:13:26]
   wire [31:0] _core_io_debug_regWdata;	// @[CRRV/src/CRRVTop.scala:13:26]
   Core core (	// @[CRRV/src/CRRVTop.scala:13:26]
-    .clock             (clock),
-    .reset             (reset),
-    .io_inst_rdata     (_arbiter_io_simpleInst_rdata),	// @[CRRV/src/CRRVTop.scala:14:26]
-    .io_inst_valid     (_arbiter_io_simpleInst_valid),	// @[CRRV/src/CRRVTop.scala:14:26]
-    .io_data_rdata     (_arbiter_io_simpleData_rdata),	// @[CRRV/src/CRRVTop.scala:14:26]
-    .io_data_valid     (_arbiter_io_simpleData_valid),	// @[CRRV/src/CRRVTop.scala:14:26]
-    .io_inst_addr      (_core_io_inst_addr),
-    .io_data_enable    (_core_io_data_enable),
-    .io_data_addr      (_core_io_data_addr),
-    .io_data_wen       (_core_io_data_wen),
-    .io_data_wdata     (_core_io_data_wdata),
-    .io_debug_valid    (_core_io_debug_valid),
-    .io_debug_halt     (_core_io_debug_halt),
-    .io_debug_pc       (_core_io_debug_pc),
-    .io_debug_regWen   (_core_io_debug_regWen),
-    .io_debug_regWaddr (_core_io_debug_regWaddr),
-    .io_debug_regWdata (_core_io_debug_regWdata)
+    .clock                    (clock),
+    .reset                    (reset),
+    .io_inst_out_ready        (_arbiter_io_simpleInst_out_ready),	// @[CRRV/src/CRRVTop.scala:14:26]
+    .io_inst_in_rdata         (_arbiter_io_simpleInst_in_rdata),	// @[CRRV/src/CRRVTop.scala:14:26]
+    .io_data_out_ready        (_arbiter_io_simpleData_out_ready),	// @[CRRV/src/CRRVTop.scala:14:26]
+    .io_data_in_rdata         (_arbiter_io_simpleData_in_rdata),	// @[CRRV/src/CRRVTop.scala:14:26]
+    .io_inst_out_bits_addr    (_core_io_inst_out_bits_addr),
+    .io_data_out_valid        (_core_io_data_out_valid),
+    .io_data_out_bits_addr    (_core_io_data_out_bits_addr),
+    .io_data_out_bits_writeEn (_core_io_data_out_bits_writeEn),
+    .io_data_out_bits_size    (_core_io_data_out_bits_size),
+    .io_data_out_bits_wdata   (_core_io_data_out_bits_wdata),
+    .io_debug_valid           (_core_io_debug_valid),
+    .io_debug_halt            (_core_io_debug_halt),
+    .io_debug_pc              (_core_io_debug_pc),
+    .io_debug_regWen          (_core_io_debug_regWen),
+    .io_debug_regWaddr        (_core_io_debug_regWaddr),
+    .io_debug_regWdata        (_core_io_debug_regWdata)
   );
   SimpleArbiter arbiter (	// @[CRRV/src/CRRVTop.scala:14:26]
-    .clock                (clock),
-    .reset                (reset),
-    .io_simpleInst_addr   (_core_io_inst_addr),	// @[CRRV/src/CRRVTop.scala:13:26]
-    .io_simpleData_enable (_core_io_data_enable),	// @[CRRV/src/CRRVTop.scala:13:26]
-    .io_simpleData_addr   (_core_io_data_addr),	// @[CRRV/src/CRRVTop.scala:13:26]
-    .io_simpleData_wen    (_core_io_data_wen),	// @[CRRV/src/CRRVTop.scala:13:26]
-    .io_simpleData_wdata  (_core_io_data_wdata),	// @[CRRV/src/CRRVTop.scala:13:26]
-    .io_simpleOut_rdata   (_simple2axi_io_simple_rdata),	// @[CRRV/src/CRRVTop.scala:15:26]
-    .io_simpleOut_valid   (_simple2axi_io_simple_valid),	// @[CRRV/src/CRRVTop.scala:15:26]
-    .io_simpleInst_rdata  (_arbiter_io_simpleInst_rdata),
-    .io_simpleInst_valid  (_arbiter_io_simpleInst_valid),
-    .io_simpleData_rdata  (_arbiter_io_simpleData_rdata),
-    .io_simpleData_valid  (_arbiter_io_simpleData_valid),
-    .io_simpleOut_enable  (_arbiter_io_simpleOut_enable),
-    .io_simpleOut_addr    (_arbiter_io_simpleOut_addr),
-    .io_simpleOut_wen     (_arbiter_io_simpleOut_wen),
-    .io_simpleOut_wdata   (_arbiter_io_simpleOut_wdata)
+    .clock                          (clock),
+    .reset                          (reset),
+    .io_simpleInst_out_bits_addr    (_core_io_inst_out_bits_addr),	// @[CRRV/src/CRRVTop.scala:13:26]
+    .io_simpleData_out_valid        (_core_io_data_out_valid),	// @[CRRV/src/CRRVTop.scala:13:26]
+    .io_simpleData_out_bits_addr    (_core_io_data_out_bits_addr),	// @[CRRV/src/CRRVTop.scala:13:26]
+    .io_simpleData_out_bits_writeEn (_core_io_data_out_bits_writeEn),	// @[CRRV/src/CRRVTop.scala:13:26]
+    .io_simpleData_out_bits_size    (_core_io_data_out_bits_size),	// @[CRRV/src/CRRVTop.scala:13:26]
+    .io_simpleData_out_bits_wdata   (_core_io_data_out_bits_wdata),	// @[CRRV/src/CRRVTop.scala:13:26]
+    .io_simpleOut_out_ready         (_simple2axi_io_simple_out_ready),	// @[CRRV/src/CRRVTop.scala:15:26]
+    .io_simpleOut_in_rdata          (_simple2axi_io_simple_in_rdata),	// @[CRRV/src/CRRVTop.scala:15:26]
+    .io_simpleInst_out_ready        (_arbiter_io_simpleInst_out_ready),
+    .io_simpleInst_in_rdata         (_arbiter_io_simpleInst_in_rdata),
+    .io_simpleData_out_ready        (_arbiter_io_simpleData_out_ready),
+    .io_simpleData_in_rdata         (_arbiter_io_simpleData_in_rdata),
+    .io_simpleOut_out_valid         (_arbiter_io_simpleOut_out_valid),
+    .io_simpleOut_out_bits_addr     (_arbiter_io_simpleOut_out_bits_addr),
+    .io_simpleOut_out_bits_writeEn  (_arbiter_io_simpleOut_out_bits_writeEn),
+    .io_simpleOut_out_bits_size     (_arbiter_io_simpleOut_out_bits_size),
+    .io_simpleOut_out_bits_wdata    (_arbiter_io_simpleOut_out_bits_wdata)
   );
   Simple2AXI4 simple2axi (	// @[CRRV/src/CRRVTop.scala:15:26]
-    .clock               (clock),
-    .reset               (reset),
-    .io_simple_enable    (_arbiter_io_simpleOut_enable),	// @[CRRV/src/CRRVTop.scala:14:26]
-    .io_simple_addr      (_arbiter_io_simpleOut_addr),	// @[CRRV/src/CRRVTop.scala:14:26]
-    .io_simple_wen       (_arbiter_io_simpleOut_wen),	// @[CRRV/src/CRRVTop.scala:14:26]
-    .io_simple_wdata     (_arbiter_io_simpleOut_wdata),	// @[CRRV/src/CRRVTop.scala:14:26]
-    .io_axi_ar_ready     (io_master_arready),
-    .io_axi_r_valid      (io_master_rvalid),
-    .io_axi_r_bits_data  (io_master_rdata),
-    .io_axi_r_bits_last  (io_master_rlast),
-    .io_axi_aw_ready     (io_master_awready),
-    .io_axi_w_ready      (io_master_wready),
-    .io_simple_rdata     (_simple2axi_io_simple_rdata),
-    .io_simple_valid     (_simple2axi_io_simple_valid),
-    .io_axi_ar_valid     (io_master_arvalid),
-    .io_axi_ar_bits_addr (io_master_araddr),
-    .io_axi_aw_valid     (io_master_awvalid),
-    .io_axi_aw_bits_addr (io_master_awaddr),
-    .io_axi_w_valid      (io_master_wvalid),
-    .io_axi_w_bits_data  (io_master_wdata),
-    .io_axi_w_bits_strb  (io_master_wstrb),
-    .io_axi_w_bits_last  (io_master_wlast)
+    .clock                      (clock),
+    .reset                      (reset),
+    .io_simple_out_valid        (_arbiter_io_simpleOut_out_valid),	// @[CRRV/src/CRRVTop.scala:14:26]
+    .io_simple_out_bits_addr    (_arbiter_io_simpleOut_out_bits_addr),	// @[CRRV/src/CRRVTop.scala:14:26]
+    .io_simple_out_bits_writeEn (_arbiter_io_simpleOut_out_bits_writeEn),	// @[CRRV/src/CRRVTop.scala:14:26]
+    .io_simple_out_bits_size    (_arbiter_io_simpleOut_out_bits_size),	// @[CRRV/src/CRRVTop.scala:14:26]
+    .io_simple_out_bits_wdata   (_arbiter_io_simpleOut_out_bits_wdata),	// @[CRRV/src/CRRVTop.scala:14:26]
+    .io_axi_ar_ready            (io_master_arready),
+    .io_axi_r_valid             (io_master_rvalid),
+    .io_axi_r_bits_data         (io_master_rdata),
+    .io_axi_r_bits_last         (io_master_rlast),
+    .io_axi_aw_ready            (io_master_awready),
+    .io_axi_w_ready             (io_master_wready),
+    .io_simple_out_ready        (_simple2axi_io_simple_out_ready),
+    .io_simple_in_rdata         (_simple2axi_io_simple_in_rdata),
+    .io_axi_ar_valid            (io_master_arvalid),
+    .io_axi_ar_bits_addr        (io_master_araddr),
+    .io_axi_ar_bits_size        (io_master_arsize),
+    .io_axi_aw_valid            (io_master_awvalid),
+    .io_axi_aw_bits_addr        (io_master_awaddr),
+    .io_axi_aw_bits_size        (io_master_awsize),
+    .io_axi_w_valid             (io_master_wvalid),
+    .io_axi_w_bits_data         (io_master_wdata),
+    .io_axi_w_bits_strb         (io_master_wstrb),
+    .io_axi_w_bits_last         (io_master_wlast)
   );
   Debug debug (	// @[CRRV/src/CRRVTop.scala:16:26]
     .clock          (clock),
@@ -2413,26 +2433,24 @@ module CRRVTop(	// @[<stdin>:2133:10]
     .debug_regWaddr (_core_io_debug_regWaddr),	// @[CRRV/src/CRRVTop.scala:13:26]
     .debug_regWdata (_core_io_debug_regWdata)	// @[CRRV/src/CRRVTop.scala:13:26]
   );
-  assign io_master_awid = 4'h0;	// @[<stdin>:2133:10, CRRV/src/CRRVTop.scala:13:26, :14:26, :15:26]
-  assign io_master_awlen = 8'h0;	// @[<stdin>:2133:10, CRRV/src/CRRVTop.scala:15:26]
-  assign io_master_awsize = 3'h2;	// @[<stdin>:2133:10, CRRV/src/CRRVTop.scala:15:26]
-  assign io_master_awburst = 2'h0;	// @[<stdin>:2133:10, CRRV/src/CRRVTop.scala:15:26]
-  assign io_master_bready = 1'h1;	// @[<stdin>:2133:10, CRRV/src/CRRVTop.scala:13:26, :14:26, :15:26]
-  assign io_master_arid = 4'h0;	// @[<stdin>:2133:10, CRRV/src/CRRVTop.scala:13:26, :14:26, :15:26]
-  assign io_master_arlen = 8'h0;	// @[<stdin>:2133:10, CRRV/src/CRRVTop.scala:15:26]
-  assign io_master_arsize = 3'h2;	// @[<stdin>:2133:10, CRRV/src/CRRVTop.scala:15:26]
-  assign io_master_arburst = 2'h1;	// @[<stdin>:2133:10, CRRV/src/CRRVTop.scala:15:26]
-  assign io_master_rready = 1'h1;	// @[<stdin>:2133:10, CRRV/src/CRRVTop.scala:13:26, :14:26, :15:26]
-  assign io_slave_awready = 1'h0;	// @[<stdin>:2133:10, CRRV/src/CRRVTop.scala:63:20]
-  assign io_slave_wready = 1'h0;	// @[<stdin>:2133:10, CRRV/src/CRRVTop.scala:63:20]
-  assign io_slave_bvalid = 1'h0;	// @[<stdin>:2133:10, CRRV/src/CRRVTop.scala:63:20]
-  assign io_slave_bresp = 2'h0;	// @[<stdin>:2133:10, CRRV/src/CRRVTop.scala:15:26]
-  assign io_slave_bid = 4'h0;	// @[<stdin>:2133:10, CRRV/src/CRRVTop.scala:13:26, :14:26, :15:26]
-  assign io_slave_arready = 1'h0;	// @[<stdin>:2133:10, CRRV/src/CRRVTop.scala:63:20]
-  assign io_slave_rvalid = 1'h0;	// @[<stdin>:2133:10, CRRV/src/CRRVTop.scala:63:20]
-  assign io_slave_rresp = 2'h0;	// @[<stdin>:2133:10, CRRV/src/CRRVTop.scala:15:26]
-  assign io_slave_rdata = 64'h0;	// @[<stdin>:2133:10, CRRV/src/CRRVTop.scala:71:20]
-  assign io_slave_rlast = 1'h0;	// @[<stdin>:2133:10, CRRV/src/CRRVTop.scala:63:20]
-  assign io_slave_rid = 4'h0;	// @[<stdin>:2133:10, CRRV/src/CRRVTop.scala:13:26, :14:26, :15:26]
+  assign io_master_awid = 4'h0;	// @[<stdin>:2123:10, CRRV/src/CRRVTop.scala:15:26]
+  assign io_master_awlen = 8'h0;	// @[<stdin>:2123:10, CRRV/src/CRRVTop.scala:15:26]
+  assign io_master_awburst = 2'h0;	// @[<stdin>:2123:10, CRRV/src/CRRVTop.scala:15:26]
+  assign io_master_bready = 1'h1;	// @[<stdin>:2123:10, CRRV/src/CRRVTop.scala:13:26, :14:26, :15:26]
+  assign io_master_arid = 4'h0;	// @[<stdin>:2123:10, CRRV/src/CRRVTop.scala:15:26]
+  assign io_master_arlen = 8'h0;	// @[<stdin>:2123:10, CRRV/src/CRRVTop.scala:15:26]
+  assign io_master_arburst = 2'h0;	// @[<stdin>:2123:10, CRRV/src/CRRVTop.scala:15:26]
+  assign io_master_rready = 1'h1;	// @[<stdin>:2123:10, CRRV/src/CRRVTop.scala:13:26, :14:26, :15:26]
+  assign io_slave_awready = 1'h0;	// @[<stdin>:2123:10, CRRV/src/CRRVTop.scala:13:26, :14:26]
+  assign io_slave_wready = 1'h0;	// @[<stdin>:2123:10, CRRV/src/CRRVTop.scala:13:26, :14:26]
+  assign io_slave_bvalid = 1'h0;	// @[<stdin>:2123:10, CRRV/src/CRRVTop.scala:13:26, :14:26]
+  assign io_slave_bresp = 2'h0;	// @[<stdin>:2123:10, CRRV/src/CRRVTop.scala:15:26]
+  assign io_slave_bid = 4'h0;	// @[<stdin>:2123:10, CRRV/src/CRRVTop.scala:15:26]
+  assign io_slave_arready = 1'h0;	// @[<stdin>:2123:10, CRRV/src/CRRVTop.scala:13:26, :14:26]
+  assign io_slave_rvalid = 1'h0;	// @[<stdin>:2123:10, CRRV/src/CRRVTop.scala:13:26, :14:26]
+  assign io_slave_rresp = 2'h0;	// @[<stdin>:2123:10, CRRV/src/CRRVTop.scala:15:26]
+  assign io_slave_rdata = 64'h0;	// @[<stdin>:2123:10, CRRV/src/CRRVTop.scala:71:20]
+  assign io_slave_rlast = 1'h0;	// @[<stdin>:2123:10, CRRV/src/CRRVTop.scala:13:26, :14:26]
+  assign io_slave_rid = 4'h0;	// @[<stdin>:2123:10, CRRV/src/CRRVTop.scala:15:26]
 endmodule
 

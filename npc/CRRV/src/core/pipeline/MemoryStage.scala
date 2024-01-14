@@ -14,7 +14,7 @@ class MemoryStage extends Module {
     val control = new MemoryStageControlIO
     val mem2wb  = Output(new MEM2WBIO)
 
-    val dataRam     = new SimpleMemIO(ADDR_WIDTH, DATA_WIDTH)
+    val dataRam     = Decoupled(new SimpleOutIO(ADDR_WIDTH, DATA_WIDTH))
     val memCsrStall = Output(new Csr2HazardResolverIO)
     val regForward  = Output(new RegForwardIO)
   })
@@ -30,13 +30,6 @@ class MemoryStage extends Module {
   // 写数据
   val addr = exe2mem.exeResult
   val data = id2mem.lsuData
-  val writeEn = MuxLookup(width, 0.U)(
-    Seq(
-      LS_DATA_BYTE -> ("b0001".U(4.W) << addr(1, 0)),
-      LS_DATA_HALF -> ("b0011".U(4.W) << addr(1, 0)),
-      LS_DATA_WORD -> "b1111".U(4.W)
-    )
-  )
   val writeData = MuxLookup(width, 0.U) {
     Seq(
       LS_DATA_BYTE -> Cat(data(7, 0), data(7, 0), data(7, 0), data(7, 0)),
@@ -45,16 +38,17 @@ class MemoryStage extends Module {
     )
   }
   // 暂停信号
-  val memStall = (!io.dataRam.valid) && en
+  val memStall = (!io.dataRam.ready) && en
   // 流水线控制
   io.control.stallReq := memStall
   io.control.flushReq := false.B
   io.control.flushPc  := 0.U
   // 访问内存
-  io.dataRam.enable := en
-  io.dataRam.wen    := Mux(wen, writeEn, 0.U)
-  io.dataRam.addr   := Cat(addr(DATA_WIDTH - 1, 2), 0.U(2.W))
-  io.dataRam.wdata  := writeData
+  io.dataRam.valid        := en
+  io.dataRam.bits.writeEn := wen
+  io.dataRam.bits.size    := width
+  io.dataRam.bits.addr    := addr
+  io.dataRam.bits.wdata   := writeData
   // CSR
   io.memCsrStall.op   := id2mem.csrOp
   io.memCsrStall.addr := id2mem.csrAddr

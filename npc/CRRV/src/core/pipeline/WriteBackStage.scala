@@ -12,7 +12,7 @@ class WriteBackStage extends Module {
   val io = IO(new Bundle {
     val mem2wb = Input(new MEM2WBIO)
 
-    val readData   = Input(UInt(DATA_WIDTH.W))
+    val read       = new SimpleInIO(DATA_WIDTH)
     val wb2csr     = new CsrWriteIO
     val regForward = Output(new RegForwardIO)
     val debug      = Output(new DebugIO)
@@ -23,7 +23,7 @@ class WriteBackStage extends Module {
   val mem2wb = io.mem2wb.MEM
   val addr   = io.mem2wb.MEM.memAddr
 
-  val shiftData = io.readData >> (Cat(addr(1, 0), 0.U(3.W)))
+  val shiftData = io.read.rdata >> (Cat(addr(1, 0), 0.U(3.W)))
   val readData = MuxLookup(id2wb.lsuOp, 0.U)(
     Seq(
       LSU_LB -> (Cat(Fill(24, shiftData(7)), shiftData(7, 0))),

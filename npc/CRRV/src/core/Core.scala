@@ -9,8 +9,8 @@ import io._
 
 class Core extends Module {
   val io = IO(new Bundle {
-    val inst  = new SimpleMemIO(ADDR_WIDTH, INST_WIDTH)
-    val data  = new SimpleMemIO(ADDR_WIDTH, DATA_WIDTH)
+    val inst  = new SimpleIO(ADDR_WIDTH, INST_WIDTH)
+    val data  = new SimpleIO(ADDR_WIDTH, DATA_WIDTH)
     val debug = Output(new DebugIO)
   })
 
@@ -29,7 +29,7 @@ class Core extends Module {
   val csrFile         = Module(new CsrFile)
   val regFile         = Module(new RegFile)
 
-  fetchStage.io.instRom <> io.inst
+  fetchStage.io.instRom <> io.inst.out
   fetchStage.io.control.flush   := pipelineControl.io.flushIF
   fetchStage.io.control.flushPC := pipelineControl.io.flushPc
   fetchStage.io.control.stall   := pipelineControl.io.stallIF
@@ -39,7 +39,7 @@ class Core extends Module {
   if2id.io.prev <> fetchStage.io.if2id
 
   decodeStage.io.if2id <> if2id.io.next
-  decodeStage.io.readInst      := io.inst.rdata
+  decodeStage.io.read          := io.inst.in
   decodeStage.io.control.stall := pipelineControl.io.stallID
   decodeStage.io.regRead1 <> hazardResolver.io.regRead1
   decodeStage.io.regRead2 <> hazardResolver.io.regRead2
@@ -58,15 +58,15 @@ class Core extends Module {
 
   memoryStage.io.exe2mem <> exe2mem.io.next
   memoryStage.io.control.flush := pipelineControl.io.flushAll
-  memoryStage.io.dataRam <> io.data
+  memoryStage.io.dataRam <> io.data.out
   mem2wb.io.flush     := pipelineControl.io.flushAll
   mem2wb.io.stallPrev := pipelineControl.io.stallMEM
   mem2wb.io.stallNext := pipelineControl.io.stallWB
   mem2wb.io.prev <> memoryStage.io.mem2wb
 
   writeBackStage.io.mem2wb <> mem2wb.io.next
-  writeBackStage.io.readData := io.data.rdata
-  io.debug                   := writeBackStage.io.debug
+  writeBackStage.io.read := io.data.in
+  io.debug               := writeBackStage.io.debug
 
   // register file
   regFile.io.read1 <> hazardResolver.io.regFile1

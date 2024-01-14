@@ -7,38 +7,38 @@ import io._
 
 /**
   * 从Simple接口到AXI 4接口的转换器
+  * AXI4的地址宽度被定位 64 位
   * 地址通道通过重新发送，解决了地址变化问题
   */
 class Simple2AXI4 extends Module {
   val io = IO(new Bundle {
-    val simple = Flipped(new SimpleMemIO(ADDR_WIDTH, DATA_WIDTH))
-    val axi    = new AXI4MasterIO(ADDR_WIDTH)
+    val simple = Flipped(new SimpleIO(ADDR_WIDTH, DATA_WIDTH))
+    val axi    = new AXI4MasterIO(ADDR_WIDTH, 64)
   })
 
-  val (sIdle :: sReadAddr :: sReadData
+  val (sIdle :: sRead :: sReadWait
     :: sWrite :: sWriteWait
     :: sEnd :: Nil) = Enum(6)
   val state         = RegInit(sIdle)
 
-  val rdata = Reg(UInt(DATA_WIDTH.W))
+  val rdata = Reg(UInt(64.W))
   val addr  = Reg(UInt(ADDR_WIDTH.W))
 
   switch(state) {
     is(sIdle) {
-      when(io.simple.enable) {
-        state := Mux(io.simple.wen =/= 0.U, sWrite, sReadAddr)
-        addr  := io.simple.addr
+      when(io.simple.out.valid) {
+        state := Mux(io.simple.out.bits.writeEn, sWrite, sRead)
+        addr  := io.simple.out.bits.addr
       }
     }
-    is(sReadAddr) {
+    is(sRead) {
       when(io.axi.ar.ready) {
-        state := sReadData
+        state := sReadWait
       }
     }
-    is(sReadData) {
+    is(sReadWait) {
       when(io.axi.r.valid && io.axi.r.bits.last) {
-        rdata :=
-          Mux(addr(2, 0) === "b100".U, io.axi.r.bits.data(63, 32), io.axi.r.bits.data(31, 0))
+        rdata := io.axi.r.bits.data
         state := sEnd
       }
     }
@@ -59,22 +59,30 @@ class Simple2AXI4 extends Module {
     }
   }
   // 如果地址有变动，则需要重新发送读写
-  io.simple.valid := (state === sEnd) && (addr === io.simple.addr)
-  io.simple.rdata := rdata
+  io.simple.out.ready := (state === sEnd) && (addr === io.simple.out.bits.addr)
+  io.simple.in.rdata  := Mux(addr(2), rdata(63, 32), rdata(31, 0))
 
-  val dataSize = log2Ceil(DATA_WIDTH / 8)
+  val wdata    = Cat(io.simple.out.bits.wdata, io.simple.out.bits.wdata)
+  val dataSize = io.simple.out.bits.size
+  val wstrb = MuxLookup(dataSize, 0.U)(
+    Seq(
+      0.U -> ("b0001".U(8.W) << addr(2, 0)),
+      1.U -> ("b0011".U(8.W) << addr(2, 0)),
+      2.U -> ("b1111".U(8.W) << addr(2, 0))
+    )
+  )
+
   io.axi.init()
-  io.axi.ar.valid      := state === sReadAddr
+  io.axi.ar.valid      := state === sRead
   io.axi.ar.bits.addr  := addr
-  io.axi.ar.bits.size  := dataSize.U
-  io.axi.ar.bits.burst := 1.U // incrementing-address
+  io.axi.ar.bits.size  := dataSize
   io.axi.r.ready       := true.B
   io.axi.aw.valid      := state === sWrite
   io.axi.aw.bits.addr  := addr
-  io.axi.aw.bits.size  := dataSize.U
+  io.axi.aw.bits.size  := dataSize
   io.axi.w.valid       := state === sWrite || state === sWriteWait
-  io.axi.w.bits.data   := Mux(addr(2, 0) === "b100".U, (io.simple.wdata << 32.U), io.simple.wdata)
+  io.axi.w.bits.data   := wdata
   io.axi.w.bits.last   := state === sWrite || state === sWriteWait
-  io.axi.w.bits.strb   := Mux(addr(2, 0) === "b100".U, (io.simple.wen << 4.U), io.simple.wen)
+  io.axi.w.bits.strb   := wstrb
   io.axi.b.ready       := true.B
 }

@@ -8,7 +8,7 @@ import config.CPUconfig._
 class FetchStage extends Module {
   val io = IO(new Bundle {
     val control = new FetchStageControlIO
-    val instRom = new SimpleMemIO(ADDR_WIDTH, INST_WIDTH)
+    val instRom = Decoupled(new SimpleOutIO(ADDR_WIDTH, INST_WIDTH))
     val if2id   = Output(new IF2IDIO)
   })
 
@@ -24,14 +24,15 @@ class FetchStage extends Module {
   pc := nextPc
 
   // control
-  io.control.stallReq := !io.instRom.valid
+  io.control.stallReq := !io.instRom.ready
   // inst rom
-  io.instRom.enable := true.B
-  io.instRom.addr   := pc
-  io.instRom.wen    := 0.U
-  io.instRom.wdata  := 0.U
+  io.instRom.valid        := true.B
+  io.instRom.bits.addr    := pc
+  io.instRom.bits.size    := 2.U
+  io.instRom.bits.writeEn := false.B
+  io.instRom.bits.wdata   := 0.U
   // to id
-  io.if2id.IF.instValid := io.instRom.valid
+  io.if2id.IF.instValid := io.instRom.ready
   io.if2id.IF.pc        := pc
 }
 
