@@ -16,9 +16,27 @@ Area heap = RANGE(&_heap_start, &_heap_end);
 static const char mainargs[] = MAINARGS;
 
 #define UART_BASE 0x10000000L
-#define UART_TX   0
+#define UART_TX 0   // 发送寄存器
+#define UART_DLL 0  // 除数锁存寄存器低位
+#define UART_DLM 1  // 除数锁存寄存器高位
+#define UART_FCR 2  // FIFO控制寄存器
+#define UART_LCR 3  // 线控寄存器
+#define UART_LSR 5  // 线状态寄存器
+
+/* 初始化串口 */
+void uart_init() {
+    *(volatile char*)(UART_BASE + UART_LCR) = 0b10000011;  // 允许访问除数寄存器
+    // 设置除数寄存器，写入顺序不能颠倒
+    *(volatile char*)(UART_BASE + UART_DLM) = 0x00;  // 高位
+    *(volatile char*)(UART_BASE + UART_DLL) = 0x01;  // 低位
+    *(volatile char*)(UART_BASE + UART_LCR) = 0b00000011;  // 关闭访问除数寄存器
+    // 设置FIFO触发电平，这里保持默认就好
+    // *(volatile char*)(UART_BASE + UART_FCR) = ;
+}
 void putch(char ch) {
-    *(volatile char *)(UART_BASE + UART_TX) = ch;
+    while ((*(volatile char*)(UART_BASE + UART_LSR)) & (1 << 5)) {
+        *(volatile char*)(UART_BASE + UART_TX) = ch;
+    }
 }
 
 void halt(int code) {
@@ -31,13 +49,14 @@ void halt(int code) {
 inline void bootloader() {
     // 确定拷贝的目标地址
     char *bdata_p = &_bdata, *edata_p = &_edata;
-    for(char *text_p = &_etext; bdata_p != edata_p; text_p++,bdata_p++){
-        *bdata_p = *text_p; // 从mrom拷贝到sram
+    for (char* text_p = &_etext; bdata_p != edata_p; text_p++, bdata_p++) {
+        *bdata_p = *text_p;  // 从mrom拷贝到sram
     }
 }
 
 void _trm_init() {
     bootloader();
+    uart_init();
     int ret = main(mainargs);
     halt(ret);
 }
