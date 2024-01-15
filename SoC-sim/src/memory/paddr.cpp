@@ -8,6 +8,7 @@ paddr_t mem_base, mem_end;
 
 // 配置需要使用的代码段储存器
 void init_mem() {
+    flash_init();
     raw_mem = mrom_raw_data();
     mem_base = MROM_BASE;
     mem_end = MROM_END;
