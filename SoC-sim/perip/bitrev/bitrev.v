@@ -13,7 +13,7 @@ state_t state = IDLE;
 reg [7:0] received_data;
 reg [7:0] bit_count; // 用于计数
 
-assign miso = (state == SEND) & received_data[bit_count];
+assign miso = ((state == SEND) & received_data[bit_count]) | ss;
 
 // 用于描述状态机的行为
 always @(posedge sck or negedge ss) begin
