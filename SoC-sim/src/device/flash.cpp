@@ -8,11 +8,14 @@
 static uint8_t flash_data[FLASH_END - FLASH_BASE];
 
 void flash_init() {
-    // 随便放个斐波那契数列吧
-    flash_data[0] = flash_data[1] = 1;
-    for (int i = 2; i < 16; i++) {
-        flash_data[i] = flash_data[i - 2] + flash_data[i - 1];
-    }
+    uint32_t init_data[] = {
+        0x100007b7,
+        0x04100713,
+        0x00e78023,
+        0x0000006f,
+    };
+
+    memcpy(flash_data,init_data,16);
 }
 
 extern "C" void flash_read(uint32_t addr, uint32_t* data) {

@@ -3,11 +3,8 @@
 const char* flash = (char *)0x30000000;
 
 int main() {
-    printf("read from flash:\n");
-    for(int i=0;i<12;i++){
-        printf("%d : %d\n",i,flash[i]);
-    }
-
+    void (*func_ptr)() = func_ptr = (void (*)())0x30000000;
+    func_ptr();
     // 通过测试
     halt(0);
 }
