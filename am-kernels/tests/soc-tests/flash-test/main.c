@@ -4,7 +4,7 @@ const char* flash = (char *)0x30000000;
 
 int main() {
     printf("read from flash:\n");
-    for(int i=0;i<13;i++){
+    for(int i=0;i<12;i++){
         printf("%d : %d\n",i,flash[i]);
     }
 
