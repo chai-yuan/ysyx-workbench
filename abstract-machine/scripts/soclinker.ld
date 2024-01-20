@@ -6,21 +6,22 @@ PHDRS {
 }
 
 MEMORY {
-  mrom : ORIGIN = 0x20000000, LENGTH = 4K
-  sram : ORIGIN = 0x0f000000, LENGTH = 8K
+  mrom  : ORIGIN = 0x20000000, LENGTH = 4K
+  flash : ORIGIN = 0x30000000, LENGTH = 16M
+  sram  : ORIGIN = 0x0f000000, LENGTH = 8K
 }
 
 SECTIONS {
-  /* 加载到MROM */
-  . = ORIGIN(mrom);
+  /* 加载到flash */
+  . = ORIGIN(flash);
   .text : {
     *(entry)
     *(.text*)
-  } > mrom AT> mrom : text
+  } > flash AT> flash : text
   .rodata : {
     *(.rodata*)
     *(.srodata*)
-  } > mrom AT> mrom
+  } > flash AT> flash
   _etext = .;
 
   /* 加载到SRAM */
@@ -29,7 +30,7 @@ SECTIONS {
   .data : {
     *(.data*)
     *(.sdata*)
-  } > sram AT> mrom : data
+  } > sram AT> flash : data
   _edata = .;
   .bss (NOLOAD) : {
     *(.bss*)

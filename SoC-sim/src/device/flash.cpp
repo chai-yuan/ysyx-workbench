@@ -18,6 +18,10 @@ void flash_init() {
     memcpy(flash_data,init_data,16);
 }
 
+uint8_t* flash_raw_data(){
+    return flash_data;
+}
+
 extern "C" void flash_read(uint32_t addr, uint32_t* data) {
     addr = addr & 0x00FFFFFC;
     *data = *(uint32_t*)(flash_data + addr);

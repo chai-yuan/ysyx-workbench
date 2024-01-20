@@ -8,10 +8,9 @@ paddr_t mem_base, mem_end;
 
 // 配置需要使用的代码段储存器
 void init_mem() {
-    flash_init();
-    raw_mem = mrom_raw_data();
-    mem_base = MROM_BASE;
-    mem_end = MROM_END;
+    raw_mem = flash_raw_data();
+    mem_base = FLASH_BASE;
+    mem_end = FLASH_END;
 }
 
 uint8_t* guest_to_host(paddr_t paddr) {
