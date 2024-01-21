@@ -1,7 +1,7 @@
 #ifndef CONFIG_H_
 #define CONFIG_H_
 
-#define CONFIG_PC 0x20000000
+#define CONFIG_PC 0x30000000
 #define CONFIG_ISA "riscv32"
 
 // #define CONFIG_DIFFTEST 1

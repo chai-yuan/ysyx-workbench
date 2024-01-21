@@ -12,11 +12,15 @@ class CRRVTop extends Module {
   // CRRV CPU
   val core       = Module(new Core)
   val arbiter    = Module(new SimpleArbiter)
+  val xbar       = Module(new SimpleXbar)
+  val clint      = Module(new CLINT)
   val simple2axi = Module(new Simple2AXI4)
   val debug      = Module(new Debug)
 
   core.io.inst <> arbiter.io.simpleInst
-  core.io.data <> arbiter.io.simpleData
+  core.io.data <> xbar.io.simpleIn
+  xbar.io.simpleOut <> arbiter.io.simpleData
+  xbar.io.simpleCLINT <> clint.io
 
   arbiter.io.simpleOut <> simple2axi.io.simple
   val aximaster = simple2axi.io.axi
