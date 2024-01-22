@@ -59,11 +59,11 @@ inline void bootloader() {
 
 void display_npc_info(){
     unsigned int mvendorid, marchid;
-    char mvendorid_s[5];
+    char mvendorid_s[5] = {0};
     asm volatile ("csrr %0, mvendorid" : "=r"(mvendorid) :: "memory");
     asm volatile ("csrr %0, marchid" : "=r"(marchid) :: "memory");
     memcpy(mvendorid_s,&mvendorid,4);
-    printf("%s\n%d\n",mvendorid_s,marchid);
+    printf("mvendorid : %s\nmarchid : %d\n",mvendorid_s,marchid);
 }
 
 void _trm_init() {
