@@ -18,4 +18,6 @@ object CsrDefine {
   val CSR_MEPC   = 0x341.U(CSR_ADDR_WIDTH.W)
   val CSR_MCAUSE = 0x342.U(CSR_ADDR_WIDTH.W)
 
+  val CSR_MVENDORID = 0xf11.U(CSR_ADDR_WIDTH.W)
+  val CSR_MARCHID   = 0xf12.U(CSR_ADDR_WIDTH.W)
 }

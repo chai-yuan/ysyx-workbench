@@ -1,5 +1,6 @@
 #include <am.h>
 #include <klib-macros.h>
+#include <klib.h>
 #include "../riscv.h"
 
 #define npc_trap(code) asm volatile("mv a0, %0; ebreak" : : "r"(code))
@@ -47,7 +48,7 @@ void halt(int code) {
         ;
 }
 
-/* 将储存这mrom当中的一些数据拷贝到sram当中执行 */
+/* 将储存这flash当中的一些数据拷贝到sram当中执行 */
 inline void bootloader() {
     // 确定拷贝的目标地址
     char *bdata_p = &_bdata, *edata_p = &_edata;
@@ -56,9 +57,19 @@ inline void bootloader() {
     }
 }
 
+void display_npc_info(){
+    unsigned int mvendorid, marchid;
+    char mvendorid_s[5];
+    asm volatile ("csrr %0, mvendorid" : "=r"(mvendorid) :: "memory");
+    asm volatile ("csrr %0, marchid" : "=r"(marchid) :: "memory");
+    memcpy(mvendorid_s,&mvendorid,4);
+    printf("%s\n%d\n",mvendorid_s,marchid);
+}
+
 void _trm_init() {
     bootloader();
     uart_init();
+    display_npc_info();
     int ret = main(mainargs);
     halt(ret);
 }

@@ -7,8 +7,6 @@ void init_difftest(char* ref_so_file, long img_size, int port);
 
 static void welcome() {
     Log("Build time: %s, %s", __TIME__, __DATE__);
-    printf("Welcome to NPC!\n");
-    printf("For help, type \"help\"\n");
 }
 
 #include <getopt.h>
