@@ -23,8 +23,8 @@ class Multiplier extends Module {
     val result   = Output(UInt((DATA_WIDTH * 2).W))
   })
   // 获得将要添加的符号位
-  val opr1Sign = Mux(io.opr1Sign, io.opr1(DATA_WIDTH - 1), 0.U(1.W))
-  val opr2Sign = Mux(io.opr1Sign, io.opr1(DATA_WIDTH - 1), 0.U(1.W))
+  val opr1Sign = io.opr1Sign & io.opr1(DATA_WIDTH - 1)
+  val opr2Sign = io.opr2Sign & io.opr2(DATA_WIDTH - 1)
   // 进行有符号乘法运算
   val opr1                               = Reg(UInt((DATA_WIDTH * 2).W))
   val opr2                               = Reg(UInt((DATA_WIDTH + 3).W))
@@ -44,7 +44,7 @@ class Multiplier extends Module {
       }
     }
     is(sWorking) {
-      when(count =/= (DATA_WIDTH / 2).U && !io.flush) {
+      when(count <= (DATA_WIDTH / 2).U && opr2 =/= 0.U && !io.flush) {
         mulResutl := mulResutl + MuxLookup(opr2(2, 0), 0.U)(
           Seq(
             ("b000".U) -> (0.U),
@@ -73,5 +73,5 @@ class Multiplier extends Module {
   val result = mulResutl
 
   io.valid  := io.en && !io.flush && state === sEnd
-  io.result := result(DATA_WIDTH * 2 - 1, 0)
+  io.result := result
 }
