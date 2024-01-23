@@ -1,8 +1,8 @@
 #include "trap.h"
 
-// #define TEST_HEAP 1
+#define TEST_HEAP 1
 
-#define TEST_PSRAM 1
+// #define TEST_PSRAM 1
 #define PSRAM_BEGIN 0x80000000
 #define PSRAM_END   0x80002000
 

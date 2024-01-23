@@ -52,6 +52,9 @@ void init_difftest(char* ref_so_file, long img_size, int port) {
     ref_difftest_init(port);
     ref_difftest_memcpy(CONFIG_PC, guest_to_host(CONFIG_PC), img_size,
                         DIFFTEST_TO_REF);
+
+    cpu.pc = CONFIG_PC;
+    difftest_flush();
 }
 
 static bool isa_difftest_checkregs(CPU_regs* ref) {
@@ -70,7 +73,7 @@ static bool isa_difftest_checkregs(CPU_regs* ref) {
     return true;
 }
 
-void difftest_flush(){
+void difftest_flush() {
     ref_difftest_regcpy(&cpu, DIFFTEST_TO_REF);
 }
 

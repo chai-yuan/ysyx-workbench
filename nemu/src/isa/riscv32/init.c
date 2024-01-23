@@ -33,6 +33,8 @@ static void restart() {
     cpu.gpr[0] = 0;
     /* 调整CSR以适配difftest */
     cpu.mstatus = 0x1800;
+    cpu.mvenforid = 0x78797379;
+    cpu.marchid = 0x015fde2e;
 }
 
 void init_isa() {

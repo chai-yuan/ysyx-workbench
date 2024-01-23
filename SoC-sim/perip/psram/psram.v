@@ -3,7 +3,7 @@ module psram(
   input ce_n,
   inout [3:0] dio
 );
-  reg [7:0] mem[1048575:0];
+  reg [7:0] mem[(1024*1024*4)-1:0];
 
   reg [7:0] count;
 

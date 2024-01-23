@@ -6,9 +6,10 @@ PHDRS {
 }
 
 MEMORY {
+  sram  : ORIGIN = 0x0f000000, LENGTH = 8K
   mrom  : ORIGIN = 0x20000000, LENGTH = 4K
   flash : ORIGIN = 0x30000000, LENGTH = 16M
-  sram  : ORIGIN = 0x0f000000, LENGTH = 8K
+  psram : ORIGIN = 0x80000000, LENGTH = 4M
 }
 
 SECTIONS {
@@ -24,26 +25,26 @@ SECTIONS {
   } > flash AT> flash
   _etext = .;
 
-  /* 加载到SRAM */
-  . = ORIGIN(sram);
+  /* 加载到PSRAM */
+  . = ORIGIN(psram);
   _bdata = .;
   .data : {
     *(.data*)
     *(.sdata*)
-  } > sram AT> flash : data
+  } > psram AT> flash : data
   _edata = .;
   .bss (NOLOAD) : {
     *(.bss*)
     *(.sbss*)
     *(.scommon)
-  } > sram
+  } > psram
 
   /* 堆栈区 */
-  _heap_start = ALIGN(16);
-  _heap_end = ORIGIN(sram) + LENGTH(sram) - 0x200;
-
-  _stack_top = ORIGIN(sram) + LENGTH(sram);
-  . = _stack_top;
+  _stack_top = ALIGN(0x1000);
+  . = _stack_top + 0x4000;
   _stack_pointer = .;
+
+  _heap_start = ALIGN(0x1000);
+  _heap_end = ORIGIN(psram) + 0x20000;
 }
 

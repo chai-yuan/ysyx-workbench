@@ -27,10 +27,13 @@ static uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};
 // 模拟其他储存器
 static uint8_t mrom_mem[MROM_SIZE];
 static uint8_t sram_mem[SRAM_SIZE];
+static uint8_t flash_mem[FLASH_SIZE];
 
 uint8_t* guest_to_host(paddr_t paddr) {
     if (paddr >= CONFIG_MBASE) {
         return pmem + paddr - CONFIG_MBASE;
+    } else if (paddr >= FLASH_BASE) {
+        return flash_mem + paddr - FLASH_BASE;
     } else if (paddr >= MROM_BASE) {
         return mrom_mem + paddr - MROM_BASE;
     } else if (paddr >= SRAM_BASE) {
@@ -72,6 +75,8 @@ void init_mem() {
 #endif
     Log("physical memory area [" FMT_PADDR ", " FMT_PADDR "]", PMEM_LEFT,
         PMEM_RIGHT);
+    Log("FLASH memory area [" FMT_PADDR ", " FMT_PADDR "]", FLASH_BASE,
+        FLASH_BASE + FLASH_SIZE);
     Log("MROM memory area [" FMT_PADDR ", " FMT_PADDR "]", MROM_BASE,
         MROM_BASE + MROM_SIZE);
     Log("SRAM memory area [" FMT_PADDR ", " FMT_PADDR "]", SRAM_BASE,

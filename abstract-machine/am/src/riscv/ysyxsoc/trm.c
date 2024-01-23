@@ -48,12 +48,12 @@ void halt(int code) {
         ;
 }
 
-/* 将储存这flash当中的一些数据拷贝到sram当中执行 */
-inline void bootloader() {
+/* 将储存这flash当中的一些数据拷贝到psram当中执行 */
+void bootloader() {
     // 确定拷贝的目标地址
     char *bdata_p = &_bdata, *edata_p = &_edata;
     for (char* text_p = &_etext; bdata_p != edata_p; text_p++, bdata_p++) {
-        *bdata_p = *text_p;  // 从mrom拷贝到sram
+        *bdata_p = *text_p;  // 从flash拷贝到psram
     }
 }
 

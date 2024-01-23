@@ -8,6 +8,9 @@ class DebugIO extends Bundle {
   val valid = Bool()
   val halt  = Bool()
 
+  val deviceAccess = Bool()
+  val deviceAddr   = UInt(CPUconfig.ADDR_WIDTH.W)
+
   val pc       = UInt(CPUconfig.ADDR_WIDTH.W)
   val regWen   = Bool()
   val regWaddr = UInt(5.W)
