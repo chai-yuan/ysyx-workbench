@@ -1,4 +1,5 @@
-AM_SRCS := riscv/ysyxsoc/start.S \
+AM_SRCS := riscv/ysyxsoc/bootloader.S \
+           riscv/ysyxsoc/start.S \
            riscv/ysyxsoc/trm.c \
            riscv/ysyxsoc/ioe.c \
            riscv/ysyxsoc/timer.c \
@@ -12,12 +13,12 @@ CFLAGS += -DMAINARGS=\"$(mainargs)\"
 .PHONY: $(AM_HOME)/am/src/riscv/ysyxsoc/trm.c
 
 SOCFLAGS += -d $(NEMU_HOME)/build/riscv32-nemu-interpreter-so
-SOCFLAGS +=
+SOCFLAGS += -b
 
 image: $(IMAGE).elf
 	@$(OBJDUMP) -d -M no-aliases $(IMAGE).elf > $(IMAGE).txt
 	@echo + OBJCOPY "->" $(IMAGE_REL).bin
-	@$(OBJCOPY) -S --only-section=.text --only-section=.data --only-section=.rodata -O binary $(IMAGE).elf $(IMAGE).bin
+	@$(OBJCOPY) -S --set-section-flags .bss=alloc,contents -O binary $(IMAGE).elf $(IMAGE).bin
 
 run: image
 	$(MAKE) -C $(SOC_HOME) ISA=$(ISA) run ARGS="$(SOCFLAGS)" IMG=$(IMAGE).bin

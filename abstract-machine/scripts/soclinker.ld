@@ -1,50 +1,65 @@
-ENTRY(_start)
-
-PHDRS {
-  text PT_LOAD;
-  data PT_LOAD;
-}
+ENTRY(_loader)
 
 MEMORY {
-  sram  : ORIGIN = 0x0f000000, LENGTH = 8K
-  mrom  : ORIGIN = 0x20000000, LENGTH = 4K
-  flash : ORIGIN = 0x30000000, LENGTH = 16M
-  psram : ORIGIN = 0x80000000, LENGTH = 4M
+  flash (rx)  : ORIGIN = 0x30000000, LENGTH = 16M
+  psram (rwx) : ORIGIN = 0x80000000, LENGTH = 4M
 }
 
+REGION_ALIAS("REGION_BOOTLOAD", flash);
+REGION_ALIAS("REGION_TEXT", psram);
+REGION_ALIAS("REGION_DATA", psram);
+REGION_ALIAS("REGION_STKHP", psram);
+
 SECTIONS {
-  /* 加载到flash */
-  . = ORIGIN(flash);
-  .text : {
+  .bootloader :
+  {
+    *(bootloader)
+    _bootloader_end = .;
+  } > REGION_BOOTLOAD
+
+  .text :
+  AT (_bootloader_end)
+  {
+    _text_start = .;
     *(entry)
     *(.text*)
-  } > flash AT> flash : text
-  .rodata : {
+  } > REGION_TEXT
+  _text_size = SIZEOF(.text);
+
+  .data :
+  AT (_bootloader_end + _text_size)
+  {
+    _data_start = .;
     *(.rodata*)
     *(.srodata*)
-  } > flash AT> flash
-  _etext = .;
-
-  /* 加载到PSRAM */
-  . = ORIGIN(psram);
-  _bdata = .;
-  .data : {
     *(.data*)
     *(.sdata*)
-  } > psram AT> flash : data
-  _edata = .;
-  .bss (NOLOAD) : {
+    _data_end = .;
+  } > REGION_DATA
+  _data_size = SIZEOF(.data);
+
+  _load_start = LOADADDR(.text);
+  _load_target = _text_start;
+  _load_target_end = _bss_start;
+
+  .bss (NOLOAD) :
+  {
+    _bss_start = .;
     *(.bss*)
     *(.sbss*)
     *(.scommon)
-  } > psram
+  } > REGION_STKHP
 
-  /* 堆栈区 */
-  _stack_top = ALIGN(0x1000);
-  . = _stack_top + 0x4000;
-  _stack_pointer = .;
+  PROVIDE (_stack_size = 0x4000);
 
-  _heap_start = ALIGN(0x1000);
-  _heap_end = ORIGIN(psram) + LENGTH(psram);
+  .stack_heap (NOLOAD) :
+  {
+    _stack_top = ALIGN(0x1000);
+    . = _stack_top + _stack_size;
+    _stack_pointer = .;
+
+    _heap_start = ALIGN(0x1000);
+    _heap_end = ORIGIN(REGION_STKHP) + LENGTH(REGION_STKHP);
+  } > REGION_STKHP
 }
 

@@ -6,7 +6,6 @@
 #define npc_trap(code) asm volatile("mv a0, %0; ebreak" : : "r"(code))
 
 extern char _heap_start, _heap_end;
-extern char _etext, _bdata, _edata;
 
 int main(const char* args);
 
@@ -48,15 +47,6 @@ void halt(int code) {
         ;
 }
 
-/* 将储存这flash当中的一些数据拷贝到psram当中执行 */
-void bootloader() {
-    // 确定拷贝的目标地址
-    char *bdata_p = &_bdata, *edata_p = &_edata;
-    for (char* text_p = &_etext; bdata_p != edata_p; text_p++, bdata_p++) {
-        *bdata_p = *text_p;  // 从flash拷贝到psram
-    }
-}
-
 void display_npc_info(){
     unsigned int mvendorid, marchid;
     char mvendorid_s[5] = {0};
@@ -67,7 +57,6 @@ void display_npc_info(){
 }
 
 void _trm_init() {
-    bootloader();
     uart_init();
     display_npc_info();
     int ret = main(mainargs);
