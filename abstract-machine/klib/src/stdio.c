@@ -6,7 +6,7 @@
 #if !defined(__ISA_NATIVE__) || defined(__NATIVE_USE_KLIB__)
 
 int printf(const char* fmt, ...) {
-    char buf[2048];
+    char buf[4096];
     va_list ap;
     va_start(ap, fmt);
     int retval = vsprintf(buf, fmt, ap);

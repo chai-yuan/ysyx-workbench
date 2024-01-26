@@ -1,7 +1,7 @@
 NAME = bootloader
 AM_SRCS  :=
 
-LOAD_BIN    ?=
+LOAD_BIN    ?= test.bin
 LOAD_TARGET ?= 0x80000000
 LOAD_LEN    := $(shell stat -c "%s" $(LOAD_BIN))
 
