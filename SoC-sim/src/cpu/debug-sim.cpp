@@ -30,4 +30,10 @@ extern "C" void debug_update_cpu(int deviceAccess,
         difftest_checkregs(&ref);
     }
 #endif
+
+#ifdef CONFIG_LOOP_CHECK
+    if ((sim_statistic.valid_cycle % 40000) == 0)
+        Log("check point : clock : %u, pc : 0x%x", sim_statistic.clock_cycle,
+            cpu.pc);
+#endif
 }

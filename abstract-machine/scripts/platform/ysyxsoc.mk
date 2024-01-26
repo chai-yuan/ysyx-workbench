@@ -1,9 +1,10 @@
-AM_SRCS := riscv/ysyxsoc/bootloader.S \
-           riscv/ysyxsoc/start.S \
+AM_SRCS := riscv/ysyxsoc/start.S \
            riscv/ysyxsoc/trm.c \
            riscv/ysyxsoc/ioe.c \
            riscv/ysyxsoc/timer.c \
-           riscv/ysyxsoc/input.c
+           riscv/ysyxsoc/input.c \
+           riscv/ysyxsoc/cte.c \
+           riscv/ysyxsoc/trap.S
 
 CFLAGS    += -fdata-sections -ffunction-sections
 LDFLAGS   += -T $(AM_HOME)/scripts/soclinker.ld
@@ -15,7 +16,11 @@ CFLAGS += -DMAINARGS=\"$(mainargs)\"
 SOCFLAGS += -d $(NEMU_HOME)/build/riscv32-nemu-interpreter-so
 SOCFLAGS += -b
 
-image: $(IMAGE).elf
+image: binary
+	@echo + ADD bootloader "->" $(IMAGE_REL).bin
+	@$(MAKE) -C $(AM_HOME)/bootloader ARCH=riscv32-ysyxsoc LOAD_BIN=$(IMAGE).bin bootloader
+
+binary: $(IMAGE).elf
 	@$(OBJDUMP) -d -M no-aliases $(IMAGE).elf > $(IMAGE).txt
 	@echo + OBJCOPY "->" $(IMAGE_REL).bin
 	@$(OBJCOPY) -S --set-section-flags .bss=alloc,contents -O binary $(IMAGE).elf $(IMAGE).bin
