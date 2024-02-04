@@ -59,6 +59,7 @@ __EXPORT void difftest_init(int port) {
     void init_mem();
     init_mem();
 
+    cpu.mstatus = 0x1800;
     cpu.mvenforid = 0x78797379;
     cpu.marchid = 0x015fde2e;
 }

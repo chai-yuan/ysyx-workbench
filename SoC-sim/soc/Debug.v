@@ -24,10 +24,29 @@ module Debug (
 
     wire valid = !reset && debug_valid;
 
+    // 因为pc数值指代的是当前指令的pc值，为了和difftest的next_pc值做比较，
+    // 在这里延后1条指令再进行对比
+    reg valid_reg;
+    reg deviceAccess;
+    reg [31:0] deviceAddr;
+    reg regWen;
+    reg [4:0] regWaddr;
+    reg [31:0] regWdata;
     always @(posedge clock) begin
         if(valid) begin
-            debug_update_cpu(debug_deviceAccess,debug_deviceAddr
-                            ,debug_pc, debug_regWen, debug_regWaddr, debug_regWdata);
+            valid_reg <= valid;
+            deviceAccess <= debug_deviceAccess;
+            deviceAddr <= debug_deviceAddr;
+            regWen <= debug_regWen;
+            regWaddr <= debug_regWaddr;
+            regWdata <= debug_regWdata;
+        end
+    end
+
+    always @(posedge clock) begin
+        if(valid && valid_reg) begin
+            debug_update_cpu(deviceAccess,deviceAddr
+                            ,debug_pc, regWen, regWaddr, regWdata);
 
             if(debug_halt)begin
                 debug_sim_halt();
