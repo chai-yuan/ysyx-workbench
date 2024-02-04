@@ -36,7 +36,7 @@ paddr_t host_to_guest(uint8_t* haddr);
 #define FLASH_BASE 0x30000000
 #define FLASH_SIZE 0x00200000
 #define SDRAM_BASE 0xa0000000
-#define SDRAM_SIZE 0x00400000
+#define SDRAM_SIZE 0x02000000
 static inline bool in_pmem(paddr_t addr) {
     return (addr - CONFIG_MBASE < CONFIG_MSIZE) ||
            (addr >= MROM_BASE && addr < MROM_BASE + MROM_SIZE) ||

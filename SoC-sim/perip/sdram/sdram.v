@@ -24,6 +24,9 @@ import "DPI-C" function void sdram_posedge(input int cmd,
                  (~cs & ras & ~cas & ~we) ? 3'h3 :  // write
                  (~cs & ras & cas & ~we) ? 3'h4:    // terminate
                  (~cs & ~ras & ~cas & ~we) ? 3'h5 : // load_mode_register
+
+                 (~cs & ~ras & cas & ~we) ? 3'h6:    // PRECHARGE
+                 (~cs & ~ras & ~cas & we) ? 3'h7:    // AUTO REFRESH
                  3'h0;                              // nop
 
     wire sys_clk;

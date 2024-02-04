@@ -1,26 +1,25 @@
 #include <cstdio>
 #include <queue>
 
-static unsigned short sdram[8192 * 512 * 4];
+static unsigned short sdram[8192 * 512 * 4 * 2];
 
 static int burst_length, cas_latency;
-static int active_row, active_col, active_bank;
+static int active_row[4];
 
 static bool read_burst, write_burst;
 static int addr, addr_idx;
 static std::queue<unsigned short> read_buff;
 
 static void active(int a, int ba) {
-    active_row = a & 0x1fff;
-    active_bank = ba;
+    active_row[ba] = a & 0x1fff;
 }
 
 static void read(int a, int ba) {
-    active_col = a & 0x1ff;
-    active_bank = ba;
+    int active_col = a & 0x1ff;
+    int active_bank = ba;
 
-    addr_idx = addr = (active_row << 11) + (active_bank << 9) + active_col;
-    printf("读命令 : addr %x\n", addr);
+    addr_idx = addr = (active_row[ba] << 11) + (active_bank << 9) + active_col;
+    // printf("读命令 : addr %x\n", addr);
 
     read_burst = true;
     if (read_buff.empty()) {  // 放入读出延迟
@@ -31,11 +30,11 @@ static void read(int a, int ba) {
 }
 
 static void write(int a, int ba) {
-    active_col = a & 0x1ff;
-    active_bank = ba;
+    int active_col = a & 0x1ff;
+    int active_bank = ba;
 
-    addr_idx = addr = (active_row << 11) + (active_bank << 9) + active_col;
-    printf("写命令 : addr %x\n", addr);
+    addr_idx = addr = (active_row[ba] << 11) + (active_bank << 9) + active_col;
+    // printf("写命令 : addr %x\n", addr);
     write_burst = true;
 }
 
@@ -49,8 +48,8 @@ static void set_mode(int a) {
     burst_length = 1 << burst_length;
 
     cas_latency = (a >> 4) & 0b111;
-    printf("设置寄存器: burst_length: %d,cas_latency: %d\n a : %d\n",
-     burst_length, cas_latency, a);
+    // printf("设置寄存器: burst_length: %d,cas_latency: %d\n a : %d\n",
+    //        burst_length, cas_latency, a);
 }
 
 extern "C" void sdram_posedge(int cmd,
@@ -85,8 +84,7 @@ extern "C" void sdram_posedge(int cmd,
 
     if (read_burst) {
         read_buff.push(sdram[addr_idx]);
-        // printf("读出 : addr: %x,data: %x,dqm: %x\n", addr_idx,
-        // sdram[addr_idx],
+        // printf("读出 : addr: %x,data: %x,dqm: %x\n", addr_idx, sdram[addr_idx],
         //        dqm);
         addr_idx++;
         if ((addr_idx - addr) == burst_length)
@@ -113,7 +111,7 @@ extern "C" void sdram_posedge(int cmd,
         *read_valid = 1;
         *read_data = read_buff.front();
         read_buff.pop();
-    }else{
-      *read_valid = 0;
+    } else {
+        *read_valid = 0;
     }
 }
