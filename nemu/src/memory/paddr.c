@@ -28,9 +28,12 @@ static uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};
 static uint8_t mrom_mem[MROM_SIZE];
 static uint8_t sram_mem[SRAM_SIZE];
 static uint8_t flash_mem[FLASH_SIZE];
+static uint8_t sdram_mem[SDRAM_SIZE];
 
 uint8_t* guest_to_host(paddr_t paddr) {
-    if (paddr >= CONFIG_MBASE) {
+    if(paddr >= SDRAM_BASE){
+        return sdram_mem + paddr - SDRAM_BASE;
+    }else if (paddr >= CONFIG_MBASE) {
         return pmem + paddr - CONFIG_MBASE;
     } else if (paddr >= FLASH_BASE) {
         return flash_mem + paddr - FLASH_BASE;
@@ -77,6 +80,8 @@ void init_mem() {
         PMEM_RIGHT);
     Log("FLASH memory area [" FMT_PADDR ", " FMT_PADDR "]", FLASH_BASE,
         FLASH_BASE + FLASH_SIZE);
+    Log("SDRAM memory area [" FMT_PADDR ", " FMT_PADDR "]", SDRAM_BASE,
+        SDRAM_BASE + SDRAM_SIZE);        
     Log("MROM memory area [" FMT_PADDR ", " FMT_PADDR "]", MROM_BASE,
         MROM_BASE + MROM_SIZE);
     Log("SRAM memory area [" FMT_PADDR ", " FMT_PADDR "]", SRAM_BASE,

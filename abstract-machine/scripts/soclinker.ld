@@ -3,11 +3,11 @@ ENTRY(_start)
 PHDRS { text PT_LOAD; data PT_LOAD; }
 
 MEMORY {
-  psram (rwx) : ORIGIN = 0x80000000, LENGTH = 4M
+  sdram (rwx) : ORIGIN = 0xa0000000, LENGTH = 32M
 }
 
 SECTIONS {
-  . = ORIGIN(psram);
+  . = ORIGIN(sdram);
 
   .text : {
     *(entry)
@@ -33,7 +33,7 @@ SECTIONS {
     _stack_pointer = .;
 
     _heap_start = ALIGN(0x1000);
-    _heap_end = ORIGIN(psram) + LENGTH(psram);
+    _heap_end = ORIGIN(sdram) + LENGTH(sdram);
   }
 }
 

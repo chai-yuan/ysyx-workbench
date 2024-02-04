@@ -16,6 +16,7 @@ LDFLAGS += --defsym=_load_target=$(LOAD_TARGET) \
 bootloader: binary
 	@echo ---- bootloader begin ----
 	@echo binary file len:$(LOAD_LEN)
+	@echo load to :$(LOAD_TARGET)
 	$(shell cat $(IMAGE).bin $(LOAD_BIN) > /tmp/combined.bin)
 	$(shell mv /tmp/combined.bin $(LOAD_BIN))
 	@echo ---- bootloader end ----
