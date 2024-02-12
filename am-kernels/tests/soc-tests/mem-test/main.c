@@ -1,7 +1,7 @@
 #include "trap.h"
 
 #define RAM_BEGIN 0xa1e10000
-#define RAM_END   0xa1e20000
+#define RAM_END   0xa1e10007
 
 extern char _heap_start, _heap_end;
 

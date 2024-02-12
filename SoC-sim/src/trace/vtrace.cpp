@@ -15,8 +15,10 @@ void vtrace_exit() {
 }
 
 void dump_wave() {
-    sim_soc->eval();
+    if (vtrace_enable) {
+        sim_soc->eval();
 
-    contextp->timeInc(1);
-    tfp->dump(contextp->time());
+        contextp->timeInc(1);
+        tfp->dump(contextp->time());
+    }
 }

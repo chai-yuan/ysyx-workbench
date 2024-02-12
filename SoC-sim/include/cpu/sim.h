@@ -16,6 +16,7 @@ struct sim_statistic_t{
 
 extern VysyxSoCFull* sim_soc;
 extern sim_statistic_t sim_statistic;
+extern bool vtrace_enable;
 
 void statistic();
 

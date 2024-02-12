@@ -9,6 +9,7 @@ VerilatedContext* contextp;
 VerilatedVcdC* tfp;
 
 sim_statistic_t sim_statistic;
+bool vtrace_enable;
 
 void sim_init() {
     Log("sim init");

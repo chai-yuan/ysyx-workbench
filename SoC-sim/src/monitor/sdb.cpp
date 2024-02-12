@@ -5,6 +5,7 @@
 #include <readline/history.h>
 #include <readline/readline.h>
 #include <utils.h>
+#include <cpu/sim.h>
 
 static int is_batch_mode = false;
 
@@ -77,6 +78,12 @@ static int cmd_x(char* args) {
     return 0;
 }
 
+static int cmd_v(char *args){
+    vtrace_enable = !vtrace_enable;
+    printf("vtrace %s\n",vtrace_enable ? "enable" : "disable");
+    return 0;
+}
+
 static struct {
     const char* name;
     const char* description;
@@ -88,6 +95,7 @@ static struct {
     {"si", "Execute N steps, pause after N instructions", cmd_si},
     {"info", "Print the program status", cmd_info},
     {"x", "Scan memory", cmd_x},
+    {"v", "Vtrace enable", cmd_v},
 };
 
 #define NR_CMD ARRLEN(cmd_table)
