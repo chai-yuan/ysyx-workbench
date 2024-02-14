@@ -1,7 +1,7 @@
 #include "trap.h"
 
-#define RAM_BEGIN 0xa1e10000
-#define RAM_END   0xa1e10007
+#define RAM_BEGIN 0xa3f00000
+#define RAM_END   0xa3f03027
 
 extern char _heap_start, _heap_end;
 
@@ -9,11 +9,11 @@ int main() {
     // 单字节测试
     printf("1 bits write\n");
     for (char* p = (char*)(RAM_BEGIN); p < (char*)(RAM_END); p++) {
-        *p = (char)((uintptr_t)p ^ 0x00);
+        *p = (char)((uintptr_t)p ^ 0x02);
     }
     printf("1 bits read\n");
     for (char* p = (char*)(RAM_BEGIN); p < (char*)(RAM_END); p++) {
-        check(*p == (char)((uintptr_t)p ^ 0x00));
+        check(*p == (char)((uintptr_t)p ^ 0x02));
     }
     // 双字节测试
     printf("2 bits write\n");

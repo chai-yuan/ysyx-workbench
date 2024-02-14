@@ -50,7 +50,7 @@ module MT48LC16M16A2(
 
         3'h2 : begin  // read
           addr <= now_addr;
-          //$display("read cmd!");
+          $display("read cmd!");
           burst_cnt   <= 8'h00;
           read_burst <= 1'b1;
         end
@@ -59,8 +59,8 @@ module MT48LC16M16A2(
           addr <= now_addr + 1;
           sdram_mem[now_addr][7:0] <= dqm[0] ? sdram_mem[now_addr][7:0] : dq[7:0];
           sdram_mem[now_addr][15:8] <= dqm[1] ? sdram_mem[now_addr][15:8] : dq[15:8];
-          //$display("write cmd!");
-          //$display("write dqm %x : %x -> %x",dqm,dq[15:0],now_addr);
+          $display("write cmd!");
+          $display("write dqm %x : %x -> %x",dqm,dq[15:0],now_addr);
           burst_cnt   <= 8'h01;
           write_burst <= 1'b1;
         end
@@ -81,13 +81,13 @@ module MT48LC16M16A2(
             if(read_burst) begin
               read_valid[read_idx[1:0] + cas_latency[1:0]] <= 1'b1;
               read_data[read_idx[1:0] + cas_latency[1:0]][15:0] <= sdram_mem[addr][15:0];
-              //$display("read : %x -> %x",addr,sdram_mem[addr][15:0]);
+              $display("read : %x -> %x",addr,sdram_mem[addr][15:0]);
             end
 
             if(write_burst) begin
               sdram_mem[addr][7:0] <= dqm[0] ? sdram_mem[addr][7:0] : dq[7:0];
               sdram_mem[addr][15:8] <= dqm[1] ? sdram_mem[addr][15:8] : dq[15:8];
-              //$display("write dqm %x : %x -> %x",dqm,dq[15:0],addr);
+              $display("write dqm %x : %x -> %x",dqm,dq[15:0],addr);
             end
 
             burst_cnt <= burst_cnt + 8'h1;
