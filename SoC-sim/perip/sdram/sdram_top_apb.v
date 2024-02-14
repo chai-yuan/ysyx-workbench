@@ -12,6 +12,7 @@ module sdram_top_apb (
   output [31:0] in_prdata,
   output        in_pslverr,
 
+  output [ 1:0] sdram_sel,
   output        sdram_clk,
   output        sdram_cke,
   output        sdram_cs,
@@ -27,6 +28,10 @@ module sdram_top_apb (
   wire sdram_dout_en;
   wire [31:0] sdram_dout;
   assign sdram_dq = sdram_dout_en ? sdram_dout : 31'bz;
+
+  wire rw_cmd = (~sdram_cs & sdram_ras & ~sdram_cas);
+  assign sdram_sel = rw_cmd ? (in_paddr[26] ? 2'b10 : 2'b01)
+                     : 2'b11;
 
   typedef enum [1:0] { ST_IDLE, ST_WAIT_ACCEPT, ST_WAIT_ACK } state_t;
   reg [1:0] state;
@@ -45,6 +50,7 @@ module sdram_top_apb (
 
   wire is_read  = ((in_psel && !in_penable) || (state == ST_WAIT_ACCEPT)) && !in_pwrite;
   wire is_write = ((in_psel && !in_penable) || (state == ST_WAIT_ACCEPT)) &&  in_pwrite;
+
   sdram_axi_core #(
     .SDRAM_MHZ(100),
     .SDRAM_ADDR_W(24),
