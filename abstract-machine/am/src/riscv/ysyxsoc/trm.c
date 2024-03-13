@@ -35,6 +35,14 @@ void display_npc_info(){
     asm volatile ("csrr %0, marchid" : "=r"(marchid) :: "memory");
     memcpy(mvendorid_s,&mvendorid,4);
     printf("mvendorid : %s\nmarchid : %d\n",mvendorid_s,marchid);
+    // 通过数码管显示
+    unsigned int seg_marchid = 0;
+    while (marchid){
+        seg_marchid = seg_marchid << 4;
+        seg_marchid += marchid%10;
+        marchid /= 10;
+    }
+    *(volatile unsigned int *)(0x10002008) = seg_marchid;
 }
 
 void _trm_init() {

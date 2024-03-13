@@ -31,7 +31,7 @@ int atoi(const char* nptr) {
     return x;
 }
 
-void itoa(int value, char* str, int base) {
+void klib_itoa(int value, char* str, int base) {
     static char num[] = "0123456789abcdefghijklmnopqrstuvwxyz";
     char* wstr = str;
     int sign;

@@ -27,16 +27,16 @@ module gpio_top_apb(
 // 寄存器同gpio输出绑定
 reg [15:0] led;
 reg [15:0] switch;
-reg [7:0] seg [7:0];
+reg [31:0] seg_data;
 assign gpio_out = led;
-assign gpio_seg_0 = seg[0];
-assign gpio_seg_1 = seg[1];
-assign gpio_seg_2 = seg[2];
-assign gpio_seg_3 = seg[3];
-assign gpio_seg_4 = seg[4];
-assign gpio_seg_5 = seg[5];
-assign gpio_seg_6 = seg[6];
-assign gpio_seg_7 = seg[7];
+DigitDriver seg_0(seg_data[3:0], gpio_seg_0);
+DigitDriver seg_1(seg_data[7:4], gpio_seg_1);
+DigitDriver seg_2(seg_data[11:8], gpio_seg_2);
+DigitDriver seg_3(seg_data[15:12], gpio_seg_3);
+DigitDriver seg_4(seg_data[19:16], gpio_seg_4);
+DigitDriver seg_5(seg_data[23:20], gpio_seg_5);
+DigitDriver seg_6(seg_data[27:24], gpio_seg_6);
+DigitDriver seg_7(seg_data[31:28], gpio_seg_7);
 always @(posedge clock) begin
   if(!reset) begin
     switch <= gpio_in;
@@ -58,7 +58,10 @@ always @(posedge clock) begin
           led[15:8] <= in_pstrb[1] ? in_pwdata[15:8] : led[15:8];
         end
         2'b10 : begin // 数码管
-          $display("TODO : segment led");
+          seg_data[7:0] <= in_pstrb[0] ? in_pwdata[7:0] : seg_data[7:0];
+          seg_data[15:8] <= in_pstrb[1] ? in_pwdata[15:8] : seg_data[15:8];
+          seg_data[23:16] <= in_pstrb[2] ? in_pwdata[23:16] : seg_data[23:16];
+          seg_data[31:24] <= in_pstrb[3] ? in_pwdata[31:24] : seg_data[31:24];
         end
         default : begin
         end
@@ -71,5 +74,35 @@ always @(posedge clock) begin
     end
   end
 end
+
+endmodule
+
+// 数码管驱动模块
+module DigitDriver (
+  input wire [3:0] seg_data,
+  output reg [7:0] gpio_seg
+);
+
+  always @(*) begin
+    case (seg_data)
+      4'b0000: gpio_seg = 8'b00000011; // Digit 0
+      4'b0001: gpio_seg = 8'b10011111; // Digit 1
+      4'b0010: gpio_seg = 8'b00100101; // Digit 2
+      4'b0011: gpio_seg = 8'b00001101; // Digit 3
+      4'b0100: gpio_seg = 8'b10011001; // Digit 4
+      4'b0101: gpio_seg = 8'b01001001; // Digit 5
+      4'b0110: gpio_seg = 8'b01000001; // Digit 6
+      4'b0111: gpio_seg = 8'b00011111; // Digit 7
+      4'b1000: gpio_seg = 8'b00000001; // Digit 8
+      4'b1001: gpio_seg = 8'b00001001; // Digit 9
+      // 4'b1010: gpio_seg = 8'b11111111; // Digit A
+      // 4'b1011: gpio_seg = 8'b11111111; // Digit B
+      // 4'b1100: gpio_seg = 8'b11111111; // Digit C
+      // 4'b1101: gpio_seg = 8'b11111111; // Digit D
+      // 4'b1110: gpio_seg = 8'b11111111; // Digit E
+      // 4'b1111: gpio_seg = 8'b11111111; // Digit F
+      default: gpio_seg = 8'b11111111; // Default case
+    endcase
+  end
 
 endmodule

@@ -29,7 +29,7 @@ int vsprintf(char* out, const char* fmt, va_list ap) {
             case 'd': {
                 int i = va_arg(ap, int);
                 char buffer[12];  // Buffer to hold int as string
-                itoa(i, buffer, 10);
+                klib_itoa(i, buffer, 10);
                 strcpy(str, buffer);
                 str += strlen(buffer);
                 break;
@@ -38,6 +38,11 @@ int vsprintf(char* out, const char* fmt, va_list ap) {
                 char* s = va_arg(ap, char*);
                 strcpy(str, s);
                 str += strlen(s);
+                break;
+            }
+            case 'c': {
+                char c = va_arg(ap, int);
+                *str++ = c;
                 break;
             }
             default:
@@ -82,7 +87,7 @@ int vsnprintf(char* out, size_t n, const char* fmt, va_list ap) {
             case 'd': {
                 int i = va_arg(ap, int);
                 char buffer[12];  // Buffer to hold int as string
-                itoa(i, buffer, 10);
+                klib_itoa(i, buffer, 10);
                 if (str - out < n) {
                     strncpy(str, buffer, n - (str - out));
                     str += strlen(buffer);
