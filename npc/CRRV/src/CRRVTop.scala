@@ -11,19 +11,22 @@ class CRRVTop extends Module {
   val io = IO(new CPUWarpIO)
   // CRRV CPU
   val core       = Module(new Core)
-  val arbiter    = Module(new SimpleArbiter)
+  // val arbiter    = Module(new SimpleArbiter)
+  val axiArbiter     = Module(new AXI4Arbiter)
   val xbar       = Module(new SimpleXbar)
   val clint      = Module(new CLINT)
-  val simple2axi = Module(new Simple2AXI4)
+  val simple2axiInst = Module(new Simple2AXI4)
+  val simple2axiData = Module(new Simple2AXI4)
   val debug      = Module(new Debug)
 
-  core.io.inst <> arbiter.io.simpleInst
+  core.io.inst <> simple2axiInst.io.simple
   core.io.data <> xbar.io.simpleIn
-  xbar.io.simpleOut <> arbiter.io.simpleData
+  xbar.io.simpleOut <> simple2axiData.io.simple
   xbar.io.simpleCLINT <> clint.io
 
-  arbiter.io.simpleOut <> simple2axi.io.simple
-  val aximaster = simple2axi.io.axi
+  axiArbiter.io.axiInst <> simple2axiInst.io.axi
+  axiArbiter.io.axiData <> simple2axiData.io.axi
+  val aximaster = axiArbiter.io.axiOut
 
   // CPU IO
   debug.io.clock := clock

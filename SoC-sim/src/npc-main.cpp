@@ -11,6 +11,7 @@ int is_exit_status_bad() {
     return !good;
 }
 
+#ifdef CONFIG_NVBOARD
 static VysyxSoCFull dut;
 void nvboard_bind_all_pins(VysyxSoCFull* top) {
     nvboard_bind_pin(&top->externalPins_vga_vsync, 1, VGA_VSYNC);
@@ -57,6 +58,7 @@ static void single_cycle() {
     dut.clock = 1;
     dut.eval();
 }
+#endif
 
 int main(int argc, char* argv[]) {
     Verilated::commandArgs(argc, argv);
@@ -75,7 +77,7 @@ int main(int argc, char* argv[]) {
         nvboard_update();
         single_cycle();
     }
-#elif
+#else
     sim_init();
     sdb_mainloop();
     sim_exit();
