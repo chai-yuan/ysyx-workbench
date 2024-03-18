@@ -10,14 +10,16 @@ import bus._
 class CRRVTop extends Module {
   val io = IO(new CPUWarpIO)
   // CRRV CPU
-  val core       = Module(new Core)
+  val core = Module(new Core)
   // val arbiter    = Module(new SimpleArbiter)
   val axiArbiter     = Module(new AXI4Arbiter)
-  val xbar       = Module(new SimpleXbar)
-  val clint      = Module(new CLINT)
+  val xbar           = Module(new SimpleXbar)
+  val clint          = Module(new CLINT)
   val simple2axiInst = Module(new Simple2AXI4)
   val simple2axiData = Module(new Simple2AXI4)
-  val debug      = Module(new Debug)
+  val debug          = Module(new Debug)
+  // val icache         = Module(new InstCache(256, 2))
+  // icache.io.flush := false.B
 
   core.io.inst <> simple2axiInst.io.simple
   core.io.data <> xbar.io.simpleIn
