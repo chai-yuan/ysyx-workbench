@@ -14,6 +14,10 @@ class PipelineStageIO extends Bundle {
 class FetchStageIO extends PipelineStageIO {
   val instValid = Bool()
   val pc        = UInt(ADDR_WIDTH.W)
+
+  val predTaken  = Bool()
+  val predTarget = UInt(ADDR_WIDTH.W)
+  val predIndex  = UInt(5.W)
 }
 
 class DecodeStageIO extends PipelineStageIO {

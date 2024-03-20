@@ -33,6 +33,7 @@ class Core extends Module {
   fetchStage.io.control.flush   := pipelineControl.io.flushIF
   fetchStage.io.control.flushPC := pipelineControl.io.flushPc
   fetchStage.io.control.stall   := pipelineControl.io.stallIF
+  fetchStage.io.branchInfo      := decodeStage.io.branchInfo
   if2id.io.flush                := pipelineControl.io.flushIF
   if2id.io.stallPrev            := pipelineControl.io.stallIF
   if2id.io.stallNext            := pipelineControl.io.stallID

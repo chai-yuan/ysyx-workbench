@@ -14,9 +14,10 @@ class DecodeStage extends Module {
     val control = new DecodeStageControlIO
     val id2exe  = Output(new ID2EXEIO)
 
-    val read     = new SimpleInIO(INST_WIDTH)
-    val regRead1 = new RegReadIO
-    val regRead2 = new RegReadIO
+    val branchInfo = Output(new BranchInfoIO(5))
+    val read       = new SimpleInIO(INST_WIDTH)
+    val regRead1   = new RegReadIO
+    val regRead2   = new RegReadIO
   })
   val if2id = io.if2id.IF
 
@@ -76,7 +77,8 @@ class DecodeStage extends Module {
   val targetB      = (if2id.pc.asSInt + immB.asSInt).asUInt
   val branchTarget = Mux(branchFlag === BR_AL, targetJ, targetB)
   val flushPC      = Mux(branchTaken, branchTarget, if2id.pc + 4.U)
-  val branchMiss   = flushPC =/= if2id.pc + 4.U // 没有添加分支预测
+  val branchMiss   = if2id.predTaken =/= branchTaken || (branchTaken && if2id.predTarget =/= branchTarget)
+
   // CSR 信号
   val csrOperation = MuxLookup(csrOp, CSR_NOP)(
     Seq(
@@ -89,6 +91,13 @@ class DecodeStage extends Module {
   // 流水线控制
   io.control.flushIF := !io.control.stall && branchMiss
   io.control.flushPc := flushPC
+  // 分支信息(用于分支预测)
+  io.branchInfo.branch := branchFlag =/= BR_NOP
+  io.branchInfo.jump   := branchFlag === BR_AL
+  io.branchInfo.taken  := branchTaken
+  io.branchInfo.index  := if2id.predIndex
+  io.branchInfo.pc     := if2id.pc
+  io.branchInfo.target := branchTarget
   // 寄存器
   io.regRead1.en   := regEn1
   io.regRead2.en   := regEn2
