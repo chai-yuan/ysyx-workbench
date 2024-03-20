@@ -75,8 +75,8 @@ class DecodeStage extends Module {
   val targetJ      = Mux(regEn1, targetJALR, targetJAL)
   val targetB      = (if2id.pc.asSInt + immB.asSInt).asUInt
   val branchTarget = Mux(branchFlag === BR_AL, targetJ, targetB)
-  val branchMiss   = branchTaken // 出现跳转后一定分支错误(没有添加分支预测)
   val flushPC      = Mux(branchTaken, branchTarget, if2id.pc + 4.U)
+  val branchMiss   = flushPC =/= if2id.pc + 4.U // 没有添加分支预测
   // CSR 信号
   val csrOperation = MuxLookup(csrOp, CSR_NOP)(
     Seq(

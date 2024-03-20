@@ -10,7 +10,7 @@ import io._
   *
   * @param tickCount
   */
-class CLINT(val tickCount: Int = 10) extends Module {
+class CLINT(val tickCount: Int = 16) extends Module {
   val io = IO(Flipped(new SimpleIO(ADDR_WIDTH, DATA_WIDTH)))
 
   val mtime = RegInit(0.U(64.W))
