@@ -22,12 +22,22 @@ typedef struct {
     word_t gpr[MUXDEF(CONFIG_RVE, 16, 32)];
     vaddr_t pc;
     // CSR
+    word_t mstatus;
     word_t mcause;
     vaddr_t mepc;
-    word_t mstatus;
     word_t mtvec;
+
     word_t mvenforid;
     word_t marchid;
+
+    uint32_t cyclel;
+    uint32_t cycleh;
+
+    uint32_t mscratch;
+    uint32_t mie;
+    uint32_t mip;
+
+    uint32_t mtval;
 } MUXDEF(CONFIG_RV64, riscv64_CPU_state, riscv32_CPU_state);
 
 // decode
