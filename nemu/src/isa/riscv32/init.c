@@ -31,11 +31,10 @@ static void restart() {
     cpu.pc = RESET_VECTOR;
     /* The zero register is always 0. */
     cpu.gpr[0] = 0;
-    cpu.gpr[11] = 0x3000000;
-    /* 调整CSR以适配difftest */
-    cpu.mstatus = 0x1800;
-    cpu.mvenforid = 0x78797379;
-    cpu.marchid = 0x015fde2e;
+    cpu.gpr[11] = 0x83000000;
+
+    // cpu.mvenforid = 0x78797379;
+    cpu.marchid = 0x5;
 }
 
 void init_isa() {

@@ -20,6 +20,7 @@
 // NOTE: this is compatible to 16550
 
 #define CH_OFFSET 0
+#define LSR_OFFSET 5
 
 static uint8_t *serial_base = NULL;
 
@@ -34,14 +35,18 @@ static void serial_io_handler(uint32_t offset, int len, bool is_write) {
     /* We bind the serial port with the host stderr in NEMU. */
     case CH_OFFSET:
       if (is_write) serial_putc(serial_base[0]);
-      else panic("do not support read");
+      else warning("do not support read");
       break;
-    default: panic("do not support offset = %d", offset);
+    case LSR_OFFSET:
+      if (is_write) warning("do not support write");
+      break;
+    default: warning("do not support offset = %d", offset);
   }
 }
 
 void init_serial() {
   serial_base = new_space(8);
+  serial_base[LSR_OFFSET] = 0x60;
 #ifdef CONFIG_HAS_PORT_IO
   add_pio_map ("serial", CONFIG_SERIAL_PORT, serial_base, 8, serial_io_handler);
 #else
