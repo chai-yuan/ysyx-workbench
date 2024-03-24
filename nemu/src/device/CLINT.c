@@ -16,7 +16,7 @@ static void clint_io_handler(uint32_t offset, int len, bool is_write) {
     }
 }
 
-void init_lint() {
+void init_clint() {
     clint_base = new_space(0x10000);
     add_mmio_map("clint", 0x2000000, clint_base, 0x10000, clint_io_handler);
 }
