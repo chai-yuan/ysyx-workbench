@@ -22,15 +22,19 @@ word_t isa_raise_intr(word_t NO, vaddr_t epc) {
     if (NO & 0x80000000) {  // 中断
         cpu.mtval = 0;
     } else {
-        cpu.mtval = epc;    // 异常
+        cpu.mtval = epc;  // 异常
     }
     cpu.mcause = NO;
     cpu.mepc = epc;
-    cpu.mstatus = ((cpu.mstatus & 0x08) << 4) | ((3) << 11);  // 设置MPIE和MPP
-
+    cpu.mstatus = ((cpu.mstatus & 0x08) << 4) | ((cpu.privilege & 3) << 11);  // 设置MPIE和MPP
+    cpu.privilege = 3;
     return cpu.mtvec;
 }
 
+bool clint_check_intr();
+
 word_t isa_query_intr() {
+    if (clint_check_intr())
+        return INTR_CLINT;
     return INTR_EMPTY;
 }

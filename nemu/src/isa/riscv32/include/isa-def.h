@@ -36,6 +36,7 @@ typedef struct {
     uint32_t mtval;
     // 其他状态
     vaddr_t amo_addr;
+    uint32_t privilege;
     bool sleep;
 } MUXDEF(CONFIG_RV64, riscv64_CPU_state, riscv32_CPU_state);
 

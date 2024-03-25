@@ -56,6 +56,8 @@ word_t* isa_csr_from_imm(word_t imm) {
     switch (imm) {
         case 0x304:
             return &(cpu.mie);
+        case 0x343:
+            return &(cpu.mtval);
         case 0x344:
             return &(cpu.mip);
         case 0x340:

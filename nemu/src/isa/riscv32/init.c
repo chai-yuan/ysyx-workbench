@@ -32,7 +32,7 @@ static void restart() {
     /* The zero register is always 0. */
     cpu.gpr[0] = 0;
     cpu.gpr[11] = 0x83000000;
-
+    cpu.privilege = 3;
     // cpu.mvenforid = 0x78797379;
     cpu.marchid = 0x5;
 }

@@ -102,8 +102,6 @@ static void decode_operand(Decode* s, int* rd, word_t* src1, word_t* src2, word_
     }
 }
 
-bool clint_check_intr();
-
 static int decode_exec(Decode* s) {
     int rd = 0;
     word_t src1 = 0, src2 = 0, imm = 0;
@@ -111,16 +109,15 @@ static int decode_exec(Decode* s) {
     s->dnpc = s->snpc;
 
     // CLINT中断
-    if (clint_check_intr()){
+    if (isa_query_intr() == INTR_CLINT){
         cpu.sleep = false;
         cpu.mip |= 1 << 7;  // 中断发生
-        return 0;
     }else{
         cpu.mip &= ~(1 << 7);
     }
     // 执行中断
     if (( cpu.mip & (1<<7) ) && ( cpu.mie & (1<<7) ) && ( cpu.mstatus & 0x8)){
-        s->dnpc = isa_raise_intr(0x80000007, 0);
+        s->dnpc = isa_raise_intr(0x80000007, s->pc);
         return 0;
     }
 
@@ -178,12 +175,18 @@ static int decode_exec(Decode* s) {
     INSTPAT("??????? ????? ????? ??? ????? 01101 11", lui, U, R(rd) = imm);
     INSTPAT("??????? ????? ????? ??? ????? 00101 11", auipc, U, R(rd) = s->pc + imm);
 
-    INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall, N, s->dnpc = isa_raise_intr(11, s->pc));
+    INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall, N, {
+        if(cpu.privilege) s->dnpc = isa_raise_intr(11, s->pc);
+        else s->dnpc = isa_raise_intr(8, s->pc);
+    });
     INSTPAT("0011000 00010 00000 000 00000 11100 11", mret, N, {
-        cpu.mstatus = (( cpu.mstatus & 0x80) >> 4) | ((3) << 11) | 0x80;
+        uint32_t startmstatus = cpu.mstatus;
+        uint32_t privilege = cpu.privilege;
+        cpu.mstatus = (( startmstatus & 0x80) >> 4) | ((privilege&3) << 11) | 0x80;
+        cpu.privilege = (privilege & ~3) | ((startmstatus >> 11) & 3);
         s->dnpc = cpu.mepc;
     });
-    INSTPAT("0001000 00101 00000 000 00000 11100 11", wfi, N, TODO()); 
+    INSTPAT("0001000 00101 00000 000 00000 11100 11", wfi, N, cpu.sleep = true; s->dnpc = s->pc + 4;); 
     INSTPAT("0000000 00001 00000 000 00000 11100 11", ebreak, N, NEMUTRAP(s->pc, R(10)));  // R(10) is $a0
     // ----------------------- Zicsr ------------------------------
     INSTPAT("??????? ????? ????? 001 ????? 11100 11", csrrw, I, R(rd) = CSR(imm); CSR(imm) = src1);
