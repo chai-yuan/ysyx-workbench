@@ -26,18 +26,17 @@ typedef struct {
     word_t mcause;
     vaddr_t mepc;
     word_t mtvec;
-
     word_t mvenforid;
     word_t marchid;
-
     uint32_t cyclel;
     uint32_t cycleh;
-
     uint32_t mscratch;
     uint32_t mie;
     uint32_t mip;
-
     uint32_t mtval;
+    // 其他状态
+    vaddr_t amo_addr;
+    bool sleep;
 } MUXDEF(CONFIG_RV64, riscv64_CPU_state, riscv32_CPU_state);
 
 // decode

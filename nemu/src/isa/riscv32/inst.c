@@ -102,12 +102,27 @@ static void decode_operand(Decode* s, int* rd, word_t* src1, word_t* src2, word_
     }
 }
 
+bool clint_check_intr();
+
 static int decode_exec(Decode* s) {
     int rd = 0;
     word_t src1 = 0, src2 = 0, imm = 0;
     word_t src1imm = 0;
-    static vaddr_t amo_addr = 0;
     s->dnpc = s->snpc;
+
+    // CLINT中断
+    if (clint_check_intr()){
+        cpu.sleep = false;
+        cpu.mip |= 1 << 7;  // 中断发生
+        return 0;
+    }else{
+        cpu.mip &= ~(1 << 7);
+    }
+    // 执行中断
+    if (( cpu.mip & (1<<7) ) && ( cpu.mie & (1<<7) ) && ( cpu.mstatus & 0x8)){
+        s->dnpc = isa_raise_intr(0x80000007, 0);
+        return 0;
+    }
 
 #define INSTPAT_INST(s) ((s)->isa.inst.val)
 #define INSTPAT_MATCH(s, name, type, ... /* execute body */)             \
@@ -163,8 +178,11 @@ static int decode_exec(Decode* s) {
     INSTPAT("??????? ????? ????? ??? ????? 01101 11", lui, U, R(rd) = imm);
     INSTPAT("??????? ????? ????? ??? ????? 00101 11", auipc, U, R(rd) = s->pc + imm);
 
-    INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall, N, s->dnpc = isa_raise_intr(0xb, s->pc));
-    INSTPAT("0011000 00010 00000 000 00000 11100 11", mret, N, s->dnpc = cpu.mepc);
+    INSTPAT("0000000 00000 00000 000 00000 11100 11", ecall, N, s->dnpc = isa_raise_intr(11, s->pc));
+    INSTPAT("0011000 00010 00000 000 00000 11100 11", mret, N, {
+        cpu.mstatus = (( cpu.mstatus & 0x80) >> 4) | ((3) << 11) | 0x80;
+        s->dnpc = cpu.mepc;
+    });
     INSTPAT("0001000 00101 00000 000 00000 11100 11", wfi, N, TODO()); 
     INSTPAT("0000000 00001 00000 000 00000 11100 11", ebreak, N, NEMUTRAP(s->pc, R(10)));  // R(10) is $a0
     // ----------------------- Zicsr ------------------------------
@@ -192,9 +210,9 @@ static int decode_exec(Decode* s) {
         R(rd) = (src2 == 0) ? 0xffffffff : src1 % src2;
     });
     // -----------------------   A   ------------------------------
-    INSTPAT("00010?? ????? ????? 010 ????? 01011 11", lr.w, R, R(rd) = Mr(src1, 4); amo_addr = src1); 
+    INSTPAT("00010?? ????? ????? 010 ????? 01011 11", lr.w, R, R(rd) = Mr(src1, 4); cpu.amo_addr = src1); 
     INSTPAT("00011?? ????? ????? 010 ????? 01011 11", sc.w, R, {
-        R(rd) = src1 != amo_addr;
+        R(rd) = src1 != cpu.amo_addr;
         if (R(rd) == 0) Mw(src1, 4, src2);
     }); 
     INSTPAT("00001?? ????? ????? 010 ????? 01011 11", amoswap.w, R, R(rd) = Mr(src1, 4); Mw(src1, 4, src2));
