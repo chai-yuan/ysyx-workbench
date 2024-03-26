@@ -31,6 +31,10 @@ void isa_reg_display() {
                    gpr(i + 1), gpr(i + 1));
         }
     }
+
+    printf("mstatus: 0x%-10x\n", cpu.mstatus);
+    printf("sleep: 0x%-10x\n", cpu.sleep);
+    printf("privilege: 0x%-10x\n", cpu.privilege);
 }
 
 word_t isa_reg_str2val(const char* s, bool* success) {

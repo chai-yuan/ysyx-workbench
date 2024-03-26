@@ -32,9 +32,7 @@ bool clint_check_intr() {
 static void clint_io_handler(uint32_t offset, int len, bool is_write) {
     if (!is_write) {  // 读数据，更新时间
         clint_time_update();
-        // Log("set timer : %u %u", CLINT(timerl), CLINT(timerh));
     } else if (offset == timermatchl || offset == timermatchh) {
-        // Log("set timermatch : %u %u", CLINT(timermatchl), CLINT(timermatchh));
     }
 }
 

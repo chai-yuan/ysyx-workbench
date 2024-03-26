@@ -28,8 +28,6 @@ typedef struct {
     word_t mtvec;
     word_t mvenforid;
     word_t marchid;
-    uint32_t cyclel;
-    uint32_t cycleh;
     uint32_t mscratch;
     uint32_t mie;
     uint32_t mip;

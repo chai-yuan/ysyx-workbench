@@ -37,16 +37,16 @@ static void serial_io_handler(uint32_t offset, int len, bool is_write) {
         case CH_OFFSET:
             if (is_write)
                 serial_putc(serial_base[0]);
-            serial_base[0] = 0x0;
             break;
         case IER_OFFSET:
             break;
         case FCR_OFFSET:
             break;
         case LSR_OFFSET:
+            serial_base[LSR_OFFSET] = 0x60;
             break;
         default:
-            warning("do not support offset = %d", offset);
+            // warning("do not support offset = %d", offset);
     }
 }
 

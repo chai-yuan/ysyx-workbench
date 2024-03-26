@@ -2,13 +2,13 @@
  * Copyright (c) 2014-2022 Zihao Yu, Nanjing University
  *
  * NEMU is licensed under Mulan PSL v2.
- * You can use this software according to the terms and conditions of the Mulan PSL v2.
- * You may obtain a copy of Mulan PSL v2 at:
+ * You can use this software according to the terms and conditions of the Mulan
+ *PSL v2. You may obtain a copy of Mulan PSL v2 at:
  *          http://license.coscl.org.cn/MulanPSL2
  *
- * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
- * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
- * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY
+ *KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+ *NON-INFRINGEMENT, MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
  *
  * See the Mulan PSL v2 for more details.
  ***************************************************************************************/
@@ -24,7 +24,7 @@
  * This is useful when you use the `si' command.
  * You can modify this value as you want.
  */
-#define MAX_INST_TO_PRINT 10
+#define MAX_INST_TO_PRINT 4
 
 CPU_state cpu = {};
 uint64_t g_nr_guest_inst = 0;
@@ -34,29 +34,33 @@ static bool g_print_step = false;
 void device_update();
 
 static void trace_and_difftest(Decode* _this, vaddr_t dnpc) {
-#ifdef CONFIG_ITRACE_COND
-    if (ITRACE_COND) {
-        log_write("%s\n", _this->logbuf);
-    }
-#endif
-    if (g_print_step) {
-        IFDEF(CONFIG_ITRACE, puts(_this->logbuf));
-    }
+// #ifdef CONFIG_ITRACE_COND
+//     if (ITRACE_COND) {
+//         log_write("%s\n", _this->logbuf);
+//     }
+// #endif
+//     if (g_print_step) {
+//         IFDEF(CONFIG_ITRACE, puts(_this->logbuf));
+//     }
     bool watch_point_check = false;
     IFDEF(CONFIG_WATCHPOINT, check_wp(dnpc, &watch_point_check));
     if (watch_point_check) {
         nemu_state.state = NEMU_STOP;
     }
-
-    IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
+    if (_this->intr != 0){
+        IFDEF(CONFIG_DIFFTEST, ref_difftest_raise_intr(_this->intr));
+    } else{
+        IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
+    }
 }
 
 /**
  * @brief Execute a single instruction in the simulator.
  *
- * This function executes a single instruction in the simulator. It first sets the program counter to the given value,
- * then executes the instruction, and finally updates the program counter to the next instruction.
- * If CONFIG_ITRACE is defined, it also generates and prints a trace log of the instruction.
+ * This function executes a single instruction in the simulator. It first sets
+ * the program counter to the given value, then executes the instruction, and
+ * finally updates the program counter to the next instruction. If CONFIG_ITRACE
+ * is defined, it also generates and prints a trace log of the instruction.
  *
  * @param s Pointer to the decode structure.
  * @param pc The current value of the program counter.
@@ -84,9 +88,11 @@ static void exec_once(Decode* s, vaddr_t pc) {
     p += space_len;
 
 #ifndef CONFIG_ISA_loongarch32r
-    void disassemble(char* str, int size, uint64_t pc, uint8_t* code, int nbyte);
+    void disassemble(char* str, int size, uint64_t pc, uint8_t* code,
+                     int nbyte);
     disassemble(p, s->logbuf + sizeof(s->logbuf) - p,
-                MUXDEF(CONFIG_ISA_x86, s->snpc, s->pc), (uint8_t*)&s->isa.inst.val, ilen);
+                MUXDEF(CONFIG_ISA_x86, s->snpc, s->pc),
+                (uint8_t*)&s->isa.inst.val, ilen);
 #else
     p[0] = '\0';  // the upstream llvm does not support loongarch32r
 #endif
@@ -111,9 +117,11 @@ static void statistic() {
     Log("host time spent = " NUMBERIC_FMT " us", g_timer);
     Log("total guest instructions = " NUMBERIC_FMT, g_nr_guest_inst);
     if (g_timer > 0)
-        Log("simulation frequency = " NUMBERIC_FMT " inst/s", g_nr_guest_inst * 1000000 / g_timer);
+        Log("simulation frequency = " NUMBERIC_FMT " inst/s",
+            g_nr_guest_inst * 1000000 / g_timer);
     else
-        Log("Finish running in less than 1 us and can not calculate the simulation frequency");
+        Log("Finish running in less than 1 us and can not calculate the "
+            "simulation frequency");
 }
 
 void assert_fail_msg() {
@@ -126,7 +134,9 @@ void cpu_exec(uint64_t n) {
     switch (nemu_state.state) {
         case NEMU_END:
         case NEMU_ABORT:
-            printf("Program execution has ended. To restart the program, exit NEMU and run again.\n");
+            printf(
+                "Program execution has ended. To restart the program, exit "
+                "NEMU and run again.\n");
             return;
         default:
             nemu_state.state = NEMU_RUNNING;
@@ -147,9 +157,13 @@ void cpu_exec(uint64_t n) {
         case NEMU_END:
         case NEMU_ABORT:
             Log("nemu: %s at pc = " FMT_WORD,
-                (nemu_state.state == NEMU_ABORT ? ANSI_FMT("ABORT", ANSI_FG_RED) : (nemu_state.halt_ret == 0 ? ANSI_FMT("HIT GOOD TRAP", ANSI_FG_GREEN) : ANSI_FMT("HIT BAD TRAP", ANSI_FG_RED))),
+                (nemu_state.state == NEMU_ABORT
+                     ? ANSI_FMT("ABORT", ANSI_FG_RED)
+                     : (nemu_state.halt_ret == 0
+                            ? ANSI_FMT("HIT GOOD TRAP", ANSI_FG_GREEN)
+                            : ANSI_FMT("HIT BAD TRAP", ANSI_FG_RED))),
                 nemu_state.halt_pc);
-                assert_fail_msg();
+            assert_fail_msg();
             // fall through
         case NEMU_QUIT:
             statistic();
