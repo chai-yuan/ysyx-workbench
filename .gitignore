@@ -7,6 +7,8 @@
 !/navy-apps/*
 !/npc/*
 !/SoC-sim/*
+!/nvboard/*
+!/reference/*
 !Makefile
 !README.md
 !.gitignore
@@ -15,5 +17,4 @@
 /ysyxSoC
 /rt-thread-am
 /fceux-am
-/nvboard
 /yosys-sta
