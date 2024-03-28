@@ -15,7 +15,7 @@
 !firtool
 !firtool.elf.strip
 build/
-
+CRRVTop.v
 # mill
 out/
 .bsp/

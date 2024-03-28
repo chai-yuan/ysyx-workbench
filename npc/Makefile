@@ -8,8 +8,8 @@ test:
 verilog:
 	$(call git_commit, "generate verilog")
 	mkdir -p $(BUILD_DIR)
-	mill -i __.runMain Elaborate -td $(BUILD_DIR)
-	cp $(BUILD_DIR)/CRRVTop.v $(SOC_HOME)/soc/
+	mill -i __.runMain --mainClass Elaborate
+	cp CRRVTop.v $(SOC_HOME)/soc/
 
 help:
 	mill -i __.test.runMain Elaborate --help
