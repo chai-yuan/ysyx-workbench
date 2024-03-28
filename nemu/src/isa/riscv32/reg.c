@@ -21,8 +21,10 @@ const char* regs[] = {"$0", "ra", "sp",  "gp",  "tp", "t0", "t1", "t2",
                       "a6", "a7", "s2",  "s3",  "s4", "s5", "s6", "s7",
                       "s8", "s9", "s10", "s11", "t3", "t4", "t5", "t6"};
 
+#define PRINTF_REG(name) printf(#name ": 0x%-10x\n", cpu.name)
+
 void isa_reg_display() {
-    printf("pc: 0x%-10x\n", cpu.pc);
+    
 
     for (int i = 0; i < 32; i += 2) {
         printf("x%-2d:%-6s: 0x%-10x %-12d | ", i, reg_name(i), gpr(i), gpr(i));
@@ -31,10 +33,18 @@ void isa_reg_display() {
                    gpr(i + 1), gpr(i + 1));
         }
     }
-
-    printf("mstatus: 0x%-10x\n", cpu.mstatus);
-    printf("sleep: 0x%-10x\n", cpu.sleep);
-    printf("privilege: 0x%-10x\n", cpu.privilege);
+    PRINTF_REG(pc);
+    PRINTF_REG(mstatus);
+    PRINTF_REG(mcause);
+    PRINTF_REG(mepc);
+    PRINTF_REG(mtvec);
+    PRINTF_REG(mscratch);
+    PRINTF_REG(mtval);
+    PRINTF_REG(mip);
+    PRINTF_REG(mie);
+    PRINTF_REG(amo_addr);
+    PRINTF_REG(privilege);
+    PRINTF_REG(sleep);
 }
 
 word_t isa_reg_str2val(const char* s, bool* success) {

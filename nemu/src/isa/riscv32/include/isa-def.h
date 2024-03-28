@@ -20,20 +20,20 @@
 
 typedef struct {
     word_t gpr[MUXDEF(CONFIG_RVE, 16, 32)];
-    vaddr_t pc;
+    uint32_t pc;
     // CSR
-    word_t mstatus;
-    word_t mcause;
-    vaddr_t mepc;
-    word_t mtvec;
-    word_t mvenforid;
-    word_t marchid;
+    uint32_t mstatus;
+    uint32_t mcause;
+    uint32_t mepc;
+    uint32_t mtvec;
+    uint32_t mvenforid;
+    uint32_t marchid;
     uint32_t mscratch;
     uint32_t mie;
     uint32_t mip;
     uint32_t mtval;
     // 其他状态
-    vaddr_t amo_addr;
+    uint32_t amo_addr;
     uint32_t privilege;
     bool sleep;
 } MUXDEF(CONFIG_RV64, riscv64_CPU_state, riscv32_CPU_state);

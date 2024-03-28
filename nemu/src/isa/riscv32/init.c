@@ -36,7 +36,7 @@ static void restart() {
 
     cpu.privilege = 3;
     // cpu.mvenforid = 0xff0ff0ff;
-    cpu.marchid = 0x5;
+    // cpu.marchid = 0x5;
 }
 
 void init_isa() {

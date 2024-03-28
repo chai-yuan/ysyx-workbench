@@ -34,24 +34,44 @@ static bool g_print_step = false;
 void device_update();
 
 static void trace_and_difftest(Decode* _this, vaddr_t dnpc) {
-// #ifdef CONFIG_ITRACE_COND
-//     if (ITRACE_COND) {
-//         log_write("%s\n", _this->logbuf);
-//     }
-// #endif
-//     if (g_print_step) {
-//         IFDEF(CONFIG_ITRACE, puts(_this->logbuf));
-//     }
+    // #ifdef CONFIG_ITRACE_COND
+    //     if (ITRACE_COND) {
+    //         log_write("%s\n", _this->logbuf);
+    //     }
+    // #endif
+    //     if (g_print_step) {
+    //         IFDEF(CONFIG_ITRACE, puts(_this->logbuf));
+    //     }
     bool watch_point_check = false;
     IFDEF(CONFIG_WATCHPOINT, check_wp(dnpc, &watch_point_check));
     if (watch_point_check) {
         nemu_state.state = NEMU_STOP;
     }
-    if (_this->intr != 0){
-        IFDEF(CONFIG_DIFFTEST, ref_difftest_raise_intr(_this->intr));
-    } else{
-        IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
+#ifdef CONFIG_DIFFTEST
+    if (_this->intr != 0) {
+        ref_difftest_raise_intr(_this->intr);
+        if (_this->access_addr >= 0x2000000 &&
+            _this->access_addr < 0x12000000) {
+            ref_difftest_regcpy(&cpu, DIFFTEST_TO_REF);
+        }
+    } else {
+        if (_this->access_addr >= 0x2000000 &&
+            _this->access_addr < 0x12000000) {
+            ref_difftest_regcpy(&cpu, DIFFTEST_TO_REF);
+        } else {
+            ref_difftest_exec(1);
+        }
     }
+    riscv32_CPU_state ref;
+    ref_difftest_regcpy(&ref, DIFFTEST_TO_DUT);
+    if (!isa_difftest_checkregs(&ref, cpu.pc)) {
+        nemu_state.state = NEMU_ABORT;
+        nemu_state.halt_pc = cpu.pc;
+        isa_reg_display();
+        ref_difftest_regcpy(&cpu, DIFFTEST_TO_DUT);
+        isa_reg_display();
+    }
+#endif
 }
 
 /**

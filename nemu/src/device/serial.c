@@ -32,27 +32,21 @@ static void serial_putc(char ch) {
 
 static void serial_io_handler(uint32_t offset, int len, bool is_write) {
     assert(len == 1);
-    switch (offset) {
-        /* We bind the serial port with the host stderr in NEMU. */
-        case CH_OFFSET:
-            if (is_write)
+    if (is_write) {
+        switch (offset) {
+            case CH_OFFSET:
                 serial_putc(serial_base[0]);
-            break;
-        case IER_OFFSET:
-            break;
-        case FCR_OFFSET:
-            break;
-        case LSR_OFFSET:
-            serial_base[LSR_OFFSET] = 0x60;
-            break;
-        default:
-            // warning("do not support offset = %d", offset);
+                break;
+            default:
+                // warning("do not support offset = %d", offset);
+        }
     }
+    memset(serial_base,0x60,8);
 }
 
 void init_serial() {
     serial_base = new_space(8);
-    serial_base[LSR_OFFSET] = 0x60;
+    memset(serial_base,0x60,8);
 #ifdef CONFIG_HAS_PORT_IO
     add_pio_map("serial", CONFIG_SERIAL_PORT, serial_base, 8,
                 serial_io_handler);

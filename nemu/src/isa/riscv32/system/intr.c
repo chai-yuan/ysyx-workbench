@@ -22,7 +22,7 @@ word_t isa_raise_intr(word_t NO, vaddr_t epc) {
     if (NO & 0x80000000) {  // 中断
         cpu.mtval = 0;
     } else {
-        // cpu.mtval = epc;  // 异常
+        cpu.mtval = epc;  // 异常
     }
     cpu.mcause = NO;
     cpu.mepc = epc;
