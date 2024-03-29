@@ -54,7 +54,7 @@ object OperationDefine {
   val BR_GEU   = 7.U(BR_WIDTH.W)
 
   // 访存操作符
-  val LSU_OP_WIDTH = log2Ceil(9)
+  val LSU_OP_WIDTH = log2Ceil(23)
   val LSU_NOP      = 0.U(LSU_OP_WIDTH.W)
   val LSU_LB       = 1.U(LSU_OP_WIDTH.W)
   val LSU_LH       = 2.U(LSU_OP_WIDTH.W)
@@ -64,6 +64,20 @@ object OperationDefine {
   val LSU_SB       = 6.U(LSU_OP_WIDTH.W)
   val LSU_SH       = 7.U(LSU_OP_WIDTH.W)
   val LSU_SW       = 8.U(LSU_OP_WIDTH.W)
+  val LSU_LR       = 9.U(LSU_OP_WIDTH.W)
+  val LSU_SC       = 10.U(LSU_OP_WIDTH.W)
+  val LSU_SWAP     = 11.U(LSU_OP_WIDTH.W)
+  val LSU_ADD      = 12.U(LSU_OP_WIDTH.W)
+  val LSU_XOR      = 13.U(LSU_OP_WIDTH.W)
+  val LSU_AND      = 14.U(LSU_OP_WIDTH.W)
+  val LSU_OR       = 15.U(LSU_OP_WIDTH.W)
+  val LSU_MIN      = 16.U(LSU_OP_WIDTH.W)
+  val LSU_MAX      = 17.U(LSU_OP_WIDTH.W)
+  val LSU_MINU     = 18.U(LSU_OP_WIDTH.W)
+  val LSU_MAXU     = 19.U(LSU_OP_WIDTH.W)
+  val LSU_FENC     = 20.U(LSU_OP_WIDTH.W)
+  val LSU_FENI     = 21.U(LSU_OP_WIDTH.W)
+  val LSU_FENV     = 22.U(LSU_OP_WIDTH.W)
 
   // CSR 操作符
   val CSR_OP_WIDTH = log2Ceil(6)
@@ -77,9 +91,10 @@ object OperationDefine {
   // 异常类型
   val EXC_TYPE_WIDTH = log2Ceil(8)
   val EXC_NONE       = 0.U(EXC_TYPE_WIDTH.W)
-  val EXC_ECALL      = 1.U(EXC_TYPE_WIDTH.W)  // 系统调用
-  val EXC_MRET       = 2.U(EXC_TYPE_WIDTH.W)  // 返回
+  val EXC_ECALL      = 1.U(EXC_TYPE_WIDTH.W) // 系统调用
+  val EXC_MRET       = 2.U(EXC_TYPE_WIDTH.W) // 返回
+  // val EXC_STAMO      = 3.U(EXC_TYPE_WIDTH.W) // 或许不需要?
   // 自定义的一些异常，并没有按照规范实现
-  val EXC_MEME       = 6.U(EXC_TYPE_WIDTH.W)  // 访问内存错误
-  val EXC_ILLEG      = 7.U(EXC_TYPE_WIDTH.W)  // 非法指令
+  val EXC_MEME  = 6.U(EXC_TYPE_WIDTH.W) // 访问内存错误
+  val EXC_ILLEG = 7.U(EXC_TYPE_WIDTH.W) // 非法指令
 }
