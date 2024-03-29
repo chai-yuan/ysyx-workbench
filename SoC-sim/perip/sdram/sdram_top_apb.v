@@ -12,7 +12,8 @@ module sdram_top_apb (
   output [31:0] in_prdata,
   output        in_pslverr,
 
-  output [ 1:0] sdram_sel,
+  output  [3:0] sdram_sel,
+
   output        sdram_clk,
   output        sdram_cke,
   output        sdram_cs,
@@ -21,17 +22,20 @@ module sdram_top_apb (
   output        sdram_we,
   output [12:0] sdram_a,
   output [ 1:0] sdram_ba,
-  output [ 3:0] sdram_dqm,
-  inout  [31:0] sdram_dq
+  output [ 1:0] sdram_dqm,
+  inout  [15:0] sdram_dq
 );
 
   wire sdram_dout_en;
-  wire [31:0] sdram_dout;
-  assign sdram_dq = sdram_dout_en ? sdram_dout : 31'bz;
+  wire [15:0] sdram_dout;
+  assign sdram_dq = sdram_dout_en ? sdram_dout : 16'bz;
 
   wire rw_cmd = (~sdram_cs & sdram_ras & ~sdram_cas);
-  assign sdram_sel = rw_cmd ? (in_paddr[26] ? 2'b10 : 2'b01)
-                     : 2'b11;
+  assign sdram_sel = in_paddr[26:25] == 2'b00 && rw_cmd ? 4'b0001 :
+                     in_paddr[26:25] == 2'b01 && rw_cmd ? 4'b0010 :
+                     in_paddr[26:25] == 2'b10 && rw_cmd ? 4'b0100 :
+                     in_paddr[26:25] == 2'b11 && rw_cmd ? 4'b1000 :
+                     4'b1111;
 
   typedef enum [1:0] { ST_IDLE, ST_WAIT_ACCEPT, ST_WAIT_ACK } state_t;
   reg [1:0] state;
@@ -50,7 +54,6 @@ module sdram_top_apb (
 
   wire is_read  = ((in_psel && !in_penable) || (state == ST_WAIT_ACCEPT)) && !in_pwrite;
   wire is_write = ((in_psel && !in_penable) || (state == ST_WAIT_ACCEPT)) &&  in_pwrite;
-
   sdram_axi_core #(
     .SDRAM_MHZ(100),
     .SDRAM_ADDR_W(24),
@@ -62,7 +65,7 @@ module sdram_top_apb (
     .inport_wr_i(is_write ? in_pstrb : 4'b0),
     .inport_rd_i(is_read),
     .inport_len_i(0),
-    .inport_addr_i(in_paddr),
+    .inport_addr_i(in_paddr[24:0]),
     .inport_write_data_i(in_pwdata),
     .inport_accept_o(req_accept),
     .inport_ack_o(in_pready),
