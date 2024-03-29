@@ -15,6 +15,12 @@ class Simple2AXI4 extends Module {
     val simple = Flipped(new SimpleIO(ADDR_WIDTH, DATA_WIDTH))
     val axi    = new AXI4MasterIO(ADDR_WIDTH, 64)
   })
+  // 地址变换
+  val simple_addr = Mux(
+    io.simple.out.bits.addr(31, 28) =/= "h8".U,
+    io.simple.out.bits.addr,
+    Cat("hA".U(4.W), io.simple.out.bits.addr(27, 0))
+  )
 
   val (sIdle :: sRead :: sReadWait
     :: sWrite :: sWriteWait
@@ -28,7 +34,7 @@ class Simple2AXI4 extends Module {
     is(sIdle) {
       when(io.simple.out.valid) {
         state := Mux(io.simple.out.bits.writeEn, sWrite, sRead)
-        addr  := io.simple.out.bits.addr
+        addr  := simple_addr
       }
     }
     is(sRead) {
@@ -59,7 +65,7 @@ class Simple2AXI4 extends Module {
     }
   }
   // 如果地址有变动，则需要重新发送读写
-  io.simple.out.ready := (state === sEnd) && (addr === io.simple.out.bits.addr)
+  io.simple.out.ready := (state === sEnd) && (addr === simple_addr)
   io.simple.in.rdata  := Mux(addr(2), rdata(63, 32), rdata(31, 0))
 
   val wdata    = Cat(io.simple.out.bits.wdata, io.simple.out.bits.wdata)
@@ -73,16 +79,16 @@ class Simple2AXI4 extends Module {
   )
 
   io.axi.init()
-  io.axi.ar.valid      := state === sRead
-  io.axi.ar.bits.addr  := addr
-  io.axi.ar.bits.size  := dataSize
-  io.axi.r.ready       := true.B
-  io.axi.aw.valid      := state === sWrite
-  io.axi.aw.bits.addr  := addr
-  io.axi.aw.bits.size  := dataSize
-  io.axi.w.valid       := state === sWrite || state === sWriteWait
-  io.axi.w.bits.data   := wdata
-  io.axi.w.bits.last   := state === sWrite || state === sWriteWait
-  io.axi.w.bits.strb   := wstrb
-  io.axi.b.ready       := true.B
+  io.axi.ar.valid     := state === sRead
+  io.axi.ar.bits.addr := addr
+  io.axi.ar.bits.size := dataSize
+  io.axi.r.ready      := true.B
+  io.axi.aw.valid     := state === sWrite
+  io.axi.aw.bits.addr := addr
+  io.axi.aw.bits.size := dataSize
+  io.axi.w.valid      := state === sWrite || state === sWriteWait
+  io.axi.w.bits.data  := wdata
+  io.axi.w.bits.last  := state === sWrite || state === sWriteWait
+  io.axi.w.bits.strb  := wstrb
+  io.axi.b.ready      := true.B
 }

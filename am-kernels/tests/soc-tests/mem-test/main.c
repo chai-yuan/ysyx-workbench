@@ -39,20 +39,20 @@ int main() {
     //      (p + 1) <= (unsigned short *)(RAM_END); p++) {
     //     check(*p == (unsigned short)((uintptr_t)p ^ 0xCFAF));
     // }
-    test_mem((unsigned int*)(0xa1000000),(unsigned int*)(0xa100a100));
-    test_mem((unsigned int*)(0xa2000000),(unsigned int*)(0xa200a100));
-    test_mem((unsigned int*)(0xa3000000),(unsigned int*)(0xa300a100));
-    test_mem((unsigned int*)(0xa4000000),(unsigned int*)(0xa400a100));
-    test_mem((unsigned int*)(0xa5000000),(unsigned int*)(0xa500a100));
-    test_mem((unsigned int*)(0xa6000000),(unsigned int*)(0xa600a100));
-    test_mem((unsigned int*)(0xa7000000),(unsigned int*)(0xa700a100));
+    test_mem((unsigned int*)(0x81000000),(unsigned int*)(0x8100a100));
+    test_mem((unsigned int*)(0x82000000),(unsigned int*)(0x8200a100));
+    test_mem((unsigned int*)(0x83000000),(unsigned int*)(0x8300a100));
+    test_mem((unsigned int*)(0x84000000),(unsigned int*)(0x8400a100));
+    test_mem((unsigned int*)(0x85000000),(unsigned int*)(0x8500a100));
+    test_mem((unsigned int*)(0x86000000),(unsigned int*)(0x8600a100));
+    test_mem((unsigned int*)(0x87000000),(unsigned int*)(0x8700a100));
 
-    test_mem((unsigned int*)(0xa1100000),(unsigned int*)(0xa110a000));
-    test_mem((unsigned int*)(0xa2100000),(unsigned int*)(0xa210a000));
-    test_mem((unsigned int*)(0xa3100000),(unsigned int*)(0xa310a000));
-    test_mem((unsigned int*)(0xa4100000),(unsigned int*)(0xa410a000));
-    test_mem((unsigned int*)(0xa5100000),(unsigned int*)(0xa510a000));
-    test_mem((unsigned int*)(0xa6100000),(unsigned int*)(0xa610a000));
-    test_mem((unsigned int*)(0xa7100000),(unsigned int*)(0xa710a000));
+    test_mem((unsigned int*)(0x81100000),(unsigned int*)(0x8110a000));
+    test_mem((unsigned int*)(0x82100000),(unsigned int*)(0x8210a000));
+    test_mem((unsigned int*)(0x83100000),(unsigned int*)(0x8310a000));
+    test_mem((unsigned int*)(0x84100000),(unsigned int*)(0x8410a000));
+    test_mem((unsigned int*)(0x85100000),(unsigned int*)(0x8510a000));
+    test_mem((unsigned int*)(0x86100000),(unsigned int*)(0x8610a000));
+    test_mem((unsigned int*)(0x87100000),(unsigned int*)(0x8710a000));
     halt(0);
 }

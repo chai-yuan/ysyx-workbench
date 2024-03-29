@@ -60,13 +60,13 @@ void init_difftest(char* ref_so_file, long img_size, int port) {
 static bool isa_difftest_checkregs(CPU_regs* ref) {
     for (int i = 1; i < 32; i++) {
         if (cpu.gpr[i] != ref->gpr[i]) {
-            printf("reg: x%d, NPC: 0x%x, NEMU: 0x%x\n", i, cpu.gpr[i],
+            printf("reg: x%d, NPC: 0x%x, REF: 0x%x\n", i, cpu.gpr[i],
                    ref->gpr[i]);
             return false;
         }
     }
     if (cpu.pc != ref->pc) {
-        printf("PC: NPC: 0x%x, NEMU: 0x%x\n", cpu.pc, ref->pc);
+        printf("PC: NPC: 0x%x, REF: 0x%x\n", cpu.pc, ref->pc);
         return false;
     }
 
@@ -84,7 +84,7 @@ void difftest_checkregs(CPU_regs* ref) {
         Log("NPC reg:");
         isa_reg_display();
 
-        Log("NEMU reg:");
+        Log("REF reg:");
         ref_difftest_regcpy(&cpu, DIFFTEST_TO_DUT);
         isa_reg_display();
     }

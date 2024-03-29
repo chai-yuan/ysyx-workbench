@@ -3,7 +3,7 @@ ENTRY(_start)
 PHDRS { text PT_LOAD; data PT_LOAD; }
 
 MEMORY {
-  sdram (rwx) : ORIGIN = 0xa0000000, LENGTH = 128M
+  sdram (rwx) : ORIGIN = 0x80000000, LENGTH = 128M
 }
 
 SECTIONS {

@@ -21,7 +21,7 @@ extern "C" void debug_update_cpu(int deviceAccess,
 
 #ifdef CONFIG_DIFFTEST
     if (deviceAccess &&
-        ((0x02000000 <= deviceAddr && deviceAddr < 0x02010000) ||
+        ((0x02000000 <= deviceAddr && deviceAddr < 0x02080000) ||
          (0x10000000 <= deviceAddr && deviceAddr < 0x10020000))) {
         difftest_flush();
     } else {

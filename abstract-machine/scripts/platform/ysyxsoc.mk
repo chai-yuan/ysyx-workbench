@@ -17,12 +17,12 @@ LDFLAGS   += --gc-sections
 CFLAGS += -DMAINARGS=\"$(mainargs)\"
 .PHONY: $(AM_HOME)/am/src/riscv/ysyxsoc/trm.c
 
-SOCFLAGS += -d $(NEMU_HOME)/build/riscv32-nemu-interpreter-so
-SOCFLAGS +=
+SOCFLAGS += -d /home/charain/Project/mini-rv32ima/sim-nemu/mini-rv32ima.so
+SOCFLAGS += -b
 
 image: binary
 	@echo + ADD bootloader "->" $(IMAGE_REL).bin
-	@$(MAKE) -C $(AM_HOME)/bootloader ARCH=riscv32-ysyxsoc LOAD_BIN=$(IMAGE).bin LOAD_TARGET=0xa0000000 bootloader
+	@$(MAKE) -C $(AM_HOME)/bootloader ARCH=riscv32-ysyxsoc LOAD_BIN=$(IMAGE).bin LOAD_TARGET=0x80000000 bootloader
 
 binary: $(IMAGE).elf
 	@$(OBJDUMP) -d -M no-aliases $(IMAGE).elf > $(IMAGE).txt

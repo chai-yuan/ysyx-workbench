@@ -16,12 +16,14 @@ class CsrFile extends Module {
     val csrInfo = new CsrInfoIO
   })
 
-  val mstatus   = RegInit(0x1800.U(32.W))
+  val mstatus   = RegInit(0.U(32.W))
   val mtvec     = RegInit(0.U(32.W))
   val mepc      = RegInit(0.U(32.W))
   val mcause    = RegInit(0.U(32.W))
-  val mvendorid = RegInit(0x78797379.U(32.W))
-  val marchid   = RegInit(0x015fde2e.U(32.W))
+//   val mvendorid = RegInit(0x78797379.U(32.W))
+//   val marchid   = RegInit(0x015fde2e.U(32.W))
+  val mvendorid = RegInit(0.U(32.W))
+  val marchid   = RegInit(0.U(32.W))
   // 处理读取数据
   val readData = MuxLookup(io.read.addr, 0.U) {
     Seq(
