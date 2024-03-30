@@ -6,6 +6,7 @@ import config.CPUconfig._
 import core.define.OperationDefine._
 import core.define.MemoryControlDefine._
 import core.define.CsrDefine._
+import io.ExcMonCommitIO
 
 class PipelineStageIO extends Bundle {
   def default() = 0.U.asTypeOf(this)
@@ -47,7 +48,10 @@ class ExecuteStageIO extends PipelineStageIO {
 }
 
 class MemoryStageIO extends PipelineStageIO {
-  val memAddr = UInt(DATA_WIDTH.W)
+  val memAddr      = UInt(DATA_WIDTH.W)
+  val excMonCommit = new ExcMonCommitIO
+  val amoValid     = Bool()
+  val amoResult    = UInt(DATA_WIDTH.W)
 }
 
 class IF2IDIO extends PipelineStageIO {

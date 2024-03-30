@@ -8,11 +8,8 @@ import io._
 
 class ExclusiveMonitor extends Module {
   val io = IO(new Bundle {
-    // pipeline control
-    val flush = Input(Bool())
-    // check channel
-    val check = Flipped(new ExcMonCheckIO)
-    // update channel
+    val flush  = Input(Bool())
+    val check  = Flipped(new ExcMonCheckIO)
     val update = Input(new ExcMonCommitIO)
   })
 

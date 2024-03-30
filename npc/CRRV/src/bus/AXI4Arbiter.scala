@@ -44,10 +44,14 @@ class AXI4Arbiter extends Module {
       }
     }
     is(sInstEnd) {
-      state := sIdle
+      when(axiDataReq && !axiDataEnd) { state := sData }
+        .elsewhen(axiInstReq && !axiInstEnd) { state := sInst }
+        .otherwise { state := sIdle }
     }
     is(sDataEnd) {
-      state := sIdle
+      when(axiDataReq && !axiDataEnd) { state := sData }
+        .elsewhen(axiInstReq && !axiInstEnd) { state := sInst }
+        .otherwise { state := sIdle }
     }
   }
 

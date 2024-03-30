@@ -3,10 +3,10 @@ package core.pipeline
 import chisel3._
 import chisel3.util._
 import config.CPUconfig._
-import core.define.InstructionDefine._
 import core.define.OperationDefine._
 import core.define.MemoryControlDefine._
 import io._
+import core.atom.AmoExecute
 
 class MemoryStage extends Module {
   val io = IO(new Bundle {
@@ -14,7 +14,8 @@ class MemoryStage extends Module {
     val control = new MemoryStageControlIO
     val mem2wb  = Output(new MEM2WBIO)
 
-    val dataRam     = Decoupled(new SimpleOutIO(ADDR_WIDTH, DATA_WIDTH))
+    val dataRam     = new SimpleIO(ADDR_WIDTH, DATA_WIDTH)
+    val excMon      = new ExcMonCheckIO
     val memCsrStall = Output(new Csr2HazardResolverIO)
     val regForward  = Output(new RegForwardIO)
   })
@@ -37,18 +38,26 @@ class MemoryStage extends Module {
       LS_DATA_WORD -> data
     )
   }
+  val amo = Module(new AmoExecute)
+  amo.io.op       := amoOp
+  amo.io.flush    := io.control.flush
+  amo.io.regOpr   := data
+  amo.io.ramValid := io.dataRam.out.ready
+  amo.io.ramRdata := io.dataRam.in.rdata
+  io.excMon.addr  := addr
+
   // 暂停信号
-  val memStall = (!io.dataRam.ready) && en
+  val memStall = Mux(amoOp =/= AMO_OP_NOP, !amo.io.ready, (!io.dataRam.out.ready) && en)
   // 流水线控制
   io.control.stallReq := memStall
   io.control.flushReq := false.B
   io.control.flushPc  := 0.U
   // 访问内存
-  io.dataRam.valid        := en
-  io.dataRam.bits.writeEn := wen
-  io.dataRam.bits.size    := width
-  io.dataRam.bits.addr    := addr
-  io.dataRam.bits.wdata   := writeData
+  io.dataRam.out.valid        := en
+  io.dataRam.out.bits.writeEn := wen || amo.io.ramWen || (checkExcMon && io.excMon.valid)
+  io.dataRam.out.bits.size    := width
+  io.dataRam.out.bits.addr    := addr
+  io.dataRam.out.bits.wdata   := Mux(wen || checkExcMon, writeData, amo.io.ramWdata)
   // CSR
   io.memCsrStall.op   := id2mem.csrOp
   io.memCsrStall.addr := id2mem.csrAddr
@@ -61,7 +70,12 @@ class MemoryStage extends Module {
   io.mem2wb.IF <> if2mem
   io.mem2wb.ID <> id2mem
   io.mem2wb.EXE <> exe2mem
-  io.mem2wb.MEM.memAddr := addr
+  io.mem2wb.MEM.memAddr            := addr
+  io.mem2wb.MEM.excMonCommit.addr  := addr
+  io.mem2wb.MEM.excMonCommit.set   := setExcMon
+  io.mem2wb.MEM.excMonCommit.clear := checkExcMon
+  io.mem2wb.MEM.amoValid           := amoOp =/= AMO_OP_NOP || checkExcMon
+  io.mem2wb.MEM.amoResult          := Mux(checkExcMon, Mux(io.excMon.valid, 0.U, 1.U), amo.io.regWdata)
 }
 
 class MemoryStageControlIO extends Bundle {

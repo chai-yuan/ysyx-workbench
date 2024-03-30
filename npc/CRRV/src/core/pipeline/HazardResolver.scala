@@ -15,15 +15,20 @@ class HazardResolver extends Module {
     val regRead2 = Flipped(new RegReadIO)
     val csrRead  = Flipped(new CsrReadIO)
 
-    val exeForward  = Input(new RegForwardIO)
-    val memForward  = Input(new RegForwardIO)
-    val wbForward   = Input(new RegForwardIO)
-    val memCsrStall = Input(new Csr2HazardResolverIO)
-    val wbCsrStall  = Flipped(new CsrWriteIO)
-
     val regFile1 = new RegReadIO
     val regFile2 = new RegReadIO
     val regCsr   = new CsrReadIO
+
+    val exeForward = Input(new RegForwardIO)
+    val memForward = Input(new RegForwardIO)
+    val wbForward  = Input(new RegForwardIO)
+
+    val wbExcMon       = Input(new ExcMonCommitIO)
+    val memExcMonCheck = Flipped(new ExcMonCheckIO)
+    val excMonCheck    = new ExcMonCheckIO
+
+    val memCsrStall = Input(new Csr2HazardResolverIO)
+    val wbCsrStall  = Flipped(new CsrWriteIO)
 
     val loadHazardFlag = Output(Bool())
     val csrHazardFlag  = Output(Bool())
@@ -46,7 +51,29 @@ class HazardResolver extends Module {
   }
   forwardReg(io.regRead1, io.regFile1)
   forwardReg(io.regRead2, io.regFile2)
-
+  io.regFile1.en   := io.regRead1.en
+  io.regFile1.addr := io.regRead1.addr
+  io.regFile2.en   := io.regRead2.en
+  io.regFile2.addr := io.regRead2.addr
+  io.regCsr <> io.csrRead
+  // 前递原子操作监视
+  def forwardExcMon(check: ExcMonCheckIO, excMon: ExcMonCheckIO) = {
+    when(io.wbExcMon.clear || io.wbExcMon.set) {
+      when(check.addr === io.wbExcMon.addr) {
+        when(io.wbExcMon.clear) {
+          check.valid := false.B
+        }.otherwise {
+          check.valid := true.B
+        }
+      }.otherwise {
+        check.valid := false.B
+      }
+    }.otherwise {
+      check.valid := excMon.valid
+    }
+  }
+  forwardExcMon(io.memExcMonCheck, io.excMonCheck)
+  io.excMonCheck.addr := io.memExcMonCheck.addr
   // 访存暂停
   def resolveLoadHazard(read: RegReadIO) = {
     val aluLoad = io.exeForward.load && read.addr === io.exeForward.addr
@@ -68,12 +95,6 @@ class HazardResolver extends Module {
   val loadHazard1 = resolveLoadHazard(io.regRead1)
   val loadHazard2 = resolveLoadHazard(io.regRead2)
   val csrHazard   = resolveCsrHazard(io.csrRead)
-
-  io.regFile1.en   := io.regRead1.en
-  io.regFile1.addr := io.regRead1.addr
-  io.regFile2.en   := io.regRead2.en
-  io.regFile2.addr := io.regRead2.addr
-  io.regCsr <> io.csrRead
 
   io.loadHazardFlag := loadHazard1 || loadHazard2
   io.csrHazardFlag  := csrHazard

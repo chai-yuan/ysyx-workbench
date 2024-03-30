@@ -28,7 +28,6 @@ checkformat:
 
 clean:
 	-rm -rf $(BUILD_DIR)
-	-rm -rf ./simulation/vsrc/
 
 .PHONY: test verilog help compile bsp reformat checkformat clean
 

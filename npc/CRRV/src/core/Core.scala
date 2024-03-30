@@ -6,6 +6,7 @@ import config.CPUconfig._
 import core.pipeline._
 import core.regfile._
 import io._
+import core.atom.ExclusiveMonitor
 
 class Core extends Module {
   val io = IO(new Bundle {
@@ -28,6 +29,7 @@ class Core extends Module {
   val hazardResolver  = Module(new HazardResolver)
   val csrFile         = Module(new CsrFile)
   val regFile         = Module(new RegFile)
+  val excMon          = Module(new ExclusiveMonitor)
 
   fetchStage.io.instRom <> io.inst.out
   fetchStage.io.control.flush   := pipelineControl.io.flushIF
@@ -59,7 +61,7 @@ class Core extends Module {
 
   memoryStage.io.exe2mem <> exe2mem.io.next
   memoryStage.io.control.flush := pipelineControl.io.flushAll
-  memoryStage.io.dataRam <> io.data.out
+  memoryStage.io.dataRam <> io.data
   mem2wb.io.flush     := pipelineControl.io.flushAll
   mem2wb.io.stallPrev := pipelineControl.io.stallMEM
   mem2wb.io.stallNext := pipelineControl.io.stallWB
@@ -80,12 +82,21 @@ class Core extends Module {
   csrFile.io.read <> hazardResolver.io.regCsr
   csrFile.io.write <> writeBackStage.io.wb2csr
 
+  // excMon
+  excMon.io.flush <> pipelineControl.io.flushAll
+  excMon.io.check <> hazardResolver.io.excMonCheck
+  excMon.io.update.addr  := writeBackStage.io.excMonCommit.addr
+  excMon.io.update.set   := writeBackStage.io.excMonCommit.set
+  excMon.io.update.clear := writeBackStage.io.excMonCommit.clear
+
   // hazard resolver
   hazardResolver.io.exeForward <> executeStage.io.regForward
   hazardResolver.io.memForward <> memoryStage.io.regForward
   hazardResolver.io.wbForward <> writeBackStage.io.regForward
   hazardResolver.io.memCsrStall <> memoryStage.io.memCsrStall
   hazardResolver.io.wbCsrStall <> writeBackStage.io.wb2csr
+  hazardResolver.io.memExcMonCheck <> memoryStage.io.excMon
+  hazardResolver.io.wbExcMon <> writeBackStage.io.excMonCommit
 
   // pipeline controller
   pipelineControl.io.ifStallReq     := fetchStage.io.control.stallReq

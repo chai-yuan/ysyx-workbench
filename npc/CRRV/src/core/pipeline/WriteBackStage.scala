@@ -12,10 +12,11 @@ class WriteBackStage extends Module {
   val io = IO(new Bundle {
     val mem2wb = Input(new MEM2WBIO)
 
-    val read       = new SimpleInIO(DATA_WIDTH)
-    val wb2csr     = new CsrWriteIO
-    val regForward = Output(new RegForwardIO)
-    val debug      = Output(new DebugIO)
+    val read         = new SimpleInIO(DATA_WIDTH)
+    val wb2csr       = new CsrWriteIO
+    val excMonCommit = Output(new ExcMonCommitIO)
+    val regForward   = Output(new RegForwardIO)
+    val debug        = Output(new DebugIO)
   })
   val if2wb  = io.mem2wb.IF
   val id2wb  = io.mem2wb.ID
@@ -30,12 +31,21 @@ class WriteBackStage extends Module {
       LSU_LBU -> (Cat(0.U(24.W), shiftData(7, 0))),
       LSU_LH -> (Cat(Fill(16, shiftData(15)), shiftData(15, 0))),
       LSU_LHU -> (Cat(0.U(16.W), shiftData(15, 0))),
-      LSU_LW -> (shiftData)
+      LSU_LW -> (shiftData),
+      LSU_LR -> (shiftData)
     )
   )
 
-  val regData = Mux(id2wb.lsuOp =/= LSU_NOP, readData, exe2wb.exeResult)
+  val regData = MuxCase(
+    exe2wb.exeResult,
+    Seq(
+      (mem2wb.amoValid) -> (mem2wb.amoResult),
+      (id2wb.lsuOp =/= LSU_NOP) -> (readData)
+    )
+  )
 
+  // 原子指令
+  io.excMonCommit <> mem2wb.excMonCommit
   // csr
   io.wb2csr.op         := id2wb.csrOp
   io.wb2csr.addr       := id2wb.csrAddr
