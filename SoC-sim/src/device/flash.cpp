@@ -23,7 +23,7 @@ uint8_t* flash_raw_data(){
 }
 
 extern "C" void flash_read(uint32_t addr, uint32_t* data) {
-    addr = addr & 0x00FFFFFC;
+    addr = addr & 0x0FFFFFFC;
     if((addr % 4096) == 0)
         Log("FLASH LOAD at 0x%x %d", addr, addr);
     *data = *(uint32_t*)(flash_data + addr);

@@ -1229,19 +1229,19 @@ module PipelineStage(	// @[<stdin>:214:10]
   wire        _GEN = io_flush | io_stallPrev & ~io_stallNext;	// @[CRRV/src/core/pipeline/PipelineStage.scala:24:{17,34,37}]
   always @(posedge clock) begin	// @[<stdin>:215:11]
     if (reset) begin	// @[<stdin>:215:11]
-      pipelineReg_IF_instValid <= 1'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-      pipelineReg_IF_pc <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-      pipelineReg_IF_predTaken <= 1'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-      pipelineReg_IF_predTarget <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-      pipelineReg_IF_predIndex <= 5'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
+      pipelineReg_IF_instValid <= 1'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+      pipelineReg_IF_pc <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+      pipelineReg_IF_predTaken <= 1'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+      pipelineReg_IF_predTarget <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+      pipelineReg_IF_predIndex <= 5'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
     end
     else begin	// @[<stdin>:215:11]
       pipelineReg_IF_instValid <=
         ~_GEN & (io_stallPrev ? pipelineReg_IF_instValid : io_prev_IF_instValid);	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, :24:{17,53}, :25:17, :26:29, :27:17]
       if (_GEN) begin	// @[CRRV/src/core/pipeline/PipelineStage.scala:24:17]
-        pipelineReg_IF_pc <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-        pipelineReg_IF_predTarget <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-        pipelineReg_IF_predIndex <= 5'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
+        pipelineReg_IF_pc <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+        pipelineReg_IF_predTarget <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+        pipelineReg_IF_predIndex <= 5'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
       end
       else if (io_stallPrev) begin	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
       end
@@ -1281,7 +1281,7 @@ module DecodeStage(	// @[<stdin>:244:10]
                 io_id2exe_ID_mduOp,	// @[CRRV/src/core/pipeline/DecodeStage.scala:12:14]
   output [31:0] io_id2exe_ID_src1,	// @[CRRV/src/core/pipeline/DecodeStage.scala:12:14]
                 io_id2exe_ID_src2,	// @[CRRV/src/core/pipeline/DecodeStage.scala:12:14]
-  output [3:0]  io_id2exe_ID_lsuOp,	// @[CRRV/src/core/pipeline/DecodeStage.scala:12:14]
+  output [4:0]  io_id2exe_ID_lsuOp,	// @[CRRV/src/core/pipeline/DecodeStage.scala:12:14]
   output [31:0] io_id2exe_ID_lsuData,	// @[CRRV/src/core/pipeline/DecodeStage.scala:12:14]
   output        io_id2exe_ID_regWen,	// @[CRRV/src/core/pipeline/DecodeStage.scala:12:14]
   output [4:0]  io_id2exe_ID_regWaddr,	// @[CRRV/src/core/pipeline/DecodeStage.scala:12:14]
@@ -1360,50 +1360,77 @@ module DecodeStage(	// @[<stdin>:244:10]
   wire        _GEN_49 = _GEN == 17'h6B3;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38]
   wire        _GEN_50 = _GEN == 17'h733;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38]
   wire        _GEN_51 = _GEN == 17'h7B3;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38]
-  wire        _GEN_52 = inst == 32'h73;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, src/main/scala/chisel3/util/Mux.scala:141:16]
-  wire        _GEN_53 = inst == 32'h100073;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, src/main/scala/chisel3/util/Mux.scala:141:16]
-  wire        _GEN_54 = inst == 32'h30200073;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, src/main/scala/chisel3/util/Mux.scala:141:16]
-  wire        _GEN_55 =
-    _GEN_44 | _GEN_45 | _GEN_46 | _GEN_47 | _GEN_48 | _GEN_49 | _GEN_50;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
-  wire        _GEN_56 = _GEN_55 | _GEN_51;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
-  wire        _GEN_57 = _GEN_41 | _GEN_42 | _GEN_43;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
-  wire        _GEN_58 = _GEN_22 | _GEN_23 | _GEN_24 | _GEN_25 | _GEN_26 | _GEN_27;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
-  wire        _GEN_59 = _GEN_4 | _GEN_5;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
-  wire        _GEN_60 = _GEN_0 | _GEN_2 | _GEN_3;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
+  wire        _GEN_52 = {inst[31:27], inst[24:20], inst[14:12], inst[6:0]} == 20'h1012F;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, src/main/scala/chisel3/util/Mux.scala:141:16]
+  wire [14:0] _GEN_53 = {inst[31:27], inst[14:12], inst[6:0]};	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, src/main/scala/chisel3/util/Mux.scala:141:16]
+  wire        _GEN_54 = _GEN_53 == 15'hD2F;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38]
+  wire        _GEN_55 = _GEN_53 == 15'h52F;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38]
+  wire        _GEN_56 = _GEN_53 == 15'h12F;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38]
+  wire        _GEN_57 = _GEN_53 == 15'h112F;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38]
+  wire        _GEN_58 = _GEN_53 == 15'h312F;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38]
+  wire        _GEN_59 = _GEN_53 == 15'h212F;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38]
+  wire        _GEN_60 = _GEN_53 == 15'h412F;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38]
+  wire        _GEN_61 = _GEN_53 == 15'h512F;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38]
+  wire        _GEN_62 = _GEN_53 == 15'h612F;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38]
+  wire        _GEN_63 = _GEN_53 == 15'h712F;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38]
+  wire        _GEN_64 = {inst[31:28], inst[19:0]} == 24'hF;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, src/main/scala/chisel3/util/Mux.scala:141:16]
+  wire        _GEN_65 = inst == 32'h100F;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, src/main/scala/chisel3/util/Mux.scala:141:16]
+  wire        _GEN_66 = inst == 32'h73;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, src/main/scala/chisel3/util/Mux.scala:141:16]
+  wire        _GEN_67 = inst == 32'h100073;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, src/main/scala/chisel3/util/Mux.scala:141:16]
+  wire        _GEN_68 = inst == 32'h10500073;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, src/main/scala/chisel3/util/Mux.scala:141:16]
+  wire        _GEN_69 = inst == 32'h30200073;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, src/main/scala/chisel3/util/Mux.scala:141:16]
+  wire        _GEN_70 =
+    _GEN_54 | _GEN_55 | _GEN_56 | _GEN_57 | _GEN_58 | _GEN_59 | _GEN_60 | _GEN_61
+    | _GEN_62;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
+  wire        _GEN_71 =
+    _GEN_44 | _GEN_45 | _GEN_46 | _GEN_47 | _GEN_48 | _GEN_49 | _GEN_50 | _GEN_51
+    | _GEN_52 | _GEN_70;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
+  wire        _GEN_72 = _GEN_41 | _GEN_42 | _GEN_43;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
+  wire        _GEN_73 = _GEN_22 | _GEN_23 | _GEN_24 | _GEN_25 | _GEN_26 | _GEN_27;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
+  wire        _GEN_74 = _GEN_4 | _GEN_5;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
+  wire        _GEN_75 = _GEN_0 | _GEN_2 | _GEN_3;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
   wire        regEn1 =
-    _GEN_60 | ~_GEN_59
+    _GEN_75 | ~_GEN_74
     & (_GEN_6 | _GEN_7 | _GEN_8 | _GEN_9 | _GEN_10 | _GEN_11 | _GEN_12 | _GEN_13 | _GEN_14
-       | _GEN_15 | _GEN_16 | _GEN_17 | _GEN_18 | _GEN_19 | _GEN_20 | _GEN_21 | _GEN_58
+       | _GEN_15 | _GEN_16 | _GEN_17 | _GEN_18 | _GEN_19 | _GEN_20 | _GEN_21 | _GEN_73
        | ~_GEN_28
        & (_GEN_29 | _GEN_30 | _GEN_31 | _GEN_32 | _GEN_33 | _GEN_34 | _GEN_35 | _GEN_36
-          | _GEN_37 | _GEN_38 | _GEN_39 | _GEN_40 | ~_GEN_57 & _GEN_56));	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
-  wire        _GEN_61 = _GEN_38 | _GEN_39 | _GEN_40 | _GEN_57;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
-  wire        _GEN_62 = _GEN_35 | _GEN_36 | _GEN_37;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
-  wire        _GEN_63 = _GEN_30 | _GEN_31 | _GEN_32 | _GEN_33 | _GEN_34;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
-  wire        _GEN_64 = _GEN_28 | _GEN_29 | _GEN_63;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
-  wire        _GEN_65 = _GEN_20 | _GEN_21;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
-  wire        _GEN_66 =
-    _GEN_6 | _GEN_7 | _GEN_8 | _GEN_9 | _GEN_10 | _GEN_11 | _GEN_12 | _GEN_13 | _GEN_14
-    | _GEN_15 | _GEN_16 | _GEN_17 | _GEN_18 | _GEN_19 | _GEN_65;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
-  wire        _GEN_67 = _GEN_0 | _GEN_2 | _GEN_3 | _GEN_4 | _GEN_5 | _GEN_66;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
-  wire        _GEN_68 =
+          | _GEN_37 | _GEN_38 | _GEN_39 | _GEN_40 | ~_GEN_72 & (_GEN_71 | _GEN_63)));	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
+  wire        _GEN_76 =
     _GEN_44 | _GEN_45 | _GEN_46 | _GEN_47 | _GEN_48 | _GEN_49 | _GEN_50 | _GEN_51;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
-  wire        _GEN_69 = _GEN_30 | _GEN_31 | _GEN_32 | _GEN_33 | _GEN_34 | _GEN_62;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
-  wire        _GEN_70 = _GEN_28 | _GEN_29;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
+  wire        _GEN_77 = _GEN_38 | _GEN_39 | _GEN_40 | _GEN_72;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
+  wire        _GEN_78 = _GEN_35 | _GEN_36 | _GEN_37;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
+  wire        _GEN_79 = _GEN_30 | _GEN_31 | _GEN_32 | _GEN_33 | _GEN_34;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
+  wire        _GEN_80 = _GEN_28 | _GEN_29 | _GEN_79;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
+  wire        _GEN_81 = _GEN_20 | _GEN_21;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
+  wire        _GEN_82 =
+    _GEN_6 | _GEN_7 | _GEN_8 | _GEN_9 | _GEN_10 | _GEN_11 | _GEN_12 | _GEN_13 | _GEN_14
+    | _GEN_15 | _GEN_16 | _GEN_17 | _GEN_18 | _GEN_19 | _GEN_81;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
+  wire        _GEN_83 = _GEN_0 | _GEN_2 | _GEN_3 | _GEN_4 | _GEN_5 | _GEN_82;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
+  wire        _GEN_84 =
+    _GEN_52 | _GEN_54 | _GEN_55 | _GEN_56 | _GEN_57 | _GEN_58 | _GEN_59 | _GEN_60
+    | _GEN_61 | _GEN_62 | _GEN_63;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
+  wire        _GEN_85 = _GEN_30 | _GEN_31 | _GEN_32 | _GEN_33 | _GEN_34 | _GEN_78;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
+  wire        _GEN_86 = _GEN_28 | _GEN_29;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
   wire [3:0]  aluSrc1Op =
-    _GEN_60
+    _GEN_75
       ? 4'h1
       : _GEN_4
           ? 4'h0
           : _GEN_5
               ? 4'h7
-              : _GEN_66
+              : _GEN_82
                   ? 4'h1
-                  : _GEN_58
+                  : _GEN_73
                       ? 4'h0
-                      : _GEN_70
+                      : _GEN_86
                           ? 4'h7
-                          : _GEN_69 ? 4'h1 : _GEN_61 ? 4'h0 : {3'h0, _GEN_68};	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
+                          : _GEN_85
+                              ? 4'h1
+                              : _GEN_77
+                                  ? 4'h0
+                                  : {3'h0,
+                                     _GEN_44 | _GEN_45 | _GEN_46 | _GEN_47 | _GEN_48
+                                       | _GEN_49 | _GEN_50 | _GEN_51 | _GEN_84};	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
   wire [3:0]  aluSrc2Op =
     _GEN_0
       ? 4'h2
@@ -1411,7 +1438,7 @@ module DecodeStage(	// @[<stdin>:244:10]
           ? 4'h3
           : _GEN_3
               ? 4'h2
-              : _GEN_59
+              : _GEN_74
                   ? 4'h5
                   : _GEN_6
                       ? 4'h2
@@ -1445,26 +1472,27 @@ module DecodeStage(	// @[<stdin>:244:10]
                                                                               ? 4'h2
                                                                               : _GEN_21
                                                                                   ? 4'h6
-                                                                                  : _GEN_58
+                                                                                  : _GEN_73
                                                                                       ? 4'h0
-                                                                                      : _GEN_70
+                                                                                      : _GEN_86
                                                                                           ? 4'h8
-                                                                                          : _GEN_63
+                                                                                          : _GEN_79
                                                                                               ? 4'h3
-                                                                                              : _GEN_62
+                                                                                              : _GEN_78
                                                                                                   ? 4'h4
-                                                                                                  : _GEN_61
+                                                                                                  : _GEN_77
                                                                                                       ? 4'h0
                                                                                                       : {2'h0,
-                                                                                                         _GEN_68,
+                                                                                                         _GEN_76,
                                                                                                          1'h0};	// @[CRRV/src/core/pipeline/DecodeStage.scala:24:27, src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
-  wire        _GEN_71 =
-    _GEN_38 | _GEN_39 | _GEN_40 | _GEN_41 | _GEN_42 | _GEN_43 | _GEN_68;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
-  wire        _GEN_72 =
+  wire        _GEN_87 = _GEN_64 | _GEN_65;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
+  wire        _GEN_88 =
+    _GEN_38 | _GEN_39 | _GEN_40 | _GEN_41 | _GEN_42 | _GEN_43 | _GEN_76;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
+  wire        _GEN_89 =
     _GEN_22 | _GEN_23 | _GEN_24 | _GEN_25 | _GEN_26 | _GEN_27 | _GEN_28 | _GEN_29
-    | _GEN_69;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
+    | _GEN_85;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
   wire [2:0]  branchFlag =
-    _GEN_67
+    _GEN_83
       ? 3'h0
       : _GEN_22
           ? 3'h2
@@ -1472,11 +1500,11 @@ module DecodeStage(	// @[<stdin>:244:10]
               ? 3'h3
               : _GEN_24
                   ? 3'h4
-                  : _GEN_25 ? 3'h5 : _GEN_26 ? 3'h6 : _GEN_27 ? 3'h7 : {2'h0, _GEN_70};	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
+                  : _GEN_25 ? 3'h5 : _GEN_26 ? 3'h6 : _GEN_27 ? 3'h7 : {2'h0, _GEN_86};	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
   wire [2:0]  csrOp =
     _GEN_0 | _GEN_2 | _GEN_3 | _GEN_4 | _GEN_5 | _GEN_6 | _GEN_7 | _GEN_8 | _GEN_9
     | _GEN_10 | _GEN_11 | _GEN_12 | _GEN_13 | _GEN_14 | _GEN_15 | _GEN_16 | _GEN_17
-    | _GEN_18 | _GEN_19 | _GEN_20 | _GEN_21 | _GEN_72
+    | _GEN_18 | _GEN_19 | _GEN_20 | _GEN_21 | _GEN_89
       ? 3'h0
       : _GEN_38
           ? 3'h3
@@ -1504,24 +1532,24 @@ module DecodeStage(	// @[<stdin>:244:10]
         casez_tmp = io_regRead1_data >= io_regRead2_data;	// @[CRRV/src/core/pipeline/DecodeStage.scala:63:51, :71:35]
     endcase	// @[CRRV/src/core/pipeline/DecodeStage.scala:63:51, src/main/scala/chisel3/util/Lookup.scala:34:39]
   end // always_comb
-  wire [19:0] _GEN_73 = {20{inst[31]}};	// @[CRRV/src/core/pipeline/DecodeStage.scala:75:51, src/main/scala/chisel3/util/Mux.scala:141:16]
-  wire [31:0] _GEN_74 = {_GEN_73, inst[31:20]};	// @[CRRV/src/core/pipeline/DecodeStage.scala:39:18, :75:51, src/main/scala/chisel3/util/Mux.scala:141:16]
-  wire [31:0] _targetJALR_T_3 = io_regRead1_data + _GEN_74;	// @[CRRV/src/core/pipeline/DecodeStage.scala:75:51]
+  wire [19:0] _GEN_90 = {20{inst[31]}};	// @[CRRV/src/core/pipeline/DecodeStage.scala:75:51, src/main/scala/chisel3/util/Mux.scala:141:16]
+  wire [31:0] _GEN_91 = {_GEN_90, inst[31:20]};	// @[CRRV/src/core/pipeline/DecodeStage.scala:39:18, :75:51, src/main/scala/chisel3/util/Mux.scala:141:16]
+  wire [31:0] _targetJALR_T_3 = io_regRead1_data + _GEN_91;	// @[CRRV/src/core/pipeline/DecodeStage.scala:75:51]
   wire [31:0] branchTarget =
     _io_branchInfo_jump_T
       ? (regEn1
            ? {_targetJALR_T_3[31:1], 1'h0}
            : io_if2id_IF_pc + {{12{inst[31]}}, inst[19:12], inst[20], inst[30:21], 1'h0})
       : io_if2id_IF_pc + {{20{inst[31]}}, inst[7], inst[30:25], inst[11:8], 1'h0};	// @[CRRV/src/core/pipeline/DecodeStage.scala:24:27, :41:{22,32,41,55}, :43:{32,46,56}, :63:51, :74:39, :75:{25,51,65}, :76:25, :77:39, :78:25, src/main/scala/chisel3/util/Lookup.scala:34:39, src/main/scala/chisel3/util/Mux.scala:141:16]
-  wire        _csrOperation_T_4 = inst[19:15] == 5'h0;	// @[CRRV/src/core/pipeline/DecodeStage.scala:36:17, :85:24, :86:25, src/main/scala/chisel3/util/Mux.scala:141:16]
+  wire        _csrOperation_T_4 = inst[19:15] == 5'h0;	// @[CRRV/src/core/pipeline/DecodeStage.scala:36:17, :86:25, src/main/scala/chisel3/util/Lookup.scala:34:39, src/main/scala/chisel3/util/Mux.scala:141:16]
   wire [2:0]  csrOperation =
     csrOp == 3'h5
       ? {~_csrOperation_T_4, 2'h1}
       : csrOp == 3'h4
           ? (_csrOperation_T_4 ? 3'h1 : 3'h4)
           : csrOp == 3'h3 ? {2'h1, |(inst[11:7])} : 3'h0;	// @[CRRV/src/core/pipeline/DecodeStage.scala:35:17, :83:47, :85:{20,24}, :86:{20,25}, :87:20, src/main/scala/chisel3/util/Lookup.scala:34:39, src/main/scala/chisel3/util/Mux.scala:141:16]
-  wire [31:0] _GEN_75 = {_GEN_73, inst[31:25], inst[11:7]};	// @[CRRV/src/core/pipeline/DecodeStage.scala:35:17, :40:22, :50:57, :75:51, src/main/scala/chisel3/util/Mux.scala:141:16]
-  wire [31:0] _GEN_76 = {27'h0, inst[24:20]};	// @[CRRV/src/core/pipeline/DecodeStage.scala:37:17, :50:57, src/main/scala/chisel3/util/Lookup.scala:31:38, src/main/scala/chisel3/util/Mux.scala:141:16]
+  wire [31:0] _GEN_92 = {_GEN_90, inst[31:25], inst[11:7]};	// @[CRRV/src/core/pipeline/DecodeStage.scala:35:17, :40:22, :50:57, :75:51, src/main/scala/chisel3/util/Mux.scala:141:16]
+  wire [31:0] _GEN_93 = {27'h0, inst[24:20]};	// @[CRRV/src/core/pipeline/DecodeStage.scala:37:17, :50:57, src/main/scala/chisel3/util/Lookup.scala:31:38, src/main/scala/chisel3/util/Mux.scala:141:16]
   always @(posedge clock) begin	// @[<stdin>:245:11]
     stallDelay <= io_control_stall;	// @[CRRV/src/core/pipeline/DecodeStage.scala:24:27]
     if (stallDelay) begin	// @[CRRV/src/core/pipeline/DecodeStage.scala:24:27]
@@ -1560,20 +1588,26 @@ module DecodeStage(	// @[<stdin>:244:10]
                                           ? 4'h8
                                           : _GEN_18 | _GEN_19
                                               ? 4'h9
-                                              : _GEN_65
+                                              : _GEN_81
                                                   ? 4'hA
-                                                  : _GEN_72
+                                                  : _GEN_89
                                                       ? 4'h1
-                                                      : _GEN_71
+                                                      : _GEN_88
                                                           ? 4'h0
-                                                          : {3'h0,
-                                                             _GEN_52 | _GEN_53 | _GEN_54};	// @[<stdin>:244:10, src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
+                                                          : _GEN_84
+                                                              ? 4'h4
+                                                              : _GEN_87
+                                                                  ? 4'h0
+                                                                  : {3'h0,
+                                                                     _GEN_66 | _GEN_67
+                                                                       | _GEN_68
+                                                                       | _GEN_69};	// @[<stdin>:244:10, src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
   assign io_id2exe_ID_mduOp =
     _GEN_0 | _GEN_2 | _GEN_3 | _GEN_4 | _GEN_5 | _GEN_6 | _GEN_7 | _GEN_8 | _GEN_9
     | _GEN_10 | _GEN_11 | _GEN_12 | _GEN_13 | _GEN_14 | _GEN_15 | _GEN_16 | _GEN_17
     | _GEN_18 | _GEN_19 | _GEN_20 | _GEN_21 | _GEN_22 | _GEN_23 | _GEN_24 | _GEN_25
     | _GEN_26 | _GEN_27 | _GEN_28 | _GEN_29 | _GEN_30 | _GEN_31 | _GEN_32 | _GEN_33
-    | _GEN_34 | _GEN_35 | _GEN_36 | _GEN_37 | _GEN_61
+    | _GEN_34 | _GEN_35 | _GEN_36 | _GEN_37 | _GEN_77
       ? 4'h0
       : _GEN_44
           ? 4'h1
@@ -1592,13 +1626,13 @@ module DecodeStage(	// @[<stdin>:244:10]
       : aluSrc1Op == 4'h7
           ? io_if2id_IF_pc
           : aluSrc1Op == 4'h6
-              ? _GEN_76
+              ? _GEN_93
               : aluSrc1Op == 4'h5
                   ? immU
                   : aluSrc1Op == 4'h4
-                      ? _GEN_75
+                      ? _GEN_92
                       : aluSrc1Op == 4'h3
-                          ? _GEN_74
+                          ? _GEN_91
                           : aluSrc1Op == 4'h2
                               ? io_regRead2_data
                               : aluSrc1Op == 4'h1 ? io_regRead1_data : 32'h0;	// @[<stdin>:244:10, CRRV/src/core/pipeline/DecodeStage.scala:42:17, :50:57, :75:51, src/main/scala/chisel3/util/Lookup.scala:34:39]
@@ -1608,13 +1642,13 @@ module DecodeStage(	// @[<stdin>:244:10]
       : aluSrc2Op == 4'h7
           ? io_if2id_IF_pc
           : aluSrc2Op == 4'h6
-              ? _GEN_76
+              ? _GEN_93
               : aluSrc2Op == 4'h5
                   ? immU
                   : aluSrc2Op == 4'h4
-                      ? _GEN_75
+                      ? _GEN_92
                       : aluSrc2Op == 4'h3
-                          ? _GEN_74
+                          ? _GEN_91
                           : aluSrc2Op == 4'h2
                               ? io_regRead2_data
                               : aluSrc2Op == 4'h1 ? io_regRead1_data : 32'h0;	// @[<stdin>:244:10, CRRV/src/core/pipeline/DecodeStage.scala:42:17, :50:57, :75:51, src/main/scala/chisel3/util/Lookup.scala:34:39]
@@ -1622,24 +1656,58 @@ module DecodeStage(	// @[<stdin>:244:10]
     _GEN_0 | _GEN_2 | _GEN_3 | _GEN_4 | _GEN_5 | _GEN_6 | _GEN_7 | _GEN_8 | _GEN_9
     | _GEN_10 | _GEN_11 | _GEN_12 | _GEN_13 | _GEN_14 | _GEN_15 | _GEN_16 | _GEN_17
     | _GEN_18 | _GEN_19 | _GEN_20 | _GEN_21 | _GEN_22 | _GEN_23 | _GEN_24 | _GEN_25
-    | _GEN_26 | _GEN_27 | _GEN_70
-      ? 4'h0
+    | _GEN_26 | _GEN_27 | _GEN_86
+      ? 5'h0
       : _GEN_30
-          ? 4'h1
+          ? 5'h1
           : _GEN_31
-              ? 4'h2
+              ? 5'h2
               : _GEN_32
-                  ? 4'h3
+                  ? 5'h3
                   : _GEN_33
-                      ? 4'h4
+                      ? 5'h4
                       : _GEN_34
-                          ? 4'h5
-                          : _GEN_35 ? 4'h6 : _GEN_36 ? 4'h7 : {_GEN_37, 3'h0};	// @[<stdin>:244:10, src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
+                          ? 5'h5
+                          : _GEN_35
+                              ? 5'h6
+                              : _GEN_36
+                                  ? 5'h7
+                                  : _GEN_37
+                                      ? 5'h8
+                                      : _GEN_88
+                                          ? 5'h0
+                                          : _GEN_52
+                                              ? 5'h9
+                                              : _GEN_54
+                                                  ? 5'hA
+                                                  : _GEN_55
+                                                      ? 5'hB
+                                                      : _GEN_56
+                                                          ? 5'hC
+                                                          : _GEN_57
+                                                              ? 5'hD
+                                                              : _GEN_58
+                                                                  ? 5'hE
+                                                                  : _GEN_59
+                                                                      ? 5'hF
+                                                                      : _GEN_60
+                                                                          ? 5'h10
+                                                                          : _GEN_61
+                                                                              ? 5'h11
+                                                                              : _GEN_62
+                                                                                  ? 5'h12
+                                                                                  : _GEN_63
+                                                                                      ? 5'h13
+                                                                                      : _GEN_64
+                                                                                          ? 5'h14
+                                                                                          : _GEN_65
+                                                                                              ? 5'h15
+                                                                                              : 5'h0;	// @[<stdin>:244:10, src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
   assign io_id2exe_ID_lsuData = io_regRead2_data;	// @[<stdin>:244:10]
   assign io_id2exe_ID_regWen =
-    _GEN_67 | ~_GEN_58
-    & (_GEN_64 | ~_GEN_62
-       & (_GEN_38 | _GEN_39 | _GEN_40 | _GEN_41 | _GEN_42 | _GEN_43 | _GEN_55 | _GEN_51));	// @[<stdin>:244:10, src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
+    _GEN_83 | ~_GEN_73
+    & (_GEN_80 | ~_GEN_78
+       & (_GEN_38 | _GEN_39 | _GEN_40 | _GEN_41 | _GEN_42 | _GEN_43 | _GEN_71 | _GEN_63));	// @[<stdin>:244:10, src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
   assign io_id2exe_ID_regWaddr = inst[11:7];	// @[<stdin>:244:10, CRRV/src/core/pipeline/DecodeStage.scala:35:17, src/main/scala/chisel3/util/Mux.scala:141:16]
   assign io_id2exe_ID_csrOp = csrOperation;	// @[<stdin>:244:10, CRRV/src/core/pipeline/DecodeStage.scala:83:47]
   assign io_id2exe_ID_csrAddr = inst[31:20];	// @[<stdin>:244:10, CRRV/src/core/pipeline/DecodeStage.scala:39:18, src/main/scala/chisel3/util/Mux.scala:141:16]
@@ -1650,9 +1718,12 @@ module DecodeStage(	// @[<stdin>:244:10]
     | _GEN_10 | _GEN_11 | _GEN_12 | _GEN_13 | _GEN_14 | _GEN_15 | _GEN_16 | _GEN_17
     | _GEN_18 | _GEN_19 | _GEN_20 | _GEN_21 | _GEN_22 | _GEN_23 | _GEN_24 | _GEN_25
     | _GEN_26 | _GEN_27 | _GEN_28 | _GEN_29 | _GEN_30 | _GEN_31 | _GEN_32 | _GEN_33
-    | _GEN_34 | _GEN_35 | _GEN_36 | _GEN_37 | _GEN_71
+    | _GEN_34 | _GEN_35 | _GEN_36 | _GEN_37 | _GEN_38 | _GEN_39 | _GEN_40 | _GEN_41
+    | _GEN_42 | _GEN_43 | _GEN_44 | _GEN_45 | _GEN_46 | _GEN_47 | _GEN_48 | _GEN_49
+    | _GEN_50 | _GEN_51 | _GEN_52 | _GEN_54 | _GEN_55 | _GEN_56 | _GEN_57 | _GEN_58
+    | _GEN_59 | _GEN_60 | _GEN_61 | _GEN_62 | _GEN_63 | _GEN_87
       ? 3'h0
-      : _GEN_52 ? 3'h1 : _GEN_53 ? 3'h0 : _GEN_54 ? 3'h2 : 3'h7;	// @[<stdin>:244:10, src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
+      : _GEN_66 ? 3'h1 : _GEN_67 | _GEN_68 ? 3'h0 : _GEN_69 ? 3'h2 : 3'h7;	// @[<stdin>:244:10, src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
   assign io_branchInfo_branch = |branchFlag;	// @[<stdin>:244:10, CRRV/src/core/pipeline/DecodeStage.scala:95:38, src/main/scala/chisel3/util/Lookup.scala:34:39]
   assign io_branchInfo_jump = _io_branchInfo_jump_T;	// @[<stdin>:244:10, CRRV/src/core/pipeline/DecodeStage.scala:63:51]
   assign io_branchInfo_taken = casez_tmp;	// @[<stdin>:244:10, CRRV/src/core/pipeline/DecodeStage.scala:63:51]
@@ -1663,7 +1734,7 @@ module DecodeStage(	// @[<stdin>:244:10]
   assign io_regRead1_addr = inst[19:15];	// @[<stdin>:244:10, CRRV/src/core/pipeline/DecodeStage.scala:36:17, src/main/scala/chisel3/util/Mux.scala:141:16]
   assign io_regRead2_en =
     _GEN_0 | ~_GEN_2
-    & (_GEN_3 | ~_GEN_59
+    & (_GEN_3 | ~_GEN_74
        & (_GEN_6 | ~_GEN_7
           & (_GEN_8 | ~_GEN_9
              & (_GEN_10 | ~_GEN_11
@@ -1672,14 +1743,16 @@ module DecodeStage(	// @[<stdin>:244:10]
                       & (_GEN_16 | ~_GEN_17
                          & (_GEN_18 | ~_GEN_19
                             & (_GEN_20 | ~_GEN_21
-                               & (_GEN_58 | ~_GEN_64
-                                  & (_GEN_62 | ~_GEN_61 & _GEN_56)))))))))));	// @[<stdin>:244:10, src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
+                               & (_GEN_73 | ~_GEN_80
+                                  & (_GEN_78 | ~_GEN_77
+                                     & (_GEN_76 | ~_GEN_52
+                                        & (_GEN_70 | _GEN_63)))))))))))));	// @[<stdin>:244:10, src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
   assign io_regRead2_addr = inst[24:20];	// @[<stdin>:244:10, CRRV/src/core/pipeline/DecodeStage.scala:37:17, src/main/scala/chisel3/util/Mux.scala:141:16]
 endmodule
 
-module PipelineStage_1(	// @[<stdin>:1135:10]
-  input         clock,	// @[<stdin>:1136:11]
-                reset,	// @[<stdin>:1137:11]
+module PipelineStage_1(	// @[<stdin>:1317:10]
+  input         clock,	// @[<stdin>:1318:11]
+                reset,	// @[<stdin>:1319:11]
                 io_flush,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
                 io_stallPrev,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
                 io_stallNext,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
@@ -1690,7 +1763,7 @@ module PipelineStage_1(	// @[<stdin>:1135:10]
                 io_prev_ID_mduOp,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
   input  [31:0] io_prev_ID_src1,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
                 io_prev_ID_src2,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
-  input  [3:0]  io_prev_ID_lsuOp,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
+  input  [4:0]  io_prev_ID_lsuOp,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
   input  [31:0] io_prev_ID_lsuData,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
   input         io_prev_ID_regWen,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
   input  [4:0]  io_prev_ID_regWaddr,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
@@ -1705,7 +1778,7 @@ module PipelineStage_1(	// @[<stdin>:1135:10]
                 io_next_ID_mduOp,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
   output [31:0] io_next_ID_src1,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
                 io_next_ID_src2,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
-  output [3:0]  io_next_ID_lsuOp,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
+  output [4:0]  io_next_ID_lsuOp,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
   output [31:0] io_next_ID_lsuData,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
   output        io_next_ID_regWen,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
   output [4:0]  io_next_ID_regWaddr,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
@@ -1722,7 +1795,7 @@ module PipelineStage_1(	// @[<stdin>:1135:10]
   reg  [3:0]  pipelineReg_ID_mduOp;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28]
   reg  [31:0] pipelineReg_ID_src1;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28]
   reg  [31:0] pipelineReg_ID_src2;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  reg  [3:0]  pipelineReg_ID_lsuOp;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  reg  [4:0]  pipelineReg_ID_lsuOp;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28]
   reg  [31:0] pipelineReg_ID_lsuData;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28]
   reg         pipelineReg_ID_regWen;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28]
   reg  [4:0]  pipelineReg_ID_regWaddr;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28]
@@ -1731,41 +1804,41 @@ module PipelineStage_1(	// @[<stdin>:1135:10]
   reg  [31:0] pipelineReg_ID_csrWriteData;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28]
   reg  [2:0]  pipelineReg_ID_exceptType;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28]
   wire        _GEN = io_flush | io_stallPrev & ~io_stallNext;	// @[CRRV/src/core/pipeline/PipelineStage.scala:24:{17,34,37}]
-  always @(posedge clock) begin	// @[<stdin>:1136:11]
-    if (reset) begin	// @[<stdin>:1136:11]
-      pipelineReg_IF_instValid <= 1'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-      pipelineReg_IF_pc <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-      pipelineReg_ID_inst <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-      pipelineReg_ID_aluOp <= 4'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-      pipelineReg_ID_mduOp <= 4'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-      pipelineReg_ID_src1 <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-      pipelineReg_ID_src2 <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-      pipelineReg_ID_lsuOp <= 4'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-      pipelineReg_ID_lsuData <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-      pipelineReg_ID_regWen <= 1'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-      pipelineReg_ID_regWaddr <= 5'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-      pipelineReg_ID_csrOp <= 3'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-      pipelineReg_ID_csrAddr <= 12'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-      pipelineReg_ID_csrWriteData <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-      pipelineReg_ID_exceptType <= 3'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
+  always @(posedge clock) begin	// @[<stdin>:1318:11]
+    if (reset) begin	// @[<stdin>:1318:11]
+      pipelineReg_IF_instValid <= 1'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+      pipelineReg_IF_pc <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+      pipelineReg_ID_inst <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+      pipelineReg_ID_aluOp <= 4'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+      pipelineReg_ID_mduOp <= 4'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+      pipelineReg_ID_src1 <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+      pipelineReg_ID_src2 <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+      pipelineReg_ID_lsuOp <= 5'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+      pipelineReg_ID_lsuData <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+      pipelineReg_ID_regWen <= 1'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+      pipelineReg_ID_regWaddr <= 5'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+      pipelineReg_ID_csrOp <= 3'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+      pipelineReg_ID_csrAddr <= 12'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+      pipelineReg_ID_csrWriteData <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+      pipelineReg_ID_exceptType <= 3'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
     end
-    else begin	// @[<stdin>:1136:11]
+    else begin	// @[<stdin>:1318:11]
       pipelineReg_IF_instValid <=
         ~_GEN & (io_stallPrev ? pipelineReg_IF_instValid : io_prev_IF_instValid);	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, :24:{17,53}, :25:17, :26:29, :27:17]
       if (_GEN) begin	// @[CRRV/src/core/pipeline/PipelineStage.scala:24:17]
-        pipelineReg_IF_pc <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-        pipelineReg_ID_inst <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-        pipelineReg_ID_aluOp <= 4'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-        pipelineReg_ID_mduOp <= 4'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-        pipelineReg_ID_src1 <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-        pipelineReg_ID_src2 <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-        pipelineReg_ID_lsuOp <= 4'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-        pipelineReg_ID_lsuData <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-        pipelineReg_ID_regWaddr <= 5'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-        pipelineReg_ID_csrOp <= 3'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-        pipelineReg_ID_csrAddr <= 12'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-        pipelineReg_ID_csrWriteData <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-        pipelineReg_ID_exceptType <= 3'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
+        pipelineReg_IF_pc <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+        pipelineReg_ID_inst <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+        pipelineReg_ID_aluOp <= 4'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+        pipelineReg_ID_mduOp <= 4'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+        pipelineReg_ID_src1 <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+        pipelineReg_ID_src2 <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+        pipelineReg_ID_lsuOp <= 5'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+        pipelineReg_ID_lsuData <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+        pipelineReg_ID_regWaddr <= 5'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+        pipelineReg_ID_csrOp <= 3'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+        pipelineReg_ID_csrAddr <= 12'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+        pipelineReg_ID_csrWriteData <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+        pipelineReg_ID_exceptType <= 3'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
       end
       else if (io_stallPrev) begin	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
       end
@@ -1788,26 +1861,26 @@ module PipelineStage_1(	// @[<stdin>:1135:10]
         ~_GEN & (io_stallPrev ? pipelineReg_ID_regWen : io_prev_ID_regWen);	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, :24:{17,53}, :25:17, :26:29, :27:17]
     end
   end // always @(posedge)
-  assign io_next_IF_instValid = pipelineReg_IF_instValid;	// @[<stdin>:1135:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_IF_pc = pipelineReg_IF_pc;	// @[<stdin>:1135:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_ID_inst = pipelineReg_ID_inst;	// @[<stdin>:1135:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_ID_aluOp = pipelineReg_ID_aluOp;	// @[<stdin>:1135:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_ID_mduOp = pipelineReg_ID_mduOp;	// @[<stdin>:1135:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_ID_src1 = pipelineReg_ID_src1;	// @[<stdin>:1135:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_ID_src2 = pipelineReg_ID_src2;	// @[<stdin>:1135:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_ID_lsuOp = pipelineReg_ID_lsuOp;	// @[<stdin>:1135:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_ID_lsuData = pipelineReg_ID_lsuData;	// @[<stdin>:1135:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_ID_regWen = pipelineReg_ID_regWen;	// @[<stdin>:1135:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_ID_regWaddr = pipelineReg_ID_regWaddr;	// @[<stdin>:1135:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_ID_csrOp = pipelineReg_ID_csrOp;	// @[<stdin>:1135:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_ID_csrAddr = pipelineReg_ID_csrAddr;	// @[<stdin>:1135:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_ID_csrWriteData = pipelineReg_ID_csrWriteData;	// @[<stdin>:1135:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_ID_exceptType = pipelineReg_ID_exceptType;	// @[<stdin>:1135:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_IF_instValid = pipelineReg_IF_instValid;	// @[<stdin>:1317:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_IF_pc = pipelineReg_IF_pc;	// @[<stdin>:1317:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_ID_inst = pipelineReg_ID_inst;	// @[<stdin>:1317:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_ID_aluOp = pipelineReg_ID_aluOp;	// @[<stdin>:1317:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_ID_mduOp = pipelineReg_ID_mduOp;	// @[<stdin>:1317:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_ID_src1 = pipelineReg_ID_src1;	// @[<stdin>:1317:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_ID_src2 = pipelineReg_ID_src2;	// @[<stdin>:1317:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_ID_lsuOp = pipelineReg_ID_lsuOp;	// @[<stdin>:1317:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_ID_lsuData = pipelineReg_ID_lsuData;	// @[<stdin>:1317:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_ID_regWen = pipelineReg_ID_regWen;	// @[<stdin>:1317:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_ID_regWaddr = pipelineReg_ID_regWaddr;	// @[<stdin>:1317:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_ID_csrOp = pipelineReg_ID_csrOp;	// @[<stdin>:1317:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_ID_csrAddr = pipelineReg_ID_csrAddr;	// @[<stdin>:1317:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_ID_csrWriteData = pipelineReg_ID_csrWriteData;	// @[<stdin>:1317:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_ID_exceptType = pipelineReg_ID_exceptType;	// @[<stdin>:1317:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
 endmodule
 
-module Multiplier(	// @[<stdin>:1193:10]
-  input         clock,	// @[<stdin>:1194:11]
-                reset,	// @[<stdin>:1195:11]
+module Multiplier(	// @[<stdin>:1375:10]
+  input         clock,	// @[<stdin>:1376:11]
+                reset,	// @[<stdin>:1377:11]
                 io_en,	// @[CRRV/src/core/muldiv/Multiplier.scala:14:14]
                 io_flush,	// @[CRRV/src/core/muldiv/Multiplier.scala:14:14]
                 io_opr1Sign,	// @[CRRV/src/core/muldiv/Multiplier.scala:14:14]
@@ -1863,7 +1936,7 @@ module Multiplier(	// @[<stdin>:1193:10]
   end // always_comb
   wire        _GEN_3 = state == 2'h0;	// @[CRRV/src/core/muldiv/Multiplier.scala:34:51, :36:17]
   wire        _GEN_4 = state == 2'h1 & _GEN_0;	// @[CRRV/src/core/muldiv/Multiplier.scala:31:47, :34:51, :36:17, :43:19, :47:{56,70}, :48:19]
-  always @(posedge clock) begin	// @[<stdin>:1194:11]
+  always @(posedge clock) begin	// @[<stdin>:1376:11]
     if (_GEN_3) begin	// @[CRRV/src/core/muldiv/Multiplier.scala:36:17]
       if (_GEN) begin	// @[CRRV/src/core/muldiv/Multiplier.scala:38:18]
         opr1 <= {{32{io_opr1Sign & io_opr1[31]}}, io_opr1};	// @[CRRV/src/core/muldiv/Multiplier.scala:26:{30,39}, :29:47, :39:{25,30}]
@@ -1876,11 +1949,11 @@ module Multiplier(	// @[<stdin>:1193:10]
       opr2 <= {2'h0, opr2[34:2]};	// @[CRRV/src/core/muldiv/Multiplier.scala:30:47, :34:51, :61:{15,23}]
       mulResutl <= mulResutl + casez_tmp[63:0];	// @[CRRV/src/core/muldiv/Multiplier.scala:31:47, :48:{32,60}]
     end
-    if (reset) begin	// @[<stdin>:1194:11]
+    if (reset) begin	// @[<stdin>:1376:11]
       count <= 6'h0;	// @[CRRV/src/core/muldiv/Multiplier.scala:32:51]
       state <= 2'h0;	// @[CRRV/src/core/muldiv/Multiplier.scala:34:51]
     end
-    else begin	// @[<stdin>:1194:11]
+    else begin	// @[<stdin>:1376:11]
       if (_GEN_3) begin	// @[CRRV/src/core/muldiv/Multiplier.scala:36:17]
         if (_GEN)	// @[CRRV/src/core/muldiv/Multiplier.scala:38:18]
           count <= 6'h0;	// @[CRRV/src/core/muldiv/Multiplier.scala:32:51]
@@ -1890,13 +1963,13 @@ module Multiplier(	// @[<stdin>:1193:10]
       state <= casez_tmp_0;	// @[CRRV/src/core/muldiv/Multiplier.scala:34:51, :36:17, :38:32]
     end
   end // always @(posedge)
-  assign io_valid = io_en & ~io_flush & state == 2'h2;	// @[<stdin>:1193:10, CRRV/src/core/muldiv/Multiplier.scala:34:51, :48:60, :75:{25,35,44}]
-  assign io_result = mulResutl;	// @[<stdin>:1193:10, CRRV/src/core/muldiv/Multiplier.scala:31:47]
+  assign io_valid = io_en & ~io_flush & state == 2'h2;	// @[<stdin>:1375:10, CRRV/src/core/muldiv/Multiplier.scala:34:51, :48:60, :75:{25,35,44}]
+  assign io_result = mulResutl;	// @[<stdin>:1375:10, CRRV/src/core/muldiv/Multiplier.scala:31:47]
 endmodule
 
-module Divider(	// @[<stdin>:1284:10]
-  input         clock,	// @[<stdin>:1285:11]
-                reset,	// @[<stdin>:1286:11]
+module Divider(	// @[<stdin>:1466:10]
+  input         clock,	// @[<stdin>:1467:11]
+                reset,	// @[<stdin>:1468:11]
                 io_en,	// @[CRRV/src/core/muldiv/Divider.scala:14:14]
                 io_flush,	// @[CRRV/src/core/muldiv/Divider.scala:14:14]
                 io_sign,	// @[CRRV/src/core/muldiv/Divider.scala:14:14]
@@ -1932,7 +2005,7 @@ module Divider(	// @[<stdin>:1284:10]
   wire [32:0] ans = dividend[63:31] - divisor;	// @[CRRV/src/core/muldiv/Divider.scala:33:47, :34:47, :52:{27,64}]
   wire        _GEN_1 = state == 2'h0;	// @[CRRV/src/core/muldiv/Divider.scala:38:51, :40:17]
   wire        _GEN_2 = state == 2'h1 & _GEN_0;	// @[CRRV/src/core/muldiv/Divider.scala:35:47, :38:51, :40:17, :47:18, :51:{35,49}, :53:18]
-  always @(posedge clock) begin	// @[<stdin>:1285:11]
+  always @(posedge clock) begin	// @[<stdin>:1467:11]
     if (_GEN_1) begin	// @[CRRV/src/core/muldiv/Divider.scala:40:17]
       if (_GEN) begin	// @[CRRV/src/core/muldiv/Divider.scala:42:18]
         dividend <= {32'h0, opr1Neg ? 32'h0 - io_opr1 : io_opr1};	// @[CRRV/src/core/muldiv/Divider.scala:26:30, :30:{25,35}, :33:47, :43:24]
@@ -1945,11 +2018,11 @@ module Divider(	// @[<stdin>:1284:10]
     end
     if (_GEN_1 & _GEN)	// @[CRRV/src/core/muldiv/Divider.scala:34:47, :40:17, :42:{18,32}, :44:18]
       divisor <= {1'h0, opr2Neg ? 32'h0 - io_opr2 : io_opr2};	// @[CRRV/src/core/muldiv/Divider.scala:27:30, :30:35, :31:{25,35}, :34:47, :43:24, :44:24]
-    if (reset) begin	// @[<stdin>:1285:11]
+    if (reset) begin	// @[<stdin>:1467:11]
       count <= 6'h0;	// @[CRRV/src/core/muldiv/Divider.scala:36:51]
       state <= 2'h0;	// @[CRRV/src/core/muldiv/Divider.scala:38:51]
     end
-    else begin	// @[<stdin>:1285:11]
+    else begin	// @[<stdin>:1467:11]
       if (_GEN_1) begin	// @[CRRV/src/core/muldiv/Divider.scala:40:17]
         if (_GEN)	// @[CRRV/src/core/muldiv/Divider.scala:42:18]
           count <= 6'h0;	// @[CRRV/src/core/muldiv/Divider.scala:36:51]
@@ -1959,14 +2032,14 @@ module Divider(	// @[<stdin>:1284:10]
       state <= casez_tmp;	// @[CRRV/src/core/muldiv/Divider.scala:38:51, :40:17, :42:32]
     end
   end // always @(posedge)
-  assign io_valid = io_en & ~io_flush & state == 2'h2;	// @[<stdin>:1284:10, CRRV/src/core/muldiv/Divider.scala:38:51, :57:15, :67:{28,38,47}]
-  assign io_divresult = opr1Neg ^ opr2Neg ? 32'h0 - quotient : quotient;	// @[<stdin>:1284:10, CRRV/src/core/muldiv/Divider.scala:26:30, :27:30, :28:30, :30:35, :35:47, :43:24, :68:{22,37}]
-  assign io_remresult = opr1Neg ? 32'h0 - dividend[63:32] : dividend[63:32];	// @[<stdin>:1284:10, CRRV/src/core/muldiv/Divider.scala:26:30, :30:35, :33:47, :43:24, :65:27, :69:{22,37}]
+  assign io_valid = io_en & ~io_flush & state == 2'h2;	// @[<stdin>:1466:10, CRRV/src/core/muldiv/Divider.scala:38:51, :57:15, :67:{28,38,47}]
+  assign io_divresult = opr1Neg ^ opr2Neg ? 32'h0 - quotient : quotient;	// @[<stdin>:1466:10, CRRV/src/core/muldiv/Divider.scala:26:30, :27:30, :28:30, :30:35, :35:47, :43:24, :68:{22,37}]
+  assign io_remresult = opr1Neg ? 32'h0 - dividend[63:32] : dividend[63:32];	// @[<stdin>:1466:10, CRRV/src/core/muldiv/Divider.scala:26:30, :30:35, :33:47, :43:24, :65:27, :69:{22,37}]
 endmodule
 
-module MDU(	// @[<stdin>:1368:10]
-  input         clock,	// @[<stdin>:1369:11]
-                reset,	// @[<stdin>:1370:11]
+module MDU(	// @[<stdin>:1550:10]
+  input         clock,	// @[<stdin>:1551:11]
+                reset,	// @[<stdin>:1552:11]
   input  [3:0]  io_op,	// @[CRRV/src/core/muldiv/MDU.scala:14:14]
   input         io_flush,	// @[CRRV/src/core/muldiv/MDU.scala:14:14]
   input  [31:0] io_opr1,	// @[CRRV/src/core/muldiv/MDU.scala:14:14]
@@ -2019,7 +2092,7 @@ module MDU(	// @[<stdin>:1368:10]
     .io_divresult (_divider_io_divresult),
     .io_remresult (_divider_io_remresult)
   );
-  assign io_valid = mulEnable ? _multiplier_io_valid : ~divEnable | _divider_io_valid;	// @[<stdin>:1368:10, CRRV/src/core/muldiv/MDU.scala:31:26, :41:23, src/main/scala/chisel3/util/Lookup.scala:34:39, src/main/scala/chisel3/util/Mux.scala:141:16]
+  assign io_valid = mulEnable ? _multiplier_io_valid : ~divEnable | _divider_io_valid;	// @[<stdin>:1550:10, CRRV/src/core/muldiv/MDU.scala:31:26, :41:23, src/main/scala/chisel3/util/Lookup.scala:34:39, src/main/scala/chisel3/util/Mux.scala:141:16]
   assign io_result =
     mulEnable
       ? (~_GEN & (_GEN_7 | _GEN_2)
@@ -2029,12 +2102,12 @@ module MDU(	// @[<stdin>:1368:10]
           ? (~(_GEN | _GEN_0 | _GEN_1 | _GEN_2 | _GEN_3 | _GEN_4) & (_GEN_5 | _GEN_6)
                ? _divider_io_remresult
                : _divider_io_divresult)
-          : 32'h0;	// @[<stdin>:1368:10, CRRV/src/core/muldiv/MDU.scala:31:26, :39:{8,36,90}, :41:23, :47:22, src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39, src/main/scala/chisel3/util/Mux.scala:141:16]
+          : 32'h0;	// @[<stdin>:1550:10, CRRV/src/core/muldiv/MDU.scala:31:26, :39:{8,36,90}, :41:23, :47:22, src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39, src/main/scala/chisel3/util/Mux.scala:141:16]
 endmodule
 
-module ExecuteStage(	// @[<stdin>:1466:10]
-  input         clock,	// @[<stdin>:1467:11]
-                reset,	// @[<stdin>:1468:11]
+module ExecuteStage(	// @[<stdin>:1648:10]
+  input         clock,	// @[<stdin>:1649:11]
+                reset,	// @[<stdin>:1650:11]
                 io_id2exe_IF_instValid,	// @[CRRV/src/core/pipeline/ExecuteStage.scala:13:14]
   input  [31:0] io_id2exe_IF_pc,	// @[CRRV/src/core/pipeline/ExecuteStage.scala:13:14]
                 io_id2exe_ID_inst,	// @[CRRV/src/core/pipeline/ExecuteStage.scala:13:14]
@@ -2042,7 +2115,7 @@ module ExecuteStage(	// @[<stdin>:1466:10]
                 io_id2exe_ID_mduOp,	// @[CRRV/src/core/pipeline/ExecuteStage.scala:13:14]
   input  [31:0] io_id2exe_ID_src1,	// @[CRRV/src/core/pipeline/ExecuteStage.scala:13:14]
                 io_id2exe_ID_src2,	// @[CRRV/src/core/pipeline/ExecuteStage.scala:13:14]
-  input  [3:0]  io_id2exe_ID_lsuOp,	// @[CRRV/src/core/pipeline/ExecuteStage.scala:13:14]
+  input  [4:0]  io_id2exe_ID_lsuOp,	// @[CRRV/src/core/pipeline/ExecuteStage.scala:13:14]
   input  [31:0] io_id2exe_ID_lsuData,	// @[CRRV/src/core/pipeline/ExecuteStage.scala:13:14]
   input         io_id2exe_ID_regWen,	// @[CRRV/src/core/pipeline/ExecuteStage.scala:13:14]
   input  [4:0]  io_id2exe_ID_regWaddr,	// @[CRRV/src/core/pipeline/ExecuteStage.scala:13:14]
@@ -2056,7 +2129,7 @@ module ExecuteStage(	// @[<stdin>:1466:10]
                 io_exe2mem_IF_instValid,	// @[CRRV/src/core/pipeline/ExecuteStage.scala:13:14]
   output [31:0] io_exe2mem_IF_pc,	// @[CRRV/src/core/pipeline/ExecuteStage.scala:13:14]
                 io_exe2mem_ID_inst,	// @[CRRV/src/core/pipeline/ExecuteStage.scala:13:14]
-  output [3:0]  io_exe2mem_ID_lsuOp,	// @[CRRV/src/core/pipeline/ExecuteStage.scala:13:14]
+  output [4:0]  io_exe2mem_ID_lsuOp,	// @[CRRV/src/core/pipeline/ExecuteStage.scala:13:14]
   output [31:0] io_exe2mem_ID_lsuData,	// @[CRRV/src/core/pipeline/ExecuteStage.scala:13:14]
   output        io_exe2mem_ID_regWen,	// @[CRRV/src/core/pipeline/ExecuteStage.scala:13:14]
   output [4:0]  io_exe2mem_ID_regWaddr,	// @[CRRV/src/core/pipeline/ExecuteStage.scala:13:14]
@@ -2132,38 +2205,38 @@ module ExecuteStage(	// @[<stdin>:1466:10]
     .io_valid  (_mdu_io_valid),
     .io_result (_mdu_io_result)
   );
-  assign io_control_stallReq = ~_mdu_io_valid;	// @[<stdin>:1466:10, CRRV/src/core/pipeline/ExecuteStage.scala:44:19, :64:26]
-  assign io_exe2mem_IF_instValid = io_id2exe_IF_instValid;	// @[<stdin>:1466:10]
-  assign io_exe2mem_IF_pc = io_id2exe_IF_pc;	// @[<stdin>:1466:10]
-  assign io_exe2mem_ID_inst = io_id2exe_ID_inst;	// @[<stdin>:1466:10]
-  assign io_exe2mem_ID_lsuOp = io_id2exe_ID_lsuOp;	// @[<stdin>:1466:10]
-  assign io_exe2mem_ID_lsuData = io_id2exe_ID_lsuData;	// @[<stdin>:1466:10]
-  assign io_exe2mem_ID_regWen = io_id2exe_ID_regWen;	// @[<stdin>:1466:10]
-  assign io_exe2mem_ID_regWaddr = io_id2exe_ID_regWaddr;	// @[<stdin>:1466:10]
-  assign io_exe2mem_ID_csrOp = io_id2exe_ID_csrOp;	// @[<stdin>:1466:10]
-  assign io_exe2mem_ID_csrAddr = io_id2exe_ID_csrAddr;	// @[<stdin>:1466:10]
-  assign io_exe2mem_ID_csrWriteData = io_id2exe_ID_csrWriteData;	// @[<stdin>:1466:10]
-  assign io_exe2mem_ID_exceptType = io_id2exe_ID_exceptType;	// @[<stdin>:1466:10]
-  assign io_exe2mem_EXE_load = load;	// @[<stdin>:1466:10, CRRV/src/core/pipeline/ExecuteStage.scala:61:39]
-  assign io_exe2mem_EXE_exeResult = _GEN_0;	// @[<stdin>:1466:10, src/main/scala/chisel3/util/Mux.scala:141:16]
-  assign io_csrRead_op = io_id2exe_ID_csrOp;	// @[<stdin>:1466:10]
-  assign io_csrRead_addr = io_id2exe_ID_csrAddr;	// @[<stdin>:1466:10]
-  assign io_regForward_en = io_id2exe_ID_regWen;	// @[<stdin>:1466:10]
-  assign io_regForward_addr = io_id2exe_ID_regWaddr;	// @[<stdin>:1466:10]
-  assign io_regForward_data = _GEN_0;	// @[<stdin>:1466:10, src/main/scala/chisel3/util/Mux.scala:141:16]
-  assign io_regForward_load = load;	// @[<stdin>:1466:10, CRRV/src/core/pipeline/ExecuteStage.scala:61:39]
+  assign io_control_stallReq = ~_mdu_io_valid;	// @[<stdin>:1648:10, CRRV/src/core/pipeline/ExecuteStage.scala:44:19, :64:26]
+  assign io_exe2mem_IF_instValid = io_id2exe_IF_instValid;	// @[<stdin>:1648:10]
+  assign io_exe2mem_IF_pc = io_id2exe_IF_pc;	// @[<stdin>:1648:10]
+  assign io_exe2mem_ID_inst = io_id2exe_ID_inst;	// @[<stdin>:1648:10]
+  assign io_exe2mem_ID_lsuOp = io_id2exe_ID_lsuOp;	// @[<stdin>:1648:10]
+  assign io_exe2mem_ID_lsuData = io_id2exe_ID_lsuData;	// @[<stdin>:1648:10]
+  assign io_exe2mem_ID_regWen = io_id2exe_ID_regWen;	// @[<stdin>:1648:10]
+  assign io_exe2mem_ID_regWaddr = io_id2exe_ID_regWaddr;	// @[<stdin>:1648:10]
+  assign io_exe2mem_ID_csrOp = io_id2exe_ID_csrOp;	// @[<stdin>:1648:10]
+  assign io_exe2mem_ID_csrAddr = io_id2exe_ID_csrAddr;	// @[<stdin>:1648:10]
+  assign io_exe2mem_ID_csrWriteData = io_id2exe_ID_csrWriteData;	// @[<stdin>:1648:10]
+  assign io_exe2mem_ID_exceptType = io_id2exe_ID_exceptType;	// @[<stdin>:1648:10]
+  assign io_exe2mem_EXE_load = load;	// @[<stdin>:1648:10, CRRV/src/core/pipeline/ExecuteStage.scala:61:39]
+  assign io_exe2mem_EXE_exeResult = _GEN_0;	// @[<stdin>:1648:10, src/main/scala/chisel3/util/Mux.scala:141:16]
+  assign io_csrRead_op = io_id2exe_ID_csrOp;	// @[<stdin>:1648:10]
+  assign io_csrRead_addr = io_id2exe_ID_csrAddr;	// @[<stdin>:1648:10]
+  assign io_regForward_en = io_id2exe_ID_regWen;	// @[<stdin>:1648:10]
+  assign io_regForward_addr = io_id2exe_ID_regWaddr;	// @[<stdin>:1648:10]
+  assign io_regForward_data = _GEN_0;	// @[<stdin>:1648:10, src/main/scala/chisel3/util/Mux.scala:141:16]
+  assign io_regForward_load = load;	// @[<stdin>:1648:10, CRRV/src/core/pipeline/ExecuteStage.scala:61:39]
 endmodule
 
-module PipelineStage_2(	// @[<stdin>:1538:10]
-  input         clock,	// @[<stdin>:1539:11]
-                reset,	// @[<stdin>:1540:11]
+module PipelineStage_2(	// @[<stdin>:1720:10]
+  input         clock,	// @[<stdin>:1721:11]
+                reset,	// @[<stdin>:1722:11]
                 io_flush,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
                 io_stallPrev,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
                 io_stallNext,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
                 io_prev_IF_instValid,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
   input  [31:0] io_prev_IF_pc,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
                 io_prev_ID_inst,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
-  input  [3:0]  io_prev_ID_lsuOp,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
+  input  [4:0]  io_prev_ID_lsuOp,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
   input  [31:0] io_prev_ID_lsuData,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
   input         io_prev_ID_regWen,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
   input  [4:0]  io_prev_ID_regWaddr,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
@@ -2176,7 +2249,7 @@ module PipelineStage_2(	// @[<stdin>:1538:10]
   output        io_next_IF_instValid,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
   output [31:0] io_next_IF_pc,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
                 io_next_ID_inst,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
-  output [3:0]  io_next_ID_lsuOp,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
+  output [4:0]  io_next_ID_lsuOp,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
   output [31:0] io_next_ID_lsuData,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
   output        io_next_ID_regWen,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
   output [4:0]  io_next_ID_regWaddr,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
@@ -2191,7 +2264,7 @@ module PipelineStage_2(	// @[<stdin>:1538:10]
   reg         pipelineReg_IF_instValid;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28]
   reg  [31:0] pipelineReg_IF_pc;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28]
   reg  [31:0] pipelineReg_ID_inst;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  reg  [3:0]  pipelineReg_ID_lsuOp;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  reg  [4:0]  pipelineReg_ID_lsuOp;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28]
   reg  [31:0] pipelineReg_ID_lsuData;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28]
   reg         pipelineReg_ID_regWen;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28]
   reg  [4:0]  pipelineReg_ID_regWaddr;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28]
@@ -2202,36 +2275,36 @@ module PipelineStage_2(	// @[<stdin>:1538:10]
   reg         pipelineReg_EXE_load;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28]
   reg  [31:0] pipelineReg_EXE_exeResult;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28]
   wire        _GEN = io_flush | io_stallPrev & ~io_stallNext;	// @[CRRV/src/core/pipeline/PipelineStage.scala:24:{17,34,37}]
-  always @(posedge clock) begin	// @[<stdin>:1539:11]
-    if (reset) begin	// @[<stdin>:1539:11]
-      pipelineReg_IF_instValid <= 1'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-      pipelineReg_IF_pc <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-      pipelineReg_ID_inst <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-      pipelineReg_ID_lsuOp <= 4'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-      pipelineReg_ID_lsuData <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-      pipelineReg_ID_regWen <= 1'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-      pipelineReg_ID_regWaddr <= 5'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-      pipelineReg_ID_csrOp <= 3'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-      pipelineReg_ID_csrAddr <= 12'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-      pipelineReg_ID_csrWriteData <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-      pipelineReg_ID_exceptType <= 3'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-      pipelineReg_EXE_load <= 1'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-      pipelineReg_EXE_exeResult <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
+  always @(posedge clock) begin	// @[<stdin>:1721:11]
+    if (reset) begin	// @[<stdin>:1721:11]
+      pipelineReg_IF_instValid <= 1'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+      pipelineReg_IF_pc <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+      pipelineReg_ID_inst <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+      pipelineReg_ID_lsuOp <= 5'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+      pipelineReg_ID_lsuData <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+      pipelineReg_ID_regWen <= 1'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+      pipelineReg_ID_regWaddr <= 5'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+      pipelineReg_ID_csrOp <= 3'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+      pipelineReg_ID_csrAddr <= 12'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+      pipelineReg_ID_csrWriteData <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+      pipelineReg_ID_exceptType <= 3'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+      pipelineReg_EXE_load <= 1'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+      pipelineReg_EXE_exeResult <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
     end
-    else begin	// @[<stdin>:1539:11]
+    else begin	// @[<stdin>:1721:11]
       pipelineReg_IF_instValid <=
         ~_GEN & (io_stallPrev ? pipelineReg_IF_instValid : io_prev_IF_instValid);	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, :24:{17,53}, :25:17, :26:29, :27:17]
       if (_GEN) begin	// @[CRRV/src/core/pipeline/PipelineStage.scala:24:17]
-        pipelineReg_IF_pc <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-        pipelineReg_ID_inst <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-        pipelineReg_ID_lsuOp <= 4'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-        pipelineReg_ID_lsuData <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-        pipelineReg_ID_regWaddr <= 5'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-        pipelineReg_ID_csrOp <= 3'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-        pipelineReg_ID_csrAddr <= 12'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-        pipelineReg_ID_csrWriteData <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-        pipelineReg_ID_exceptType <= 3'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-        pipelineReg_EXE_exeResult <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
+        pipelineReg_IF_pc <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+        pipelineReg_ID_inst <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+        pipelineReg_ID_lsuOp <= 5'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+        pipelineReg_ID_lsuData <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+        pipelineReg_ID_regWaddr <= 5'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+        pipelineReg_ID_csrOp <= 3'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+        pipelineReg_ID_csrAddr <= 12'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+        pipelineReg_ID_csrWriteData <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+        pipelineReg_ID_exceptType <= 3'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+        pipelineReg_EXE_exeResult <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
       end
       else if (io_stallPrev) begin	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
       end
@@ -2253,26 +2326,87 @@ module PipelineStage_2(	// @[<stdin>:1538:10]
         ~_GEN & (io_stallPrev ? pipelineReg_EXE_load : io_prev_EXE_load);	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, :24:{17,53}, :25:17, :26:29, :27:17]
     end
   end // always @(posedge)
-  assign io_next_IF_instValid = pipelineReg_IF_instValid;	// @[<stdin>:1538:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_IF_pc = pipelineReg_IF_pc;	// @[<stdin>:1538:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_ID_inst = pipelineReg_ID_inst;	// @[<stdin>:1538:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_ID_lsuOp = pipelineReg_ID_lsuOp;	// @[<stdin>:1538:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_ID_lsuData = pipelineReg_ID_lsuData;	// @[<stdin>:1538:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_ID_regWen = pipelineReg_ID_regWen;	// @[<stdin>:1538:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_ID_regWaddr = pipelineReg_ID_regWaddr;	// @[<stdin>:1538:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_ID_csrOp = pipelineReg_ID_csrOp;	// @[<stdin>:1538:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_ID_csrAddr = pipelineReg_ID_csrAddr;	// @[<stdin>:1538:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_ID_csrWriteData = pipelineReg_ID_csrWriteData;	// @[<stdin>:1538:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_ID_exceptType = pipelineReg_ID_exceptType;	// @[<stdin>:1538:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_EXE_load = pipelineReg_EXE_load;	// @[<stdin>:1538:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_EXE_exeResult = pipelineReg_EXE_exeResult;	// @[<stdin>:1538:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_IF_instValid = pipelineReg_IF_instValid;	// @[<stdin>:1720:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_IF_pc = pipelineReg_IF_pc;	// @[<stdin>:1720:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_ID_inst = pipelineReg_ID_inst;	// @[<stdin>:1720:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_ID_lsuOp = pipelineReg_ID_lsuOp;	// @[<stdin>:1720:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_ID_lsuData = pipelineReg_ID_lsuData;	// @[<stdin>:1720:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_ID_regWen = pipelineReg_ID_regWen;	// @[<stdin>:1720:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_ID_regWaddr = pipelineReg_ID_regWaddr;	// @[<stdin>:1720:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_ID_csrOp = pipelineReg_ID_csrOp;	// @[<stdin>:1720:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_ID_csrAddr = pipelineReg_ID_csrAddr;	// @[<stdin>:1720:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_ID_csrWriteData = pipelineReg_ID_csrWriteData;	// @[<stdin>:1720:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_ID_exceptType = pipelineReg_ID_exceptType;	// @[<stdin>:1720:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_EXE_load = pipelineReg_EXE_load;	// @[<stdin>:1720:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_EXE_exeResult = pipelineReg_EXE_exeResult;	// @[<stdin>:1720:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
 endmodule
 
-module MemoryStage(	// @[<stdin>:1600:10]
-  input         io_exe2mem_IF_instValid,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
+module AmoExecute(	// @[<stdin>:1782:10]
+  input         clock,	// @[<stdin>:1783:11]
+                reset,	// @[<stdin>:1784:11]
+  input  [3:0]  io_op,	// @[CRRV/src/core/atom/AmoExecute.scala:9:14]
+  input         io_flush,	// @[CRRV/src/core/atom/AmoExecute.scala:9:14]
+  input  [31:0] io_regOpr,	// @[CRRV/src/core/atom/AmoExecute.scala:9:14]
+  input         io_ramValid,	// @[CRRV/src/core/atom/AmoExecute.scala:9:14]
+  input  [31:0] io_ramRdata,	// @[CRRV/src/core/atom/AmoExecute.scala:9:14]
+  output        io_ready,	// @[CRRV/src/core/atom/AmoExecute.scala:9:14]
+  output [31:0] io_regWdata,	// @[CRRV/src/core/atom/AmoExecute.scala:9:14]
+  output        io_ramWen,	// @[CRRV/src/core/atom/AmoExecute.scala:9:14]
+  output [31:0] io_ramWdata	// @[CRRV/src/core/atom/AmoExecute.scala:9:14]
+);
+
+  reg [1:0] casez_tmp;	// @[CRRV/src/core/atom/AmoExecute.scala:49:19, :51:36]
+  reg [1:0] state;	// @[CRRV/src/core/atom/AmoExecute.scala:25:47]
+  always_comb begin	// @[CRRV/src/core/atom/AmoExecute.scala:25:47, :49:19, :51:36, :58:15, :61:15]
+    casez (state)	// @[CRRV/src/core/atom/AmoExecute.scala:25:47, :49:19, :51:36, :58:15, :61:15]
+      2'b00:
+        casez_tmp = {1'h0, |io_op};	// @[CRRV/src/core/atom/AmoExecute.scala:25:47, :49:19, :51:{20,36}, :52:17, :54:17, :58:15, :61:15]
+      2'b01:
+        casez_tmp = 2'h2;	// @[CRRV/src/core/atom/AmoExecute.scala:25:47, :49:19, :51:36, :58:15, :61:15]
+      2'b10:
+        casez_tmp = 2'h0;	// @[CRRV/src/core/atom/AmoExecute.scala:25:47, :49:19, :51:36, :58:15, :61:15]
+      default:
+        casez_tmp = state;	// @[CRRV/src/core/atom/AmoExecute.scala:25:47, :49:19, :51:36, :58:15, :61:15]
+    endcase	// @[CRRV/src/core/atom/AmoExecute.scala:25:47, :49:19, :51:36, :58:15, :61:15]
+  end // always_comb
+  always @(posedge clock) begin	// @[<stdin>:1783:11]
+    if (reset)	// @[<stdin>:1783:11]
+      state <= 2'h0;	// @[CRRV/src/core/atom/AmoExecute.scala:25:47]
+    else if (io_flush)	// @[CRRV/src/core/atom/AmoExecute.scala:9:14]
+      state <= 2'h0;	// @[CRRV/src/core/atom/AmoExecute.scala:25:47]
+    else if (io_ramValid)	// @[CRRV/src/core/atom/AmoExecute.scala:9:14]
+      state <= casez_tmp;	// @[CRRV/src/core/atom/AmoExecute.scala:25:47, :49:19, :51:36]
+  end // always @(posedge)
+  assign io_ready = state == 2'h2;	// @[<stdin>:1782:10, CRRV/src/core/atom/AmoExecute.scala:25:47, :58:15, :66:24]
+  assign io_regWdata = io_ramRdata;	// @[<stdin>:1782:10]
+  assign io_ramWen = state == 2'h1;	// @[<stdin>:1782:10, CRRV/src/core/atom/AmoExecute.scala:25:47, :54:17, :68:24]
+  assign io_ramWdata =
+    io_op == 4'h9
+      ? (io_ramRdata > io_regOpr ? io_ramRdata : io_regOpr)
+      : io_op == 4'h8
+          ? (io_ramRdata < io_regOpr ? io_ramRdata : io_regOpr)
+          : io_op == 4'h7
+              ? ($signed(io_ramRdata) > $signed(io_regOpr) ? io_ramRdata : io_regOpr)
+              : io_op == 4'h6
+                  ? ($signed(io_ramRdata) < $signed(io_regOpr) ? io_ramRdata : io_regOpr)
+                  : io_op == 4'h5
+                      ? io_ramRdata | io_regOpr
+                      : io_op == 4'h4
+                          ? io_ramRdata & io_regOpr
+                          : io_op == 4'h3
+                              ? io_ramRdata ^ io_regOpr
+                              : io_op == 4'h2
+                                  ? io_ramRdata + io_regOpr
+                                  : io_op == 4'h1 ? io_regOpr : 32'h0;	// @[<stdin>:1782:10, CRRV/src/core/atom/AmoExecute.scala:32:38, :35:27, :36:27, :37:27, :38:26, :39:{24,37}, :40:{24,37}, :41:{25,31}, :42:{25,31}]
+endmodule
+
+module MemoryStage(	// @[<stdin>:1850:10]
+  input         clock,	// @[<stdin>:1851:11]
+                reset,	// @[<stdin>:1852:11]
+                io_exe2mem_IF_instValid,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
   input  [31:0] io_exe2mem_IF_pc,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
                 io_exe2mem_ID_inst,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
-  input  [3:0]  io_exe2mem_ID_lsuOp,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
+  input  [4:0]  io_exe2mem_ID_lsuOp,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
   input  [31:0] io_exe2mem_ID_lsuData,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
   input         io_exe2mem_ID_regWen,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
   input  [4:0]  io_exe2mem_ID_regWaddr,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
@@ -2282,12 +2416,15 @@ module MemoryStage(	// @[<stdin>:1600:10]
   input  [2:0]  io_exe2mem_ID_exceptType,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
   input         io_exe2mem_EXE_load,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
   input  [31:0] io_exe2mem_EXE_exeResult,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
-  input         io_dataRam_ready,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
+  input         io_control_flush,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
+                io_dataRam_out_ready,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
+  input  [31:0] io_dataRam_in_rdata,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
+  input         io_excMon_valid,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
   output        io_control_stallReq,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
                 io_mem2wb_IF_instValid,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
   output [31:0] io_mem2wb_IF_pc,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
                 io_mem2wb_ID_inst,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
-  output [3:0]  io_mem2wb_ID_lsuOp,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
+  output [4:0]  io_mem2wb_ID_lsuOp,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
   output        io_mem2wb_ID_regWen,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
   output [4:0]  io_mem2wb_ID_regWaddr,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
   output [2:0]  io_mem2wb_ID_csrOp,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
@@ -2296,11 +2433,17 @@ module MemoryStage(	// @[<stdin>:1600:10]
   output [2:0]  io_mem2wb_ID_exceptType,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
   output [31:0] io_mem2wb_EXE_exeResult,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
                 io_mem2wb_MEM_memAddr,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
-  output        io_dataRam_valid,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
-  output [31:0] io_dataRam_bits_addr,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
-  output        io_dataRam_bits_writeEn,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
-  output [1:0]  io_dataRam_bits_size,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
-  output [31:0] io_dataRam_bits_wdata,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
+                io_mem2wb_MEM_excMonCommit_addr,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
+  output        io_mem2wb_MEM_excMonCommit_set,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
+                io_mem2wb_MEM_excMonCommit_clear,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
+                io_mem2wb_MEM_amoValid,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
+  output [31:0] io_mem2wb_MEM_amoResult,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
+  output        io_dataRam_out_valid,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
+  output [31:0] io_dataRam_out_bits_addr,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
+  output        io_dataRam_out_bits_writeEn,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
+  output [1:0]  io_dataRam_out_bits_size,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
+  output [31:0] io_dataRam_out_bits_wdata,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
+                io_excMon_addr,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
   output [2:0]  io_memCsrStall_op,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
   output [11:0] io_memCsrStall_addr,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
   output        io_regForward_en,	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
@@ -2309,17 +2452,36 @@ module MemoryStage(	// @[<stdin>:1600:10]
   output        io_regForward_load	// @[CRRV/src/core/pipeline/MemoryStage.scala:12:14]
 );
 
-  reg  [31:0] casez_tmp;	// @[CRRV/src/core/pipeline/MemoryStage.scala:33:41]
-  wire        _GEN = io_exe2mem_ID_lsuOp == 4'h1;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38]
-  wire        _GEN_0 = io_exe2mem_ID_lsuOp == 4'h2;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38]
-  wire        _GEN_1 = io_exe2mem_ID_lsuOp == 4'h3;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38]
-  wire        _GEN_2 = io_exe2mem_ID_lsuOp == 4'h4;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38]
-  wire        _GEN_3 = io_exe2mem_ID_lsuOp == 4'h5;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38]
-  wire        _GEN_4 = io_exe2mem_ID_lsuOp == 4'h6;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38]
-  wire        _GEN_5 = io_exe2mem_ID_lsuOp == 4'h7;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38]
-  wire        _GEN_6 = io_exe2mem_ID_lsuOp == 4'h8;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38]
-  wire        _GEN_7 = _GEN_4 | _GEN_5;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
-  wire        en = _GEN | _GEN_0 | _GEN_1 | _GEN_2 | _GEN_3 | _GEN_7 | _GEN_6;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
+  wire        _amo_io_ready;	// @[CRRV/src/core/pipeline/MemoryStage.scala:41:19]
+  wire [31:0] _amo_io_regWdata;	// @[CRRV/src/core/pipeline/MemoryStage.scala:41:19]
+  wire        _amo_io_ramWen;	// @[CRRV/src/core/pipeline/MemoryStage.scala:41:19]
+  wire [31:0] _amo_io_ramWdata;	// @[CRRV/src/core/pipeline/MemoryStage.scala:41:19]
+  reg  [31:0] casez_tmp;	// @[CRRV/src/core/pipeline/MemoryStage.scala:34:41]
+  wire        _GEN = io_exe2mem_ID_lsuOp == 5'h1;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38]
+  wire        _GEN_0 = io_exe2mem_ID_lsuOp == 5'h2;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38]
+  wire        _GEN_1 = io_exe2mem_ID_lsuOp == 5'h3;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38]
+  wire        _GEN_2 = io_exe2mem_ID_lsuOp == 5'h4;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38]
+  wire        _GEN_3 = io_exe2mem_ID_lsuOp == 5'h5;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38]
+  wire        _GEN_4 = io_exe2mem_ID_lsuOp == 5'h6;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38]
+  wire        _GEN_5 = io_exe2mem_ID_lsuOp == 5'h7;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38]
+  wire        _GEN_6 = io_exe2mem_ID_lsuOp == 5'h8;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38]
+  wire        _GEN_7 = io_exe2mem_ID_lsuOp == 5'h9;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38]
+  wire        _GEN_8 = io_exe2mem_ID_lsuOp == 5'hA;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38]
+  wire        _GEN_9 = io_exe2mem_ID_lsuOp == 5'hB;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38]
+  wire        _GEN_10 = io_exe2mem_ID_lsuOp == 5'hC;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38]
+  wire        _GEN_11 = io_exe2mem_ID_lsuOp == 5'hD;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38]
+  wire        _GEN_12 = io_exe2mem_ID_lsuOp == 5'hE;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38]
+  wire        _GEN_13 = io_exe2mem_ID_lsuOp == 5'hF;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38]
+  wire        _GEN_14 = io_exe2mem_ID_lsuOp == 5'h10;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38]
+  wire        _GEN_15 = io_exe2mem_ID_lsuOp == 5'h11;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38]
+  wire        _GEN_16 = io_exe2mem_ID_lsuOp == 5'h12;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38]
+  wire        _GEN_17 = io_exe2mem_ID_lsuOp == 5'h13;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38]
+  wire        en =
+    _GEN | _GEN_0 | _GEN_1 | _GEN_2 | _GEN_3 | _GEN_4 | _GEN_5 | _GEN_6 | _GEN_7 | _GEN_8
+    | _GEN_9 | _GEN_10 | _GEN_11 | _GEN_12 | _GEN_13 | _GEN_14 | _GEN_15 | _GEN_16
+    | _GEN_17;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
+  wire        wen =
+    ~(_GEN | _GEN_0 | _GEN_1 | _GEN_2 | _GEN_3) & (_GEN_4 | _GEN_5 | _GEN_6);	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
   wire [1:0]  width =
     _GEN
       ? 2'h0
@@ -2329,56 +2491,105 @@ module MemoryStage(	// @[<stdin>:1600:10]
               ? 2'h2
               : _GEN_2
                   ? 2'h0
-                  : _GEN_3 ? 2'h1 : _GEN_4 ? 2'h0 : _GEN_5 ? 2'h1 : {_GEN_6, 1'h0};	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
-  always_comb begin	// @[CRRV/src/core/pipeline/MemoryStage.scala:33:41]
-    casez (width)	// @[CRRV/src/core/pipeline/MemoryStage.scala:33:41, src/main/scala/chisel3/util/Lookup.scala:34:39]
+                  : _GEN_3
+                      ? 2'h1
+                      : _GEN_4
+                          ? 2'h0
+                          : _GEN_5
+                              ? 2'h1
+                              : {_GEN_6 | _GEN_7 | _GEN_8 | _GEN_9 | _GEN_10 | _GEN_11
+                                   | _GEN_12 | _GEN_13 | _GEN_14 | _GEN_15 | _GEN_16
+                                   | _GEN_17,
+                                 1'h0};	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
+  wire        checkExcMon =
+    ~(_GEN | _GEN_0 | _GEN_1 | _GEN_2 | _GEN_3 | _GEN_4 | _GEN_5 | _GEN_6 | _GEN_7)
+    & _GEN_8;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
+  wire [3:0]  amoOp =
+    _GEN | _GEN_0 | _GEN_1 | _GEN_2 | _GEN_3 | _GEN_4 | _GEN_5 | _GEN_6 | _GEN_7 | _GEN_8
+      ? 4'h0
+      : _GEN_9
+          ? 4'h1
+          : _GEN_10
+              ? 4'h2
+              : _GEN_11
+                  ? 4'h3
+                  : _GEN_12
+                      ? 4'h4
+                      : _GEN_13
+                          ? 4'h5
+                          : _GEN_14
+                              ? 4'h6
+                              : _GEN_15 ? 4'h7 : _GEN_16 ? 4'h8 : _GEN_17 ? 4'h9 : 4'h0;	// @[src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
+  always_comb begin	// @[CRRV/src/core/pipeline/MemoryStage.scala:34:41]
+    casez (width)	// @[CRRV/src/core/pipeline/MemoryStage.scala:34:41, src/main/scala/chisel3/util/Lookup.scala:34:39]
       2'b00:
-        casez_tmp = {4{io_exe2mem_ID_lsuData[7:0]}};	// @[CRRV/src/core/pipeline/MemoryStage.scala:33:41, :35:{26,31}]
+        casez_tmp = {4{io_exe2mem_ID_lsuData[7:0]}};	// @[CRRV/src/core/pipeline/MemoryStage.scala:34:41, :36:{26,31}]
       2'b01:
-        casez_tmp = {2{io_exe2mem_ID_lsuData[15:0]}};	// @[CRRV/src/core/pipeline/MemoryStage.scala:33:41, :36:{26,31}]
+        casez_tmp = {2{io_exe2mem_ID_lsuData[15:0]}};	// @[CRRV/src/core/pipeline/MemoryStage.scala:34:41, :37:{26,31}]
       2'b10:
-        casez_tmp = io_exe2mem_ID_lsuData;	// @[CRRV/src/core/pipeline/MemoryStage.scala:33:41]
+        casez_tmp = io_exe2mem_ID_lsuData;	// @[CRRV/src/core/pipeline/MemoryStage.scala:34:41]
       default:
-        casez_tmp = 32'h0;	// @[CRRV/src/core/pipeline/MemoryStage.scala:33:41]
-    endcase	// @[CRRV/src/core/pipeline/MemoryStage.scala:33:41, src/main/scala/chisel3/util/Lookup.scala:34:39]
+        casez_tmp = 32'h0;	// @[CRRV/src/core/pipeline/MemoryStage.scala:34:41]
+    endcase	// @[CRRV/src/core/pipeline/MemoryStage.scala:34:41, src/main/scala/chisel3/util/Lookup.scala:34:39]
   end // always_comb
-  assign io_control_stallReq = ~io_dataRam_ready & en;	// @[<stdin>:1600:10, CRRV/src/core/pipeline/MemoryStage.scala:41:{19,38}, src/main/scala/chisel3/util/Lookup.scala:34:39]
-  assign io_mem2wb_IF_instValid = io_exe2mem_IF_instValid;	// @[<stdin>:1600:10]
-  assign io_mem2wb_IF_pc = io_exe2mem_IF_pc;	// @[<stdin>:1600:10]
-  assign io_mem2wb_ID_inst = io_exe2mem_ID_inst;	// @[<stdin>:1600:10]
-  assign io_mem2wb_ID_lsuOp = io_exe2mem_ID_lsuOp;	// @[<stdin>:1600:10]
-  assign io_mem2wb_ID_regWen = io_exe2mem_ID_regWen;	// @[<stdin>:1600:10]
-  assign io_mem2wb_ID_regWaddr = io_exe2mem_ID_regWaddr;	// @[<stdin>:1600:10]
-  assign io_mem2wb_ID_csrOp = io_exe2mem_ID_csrOp;	// @[<stdin>:1600:10]
-  assign io_mem2wb_ID_csrAddr = io_exe2mem_ID_csrAddr;	// @[<stdin>:1600:10]
-  assign io_mem2wb_ID_csrWriteData = io_exe2mem_ID_csrWriteData;	// @[<stdin>:1600:10]
-  assign io_mem2wb_ID_exceptType = io_exe2mem_ID_exceptType;	// @[<stdin>:1600:10]
-  assign io_mem2wb_EXE_exeResult = io_exe2mem_EXE_exeResult;	// @[<stdin>:1600:10]
-  assign io_mem2wb_MEM_memAddr = io_exe2mem_EXE_exeResult;	// @[<stdin>:1600:10]
-  assign io_dataRam_valid = en;	// @[<stdin>:1600:10, src/main/scala/chisel3/util/Lookup.scala:34:39]
-  assign io_dataRam_bits_addr = io_exe2mem_EXE_exeResult;	// @[<stdin>:1600:10]
-  assign io_dataRam_bits_writeEn =
-    ~(_GEN | _GEN_0 | _GEN_1 | _GEN_2 | _GEN_3) & (_GEN_7 | _GEN_6);	// @[<stdin>:1600:10, src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
-  assign io_dataRam_bits_size = width;	// @[<stdin>:1600:10, src/main/scala/chisel3/util/Lookup.scala:34:39]
-  assign io_dataRam_bits_wdata = casez_tmp;	// @[<stdin>:1600:10, CRRV/src/core/pipeline/MemoryStage.scala:33:41]
-  assign io_memCsrStall_op = io_exe2mem_ID_csrOp;	// @[<stdin>:1600:10]
-  assign io_memCsrStall_addr = io_exe2mem_ID_csrAddr;	// @[<stdin>:1600:10]
-  assign io_regForward_en = io_exe2mem_ID_regWen;	// @[<stdin>:1600:10]
-  assign io_regForward_addr = io_exe2mem_ID_regWaddr;	// @[<stdin>:1600:10]
-  assign io_regForward_data = io_exe2mem_EXE_exeResult;	// @[<stdin>:1600:10]
-  assign io_regForward_load = io_exe2mem_EXE_load;	// @[<stdin>:1600:10]
+  AmoExecute amo (	// @[CRRV/src/core/pipeline/MemoryStage.scala:41:19]
+    .clock       (clock),
+    .reset       (reset),
+    .io_op       (amoOp),	// @[src/main/scala/chisel3/util/Lookup.scala:34:39]
+    .io_flush    (io_control_flush),
+    .io_regOpr   (io_exe2mem_ID_lsuData),
+    .io_ramValid (io_dataRam_out_ready),
+    .io_ramRdata (io_dataRam_in_rdata),
+    .io_ready    (_amo_io_ready),
+    .io_regWdata (_amo_io_regWdata),
+    .io_ramWen   (_amo_io_ramWen),
+    .io_ramWdata (_amo_io_ramWdata)
+  );
+  assign io_control_stallReq = (|amoOp) ? ~_amo_io_ready : ~io_dataRam_out_ready & en;	// @[<stdin>:1850:10, CRRV/src/core/pipeline/MemoryStage.scala:41:19, :50:{21,28,44,60,83}, src/main/scala/chisel3/util/Lookup.scala:34:39]
+  assign io_mem2wb_IF_instValid = io_exe2mem_IF_instValid;	// @[<stdin>:1850:10]
+  assign io_mem2wb_IF_pc = io_exe2mem_IF_pc;	// @[<stdin>:1850:10]
+  assign io_mem2wb_ID_inst = io_exe2mem_ID_inst;	// @[<stdin>:1850:10]
+  assign io_mem2wb_ID_lsuOp = io_exe2mem_ID_lsuOp;	// @[<stdin>:1850:10]
+  assign io_mem2wb_ID_regWen = io_exe2mem_ID_regWen;	// @[<stdin>:1850:10]
+  assign io_mem2wb_ID_regWaddr = io_exe2mem_ID_regWaddr;	// @[<stdin>:1850:10]
+  assign io_mem2wb_ID_csrOp = io_exe2mem_ID_csrOp;	// @[<stdin>:1850:10]
+  assign io_mem2wb_ID_csrAddr = io_exe2mem_ID_csrAddr;	// @[<stdin>:1850:10]
+  assign io_mem2wb_ID_csrWriteData = io_exe2mem_ID_csrWriteData;	// @[<stdin>:1850:10]
+  assign io_mem2wb_ID_exceptType = io_exe2mem_ID_exceptType;	// @[<stdin>:1850:10]
+  assign io_mem2wb_EXE_exeResult = io_exe2mem_EXE_exeResult;	// @[<stdin>:1850:10]
+  assign io_mem2wb_MEM_memAddr = io_exe2mem_EXE_exeResult;	// @[<stdin>:1850:10]
+  assign io_mem2wb_MEM_excMonCommit_addr = io_exe2mem_EXE_exeResult;	// @[<stdin>:1850:10]
+  assign io_mem2wb_MEM_excMonCommit_set =
+    ~(_GEN | _GEN_0 | _GEN_1 | _GEN_2 | _GEN_3 | _GEN_4 | _GEN_5 | _GEN_6) & _GEN_7;	// @[<stdin>:1850:10, src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
+  assign io_mem2wb_MEM_excMonCommit_clear = checkExcMon;	// @[<stdin>:1850:10, src/main/scala/chisel3/util/Lookup.scala:34:39]
+  assign io_mem2wb_MEM_amoValid = (|amoOp) | checkExcMon;	// @[<stdin>:1850:10, CRRV/src/core/pipeline/MemoryStage.scala:50:28, :77:60, src/main/scala/chisel3/util/Lookup.scala:34:39]
+  assign io_mem2wb_MEM_amoResult =
+    checkExcMon ? {31'h0, ~io_excMon_valid} : _amo_io_regWdata;	// @[<stdin>:1850:10, CRRV/src/core/pipeline/MemoryStage.scala:41:19, :78:{42,59}, src/main/scala/chisel3/util/Lookup.scala:31:38, :34:39]
+  assign io_dataRam_out_valid = en;	// @[<stdin>:1850:10, src/main/scala/chisel3/util/Lookup.scala:34:39]
+  assign io_dataRam_out_bits_addr = io_exe2mem_EXE_exeResult;	// @[<stdin>:1850:10]
+  assign io_dataRam_out_bits_writeEn =
+    wen | _amo_io_ramWen | checkExcMon & io_excMon_valid;	// @[<stdin>:1850:10, CRRV/src/core/pipeline/MemoryStage.scala:41:19, :57:{55,71}, src/main/scala/chisel3/util/Lookup.scala:34:39]
+  assign io_dataRam_out_bits_size = width;	// @[<stdin>:1850:10, src/main/scala/chisel3/util/Lookup.scala:34:39]
+  assign io_dataRam_out_bits_wdata = wen | checkExcMon ? casez_tmp : _amo_io_ramWdata;	// @[<stdin>:1850:10, CRRV/src/core/pipeline/MemoryStage.scala:34:41, :41:19, :60:{37,42}, src/main/scala/chisel3/util/Lookup.scala:34:39]
+  assign io_excMon_addr = io_exe2mem_EXE_exeResult;	// @[<stdin>:1850:10]
+  assign io_memCsrStall_op = io_exe2mem_ID_csrOp;	// @[<stdin>:1850:10]
+  assign io_memCsrStall_addr = io_exe2mem_ID_csrAddr;	// @[<stdin>:1850:10]
+  assign io_regForward_en = io_exe2mem_ID_regWen;	// @[<stdin>:1850:10]
+  assign io_regForward_addr = io_exe2mem_ID_regWaddr;	// @[<stdin>:1850:10]
+  assign io_regForward_data = io_exe2mem_EXE_exeResult;	// @[<stdin>:1850:10]
+  assign io_regForward_load = io_exe2mem_EXE_load;	// @[<stdin>:1850:10]
 endmodule
 
-module PipelineStage_3(	// @[<stdin>:1746:10]
-  input         clock,	// @[<stdin>:1747:11]
-                reset,	// @[<stdin>:1748:11]
+module PipelineStage_3(	// @[<stdin>:2165:10]
+  input         clock,	// @[<stdin>:2166:11]
+                reset,	// @[<stdin>:2167:11]
                 io_flush,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
                 io_stallPrev,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
                 io_stallNext,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
                 io_prev_IF_instValid,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
   input  [31:0] io_prev_IF_pc,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
                 io_prev_ID_inst,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
-  input  [3:0]  io_prev_ID_lsuOp,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
+  input  [4:0]  io_prev_ID_lsuOp,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
   input         io_prev_ID_regWen,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
   input  [4:0]  io_prev_ID_regWaddr,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
   input  [2:0]  io_prev_ID_csrOp,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
@@ -2387,10 +2598,15 @@ module PipelineStage_3(	// @[<stdin>:1746:10]
   input  [2:0]  io_prev_ID_exceptType,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
   input  [31:0] io_prev_EXE_exeResult,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
                 io_prev_MEM_memAddr,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
+                io_prev_MEM_excMonCommit_addr,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
+  input         io_prev_MEM_excMonCommit_set,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
+                io_prev_MEM_excMonCommit_clear,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
+                io_prev_MEM_amoValid,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
+  input  [31:0] io_prev_MEM_amoResult,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
   output        io_next_IF_instValid,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
   output [31:0] io_next_IF_pc,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
                 io_next_ID_inst,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
-  output [3:0]  io_next_ID_lsuOp,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
+  output [4:0]  io_next_ID_lsuOp,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
   output        io_next_ID_regWen,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
   output [4:0]  io_next_ID_regWaddr,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
   output [2:0]  io_next_ID_csrOp,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
@@ -2398,13 +2614,18 @@ module PipelineStage_3(	// @[<stdin>:1746:10]
   output [31:0] io_next_ID_csrWriteData,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
   output [2:0]  io_next_ID_exceptType,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
   output [31:0] io_next_EXE_exeResult,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
-                io_next_MEM_memAddr	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
+                io_next_MEM_memAddr,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
+                io_next_MEM_excMonCommit_addr,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
+  output        io_next_MEM_excMonCommit_set,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
+                io_next_MEM_excMonCommit_clear,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
+                io_next_MEM_amoValid,	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
+  output [31:0] io_next_MEM_amoResult	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
 );
 
   reg         pipelineReg_IF_instValid;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28]
   reg  [31:0] pipelineReg_IF_pc;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28]
   reg  [31:0] pipelineReg_ID_inst;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  reg  [3:0]  pipelineReg_ID_lsuOp;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  reg  [4:0]  pipelineReg_ID_lsuOp;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28]
   reg         pipelineReg_ID_regWen;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28]
   reg  [4:0]  pipelineReg_ID_regWaddr;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28]
   reg  [2:0]  pipelineReg_ID_csrOp;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28]
@@ -2413,36 +2634,48 @@ module PipelineStage_3(	// @[<stdin>:1746:10]
   reg  [2:0]  pipelineReg_ID_exceptType;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28]
   reg  [31:0] pipelineReg_EXE_exeResult;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28]
   reg  [31:0] pipelineReg_MEM_memAddr;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  reg  [31:0] pipelineReg_MEM_excMonCommit_addr;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  reg         pipelineReg_MEM_excMonCommit_set;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  reg         pipelineReg_MEM_excMonCommit_clear;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  reg         pipelineReg_MEM_amoValid;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  reg  [31:0] pipelineReg_MEM_amoResult;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28]
   wire        _GEN = io_flush | io_stallPrev & ~io_stallNext;	// @[CRRV/src/core/pipeline/PipelineStage.scala:24:{17,34,37}]
-  always @(posedge clock) begin	// @[<stdin>:1747:11]
-    if (reset) begin	// @[<stdin>:1747:11]
-      pipelineReg_IF_instValid <= 1'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-      pipelineReg_IF_pc <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-      pipelineReg_ID_inst <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-      pipelineReg_ID_lsuOp <= 4'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-      pipelineReg_ID_regWen <= 1'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-      pipelineReg_ID_regWaddr <= 5'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-      pipelineReg_ID_csrOp <= 3'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-      pipelineReg_ID_csrAddr <= 12'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-      pipelineReg_ID_csrWriteData <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-      pipelineReg_ID_exceptType <= 3'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-      pipelineReg_EXE_exeResult <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-      pipelineReg_MEM_memAddr <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
+  always @(posedge clock) begin	// @[<stdin>:2166:11]
+    if (reset) begin	// @[<stdin>:2166:11]
+      pipelineReg_IF_instValid <= 1'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+      pipelineReg_IF_pc <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+      pipelineReg_ID_inst <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+      pipelineReg_ID_lsuOp <= 5'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+      pipelineReg_ID_regWen <= 1'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+      pipelineReg_ID_regWaddr <= 5'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+      pipelineReg_ID_csrOp <= 3'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+      pipelineReg_ID_csrAddr <= 12'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+      pipelineReg_ID_csrWriteData <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+      pipelineReg_ID_exceptType <= 3'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+      pipelineReg_EXE_exeResult <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+      pipelineReg_MEM_memAddr <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+      pipelineReg_MEM_excMonCommit_addr <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+      pipelineReg_MEM_excMonCommit_set <= 1'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+      pipelineReg_MEM_excMonCommit_clear <= 1'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+      pipelineReg_MEM_amoValid <= 1'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+      pipelineReg_MEM_amoResult <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
     end
-    else begin	// @[<stdin>:1747:11]
+    else begin	// @[<stdin>:2166:11]
       pipelineReg_IF_instValid <=
         ~_GEN & (io_stallPrev ? pipelineReg_IF_instValid : io_prev_IF_instValid);	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, :24:{17,53}, :25:17, :26:29, :27:17]
       if (_GEN) begin	// @[CRRV/src/core/pipeline/PipelineStage.scala:24:17]
-        pipelineReg_IF_pc <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-        pipelineReg_ID_inst <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-        pipelineReg_ID_lsuOp <= 4'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-        pipelineReg_ID_regWaddr <= 5'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-        pipelineReg_ID_csrOp <= 3'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-        pipelineReg_ID_csrAddr <= 12'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-        pipelineReg_ID_csrWriteData <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-        pipelineReg_ID_exceptType <= 3'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-        pipelineReg_EXE_exeResult <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
-        pipelineReg_MEM_memAddr <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:11:31]
+        pipelineReg_IF_pc <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+        pipelineReg_ID_inst <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+        pipelineReg_ID_lsuOp <= 5'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+        pipelineReg_ID_regWaddr <= 5'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+        pipelineReg_ID_csrOp <= 3'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+        pipelineReg_ID_csrAddr <= 12'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+        pipelineReg_ID_csrWriteData <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+        pipelineReg_ID_exceptType <= 3'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+        pipelineReg_EXE_exeResult <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+        pipelineReg_MEM_memAddr <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+        pipelineReg_MEM_excMonCommit_addr <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
+        pipelineReg_MEM_amoResult <= 32'h0;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, CRRV/src/io/PipelineStageIO.scala:12:31]
       end
       else if (io_stallPrev) begin	// @[CRRV/src/core/pipeline/PipelineStage.scala:13:14]
       end
@@ -2457,30 +2690,49 @@ module PipelineStage_3(	// @[<stdin>:1746:10]
         pipelineReg_ID_exceptType <= io_prev_ID_exceptType;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28]
         pipelineReg_EXE_exeResult <= io_prev_EXE_exeResult;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28]
         pipelineReg_MEM_memAddr <= io_prev_MEM_memAddr;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+        pipelineReg_MEM_excMonCommit_addr <= io_prev_MEM_excMonCommit_addr;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+        pipelineReg_MEM_amoResult <= io_prev_MEM_amoResult;	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28]
       end
       pipelineReg_ID_regWen <=
         ~_GEN & (io_stallPrev ? pipelineReg_ID_regWen : io_prev_ID_regWen);	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, :24:{17,53}, :25:17, :26:29, :27:17]
+      pipelineReg_MEM_excMonCommit_set <=
+        ~_GEN
+        & (io_stallPrev
+             ? pipelineReg_MEM_excMonCommit_set
+             : io_prev_MEM_excMonCommit_set);	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, :24:{17,53}, :25:17, :26:29, :27:17]
+      pipelineReg_MEM_excMonCommit_clear <=
+        ~_GEN
+        & (io_stallPrev
+             ? pipelineReg_MEM_excMonCommit_clear
+             : io_prev_MEM_excMonCommit_clear);	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, :24:{17,53}, :25:17, :26:29, :27:17]
+      pipelineReg_MEM_amoValid <=
+        ~_GEN & (io_stallPrev ? pipelineReg_MEM_amoValid : io_prev_MEM_amoValid);	// @[CRRV/src/core/pipeline/PipelineStage.scala:23:28, :24:{17,53}, :25:17, :26:29, :27:17]
     end
   end // always @(posedge)
-  assign io_next_IF_instValid = pipelineReg_IF_instValid;	// @[<stdin>:1746:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_IF_pc = pipelineReg_IF_pc;	// @[<stdin>:1746:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_ID_inst = pipelineReg_ID_inst;	// @[<stdin>:1746:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_ID_lsuOp = pipelineReg_ID_lsuOp;	// @[<stdin>:1746:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_ID_regWen = pipelineReg_ID_regWen;	// @[<stdin>:1746:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_ID_regWaddr = pipelineReg_ID_regWaddr;	// @[<stdin>:1746:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_ID_csrOp = pipelineReg_ID_csrOp;	// @[<stdin>:1746:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_ID_csrAddr = pipelineReg_ID_csrAddr;	// @[<stdin>:1746:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_ID_csrWriteData = pipelineReg_ID_csrWriteData;	// @[<stdin>:1746:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_ID_exceptType = pipelineReg_ID_exceptType;	// @[<stdin>:1746:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_EXE_exeResult = pipelineReg_EXE_exeResult;	// @[<stdin>:1746:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
-  assign io_next_MEM_memAddr = pipelineReg_MEM_memAddr;	// @[<stdin>:1746:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_IF_instValid = pipelineReg_IF_instValid;	// @[<stdin>:2165:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_IF_pc = pipelineReg_IF_pc;	// @[<stdin>:2165:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_ID_inst = pipelineReg_ID_inst;	// @[<stdin>:2165:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_ID_lsuOp = pipelineReg_ID_lsuOp;	// @[<stdin>:2165:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_ID_regWen = pipelineReg_ID_regWen;	// @[<stdin>:2165:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_ID_regWaddr = pipelineReg_ID_regWaddr;	// @[<stdin>:2165:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_ID_csrOp = pipelineReg_ID_csrOp;	// @[<stdin>:2165:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_ID_csrAddr = pipelineReg_ID_csrAddr;	// @[<stdin>:2165:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_ID_csrWriteData = pipelineReg_ID_csrWriteData;	// @[<stdin>:2165:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_ID_exceptType = pipelineReg_ID_exceptType;	// @[<stdin>:2165:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_EXE_exeResult = pipelineReg_EXE_exeResult;	// @[<stdin>:2165:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_MEM_memAddr = pipelineReg_MEM_memAddr;	// @[<stdin>:2165:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_MEM_excMonCommit_addr = pipelineReg_MEM_excMonCommit_addr;	// @[<stdin>:2165:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_MEM_excMonCommit_set = pipelineReg_MEM_excMonCommit_set;	// @[<stdin>:2165:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_MEM_excMonCommit_clear = pipelineReg_MEM_excMonCommit_clear;	// @[<stdin>:2165:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_MEM_amoValid = pipelineReg_MEM_amoValid;	// @[<stdin>:2165:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
+  assign io_next_MEM_amoResult = pipelineReg_MEM_amoResult;	// @[<stdin>:2165:10, CRRV/src/core/pipeline/PipelineStage.scala:23:28]
 endmodule
 
-module WriteBackStage(	// @[<stdin>:1810:10]
+module WriteBackStage(	// @[<stdin>:2239:10]
   input         io_mem2wb_IF_instValid,	// @[CRRV/src/core/pipeline/WriteBackStage.scala:12:14]
   input  [31:0] io_mem2wb_IF_pc,	// @[CRRV/src/core/pipeline/WriteBackStage.scala:12:14]
                 io_mem2wb_ID_inst,	// @[CRRV/src/core/pipeline/WriteBackStage.scala:12:14]
-  input  [3:0]  io_mem2wb_ID_lsuOp,	// @[CRRV/src/core/pipeline/WriteBackStage.scala:12:14]
+  input  [4:0]  io_mem2wb_ID_lsuOp,	// @[CRRV/src/core/pipeline/WriteBackStage.scala:12:14]
   input         io_mem2wb_ID_regWen,	// @[CRRV/src/core/pipeline/WriteBackStage.scala:12:14]
   input  [4:0]  io_mem2wb_ID_regWaddr,	// @[CRRV/src/core/pipeline/WriteBackStage.scala:12:14]
   input  [2:0]  io_mem2wb_ID_csrOp,	// @[CRRV/src/core/pipeline/WriteBackStage.scala:12:14]
@@ -2489,13 +2741,21 @@ module WriteBackStage(	// @[<stdin>:1810:10]
   input  [2:0]  io_mem2wb_ID_exceptType,	// @[CRRV/src/core/pipeline/WriteBackStage.scala:12:14]
   input  [31:0] io_mem2wb_EXE_exeResult,	// @[CRRV/src/core/pipeline/WriteBackStage.scala:12:14]
                 io_mem2wb_MEM_memAddr,	// @[CRRV/src/core/pipeline/WriteBackStage.scala:12:14]
+                io_mem2wb_MEM_excMonCommit_addr,	// @[CRRV/src/core/pipeline/WriteBackStage.scala:12:14]
+  input         io_mem2wb_MEM_excMonCommit_set,	// @[CRRV/src/core/pipeline/WriteBackStage.scala:12:14]
+                io_mem2wb_MEM_excMonCommit_clear,	// @[CRRV/src/core/pipeline/WriteBackStage.scala:12:14]
+                io_mem2wb_MEM_amoValid,	// @[CRRV/src/core/pipeline/WriteBackStage.scala:12:14]
+  input  [31:0] io_mem2wb_MEM_amoResult,	// @[CRRV/src/core/pipeline/WriteBackStage.scala:12:14]
                 io_read_rdata,	// @[CRRV/src/core/pipeline/WriteBackStage.scala:12:14]
   output [2:0]  io_wb2csr_op,	// @[CRRV/src/core/pipeline/WriteBackStage.scala:12:14]
   output [11:0] io_wb2csr_addr,	// @[CRRV/src/core/pipeline/WriteBackStage.scala:12:14]
   output [31:0] io_wb2csr_data,	// @[CRRV/src/core/pipeline/WriteBackStage.scala:12:14]
   output [2:0]  io_wb2csr_exceptType,	// @[CRRV/src/core/pipeline/WriteBackStage.scala:12:14]
   output [31:0] io_wb2csr_exceptPc,	// @[CRRV/src/core/pipeline/WriteBackStage.scala:12:14]
-  output        io_regForward_en,	// @[CRRV/src/core/pipeline/WriteBackStage.scala:12:14]
+                io_excMonCommit_addr,	// @[CRRV/src/core/pipeline/WriteBackStage.scala:12:14]
+  output        io_excMonCommit_set,	// @[CRRV/src/core/pipeline/WriteBackStage.scala:12:14]
+                io_excMonCommit_clear,	// @[CRRV/src/core/pipeline/WriteBackStage.scala:12:14]
+                io_regForward_en,	// @[CRRV/src/core/pipeline/WriteBackStage.scala:12:14]
   output [4:0]  io_regForward_addr,	// @[CRRV/src/core/pipeline/WriteBackStage.scala:12:14]
   output [31:0] io_regForward_data,	// @[CRRV/src/core/pipeline/WriteBackStage.scala:12:14]
   output        io_debug_valid,	// @[CRRV/src/core/pipeline/WriteBackStage.scala:12:14]
@@ -2508,40 +2768,45 @@ module WriteBackStage(	// @[<stdin>:1810:10]
   output [31:0] io_debug_regWdata	// @[CRRV/src/core/pipeline/WriteBackStage.scala:12:14]
 );
 
-  wire [31:0] shiftData = io_read_rdata >> {27'h0, io_mem2wb_MEM_memAddr[1:0], 3'h0};	// @[CRRV/src/core/pipeline/WriteBackStage.scala:26:{33,40,45}]
+  wire [31:0] shiftData = io_read_rdata >> {27'h0, io_mem2wb_MEM_memAddr[1:0], 3'h0};	// @[CRRV/src/core/pipeline/WriteBackStage.scala:27:{33,40,45}]
   wire [31:0] regData =
-    (|io_mem2wb_ID_lsuOp)
-      ? (io_mem2wb_ID_lsuOp == 4'h3
-           ? shiftData
-           : io_mem2wb_ID_lsuOp == 4'h5
-               ? {16'h0, shiftData[15:0]}
-               : io_mem2wb_ID_lsuOp == 4'h2
-                   ? {{16{shiftData[15]}}, shiftData[15:0]}
-                   : io_mem2wb_ID_lsuOp == 4'h4
-                       ? {24'h0, shiftData[7:0]}
-                       : io_mem2wb_ID_lsuOp == 4'h1
-                           ? {{24{shiftData[7]}}, shiftData[7:0]}
-                           : 32'h0)
-      : io_mem2wb_EXE_exeResult;	// @[CRRV/src/core/pipeline/WriteBackStage.scala:26:33, :27:45, :29:{21,26,40,55}, :30:22, :31:{21,26,40,56}, :32:22, :37:{20,33}]
-  assign io_wb2csr_op = io_mem2wb_ID_csrOp;	// @[<stdin>:1810:10]
-  assign io_wb2csr_addr = io_mem2wb_ID_csrAddr;	// @[<stdin>:1810:10]
-  assign io_wb2csr_data = io_mem2wb_ID_csrWriteData;	// @[<stdin>:1810:10]
-  assign io_wb2csr_exceptType = io_mem2wb_ID_exceptType;	// @[<stdin>:1810:10]
-  assign io_wb2csr_exceptPc = io_mem2wb_IF_pc;	// @[<stdin>:1810:10]
-  assign io_regForward_en = io_mem2wb_ID_regWen;	// @[<stdin>:1810:10]
-  assign io_regForward_addr = io_mem2wb_ID_regWaddr;	// @[<stdin>:1810:10]
-  assign io_regForward_data = regData;	// @[<stdin>:1810:10, CRRV/src/core/pipeline/WriteBackStage.scala:37:20]
-  assign io_debug_valid = io_mem2wb_IF_instValid;	// @[<stdin>:1810:10]
-  assign io_debug_halt = io_mem2wb_ID_inst == 32'h100073;	// @[<stdin>:1810:10, CRRV/src/core/pipeline/WriteBackStage.scala:52:32]
-  assign io_debug_deviceAccess = |io_mem2wb_ID_lsuOp;	// @[<stdin>:1810:10, CRRV/src/core/pipeline/WriteBackStage.scala:37:33]
-  assign io_debug_deviceAddr = io_mem2wb_EXE_exeResult;	// @[<stdin>:1810:10]
-  assign io_debug_pc = io_mem2wb_IF_pc;	// @[<stdin>:1810:10]
-  assign io_debug_regWen = io_mem2wb_ID_regWen;	// @[<stdin>:1810:10]
-  assign io_debug_regWaddr = io_mem2wb_ID_regWaddr;	// @[<stdin>:1810:10]
-  assign io_debug_regWdata = regData;	// @[<stdin>:1810:10, CRRV/src/core/pipeline/WriteBackStage.scala:37:20]
+    io_mem2wb_MEM_amoValid
+      ? io_mem2wb_MEM_amoResult
+      : (|io_mem2wb_ID_lsuOp)
+          ? (io_mem2wb_ID_lsuOp == 5'h9 | io_mem2wb_ID_lsuOp == 5'h3
+               ? shiftData
+               : io_mem2wb_ID_lsuOp == 5'h5
+                   ? {16'h0, shiftData[15:0]}
+                   : io_mem2wb_ID_lsuOp == 5'h2
+                       ? {{16{shiftData[15]}}, shiftData[15:0]}
+                       : io_mem2wb_ID_lsuOp == 5'h4
+                           ? {24'h0, shiftData[7:0]}
+                           : io_mem2wb_ID_lsuOp == 5'h1
+                               ? {{24{shiftData[7]}}, shiftData[7:0]}
+                               : 32'h0)
+          : io_mem2wb_EXE_exeResult;	// @[CRRV/src/core/pipeline/WriteBackStage.scala:27:33, :28:45, :30:{21,26,40,55}, :31:22, :32:{21,26,40,56}, :33:22, :43:20, src/main/scala/chisel3/util/Mux.scala:141:16]
+  assign io_wb2csr_op = io_mem2wb_ID_csrOp;	// @[<stdin>:2239:10]
+  assign io_wb2csr_addr = io_mem2wb_ID_csrAddr;	// @[<stdin>:2239:10]
+  assign io_wb2csr_data = io_mem2wb_ID_csrWriteData;	// @[<stdin>:2239:10]
+  assign io_wb2csr_exceptType = io_mem2wb_ID_exceptType;	// @[<stdin>:2239:10]
+  assign io_wb2csr_exceptPc = io_mem2wb_IF_pc;	// @[<stdin>:2239:10]
+  assign io_excMonCommit_addr = io_mem2wb_MEM_excMonCommit_addr;	// @[<stdin>:2239:10]
+  assign io_excMonCommit_set = io_mem2wb_MEM_excMonCommit_set;	// @[<stdin>:2239:10]
+  assign io_excMonCommit_clear = io_mem2wb_MEM_excMonCommit_clear;	// @[<stdin>:2239:10]
+  assign io_regForward_en = io_mem2wb_ID_regWen;	// @[<stdin>:2239:10]
+  assign io_regForward_addr = io_mem2wb_ID_regWaddr;	// @[<stdin>:2239:10]
+  assign io_regForward_data = regData;	// @[<stdin>:2239:10, src/main/scala/chisel3/util/Mux.scala:141:16]
+  assign io_debug_valid = io_mem2wb_IF_instValid;	// @[<stdin>:2239:10]
+  assign io_debug_halt = io_mem2wb_ID_inst == 32'h100073;	// @[<stdin>:2239:10, CRRV/src/core/pipeline/WriteBackStage.scala:62:32]
+  assign io_debug_deviceAccess = |io_mem2wb_ID_lsuOp;	// @[<stdin>:2239:10, CRRV/src/core/pipeline/WriteBackStage.scala:43:20]
+  assign io_debug_deviceAddr = io_mem2wb_EXE_exeResult;	// @[<stdin>:2239:10]
+  assign io_debug_pc = io_mem2wb_IF_pc;	// @[<stdin>:2239:10]
+  assign io_debug_regWen = io_mem2wb_ID_regWen;	// @[<stdin>:2239:10]
+  assign io_debug_regWaddr = io_mem2wb_ID_regWaddr;	// @[<stdin>:2239:10]
+  assign io_debug_regWdata = regData;	// @[<stdin>:2239:10, src/main/scala/chisel3/util/Mux.scala:141:16]
 endmodule
 
-module PipelineControl(	// @[<stdin>:1865:10]
+module PipelineControl(	// @[<stdin>:2298:10]
   input         io_ifStallReq,	// @[CRRV/src/core/pipeline/PipelineControl.scala:14:14]
                 io_exeStallReq,	// @[CRRV/src/core/pipeline/PipelineControl.scala:14:14]
                 io_memStallReq,	// @[CRRV/src/core/pipeline/PipelineControl.scala:14:14]
@@ -2568,28 +2833,31 @@ module PipelineControl(	// @[<stdin>:1865:10]
       : io_exeStallReq | io_csrHazardFlag
           ? 5'h1C
           : io_loadHazardFlage ? 5'h18 : {io_ifStallReq, 4'h0};	// @[CRRV/src/core/pipeline/PipelineControl.scala:44:23, src/main/scala/chisel3/util/Mux.scala:141:16]
-  assign io_stallIF = stall[4];	// @[<stdin>:1865:10, CRRV/src/core/pipeline/PipelineControl.scala:69:23, src/main/scala/chisel3/util/Mux.scala:141:16]
-  assign io_stallID = stall[3];	// @[<stdin>:1865:10, CRRV/src/core/pipeline/PipelineControl.scala:70:23, src/main/scala/chisel3/util/Mux.scala:141:16]
-  assign io_stallEXE = stall[2];	// @[<stdin>:1865:10, CRRV/src/core/pipeline/PipelineControl.scala:71:23, src/main/scala/chisel3/util/Mux.scala:141:16]
-  assign io_stallMEM = stall[1];	// @[<stdin>:1865:10, CRRV/src/core/pipeline/PipelineControl.scala:72:23, src/main/scala/chisel3/util/Mux.scala:141:16]
-  assign io_stallWB = stall[0];	// @[<stdin>:1865:10, CRRV/src/core/pipeline/PipelineControl.scala:73:23, src/main/scala/chisel3/util/Mux.scala:141:16]
-  assign io_flushAll = |io_exceptType;	// @[<stdin>:1865:10, CRRV/src/core/pipeline/PipelineControl.scala:50:32]
-  assign io_flushIF = (|io_exceptType) | io_idFlushReq;	// @[<stdin>:1865:10, CRRV/src/core/pipeline/PipelineControl.scala:50:32, :59:27]
+  assign io_stallIF = stall[4];	// @[<stdin>:2298:10, CRRV/src/core/pipeline/PipelineControl.scala:69:23, src/main/scala/chisel3/util/Mux.scala:141:16]
+  assign io_stallID = stall[3];	// @[<stdin>:2298:10, CRRV/src/core/pipeline/PipelineControl.scala:70:23, src/main/scala/chisel3/util/Mux.scala:141:16]
+  assign io_stallEXE = stall[2];	// @[<stdin>:2298:10, CRRV/src/core/pipeline/PipelineControl.scala:71:23, src/main/scala/chisel3/util/Mux.scala:141:16]
+  assign io_stallMEM = stall[1];	// @[<stdin>:2298:10, CRRV/src/core/pipeline/PipelineControl.scala:72:23, src/main/scala/chisel3/util/Mux.scala:141:16]
+  assign io_stallWB = stall[0];	// @[<stdin>:2298:10, CRRV/src/core/pipeline/PipelineControl.scala:73:23, src/main/scala/chisel3/util/Mux.scala:141:16]
+  assign io_flushAll = |io_exceptType;	// @[<stdin>:2298:10, CRRV/src/core/pipeline/PipelineControl.scala:50:32]
+  assign io_flushIF = (|io_exceptType) | io_idFlushReq;	// @[<stdin>:2298:10, CRRV/src/core/pipeline/PipelineControl.scala:50:32, :59:27]
   assign io_flushPc =
     (|io_exceptType)
       ? (io_exceptType == 3'h2
            ? io_csrInfo_mepc
            : io_exceptType == 3'h1 ? io_csrInfo_trapEnterVec : 32'h0)
-      : io_idFlushReq ? io_idFlushTarget : 32'h0;	// @[<stdin>:1865:10, CRRV/src/core/pipeline/PipelineControl.scala:14:14, :50:32, :51:44, src/main/scala/chisel3/util/Mux.scala:141:16]
+      : io_idFlushReq ? io_idFlushTarget : 32'h0;	// @[<stdin>:2298:10, CRRV/src/core/pipeline/PipelineControl.scala:14:14, :50:32, :51:44, src/main/scala/chisel3/util/Mux.scala:141:16]
 endmodule
 
-module HazardResolver(	// @[<stdin>:1899:10]
+module HazardResolver(	// @[<stdin>:2332:10]
   input         io_regRead1_en,	// @[CRRV/src/core/pipeline/HazardResolver.scala:13:14]
   input  [4:0]  io_regRead1_addr,	// @[CRRV/src/core/pipeline/HazardResolver.scala:13:14]
   input         io_regRead2_en,	// @[CRRV/src/core/pipeline/HazardResolver.scala:13:14]
   input  [4:0]  io_regRead2_addr,	// @[CRRV/src/core/pipeline/HazardResolver.scala:13:14]
   input  [2:0]  io_csrRead_op,	// @[CRRV/src/core/pipeline/HazardResolver.scala:13:14]
   input  [11:0] io_csrRead_addr,	// @[CRRV/src/core/pipeline/HazardResolver.scala:13:14]
+  input  [31:0] io_regFile1_data,	// @[CRRV/src/core/pipeline/HazardResolver.scala:13:14]
+                io_regFile2_data,	// @[CRRV/src/core/pipeline/HazardResolver.scala:13:14]
+                io_regCsr_data,	// @[CRRV/src/core/pipeline/HazardResolver.scala:13:14]
   input         io_exeForward_en,	// @[CRRV/src/core/pipeline/HazardResolver.scala:13:14]
   input  [4:0]  io_exeForward_addr,	// @[CRRV/src/core/pipeline/HazardResolver.scala:13:14]
   input  [31:0] io_exeForward_data,	// @[CRRV/src/core/pipeline/HazardResolver.scala:13:14]
@@ -2601,13 +2869,15 @@ module HazardResolver(	// @[<stdin>:1899:10]
                 io_wbForward_en,	// @[CRRV/src/core/pipeline/HazardResolver.scala:13:14]
   input  [4:0]  io_wbForward_addr,	// @[CRRV/src/core/pipeline/HazardResolver.scala:13:14]
   input  [31:0] io_wbForward_data,	// @[CRRV/src/core/pipeline/HazardResolver.scala:13:14]
+                io_wbExcMon_addr,	// @[CRRV/src/core/pipeline/HazardResolver.scala:13:14]
+  input         io_wbExcMon_set,	// @[CRRV/src/core/pipeline/HazardResolver.scala:13:14]
+                io_wbExcMon_clear,	// @[CRRV/src/core/pipeline/HazardResolver.scala:13:14]
+  input  [31:0] io_memExcMonCheck_addr,	// @[CRRV/src/core/pipeline/HazardResolver.scala:13:14]
+  input         io_excMonCheck_valid,	// @[CRRV/src/core/pipeline/HazardResolver.scala:13:14]
   input  [2:0]  io_memCsrStall_op,	// @[CRRV/src/core/pipeline/HazardResolver.scala:13:14]
   input  [11:0] io_memCsrStall_addr,	// @[CRRV/src/core/pipeline/HazardResolver.scala:13:14]
   input  [2:0]  io_wbCsrStall_op,	// @[CRRV/src/core/pipeline/HazardResolver.scala:13:14]
   input  [11:0] io_wbCsrStall_addr,	// @[CRRV/src/core/pipeline/HazardResolver.scala:13:14]
-  input  [31:0] io_regFile1_data,	// @[CRRV/src/core/pipeline/HazardResolver.scala:13:14]
-                io_regFile2_data,	// @[CRRV/src/core/pipeline/HazardResolver.scala:13:14]
-                io_regCsr_data,	// @[CRRV/src/core/pipeline/HazardResolver.scala:13:14]
   output [31:0] io_regRead1_data,	// @[CRRV/src/core/pipeline/HazardResolver.scala:13:14]
                 io_regRead2_data,	// @[CRRV/src/core/pipeline/HazardResolver.scala:13:14]
                 io_csrRead_data,	// @[CRRV/src/core/pipeline/HazardResolver.scala:13:14]
@@ -2616,6 +2886,8 @@ module HazardResolver(	// @[<stdin>:1899:10]
   output        io_regFile2_en,	// @[CRRV/src/core/pipeline/HazardResolver.scala:13:14]
   output [4:0]  io_regFile2_addr,	// @[CRRV/src/core/pipeline/HazardResolver.scala:13:14]
   output [11:0] io_regCsr_addr,	// @[CRRV/src/core/pipeline/HazardResolver.scala:13:14]
+  output        io_memExcMonCheck_valid,	// @[CRRV/src/core/pipeline/HazardResolver.scala:13:14]
+  output [31:0] io_excMonCheck_addr,	// @[CRRV/src/core/pipeline/HazardResolver.scala:13:14]
   output        io_loadHazardFlag,	// @[CRRV/src/core/pipeline/HazardResolver.scala:13:14]
                 io_csrHazardFlag	// @[CRRV/src/core/pipeline/HazardResolver.scala:13:14]
 );
@@ -2629,7 +2901,7 @@ module HazardResolver(	// @[<stdin>:1899:10]
                : io_wbForward_en & io_regRead1_addr == io_wbForward_addr
                    ? io_wbForward_data
                    : io_regFile1_data)
-      : 32'h0;	// @[<stdin>:1899:10, CRRV/src/core/pipeline/HazardResolver.scala:33:{18,31,40}, :34:{29,42,66}, :35:19, :36:{35,48,72}, :37:19, :38:{34,47,70}, :39:19, :41:19, :44:17]
+      : 32'h0;	// @[<stdin>:2332:10, CRRV/src/core/pipeline/HazardResolver.scala:38:{18,31,40}, :39:{29,42,66}, :40:19, :41:{35,48,72}, :42:19, :43:{34,47,70}, :44:19, :46:19, :49:17]
   assign io_regRead2_data =
     io_regRead2_en & (|io_regRead2_addr)
       ? (io_exeForward_en & io_regRead2_addr == io_exeForward_addr
@@ -2639,29 +2911,34 @@ module HazardResolver(	// @[<stdin>:1899:10]
                : io_wbForward_en & io_regRead2_addr == io_wbForward_addr
                    ? io_wbForward_data
                    : io_regFile2_data)
-      : 32'h0;	// @[<stdin>:1899:10, CRRV/src/core/pipeline/HazardResolver.scala:33:{18,31,40}, :34:{29,42,66}, :35:19, :36:{35,48,72}, :37:19, :38:{34,47,70}, :39:19, :41:19, :44:17]
-  assign io_csrRead_data = io_regCsr_data;	// @[<stdin>:1899:10]
-  assign io_regFile1_en = io_regRead1_en;	// @[<stdin>:1899:10]
-  assign io_regFile1_addr = io_regRead1_addr;	// @[<stdin>:1899:10]
-  assign io_regFile2_en = io_regRead2_en;	// @[<stdin>:1899:10]
-  assign io_regFile2_addr = io_regRead2_addr;	// @[<stdin>:1899:10]
-  assign io_regCsr_addr = io_csrRead_addr;	// @[<stdin>:1899:10]
+      : 32'h0;	// @[<stdin>:2332:10, CRRV/src/core/pipeline/HazardResolver.scala:38:{18,31,40}, :39:{29,42,66}, :40:19, :41:{35,48,72}, :42:19, :43:{34,47,70}, :44:19, :46:19, :49:17]
+  assign io_csrRead_data = io_regCsr_data;	// @[<stdin>:2332:10]
+  assign io_regFile1_en = io_regRead1_en;	// @[<stdin>:2332:10]
+  assign io_regFile1_addr = io_regRead1_addr;	// @[<stdin>:2332:10]
+  assign io_regFile2_en = io_regRead2_en;	// @[<stdin>:2332:10]
+  assign io_regFile2_addr = io_regRead2_addr;	// @[<stdin>:2332:10]
+  assign io_regCsr_addr = io_csrRead_addr;	// @[<stdin>:2332:10]
+  assign io_memExcMonCheck_valid =
+    io_wbExcMon_clear | io_wbExcMon_set
+      ? io_memExcMonCheck_addr == io_wbExcMon_addr & ~io_wbExcMon_clear
+      : io_excMonCheck_valid;	// @[<stdin>:2332:10, CRRV/src/core/pipeline/HazardResolver.scala:38:31, :61:{28,48}, :62:{23,45}, :63:33, :64:23, :66:23, :69:21, :72:19]
+  assign io_excMonCheck_addr = io_memExcMonCheck_addr;	// @[<stdin>:2332:10]
   assign io_loadHazardFlag =
     io_regRead1_en
     & (io_exeForward_load & io_regRead1_addr == io_exeForward_addr | io_memForward_load
        & io_regRead1_addr == io_memForward_addr) | io_regRead2_en
     & (io_exeForward_load & io_regRead2_addr == io_exeForward_addr | io_memForward_load
-       & io_regRead2_addr == io_memForward_addr);	// @[<stdin>:1899:10, CRRV/src/core/pipeline/HazardResolver.scala:52:{38,51}, :53:{38,51}, :54:{13,25}, :78:36]
+       & io_regRead2_addr == io_memForward_addr);	// @[<stdin>:2332:10, CRRV/src/core/pipeline/HazardResolver.scala:79:{38,51}, :80:{38,51}, :81:{13,25}, :99:36]
   assign io_csrHazardFlag =
     (|io_csrRead_op) & io_csrRead_op != 3'h2
     & ((|io_memCsrStall_op) & io_memCsrStall_op != 3'h1
        & io_csrRead_addr == io_memCsrStall_addr | (|io_wbCsrStall_op)
-       & io_wbCsrStall_op != 3'h1 & io_csrRead_addr == io_wbCsrStall_addr);	// @[<stdin>:1899:10, CRRV/src/core/pipeline/HazardResolver.scala:58:{26,49}, :59:36, :60:{25,35}, :61:17, :62:34, :63:{24,34}, :64:17, :65:{12,23}]
+       & io_wbCsrStall_op != 3'h1 & io_csrRead_addr == io_wbCsrStall_addr);	// @[<stdin>:2332:10, CRRV/src/core/pipeline/HazardResolver.scala:85:{26,49}, :86:36, :87:{25,35}, :88:17, :89:34, :90:{24,34}, :91:17, :92:{12,23}]
 endmodule
 
-module CsrFile(	// @[<stdin>:1982:10]
-  input         clock,	// @[<stdin>:1983:11]
-                reset,	// @[<stdin>:1984:11]
+module CsrFile(	// @[<stdin>:2428:10]
+  input         clock,	// @[<stdin>:2429:11]
+                reset,	// @[<stdin>:2430:11]
   input  [11:0] io_read_addr,	// @[CRRV/src/core/regfile/CsrFile.scala:12:14]
   input  [2:0]  io_write_op,	// @[CRRV/src/core/regfile/CsrFile.scala:12:14]
   input  [11:0] io_write_addr,	// @[CRRV/src/core/regfile/CsrFile.scala:12:14]
@@ -2693,14 +2970,14 @@ module CsrFile(	// @[<stdin>:1982:10]
   wire        _GEN = io_write_op == 3'h3 | io_write_op == 3'h2;	// @[CRRV/src/core/regfile/CsrFile.scala:41:46]
   wire        _writeData_T_7 = io_write_op == 3'h4;	// @[CRRV/src/core/regfile/CsrFile.scala:41:46]
   wire        _writeData_T_9 = io_write_op == 3'h5;	// @[CRRV/src/core/regfile/CsrFile.scala:41:46]
-  always @(posedge clock) begin	// @[<stdin>:1983:11]
-    if (reset) begin	// @[<stdin>:1983:11]
+  always @(posedge clock) begin	// @[<stdin>:2429:11]
+    if (reset) begin	// @[<stdin>:2429:11]
       mstatus <= 32'h0;	// @[CRRV/src/core/regfile/CsrFile.scala:19:26]
       mtvec <= 32'h0;	// @[CRRV/src/core/regfile/CsrFile.scala:19:26, :20:26]
       mepc <= 32'h0;	// @[CRRV/src/core/regfile/CsrFile.scala:19:26, :21:26]
       mcause <= 32'h0;	// @[CRRV/src/core/regfile/CsrFile.scala:19:26, :22:26]
     end
-    else begin	// @[<stdin>:1983:11]
+    else begin	// @[<stdin>:2429:11]
       if ((|io_write_exceptType) | ~(writeEn & io_write_addr == 12'h300)) begin	// @[CRRV/src/core/regfile/CsrFile.scala:19:26, :28:47, :40:51, :50:{28,42}, :55:23, :56:{24,41,51}]
       end
       else if (_writeData_T_9)	// @[CRRV/src/core/regfile/CsrFile.scala:41:46]
@@ -2751,13 +3028,13 @@ module CsrFile(	// @[<stdin>:1982:10]
       end
     end
   end // always @(posedge)
-  assign io_read_data = readData;	// @[<stdin>:1982:10, CRRV/src/core/regfile/CsrFile.scala:28:47]
-  assign io_csrInfo_mepc = mepc;	// @[<stdin>:1982:10, CRRV/src/core/regfile/CsrFile.scala:21:26]
-  assign io_csrInfo_trapEnterVec = mtvec;	// @[<stdin>:1982:10, CRRV/src/core/regfile/CsrFile.scala:20:26]
+  assign io_read_data = readData;	// @[<stdin>:2428:10, CRRV/src/core/regfile/CsrFile.scala:28:47]
+  assign io_csrInfo_mepc = mepc;	// @[<stdin>:2428:10, CRRV/src/core/regfile/CsrFile.scala:21:26]
+  assign io_csrInfo_trapEnterVec = mtvec;	// @[<stdin>:2428:10, CRRV/src/core/regfile/CsrFile.scala:20:26]
 endmodule
 
-module RegFile(	// @[<stdin>:2050:10]
-  input         clock,	// @[<stdin>:2051:11]
+module RegFile(	// @[<stdin>:2496:10]
+  input         clock,	// @[<stdin>:2497:11]
                 io_read1_en,	// @[CRRV/src/core/regfile/RegFile.scala:10:14]
   input  [4:0]  io_read1_addr,	// @[CRRV/src/core/regfile/RegFile.scala:10:14]
   input         io_read2_en,	// @[CRRV/src/core/regfile/RegFile.scala:10:14]
@@ -2773,10 +3050,10 @@ module RegFile(	// @[<stdin>:2050:10]
   wire [31:0] _regfile_ext_R1_data;	// @[CRRV/src/core/regfile/RegFile.scala:15:20]
   regfile_combMem regfile_ext (	// @[CRRV/src/core/regfile/RegFile.scala:15:20]
     .R0_addr (io_read1_addr),
-    .R0_en   (1'h1),	// @[<stdin>:2050:10]
+    .R0_en   (1'h1),	// @[<stdin>:2496:10]
     .R0_clk  (clock),
     .R1_addr (io_read2_addr),
-    .R1_en   (1'h1),	// @[<stdin>:2050:10]
+    .R1_en   (1'h1),	// @[<stdin>:2496:10]
     .R1_clk  (clock),
     .W0_addr (io_write_addr),
     .W0_en   (io_write_en & (|io_write_addr)),	// @[CRRV/src/core/regfile/RegFile.scala:19:{20,37}]
@@ -2785,194 +3062,241 @@ module RegFile(	// @[<stdin>:2050:10]
     .R0_data (_regfile_ext_R0_data),
     .R1_data (_regfile_ext_R1_data)
   );
-  assign io_read1_data = (|io_read1_addr) & io_read1_en ? _regfile_ext_R0_data : 32'h0;	// @[<stdin>:2050:10, CRRV/src/core/regfile/RegFile.scala:15:20, :17:{23,38,46}, :18:23]
-  assign io_read2_data = (|io_read2_addr) & io_read2_en ? _regfile_ext_R1_data : 32'h0;	// @[<stdin>:2050:10, CRRV/src/core/regfile/RegFile.scala:15:20, :18:{23,38,46}]
+  assign io_read1_data = (|io_read1_addr) & io_read1_en ? _regfile_ext_R0_data : 32'h0;	// @[<stdin>:2496:10, CRRV/src/core/regfile/RegFile.scala:15:20, :17:{23,38,46}, :18:23]
+  assign io_read2_data = (|io_read2_addr) & io_read2_en ? _regfile_ext_R1_data : 32'h0;	// @[<stdin>:2496:10, CRRV/src/core/regfile/RegFile.scala:15:20, :18:{23,38,46}]
 endmodule
 
-module Core(	// @[<stdin>:2073:10]
-  input         clock,	// @[<stdin>:2074:11]
-                reset,	// @[<stdin>:2075:11]
-                io_inst_out_ready,	// @[CRRV/src/core/Core.scala:11:14]
-  input  [31:0] io_inst_in_rdata,	// @[CRRV/src/core/Core.scala:11:14]
-  input         io_data_out_ready,	// @[CRRV/src/core/Core.scala:11:14]
-  input  [31:0] io_data_in_rdata,	// @[CRRV/src/core/Core.scala:11:14]
-  output [31:0] io_inst_out_bits_addr,	// @[CRRV/src/core/Core.scala:11:14]
-  output        io_data_out_valid,	// @[CRRV/src/core/Core.scala:11:14]
-  output [31:0] io_data_out_bits_addr,	// @[CRRV/src/core/Core.scala:11:14]
-  output        io_data_out_bits_writeEn,	// @[CRRV/src/core/Core.scala:11:14]
-  output [1:0]  io_data_out_bits_size,	// @[CRRV/src/core/Core.scala:11:14]
-  output [31:0] io_data_out_bits_wdata,	// @[CRRV/src/core/Core.scala:11:14]
-  output        io_debug_valid,	// @[CRRV/src/core/Core.scala:11:14]
-                io_debug_halt,	// @[CRRV/src/core/Core.scala:11:14]
-                io_debug_deviceAccess,	// @[CRRV/src/core/Core.scala:11:14]
-  output [31:0] io_debug_deviceAddr,	// @[CRRV/src/core/Core.scala:11:14]
-                io_debug_pc,	// @[CRRV/src/core/Core.scala:11:14]
-  output        io_debug_regWen,	// @[CRRV/src/core/Core.scala:11:14]
-  output [4:0]  io_debug_regWaddr,	// @[CRRV/src/core/Core.scala:11:14]
-  output [31:0] io_debug_regWdata	// @[CRRV/src/core/Core.scala:11:14]
+module ExclusiveMonitor(	// @[<stdin>:2519:10]
+  input         clock,	// @[<stdin>:2520:11]
+                reset,	// @[<stdin>:2521:11]
+                io_flush,	// @[CRRV/src/core/atom/ExclusiveMonitor.scala:10:14]
+  input  [31:0] io_check_addr,	// @[CRRV/src/core/atom/ExclusiveMonitor.scala:10:14]
+                io_update_addr,	// @[CRRV/src/core/atom/ExclusiveMonitor.scala:10:14]
+  input         io_update_set,	// @[CRRV/src/core/atom/ExclusiveMonitor.scala:10:14]
+                io_update_clear,	// @[CRRV/src/core/atom/ExclusiveMonitor.scala:10:14]
+  output        io_check_valid	// @[CRRV/src/core/atom/ExclusiveMonitor.scala:10:14]
 );
 
-  wire [31:0] _regFile_io_read1_data;	// @[CRRV/src/core/Core.scala:30:31]
-  wire [31:0] _regFile_io_read2_data;	// @[CRRV/src/core/Core.scala:30:31]
-  wire [31:0] _csrFile_io_read_data;	// @[CRRV/src/core/Core.scala:29:31]
-  wire [31:0] _csrFile_io_csrInfo_mepc;	// @[CRRV/src/core/Core.scala:29:31]
-  wire [31:0] _csrFile_io_csrInfo_trapEnterVec;	// @[CRRV/src/core/Core.scala:29:31]
-  wire [31:0] _hazardResolver_io_regRead1_data;	// @[CRRV/src/core/Core.scala:28:31]
-  wire [31:0] _hazardResolver_io_regRead2_data;	// @[CRRV/src/core/Core.scala:28:31]
-  wire [31:0] _hazardResolver_io_csrRead_data;	// @[CRRV/src/core/Core.scala:28:31]
-  wire        _hazardResolver_io_regFile1_en;	// @[CRRV/src/core/Core.scala:28:31]
-  wire [4:0]  _hazardResolver_io_regFile1_addr;	// @[CRRV/src/core/Core.scala:28:31]
-  wire        _hazardResolver_io_regFile2_en;	// @[CRRV/src/core/Core.scala:28:31]
-  wire [4:0]  _hazardResolver_io_regFile2_addr;	// @[CRRV/src/core/Core.scala:28:31]
-  wire [11:0] _hazardResolver_io_regCsr_addr;	// @[CRRV/src/core/Core.scala:28:31]
-  wire        _hazardResolver_io_loadHazardFlag;	// @[CRRV/src/core/Core.scala:28:31]
-  wire        _hazardResolver_io_csrHazardFlag;	// @[CRRV/src/core/Core.scala:28:31]
-  wire        _pipelineControl_io_stallIF;	// @[CRRV/src/core/Core.scala:27:31]
-  wire        _pipelineControl_io_stallID;	// @[CRRV/src/core/Core.scala:27:31]
-  wire        _pipelineControl_io_stallEXE;	// @[CRRV/src/core/Core.scala:27:31]
-  wire        _pipelineControl_io_stallMEM;	// @[CRRV/src/core/Core.scala:27:31]
-  wire        _pipelineControl_io_stallWB;	// @[CRRV/src/core/Core.scala:27:31]
-  wire        _pipelineControl_io_flushAll;	// @[CRRV/src/core/Core.scala:27:31]
-  wire        _pipelineControl_io_flushIF;	// @[CRRV/src/core/Core.scala:27:31]
-  wire [31:0] _pipelineControl_io_flushPc;	// @[CRRV/src/core/Core.scala:27:31]
-  wire [2:0]  _writeBackStage_io_wb2csr_op;	// @[CRRV/src/core/Core.scala:25:30]
-  wire [11:0] _writeBackStage_io_wb2csr_addr;	// @[CRRV/src/core/Core.scala:25:30]
-  wire [31:0] _writeBackStage_io_wb2csr_data;	// @[CRRV/src/core/Core.scala:25:30]
-  wire [2:0]  _writeBackStage_io_wb2csr_exceptType;	// @[CRRV/src/core/Core.scala:25:30]
-  wire [31:0] _writeBackStage_io_wb2csr_exceptPc;	// @[CRRV/src/core/Core.scala:25:30]
-  wire        _writeBackStage_io_regForward_en;	// @[CRRV/src/core/Core.scala:25:30]
-  wire [4:0]  _writeBackStage_io_regForward_addr;	// @[CRRV/src/core/Core.scala:25:30]
-  wire [31:0] _writeBackStage_io_regForward_data;	// @[CRRV/src/core/Core.scala:25:30]
-  wire        _mem2wb_io_next_IF_instValid;	// @[CRRV/src/core/Core.scala:24:30]
-  wire [31:0] _mem2wb_io_next_IF_pc;	// @[CRRV/src/core/Core.scala:24:30]
-  wire [31:0] _mem2wb_io_next_ID_inst;	// @[CRRV/src/core/Core.scala:24:30]
-  wire [3:0]  _mem2wb_io_next_ID_lsuOp;	// @[CRRV/src/core/Core.scala:24:30]
-  wire        _mem2wb_io_next_ID_regWen;	// @[CRRV/src/core/Core.scala:24:30]
-  wire [4:0]  _mem2wb_io_next_ID_regWaddr;	// @[CRRV/src/core/Core.scala:24:30]
-  wire [2:0]  _mem2wb_io_next_ID_csrOp;	// @[CRRV/src/core/Core.scala:24:30]
-  wire [11:0] _mem2wb_io_next_ID_csrAddr;	// @[CRRV/src/core/Core.scala:24:30]
-  wire [31:0] _mem2wb_io_next_ID_csrWriteData;	// @[CRRV/src/core/Core.scala:24:30]
-  wire [2:0]  _mem2wb_io_next_ID_exceptType;	// @[CRRV/src/core/Core.scala:24:30]
-  wire [31:0] _mem2wb_io_next_EXE_exeResult;	// @[CRRV/src/core/Core.scala:24:30]
-  wire [31:0] _mem2wb_io_next_MEM_memAddr;	// @[CRRV/src/core/Core.scala:24:30]
-  wire        _memoryStage_io_control_stallReq;	// @[CRRV/src/core/Core.scala:23:30]
-  wire        _memoryStage_io_mem2wb_IF_instValid;	// @[CRRV/src/core/Core.scala:23:30]
-  wire [31:0] _memoryStage_io_mem2wb_IF_pc;	// @[CRRV/src/core/Core.scala:23:30]
-  wire [31:0] _memoryStage_io_mem2wb_ID_inst;	// @[CRRV/src/core/Core.scala:23:30]
-  wire [3:0]  _memoryStage_io_mem2wb_ID_lsuOp;	// @[CRRV/src/core/Core.scala:23:30]
-  wire        _memoryStage_io_mem2wb_ID_regWen;	// @[CRRV/src/core/Core.scala:23:30]
-  wire [4:0]  _memoryStage_io_mem2wb_ID_regWaddr;	// @[CRRV/src/core/Core.scala:23:30]
-  wire [2:0]  _memoryStage_io_mem2wb_ID_csrOp;	// @[CRRV/src/core/Core.scala:23:30]
-  wire [11:0] _memoryStage_io_mem2wb_ID_csrAddr;	// @[CRRV/src/core/Core.scala:23:30]
-  wire [31:0] _memoryStage_io_mem2wb_ID_csrWriteData;	// @[CRRV/src/core/Core.scala:23:30]
-  wire [2:0]  _memoryStage_io_mem2wb_ID_exceptType;	// @[CRRV/src/core/Core.scala:23:30]
-  wire [31:0] _memoryStage_io_mem2wb_EXE_exeResult;	// @[CRRV/src/core/Core.scala:23:30]
-  wire [31:0] _memoryStage_io_mem2wb_MEM_memAddr;	// @[CRRV/src/core/Core.scala:23:30]
-  wire [2:0]  _memoryStage_io_memCsrStall_op;	// @[CRRV/src/core/Core.scala:23:30]
-  wire [11:0] _memoryStage_io_memCsrStall_addr;	// @[CRRV/src/core/Core.scala:23:30]
-  wire        _memoryStage_io_regForward_en;	// @[CRRV/src/core/Core.scala:23:30]
-  wire [4:0]  _memoryStage_io_regForward_addr;	// @[CRRV/src/core/Core.scala:23:30]
-  wire [31:0] _memoryStage_io_regForward_data;	// @[CRRV/src/core/Core.scala:23:30]
-  wire        _memoryStage_io_regForward_load;	// @[CRRV/src/core/Core.scala:23:30]
-  wire        _exe2mem_io_next_IF_instValid;	// @[CRRV/src/core/Core.scala:22:30]
-  wire [31:0] _exe2mem_io_next_IF_pc;	// @[CRRV/src/core/Core.scala:22:30]
-  wire [31:0] _exe2mem_io_next_ID_inst;	// @[CRRV/src/core/Core.scala:22:30]
-  wire [3:0]  _exe2mem_io_next_ID_lsuOp;	// @[CRRV/src/core/Core.scala:22:30]
-  wire [31:0] _exe2mem_io_next_ID_lsuData;	// @[CRRV/src/core/Core.scala:22:30]
-  wire        _exe2mem_io_next_ID_regWen;	// @[CRRV/src/core/Core.scala:22:30]
-  wire [4:0]  _exe2mem_io_next_ID_regWaddr;	// @[CRRV/src/core/Core.scala:22:30]
-  wire [2:0]  _exe2mem_io_next_ID_csrOp;	// @[CRRV/src/core/Core.scala:22:30]
-  wire [11:0] _exe2mem_io_next_ID_csrAddr;	// @[CRRV/src/core/Core.scala:22:30]
-  wire [31:0] _exe2mem_io_next_ID_csrWriteData;	// @[CRRV/src/core/Core.scala:22:30]
-  wire [2:0]  _exe2mem_io_next_ID_exceptType;	// @[CRRV/src/core/Core.scala:22:30]
-  wire        _exe2mem_io_next_EXE_load;	// @[CRRV/src/core/Core.scala:22:30]
-  wire [31:0] _exe2mem_io_next_EXE_exeResult;	// @[CRRV/src/core/Core.scala:22:30]
-  wire        _executeStage_io_control_stallReq;	// @[CRRV/src/core/Core.scala:21:30]
-  wire        _executeStage_io_exe2mem_IF_instValid;	// @[CRRV/src/core/Core.scala:21:30]
-  wire [31:0] _executeStage_io_exe2mem_IF_pc;	// @[CRRV/src/core/Core.scala:21:30]
-  wire [31:0] _executeStage_io_exe2mem_ID_inst;	// @[CRRV/src/core/Core.scala:21:30]
-  wire [3:0]  _executeStage_io_exe2mem_ID_lsuOp;	// @[CRRV/src/core/Core.scala:21:30]
-  wire [31:0] _executeStage_io_exe2mem_ID_lsuData;	// @[CRRV/src/core/Core.scala:21:30]
-  wire        _executeStage_io_exe2mem_ID_regWen;	// @[CRRV/src/core/Core.scala:21:30]
-  wire [4:0]  _executeStage_io_exe2mem_ID_regWaddr;	// @[CRRV/src/core/Core.scala:21:30]
-  wire [2:0]  _executeStage_io_exe2mem_ID_csrOp;	// @[CRRV/src/core/Core.scala:21:30]
-  wire [11:0] _executeStage_io_exe2mem_ID_csrAddr;	// @[CRRV/src/core/Core.scala:21:30]
-  wire [31:0] _executeStage_io_exe2mem_ID_csrWriteData;	// @[CRRV/src/core/Core.scala:21:30]
-  wire [2:0]  _executeStage_io_exe2mem_ID_exceptType;	// @[CRRV/src/core/Core.scala:21:30]
-  wire        _executeStage_io_exe2mem_EXE_load;	// @[CRRV/src/core/Core.scala:21:30]
-  wire [31:0] _executeStage_io_exe2mem_EXE_exeResult;	// @[CRRV/src/core/Core.scala:21:30]
-  wire [2:0]  _executeStage_io_csrRead_op;	// @[CRRV/src/core/Core.scala:21:30]
-  wire [11:0] _executeStage_io_csrRead_addr;	// @[CRRV/src/core/Core.scala:21:30]
-  wire        _executeStage_io_regForward_en;	// @[CRRV/src/core/Core.scala:21:30]
-  wire [4:0]  _executeStage_io_regForward_addr;	// @[CRRV/src/core/Core.scala:21:30]
-  wire [31:0] _executeStage_io_regForward_data;	// @[CRRV/src/core/Core.scala:21:30]
-  wire        _executeStage_io_regForward_load;	// @[CRRV/src/core/Core.scala:21:30]
-  wire        _id2exe_io_next_IF_instValid;	// @[CRRV/src/core/Core.scala:20:30]
-  wire [31:0] _id2exe_io_next_IF_pc;	// @[CRRV/src/core/Core.scala:20:30]
-  wire [31:0] _id2exe_io_next_ID_inst;	// @[CRRV/src/core/Core.scala:20:30]
-  wire [3:0]  _id2exe_io_next_ID_aluOp;	// @[CRRV/src/core/Core.scala:20:30]
-  wire [3:0]  _id2exe_io_next_ID_mduOp;	// @[CRRV/src/core/Core.scala:20:30]
-  wire [31:0] _id2exe_io_next_ID_src1;	// @[CRRV/src/core/Core.scala:20:30]
-  wire [31:0] _id2exe_io_next_ID_src2;	// @[CRRV/src/core/Core.scala:20:30]
-  wire [3:0]  _id2exe_io_next_ID_lsuOp;	// @[CRRV/src/core/Core.scala:20:30]
-  wire [31:0] _id2exe_io_next_ID_lsuData;	// @[CRRV/src/core/Core.scala:20:30]
-  wire        _id2exe_io_next_ID_regWen;	// @[CRRV/src/core/Core.scala:20:30]
-  wire [4:0]  _id2exe_io_next_ID_regWaddr;	// @[CRRV/src/core/Core.scala:20:30]
-  wire [2:0]  _id2exe_io_next_ID_csrOp;	// @[CRRV/src/core/Core.scala:20:30]
-  wire [11:0] _id2exe_io_next_ID_csrAddr;	// @[CRRV/src/core/Core.scala:20:30]
-  wire [31:0] _id2exe_io_next_ID_csrWriteData;	// @[CRRV/src/core/Core.scala:20:30]
-  wire [2:0]  _id2exe_io_next_ID_exceptType;	// @[CRRV/src/core/Core.scala:20:30]
-  wire        _decodeStage_io_control_flushIF;	// @[CRRV/src/core/Core.scala:19:30]
-  wire [31:0] _decodeStage_io_control_flushPc;	// @[CRRV/src/core/Core.scala:19:30]
-  wire        _decodeStage_io_id2exe_IF_instValid;	// @[CRRV/src/core/Core.scala:19:30]
-  wire [31:0] _decodeStage_io_id2exe_IF_pc;	// @[CRRV/src/core/Core.scala:19:30]
-  wire [31:0] _decodeStage_io_id2exe_ID_inst;	// @[CRRV/src/core/Core.scala:19:30]
-  wire [3:0]  _decodeStage_io_id2exe_ID_aluOp;	// @[CRRV/src/core/Core.scala:19:30]
-  wire [3:0]  _decodeStage_io_id2exe_ID_mduOp;	// @[CRRV/src/core/Core.scala:19:30]
-  wire [31:0] _decodeStage_io_id2exe_ID_src1;	// @[CRRV/src/core/Core.scala:19:30]
-  wire [31:0] _decodeStage_io_id2exe_ID_src2;	// @[CRRV/src/core/Core.scala:19:30]
-  wire [3:0]  _decodeStage_io_id2exe_ID_lsuOp;	// @[CRRV/src/core/Core.scala:19:30]
-  wire [31:0] _decodeStage_io_id2exe_ID_lsuData;	// @[CRRV/src/core/Core.scala:19:30]
-  wire        _decodeStage_io_id2exe_ID_regWen;	// @[CRRV/src/core/Core.scala:19:30]
-  wire [4:0]  _decodeStage_io_id2exe_ID_regWaddr;	// @[CRRV/src/core/Core.scala:19:30]
-  wire [2:0]  _decodeStage_io_id2exe_ID_csrOp;	// @[CRRV/src/core/Core.scala:19:30]
-  wire [11:0] _decodeStage_io_id2exe_ID_csrAddr;	// @[CRRV/src/core/Core.scala:19:30]
-  wire [31:0] _decodeStage_io_id2exe_ID_csrWriteData;	// @[CRRV/src/core/Core.scala:19:30]
-  wire [2:0]  _decodeStage_io_id2exe_ID_exceptType;	// @[CRRV/src/core/Core.scala:19:30]
-  wire        _decodeStage_io_branchInfo_branch;	// @[CRRV/src/core/Core.scala:19:30]
-  wire        _decodeStage_io_branchInfo_jump;	// @[CRRV/src/core/Core.scala:19:30]
-  wire        _decodeStage_io_branchInfo_taken;	// @[CRRV/src/core/Core.scala:19:30]
-  wire [4:0]  _decodeStage_io_branchInfo_index;	// @[CRRV/src/core/Core.scala:19:30]
-  wire [31:0] _decodeStage_io_branchInfo_pc;	// @[CRRV/src/core/Core.scala:19:30]
-  wire [31:0] _decodeStage_io_branchInfo_target;	// @[CRRV/src/core/Core.scala:19:30]
-  wire        _decodeStage_io_regRead1_en;	// @[CRRV/src/core/Core.scala:19:30]
-  wire [4:0]  _decodeStage_io_regRead1_addr;	// @[CRRV/src/core/Core.scala:19:30]
-  wire        _decodeStage_io_regRead2_en;	// @[CRRV/src/core/Core.scala:19:30]
-  wire [4:0]  _decodeStage_io_regRead2_addr;	// @[CRRV/src/core/Core.scala:19:30]
-  wire        _if2id_io_next_IF_instValid;	// @[CRRV/src/core/Core.scala:18:30]
-  wire [31:0] _if2id_io_next_IF_pc;	// @[CRRV/src/core/Core.scala:18:30]
-  wire        _if2id_io_next_IF_predTaken;	// @[CRRV/src/core/Core.scala:18:30]
-  wire [31:0] _if2id_io_next_IF_predTarget;	// @[CRRV/src/core/Core.scala:18:30]
-  wire [4:0]  _if2id_io_next_IF_predIndex;	// @[CRRV/src/core/Core.scala:18:30]
-  wire        _fetchStage_io_control_stallReq;	// @[CRRV/src/core/Core.scala:17:30]
-  wire        _fetchStage_io_if2id_IF_instValid;	// @[CRRV/src/core/Core.scala:17:30]
-  wire [31:0] _fetchStage_io_if2id_IF_pc;	// @[CRRV/src/core/Core.scala:17:30]
-  wire        _fetchStage_io_if2id_IF_predTaken;	// @[CRRV/src/core/Core.scala:17:30]
-  wire [31:0] _fetchStage_io_if2id_IF_predTarget;	// @[CRRV/src/core/Core.scala:17:30]
-  wire [4:0]  _fetchStage_io_if2id_IF_predIndex;	// @[CRRV/src/core/Core.scala:17:30]
-  FetchStage fetchStage (	// @[CRRV/src/core/Core.scala:17:30]
+  reg         flag;	// @[CRRV/src/core/atom/ExclusiveMonitor.scala:16:21]
+  reg  [31:0] addr;	// @[CRRV/src/core/atom/ExclusiveMonitor.scala:17:21]
+  wire        _GEN = io_flush | io_update_clear & io_update_addr == addr;	// @[CRRV/src/core/atom/ExclusiveMonitor.scala:17:21, :19:{17,37,55}]
+  always @(posedge clock) begin	// @[<stdin>:2520:11]
+    if (reset) begin	// @[<stdin>:2520:11]
+      flag <= 1'h0;	// @[CRRV/src/core/atom/ExclusiveMonitor.scala:16:21]
+      addr <= 32'h0;	// @[CRRV/src/core/atom/ExclusiveMonitor.scala:17:21]
+    end
+    else begin	// @[<stdin>:2520:11]
+      flag <= ~_GEN & (io_update_set | flag);	// @[CRRV/src/core/atom/ExclusiveMonitor.scala:16:21, :19:{17,66}, :20:10, :22:29, :23:10]
+      if (_GEN)	// @[CRRV/src/core/atom/ExclusiveMonitor.scala:19:17]
+        addr <= 32'h0;	// @[CRRV/src/core/atom/ExclusiveMonitor.scala:17:21]
+      else if (io_update_set)	// @[CRRV/src/core/atom/ExclusiveMonitor.scala:10:14]
+        addr <= io_update_addr;	// @[CRRV/src/core/atom/ExclusiveMonitor.scala:17:21]
+    end
+  end // always @(posedge)
+  assign io_check_valid = flag & addr == io_check_addr;	// @[<stdin>:2519:10, CRRV/src/core/atom/ExclusiveMonitor.scala:16:21, :17:21, :27:{26,34}]
+endmodule
+
+module Core(	// @[<stdin>:2542:10]
+  input         clock,	// @[<stdin>:2543:11]
+                reset,	// @[<stdin>:2544:11]
+                io_inst_out_ready,	// @[CRRV/src/core/Core.scala:12:14]
+  input  [31:0] io_inst_in_rdata,	// @[CRRV/src/core/Core.scala:12:14]
+  input         io_data_out_ready,	// @[CRRV/src/core/Core.scala:12:14]
+  input  [31:0] io_data_in_rdata,	// @[CRRV/src/core/Core.scala:12:14]
+  output [31:0] io_inst_out_bits_addr,	// @[CRRV/src/core/Core.scala:12:14]
+  output        io_data_out_valid,	// @[CRRV/src/core/Core.scala:12:14]
+  output [31:0] io_data_out_bits_addr,	// @[CRRV/src/core/Core.scala:12:14]
+  output        io_data_out_bits_writeEn,	// @[CRRV/src/core/Core.scala:12:14]
+  output [1:0]  io_data_out_bits_size,	// @[CRRV/src/core/Core.scala:12:14]
+  output [31:0] io_data_out_bits_wdata,	// @[CRRV/src/core/Core.scala:12:14]
+  output        io_debug_valid,	// @[CRRV/src/core/Core.scala:12:14]
+                io_debug_halt,	// @[CRRV/src/core/Core.scala:12:14]
+                io_debug_deviceAccess,	// @[CRRV/src/core/Core.scala:12:14]
+  output [31:0] io_debug_deviceAddr,	// @[CRRV/src/core/Core.scala:12:14]
+                io_debug_pc,	// @[CRRV/src/core/Core.scala:12:14]
+  output        io_debug_regWen,	// @[CRRV/src/core/Core.scala:12:14]
+  output [4:0]  io_debug_regWaddr,	// @[CRRV/src/core/Core.scala:12:14]
+  output [31:0] io_debug_regWdata	// @[CRRV/src/core/Core.scala:12:14]
+);
+
+  wire        _excMon_io_check_valid;	// @[CRRV/src/core/Core.scala:32:31]
+  wire [31:0] _regFile_io_read1_data;	// @[CRRV/src/core/Core.scala:31:31]
+  wire [31:0] _regFile_io_read2_data;	// @[CRRV/src/core/Core.scala:31:31]
+  wire [31:0] _csrFile_io_read_data;	// @[CRRV/src/core/Core.scala:30:31]
+  wire [31:0] _csrFile_io_csrInfo_mepc;	// @[CRRV/src/core/Core.scala:30:31]
+  wire [31:0] _csrFile_io_csrInfo_trapEnterVec;	// @[CRRV/src/core/Core.scala:30:31]
+  wire [31:0] _hazardResolver_io_regRead1_data;	// @[CRRV/src/core/Core.scala:29:31]
+  wire [31:0] _hazardResolver_io_regRead2_data;	// @[CRRV/src/core/Core.scala:29:31]
+  wire [31:0] _hazardResolver_io_csrRead_data;	// @[CRRV/src/core/Core.scala:29:31]
+  wire        _hazardResolver_io_regFile1_en;	// @[CRRV/src/core/Core.scala:29:31]
+  wire [4:0]  _hazardResolver_io_regFile1_addr;	// @[CRRV/src/core/Core.scala:29:31]
+  wire        _hazardResolver_io_regFile2_en;	// @[CRRV/src/core/Core.scala:29:31]
+  wire [4:0]  _hazardResolver_io_regFile2_addr;	// @[CRRV/src/core/Core.scala:29:31]
+  wire [11:0] _hazardResolver_io_regCsr_addr;	// @[CRRV/src/core/Core.scala:29:31]
+  wire        _hazardResolver_io_memExcMonCheck_valid;	// @[CRRV/src/core/Core.scala:29:31]
+  wire [31:0] _hazardResolver_io_excMonCheck_addr;	// @[CRRV/src/core/Core.scala:29:31]
+  wire        _hazardResolver_io_loadHazardFlag;	// @[CRRV/src/core/Core.scala:29:31]
+  wire        _hazardResolver_io_csrHazardFlag;	// @[CRRV/src/core/Core.scala:29:31]
+  wire        _pipelineControl_io_stallIF;	// @[CRRV/src/core/Core.scala:28:31]
+  wire        _pipelineControl_io_stallID;	// @[CRRV/src/core/Core.scala:28:31]
+  wire        _pipelineControl_io_stallEXE;	// @[CRRV/src/core/Core.scala:28:31]
+  wire        _pipelineControl_io_stallMEM;	// @[CRRV/src/core/Core.scala:28:31]
+  wire        _pipelineControl_io_stallWB;	// @[CRRV/src/core/Core.scala:28:31]
+  wire        _pipelineControl_io_flushAll;	// @[CRRV/src/core/Core.scala:28:31]
+  wire        _pipelineControl_io_flushIF;	// @[CRRV/src/core/Core.scala:28:31]
+  wire [31:0] _pipelineControl_io_flushPc;	// @[CRRV/src/core/Core.scala:28:31]
+  wire [2:0]  _writeBackStage_io_wb2csr_op;	// @[CRRV/src/core/Core.scala:26:30]
+  wire [11:0] _writeBackStage_io_wb2csr_addr;	// @[CRRV/src/core/Core.scala:26:30]
+  wire [31:0] _writeBackStage_io_wb2csr_data;	// @[CRRV/src/core/Core.scala:26:30]
+  wire [2:0]  _writeBackStage_io_wb2csr_exceptType;	// @[CRRV/src/core/Core.scala:26:30]
+  wire [31:0] _writeBackStage_io_wb2csr_exceptPc;	// @[CRRV/src/core/Core.scala:26:30]
+  wire [31:0] _writeBackStage_io_excMonCommit_addr;	// @[CRRV/src/core/Core.scala:26:30]
+  wire        _writeBackStage_io_excMonCommit_set;	// @[CRRV/src/core/Core.scala:26:30]
+  wire        _writeBackStage_io_excMonCommit_clear;	// @[CRRV/src/core/Core.scala:26:30]
+  wire        _writeBackStage_io_regForward_en;	// @[CRRV/src/core/Core.scala:26:30]
+  wire [4:0]  _writeBackStage_io_regForward_addr;	// @[CRRV/src/core/Core.scala:26:30]
+  wire [31:0] _writeBackStage_io_regForward_data;	// @[CRRV/src/core/Core.scala:26:30]
+  wire        _mem2wb_io_next_IF_instValid;	// @[CRRV/src/core/Core.scala:25:30]
+  wire [31:0] _mem2wb_io_next_IF_pc;	// @[CRRV/src/core/Core.scala:25:30]
+  wire [31:0] _mem2wb_io_next_ID_inst;	// @[CRRV/src/core/Core.scala:25:30]
+  wire [4:0]  _mem2wb_io_next_ID_lsuOp;	// @[CRRV/src/core/Core.scala:25:30]
+  wire        _mem2wb_io_next_ID_regWen;	// @[CRRV/src/core/Core.scala:25:30]
+  wire [4:0]  _mem2wb_io_next_ID_regWaddr;	// @[CRRV/src/core/Core.scala:25:30]
+  wire [2:0]  _mem2wb_io_next_ID_csrOp;	// @[CRRV/src/core/Core.scala:25:30]
+  wire [11:0] _mem2wb_io_next_ID_csrAddr;	// @[CRRV/src/core/Core.scala:25:30]
+  wire [31:0] _mem2wb_io_next_ID_csrWriteData;	// @[CRRV/src/core/Core.scala:25:30]
+  wire [2:0]  _mem2wb_io_next_ID_exceptType;	// @[CRRV/src/core/Core.scala:25:30]
+  wire [31:0] _mem2wb_io_next_EXE_exeResult;	// @[CRRV/src/core/Core.scala:25:30]
+  wire [31:0] _mem2wb_io_next_MEM_memAddr;	// @[CRRV/src/core/Core.scala:25:30]
+  wire [31:0] _mem2wb_io_next_MEM_excMonCommit_addr;	// @[CRRV/src/core/Core.scala:25:30]
+  wire        _mem2wb_io_next_MEM_excMonCommit_set;	// @[CRRV/src/core/Core.scala:25:30]
+  wire        _mem2wb_io_next_MEM_excMonCommit_clear;	// @[CRRV/src/core/Core.scala:25:30]
+  wire        _mem2wb_io_next_MEM_amoValid;	// @[CRRV/src/core/Core.scala:25:30]
+  wire [31:0] _mem2wb_io_next_MEM_amoResult;	// @[CRRV/src/core/Core.scala:25:30]
+  wire        _memoryStage_io_control_stallReq;	// @[CRRV/src/core/Core.scala:24:30]
+  wire        _memoryStage_io_mem2wb_IF_instValid;	// @[CRRV/src/core/Core.scala:24:30]
+  wire [31:0] _memoryStage_io_mem2wb_IF_pc;	// @[CRRV/src/core/Core.scala:24:30]
+  wire [31:0] _memoryStage_io_mem2wb_ID_inst;	// @[CRRV/src/core/Core.scala:24:30]
+  wire [4:0]  _memoryStage_io_mem2wb_ID_lsuOp;	// @[CRRV/src/core/Core.scala:24:30]
+  wire        _memoryStage_io_mem2wb_ID_regWen;	// @[CRRV/src/core/Core.scala:24:30]
+  wire [4:0]  _memoryStage_io_mem2wb_ID_regWaddr;	// @[CRRV/src/core/Core.scala:24:30]
+  wire [2:0]  _memoryStage_io_mem2wb_ID_csrOp;	// @[CRRV/src/core/Core.scala:24:30]
+  wire [11:0] _memoryStage_io_mem2wb_ID_csrAddr;	// @[CRRV/src/core/Core.scala:24:30]
+  wire [31:0] _memoryStage_io_mem2wb_ID_csrWriteData;	// @[CRRV/src/core/Core.scala:24:30]
+  wire [2:0]  _memoryStage_io_mem2wb_ID_exceptType;	// @[CRRV/src/core/Core.scala:24:30]
+  wire [31:0] _memoryStage_io_mem2wb_EXE_exeResult;	// @[CRRV/src/core/Core.scala:24:30]
+  wire [31:0] _memoryStage_io_mem2wb_MEM_memAddr;	// @[CRRV/src/core/Core.scala:24:30]
+  wire [31:0] _memoryStage_io_mem2wb_MEM_excMonCommit_addr;	// @[CRRV/src/core/Core.scala:24:30]
+  wire        _memoryStage_io_mem2wb_MEM_excMonCommit_set;	// @[CRRV/src/core/Core.scala:24:30]
+  wire        _memoryStage_io_mem2wb_MEM_excMonCommit_clear;	// @[CRRV/src/core/Core.scala:24:30]
+  wire        _memoryStage_io_mem2wb_MEM_amoValid;	// @[CRRV/src/core/Core.scala:24:30]
+  wire [31:0] _memoryStage_io_mem2wb_MEM_amoResult;	// @[CRRV/src/core/Core.scala:24:30]
+  wire [31:0] _memoryStage_io_excMon_addr;	// @[CRRV/src/core/Core.scala:24:30]
+  wire [2:0]  _memoryStage_io_memCsrStall_op;	// @[CRRV/src/core/Core.scala:24:30]
+  wire [11:0] _memoryStage_io_memCsrStall_addr;	// @[CRRV/src/core/Core.scala:24:30]
+  wire        _memoryStage_io_regForward_en;	// @[CRRV/src/core/Core.scala:24:30]
+  wire [4:0]  _memoryStage_io_regForward_addr;	// @[CRRV/src/core/Core.scala:24:30]
+  wire [31:0] _memoryStage_io_regForward_data;	// @[CRRV/src/core/Core.scala:24:30]
+  wire        _memoryStage_io_regForward_load;	// @[CRRV/src/core/Core.scala:24:30]
+  wire        _exe2mem_io_next_IF_instValid;	// @[CRRV/src/core/Core.scala:23:30]
+  wire [31:0] _exe2mem_io_next_IF_pc;	// @[CRRV/src/core/Core.scala:23:30]
+  wire [31:0] _exe2mem_io_next_ID_inst;	// @[CRRV/src/core/Core.scala:23:30]
+  wire [4:0]  _exe2mem_io_next_ID_lsuOp;	// @[CRRV/src/core/Core.scala:23:30]
+  wire [31:0] _exe2mem_io_next_ID_lsuData;	// @[CRRV/src/core/Core.scala:23:30]
+  wire        _exe2mem_io_next_ID_regWen;	// @[CRRV/src/core/Core.scala:23:30]
+  wire [4:0]  _exe2mem_io_next_ID_regWaddr;	// @[CRRV/src/core/Core.scala:23:30]
+  wire [2:0]  _exe2mem_io_next_ID_csrOp;	// @[CRRV/src/core/Core.scala:23:30]
+  wire [11:0] _exe2mem_io_next_ID_csrAddr;	// @[CRRV/src/core/Core.scala:23:30]
+  wire [31:0] _exe2mem_io_next_ID_csrWriteData;	// @[CRRV/src/core/Core.scala:23:30]
+  wire [2:0]  _exe2mem_io_next_ID_exceptType;	// @[CRRV/src/core/Core.scala:23:30]
+  wire        _exe2mem_io_next_EXE_load;	// @[CRRV/src/core/Core.scala:23:30]
+  wire [31:0] _exe2mem_io_next_EXE_exeResult;	// @[CRRV/src/core/Core.scala:23:30]
+  wire        _executeStage_io_control_stallReq;	// @[CRRV/src/core/Core.scala:22:30]
+  wire        _executeStage_io_exe2mem_IF_instValid;	// @[CRRV/src/core/Core.scala:22:30]
+  wire [31:0] _executeStage_io_exe2mem_IF_pc;	// @[CRRV/src/core/Core.scala:22:30]
+  wire [31:0] _executeStage_io_exe2mem_ID_inst;	// @[CRRV/src/core/Core.scala:22:30]
+  wire [4:0]  _executeStage_io_exe2mem_ID_lsuOp;	// @[CRRV/src/core/Core.scala:22:30]
+  wire [31:0] _executeStage_io_exe2mem_ID_lsuData;	// @[CRRV/src/core/Core.scala:22:30]
+  wire        _executeStage_io_exe2mem_ID_regWen;	// @[CRRV/src/core/Core.scala:22:30]
+  wire [4:0]  _executeStage_io_exe2mem_ID_regWaddr;	// @[CRRV/src/core/Core.scala:22:30]
+  wire [2:0]  _executeStage_io_exe2mem_ID_csrOp;	// @[CRRV/src/core/Core.scala:22:30]
+  wire [11:0] _executeStage_io_exe2mem_ID_csrAddr;	// @[CRRV/src/core/Core.scala:22:30]
+  wire [31:0] _executeStage_io_exe2mem_ID_csrWriteData;	// @[CRRV/src/core/Core.scala:22:30]
+  wire [2:0]  _executeStage_io_exe2mem_ID_exceptType;	// @[CRRV/src/core/Core.scala:22:30]
+  wire        _executeStage_io_exe2mem_EXE_load;	// @[CRRV/src/core/Core.scala:22:30]
+  wire [31:0] _executeStage_io_exe2mem_EXE_exeResult;	// @[CRRV/src/core/Core.scala:22:30]
+  wire [2:0]  _executeStage_io_csrRead_op;	// @[CRRV/src/core/Core.scala:22:30]
+  wire [11:0] _executeStage_io_csrRead_addr;	// @[CRRV/src/core/Core.scala:22:30]
+  wire        _executeStage_io_regForward_en;	// @[CRRV/src/core/Core.scala:22:30]
+  wire [4:0]  _executeStage_io_regForward_addr;	// @[CRRV/src/core/Core.scala:22:30]
+  wire [31:0] _executeStage_io_regForward_data;	// @[CRRV/src/core/Core.scala:22:30]
+  wire        _executeStage_io_regForward_load;	// @[CRRV/src/core/Core.scala:22:30]
+  wire        _id2exe_io_next_IF_instValid;	// @[CRRV/src/core/Core.scala:21:30]
+  wire [31:0] _id2exe_io_next_IF_pc;	// @[CRRV/src/core/Core.scala:21:30]
+  wire [31:0] _id2exe_io_next_ID_inst;	// @[CRRV/src/core/Core.scala:21:30]
+  wire [3:0]  _id2exe_io_next_ID_aluOp;	// @[CRRV/src/core/Core.scala:21:30]
+  wire [3:0]  _id2exe_io_next_ID_mduOp;	// @[CRRV/src/core/Core.scala:21:30]
+  wire [31:0] _id2exe_io_next_ID_src1;	// @[CRRV/src/core/Core.scala:21:30]
+  wire [31:0] _id2exe_io_next_ID_src2;	// @[CRRV/src/core/Core.scala:21:30]
+  wire [4:0]  _id2exe_io_next_ID_lsuOp;	// @[CRRV/src/core/Core.scala:21:30]
+  wire [31:0] _id2exe_io_next_ID_lsuData;	// @[CRRV/src/core/Core.scala:21:30]
+  wire        _id2exe_io_next_ID_regWen;	// @[CRRV/src/core/Core.scala:21:30]
+  wire [4:0]  _id2exe_io_next_ID_regWaddr;	// @[CRRV/src/core/Core.scala:21:30]
+  wire [2:0]  _id2exe_io_next_ID_csrOp;	// @[CRRV/src/core/Core.scala:21:30]
+  wire [11:0] _id2exe_io_next_ID_csrAddr;	// @[CRRV/src/core/Core.scala:21:30]
+  wire [31:0] _id2exe_io_next_ID_csrWriteData;	// @[CRRV/src/core/Core.scala:21:30]
+  wire [2:0]  _id2exe_io_next_ID_exceptType;	// @[CRRV/src/core/Core.scala:21:30]
+  wire        _decodeStage_io_control_flushIF;	// @[CRRV/src/core/Core.scala:20:30]
+  wire [31:0] _decodeStage_io_control_flushPc;	// @[CRRV/src/core/Core.scala:20:30]
+  wire        _decodeStage_io_id2exe_IF_instValid;	// @[CRRV/src/core/Core.scala:20:30]
+  wire [31:0] _decodeStage_io_id2exe_IF_pc;	// @[CRRV/src/core/Core.scala:20:30]
+  wire [31:0] _decodeStage_io_id2exe_ID_inst;	// @[CRRV/src/core/Core.scala:20:30]
+  wire [3:0]  _decodeStage_io_id2exe_ID_aluOp;	// @[CRRV/src/core/Core.scala:20:30]
+  wire [3:0]  _decodeStage_io_id2exe_ID_mduOp;	// @[CRRV/src/core/Core.scala:20:30]
+  wire [31:0] _decodeStage_io_id2exe_ID_src1;	// @[CRRV/src/core/Core.scala:20:30]
+  wire [31:0] _decodeStage_io_id2exe_ID_src2;	// @[CRRV/src/core/Core.scala:20:30]
+  wire [4:0]  _decodeStage_io_id2exe_ID_lsuOp;	// @[CRRV/src/core/Core.scala:20:30]
+  wire [31:0] _decodeStage_io_id2exe_ID_lsuData;	// @[CRRV/src/core/Core.scala:20:30]
+  wire        _decodeStage_io_id2exe_ID_regWen;	// @[CRRV/src/core/Core.scala:20:30]
+  wire [4:0]  _decodeStage_io_id2exe_ID_regWaddr;	// @[CRRV/src/core/Core.scala:20:30]
+  wire [2:0]  _decodeStage_io_id2exe_ID_csrOp;	// @[CRRV/src/core/Core.scala:20:30]
+  wire [11:0] _decodeStage_io_id2exe_ID_csrAddr;	// @[CRRV/src/core/Core.scala:20:30]
+  wire [31:0] _decodeStage_io_id2exe_ID_csrWriteData;	// @[CRRV/src/core/Core.scala:20:30]
+  wire [2:0]  _decodeStage_io_id2exe_ID_exceptType;	// @[CRRV/src/core/Core.scala:20:30]
+  wire        _decodeStage_io_branchInfo_branch;	// @[CRRV/src/core/Core.scala:20:30]
+  wire        _decodeStage_io_branchInfo_jump;	// @[CRRV/src/core/Core.scala:20:30]
+  wire        _decodeStage_io_branchInfo_taken;	// @[CRRV/src/core/Core.scala:20:30]
+  wire [4:0]  _decodeStage_io_branchInfo_index;	// @[CRRV/src/core/Core.scala:20:30]
+  wire [31:0] _decodeStage_io_branchInfo_pc;	// @[CRRV/src/core/Core.scala:20:30]
+  wire [31:0] _decodeStage_io_branchInfo_target;	// @[CRRV/src/core/Core.scala:20:30]
+  wire        _decodeStage_io_regRead1_en;	// @[CRRV/src/core/Core.scala:20:30]
+  wire [4:0]  _decodeStage_io_regRead1_addr;	// @[CRRV/src/core/Core.scala:20:30]
+  wire        _decodeStage_io_regRead2_en;	// @[CRRV/src/core/Core.scala:20:30]
+  wire [4:0]  _decodeStage_io_regRead2_addr;	// @[CRRV/src/core/Core.scala:20:30]
+  wire        _if2id_io_next_IF_instValid;	// @[CRRV/src/core/Core.scala:19:30]
+  wire [31:0] _if2id_io_next_IF_pc;	// @[CRRV/src/core/Core.scala:19:30]
+  wire        _if2id_io_next_IF_predTaken;	// @[CRRV/src/core/Core.scala:19:30]
+  wire [31:0] _if2id_io_next_IF_predTarget;	// @[CRRV/src/core/Core.scala:19:30]
+  wire [4:0]  _if2id_io_next_IF_predIndex;	// @[CRRV/src/core/Core.scala:19:30]
+  wire        _fetchStage_io_control_stallReq;	// @[CRRV/src/core/Core.scala:18:30]
+  wire        _fetchStage_io_if2id_IF_instValid;	// @[CRRV/src/core/Core.scala:18:30]
+  wire [31:0] _fetchStage_io_if2id_IF_pc;	// @[CRRV/src/core/Core.scala:18:30]
+  wire        _fetchStage_io_if2id_IF_predTaken;	// @[CRRV/src/core/Core.scala:18:30]
+  wire [31:0] _fetchStage_io_if2id_IF_predTarget;	// @[CRRV/src/core/Core.scala:18:30]
+  wire [4:0]  _fetchStage_io_if2id_IF_predIndex;	// @[CRRV/src/core/Core.scala:18:30]
+  FetchStage fetchStage (	// @[CRRV/src/core/Core.scala:18:30]
     .clock                  (clock),
     .reset                  (reset),
-    .io_control_flush       (_pipelineControl_io_flushIF),	// @[CRRV/src/core/Core.scala:27:31]
-    .io_control_flushPC     (_pipelineControl_io_flushPc),	// @[CRRV/src/core/Core.scala:27:31]
-    .io_control_stall       (_pipelineControl_io_stallIF),	// @[CRRV/src/core/Core.scala:27:31]
+    .io_control_flush       (_pipelineControl_io_flushIF),	// @[CRRV/src/core/Core.scala:28:31]
+    .io_control_flushPC     (_pipelineControl_io_flushPc),	// @[CRRV/src/core/Core.scala:28:31]
+    .io_control_stall       (_pipelineControl_io_stallIF),	// @[CRRV/src/core/Core.scala:28:31]
     .io_instRom_ready       (io_inst_out_ready),
-    .io_branchInfo_branch   (_decodeStage_io_branchInfo_branch),	// @[CRRV/src/core/Core.scala:19:30]
-    .io_branchInfo_jump     (_decodeStage_io_branchInfo_jump),	// @[CRRV/src/core/Core.scala:19:30]
-    .io_branchInfo_taken    (_decodeStage_io_branchInfo_taken),	// @[CRRV/src/core/Core.scala:19:30]
-    .io_branchInfo_index    (_decodeStage_io_branchInfo_index),	// @[CRRV/src/core/Core.scala:19:30]
-    .io_branchInfo_pc       (_decodeStage_io_branchInfo_pc),	// @[CRRV/src/core/Core.scala:19:30]
-    .io_branchInfo_target   (_decodeStage_io_branchInfo_target),	// @[CRRV/src/core/Core.scala:19:30]
+    .io_branchInfo_branch   (_decodeStage_io_branchInfo_branch),	// @[CRRV/src/core/Core.scala:20:30]
+    .io_branchInfo_jump     (_decodeStage_io_branchInfo_jump),	// @[CRRV/src/core/Core.scala:20:30]
+    .io_branchInfo_taken    (_decodeStage_io_branchInfo_taken),	// @[CRRV/src/core/Core.scala:20:30]
+    .io_branchInfo_index    (_decodeStage_io_branchInfo_index),	// @[CRRV/src/core/Core.scala:20:30]
+    .io_branchInfo_pc       (_decodeStage_io_branchInfo_pc),	// @[CRRV/src/core/Core.scala:20:30]
+    .io_branchInfo_target   (_decodeStage_io_branchInfo_target),	// @[CRRV/src/core/Core.scala:20:30]
     .io_control_stallReq    (_fetchStage_io_control_stallReq),
     .io_instRom_bits_addr   (io_inst_out_bits_addr),
     .io_if2id_IF_instValid  (_fetchStage_io_if2id_IF_instValid),
@@ -2981,34 +3305,34 @@ module Core(	// @[<stdin>:2073:10]
     .io_if2id_IF_predTarget (_fetchStage_io_if2id_IF_predTarget),
     .io_if2id_IF_predIndex  (_fetchStage_io_if2id_IF_predIndex)
   );
-  PipelineStage if2id (	// @[CRRV/src/core/Core.scala:18:30]
+  PipelineStage if2id (	// @[CRRV/src/core/Core.scala:19:30]
     .clock                 (clock),
     .reset                 (reset),
-    .io_flush              (_pipelineControl_io_flushIF),	// @[CRRV/src/core/Core.scala:27:31]
-    .io_stallPrev          (_pipelineControl_io_stallIF),	// @[CRRV/src/core/Core.scala:27:31]
-    .io_stallNext          (_pipelineControl_io_stallID),	// @[CRRV/src/core/Core.scala:27:31]
-    .io_prev_IF_instValid  (_fetchStage_io_if2id_IF_instValid),	// @[CRRV/src/core/Core.scala:17:30]
-    .io_prev_IF_pc         (_fetchStage_io_if2id_IF_pc),	// @[CRRV/src/core/Core.scala:17:30]
-    .io_prev_IF_predTaken  (_fetchStage_io_if2id_IF_predTaken),	// @[CRRV/src/core/Core.scala:17:30]
-    .io_prev_IF_predTarget (_fetchStage_io_if2id_IF_predTarget),	// @[CRRV/src/core/Core.scala:17:30]
-    .io_prev_IF_predIndex  (_fetchStage_io_if2id_IF_predIndex),	// @[CRRV/src/core/Core.scala:17:30]
+    .io_flush              (_pipelineControl_io_flushIF),	// @[CRRV/src/core/Core.scala:28:31]
+    .io_stallPrev          (_pipelineControl_io_stallIF),	// @[CRRV/src/core/Core.scala:28:31]
+    .io_stallNext          (_pipelineControl_io_stallID),	// @[CRRV/src/core/Core.scala:28:31]
+    .io_prev_IF_instValid  (_fetchStage_io_if2id_IF_instValid),	// @[CRRV/src/core/Core.scala:18:30]
+    .io_prev_IF_pc         (_fetchStage_io_if2id_IF_pc),	// @[CRRV/src/core/Core.scala:18:30]
+    .io_prev_IF_predTaken  (_fetchStage_io_if2id_IF_predTaken),	// @[CRRV/src/core/Core.scala:18:30]
+    .io_prev_IF_predTarget (_fetchStage_io_if2id_IF_predTarget),	// @[CRRV/src/core/Core.scala:18:30]
+    .io_prev_IF_predIndex  (_fetchStage_io_if2id_IF_predIndex),	// @[CRRV/src/core/Core.scala:18:30]
     .io_next_IF_instValid  (_if2id_io_next_IF_instValid),
     .io_next_IF_pc         (_if2id_io_next_IF_pc),
     .io_next_IF_predTaken  (_if2id_io_next_IF_predTaken),
     .io_next_IF_predTarget (_if2id_io_next_IF_predTarget),
     .io_next_IF_predIndex  (_if2id_io_next_IF_predIndex)
   );
-  DecodeStage decodeStage (	// @[CRRV/src/core/Core.scala:19:30]
+  DecodeStage decodeStage (	// @[CRRV/src/core/Core.scala:20:30]
     .clock                     (clock),
-    .io_if2id_IF_instValid     (_if2id_io_next_IF_instValid),	// @[CRRV/src/core/Core.scala:18:30]
-    .io_if2id_IF_pc            (_if2id_io_next_IF_pc),	// @[CRRV/src/core/Core.scala:18:30]
-    .io_if2id_IF_predTaken     (_if2id_io_next_IF_predTaken),	// @[CRRV/src/core/Core.scala:18:30]
-    .io_if2id_IF_predTarget    (_if2id_io_next_IF_predTarget),	// @[CRRV/src/core/Core.scala:18:30]
-    .io_if2id_IF_predIndex     (_if2id_io_next_IF_predIndex),	// @[CRRV/src/core/Core.scala:18:30]
-    .io_control_stall          (_pipelineControl_io_stallID),	// @[CRRV/src/core/Core.scala:27:31]
+    .io_if2id_IF_instValid     (_if2id_io_next_IF_instValid),	// @[CRRV/src/core/Core.scala:19:30]
+    .io_if2id_IF_pc            (_if2id_io_next_IF_pc),	// @[CRRV/src/core/Core.scala:19:30]
+    .io_if2id_IF_predTaken     (_if2id_io_next_IF_predTaken),	// @[CRRV/src/core/Core.scala:19:30]
+    .io_if2id_IF_predTarget    (_if2id_io_next_IF_predTarget),	// @[CRRV/src/core/Core.scala:19:30]
+    .io_if2id_IF_predIndex     (_if2id_io_next_IF_predIndex),	// @[CRRV/src/core/Core.scala:19:30]
+    .io_control_stall          (_pipelineControl_io_stallID),	// @[CRRV/src/core/Core.scala:28:31]
     .io_read_rdata             (io_inst_in_rdata),
-    .io_regRead1_data          (_hazardResolver_io_regRead1_data),	// @[CRRV/src/core/Core.scala:28:31]
-    .io_regRead2_data          (_hazardResolver_io_regRead2_data),	// @[CRRV/src/core/Core.scala:28:31]
+    .io_regRead1_data          (_hazardResolver_io_regRead1_data),	// @[CRRV/src/core/Core.scala:29:31]
+    .io_regRead2_data          (_hazardResolver_io_regRead2_data),	// @[CRRV/src/core/Core.scala:29:31]
     .io_control_flushIF        (_decodeStage_io_control_flushIF),
     .io_control_flushPc        (_decodeStage_io_control_flushPc),
     .io_id2exe_IF_instValid    (_decodeStage_io_id2exe_IF_instValid),
@@ -3037,27 +3361,27 @@ module Core(	// @[<stdin>:2073:10]
     .io_regRead2_en            (_decodeStage_io_regRead2_en),
     .io_regRead2_addr          (_decodeStage_io_regRead2_addr)
   );
-  PipelineStage_1 id2exe (	// @[CRRV/src/core/Core.scala:20:30]
+  PipelineStage_1 id2exe (	// @[CRRV/src/core/Core.scala:21:30]
     .clock                   (clock),
     .reset                   (reset),
-    .io_flush                (_pipelineControl_io_flushAll),	// @[CRRV/src/core/Core.scala:27:31]
-    .io_stallPrev            (_pipelineControl_io_stallID),	// @[CRRV/src/core/Core.scala:27:31]
-    .io_stallNext            (_pipelineControl_io_stallEXE),	// @[CRRV/src/core/Core.scala:27:31]
-    .io_prev_IF_instValid    (_decodeStage_io_id2exe_IF_instValid),	// @[CRRV/src/core/Core.scala:19:30]
-    .io_prev_IF_pc           (_decodeStage_io_id2exe_IF_pc),	// @[CRRV/src/core/Core.scala:19:30]
-    .io_prev_ID_inst         (_decodeStage_io_id2exe_ID_inst),	// @[CRRV/src/core/Core.scala:19:30]
-    .io_prev_ID_aluOp        (_decodeStage_io_id2exe_ID_aluOp),	// @[CRRV/src/core/Core.scala:19:30]
-    .io_prev_ID_mduOp        (_decodeStage_io_id2exe_ID_mduOp),	// @[CRRV/src/core/Core.scala:19:30]
-    .io_prev_ID_src1         (_decodeStage_io_id2exe_ID_src1),	// @[CRRV/src/core/Core.scala:19:30]
-    .io_prev_ID_src2         (_decodeStage_io_id2exe_ID_src2),	// @[CRRV/src/core/Core.scala:19:30]
-    .io_prev_ID_lsuOp        (_decodeStage_io_id2exe_ID_lsuOp),	// @[CRRV/src/core/Core.scala:19:30]
-    .io_prev_ID_lsuData      (_decodeStage_io_id2exe_ID_lsuData),	// @[CRRV/src/core/Core.scala:19:30]
-    .io_prev_ID_regWen       (_decodeStage_io_id2exe_ID_regWen),	// @[CRRV/src/core/Core.scala:19:30]
-    .io_prev_ID_regWaddr     (_decodeStage_io_id2exe_ID_regWaddr),	// @[CRRV/src/core/Core.scala:19:30]
-    .io_prev_ID_csrOp        (_decodeStage_io_id2exe_ID_csrOp),	// @[CRRV/src/core/Core.scala:19:30]
-    .io_prev_ID_csrAddr      (_decodeStage_io_id2exe_ID_csrAddr),	// @[CRRV/src/core/Core.scala:19:30]
-    .io_prev_ID_csrWriteData (_decodeStage_io_id2exe_ID_csrWriteData),	// @[CRRV/src/core/Core.scala:19:30]
-    .io_prev_ID_exceptType   (_decodeStage_io_id2exe_ID_exceptType),	// @[CRRV/src/core/Core.scala:19:30]
+    .io_flush                (_pipelineControl_io_flushAll),	// @[CRRV/src/core/Core.scala:28:31]
+    .io_stallPrev            (_pipelineControl_io_stallID),	// @[CRRV/src/core/Core.scala:28:31]
+    .io_stallNext            (_pipelineControl_io_stallEXE),	// @[CRRV/src/core/Core.scala:28:31]
+    .io_prev_IF_instValid    (_decodeStage_io_id2exe_IF_instValid),	// @[CRRV/src/core/Core.scala:20:30]
+    .io_prev_IF_pc           (_decodeStage_io_id2exe_IF_pc),	// @[CRRV/src/core/Core.scala:20:30]
+    .io_prev_ID_inst         (_decodeStage_io_id2exe_ID_inst),	// @[CRRV/src/core/Core.scala:20:30]
+    .io_prev_ID_aluOp        (_decodeStage_io_id2exe_ID_aluOp),	// @[CRRV/src/core/Core.scala:20:30]
+    .io_prev_ID_mduOp        (_decodeStage_io_id2exe_ID_mduOp),	// @[CRRV/src/core/Core.scala:20:30]
+    .io_prev_ID_src1         (_decodeStage_io_id2exe_ID_src1),	// @[CRRV/src/core/Core.scala:20:30]
+    .io_prev_ID_src2         (_decodeStage_io_id2exe_ID_src2),	// @[CRRV/src/core/Core.scala:20:30]
+    .io_prev_ID_lsuOp        (_decodeStage_io_id2exe_ID_lsuOp),	// @[CRRV/src/core/Core.scala:20:30]
+    .io_prev_ID_lsuData      (_decodeStage_io_id2exe_ID_lsuData),	// @[CRRV/src/core/Core.scala:20:30]
+    .io_prev_ID_regWen       (_decodeStage_io_id2exe_ID_regWen),	// @[CRRV/src/core/Core.scala:20:30]
+    .io_prev_ID_regWaddr     (_decodeStage_io_id2exe_ID_regWaddr),	// @[CRRV/src/core/Core.scala:20:30]
+    .io_prev_ID_csrOp        (_decodeStage_io_id2exe_ID_csrOp),	// @[CRRV/src/core/Core.scala:20:30]
+    .io_prev_ID_csrAddr      (_decodeStage_io_id2exe_ID_csrAddr),	// @[CRRV/src/core/Core.scala:20:30]
+    .io_prev_ID_csrWriteData (_decodeStage_io_id2exe_ID_csrWriteData),	// @[CRRV/src/core/Core.scala:20:30]
+    .io_prev_ID_exceptType   (_decodeStage_io_id2exe_ID_exceptType),	// @[CRRV/src/core/Core.scala:20:30]
     .io_next_IF_instValid    (_id2exe_io_next_IF_instValid),
     .io_next_IF_pc           (_id2exe_io_next_IF_pc),
     .io_next_ID_inst         (_id2exe_io_next_ID_inst),
@@ -3074,26 +3398,26 @@ module Core(	// @[<stdin>:2073:10]
     .io_next_ID_csrWriteData (_id2exe_io_next_ID_csrWriteData),
     .io_next_ID_exceptType   (_id2exe_io_next_ID_exceptType)
   );
-  ExecuteStage executeStage (	// @[CRRV/src/core/Core.scala:21:30]
+  ExecuteStage executeStage (	// @[CRRV/src/core/Core.scala:22:30]
     .clock                      (clock),
     .reset                      (reset),
-    .io_id2exe_IF_instValid     (_id2exe_io_next_IF_instValid),	// @[CRRV/src/core/Core.scala:20:30]
-    .io_id2exe_IF_pc            (_id2exe_io_next_IF_pc),	// @[CRRV/src/core/Core.scala:20:30]
-    .io_id2exe_ID_inst          (_id2exe_io_next_ID_inst),	// @[CRRV/src/core/Core.scala:20:30]
-    .io_id2exe_ID_aluOp         (_id2exe_io_next_ID_aluOp),	// @[CRRV/src/core/Core.scala:20:30]
-    .io_id2exe_ID_mduOp         (_id2exe_io_next_ID_mduOp),	// @[CRRV/src/core/Core.scala:20:30]
-    .io_id2exe_ID_src1          (_id2exe_io_next_ID_src1),	// @[CRRV/src/core/Core.scala:20:30]
-    .io_id2exe_ID_src2          (_id2exe_io_next_ID_src2),	// @[CRRV/src/core/Core.scala:20:30]
-    .io_id2exe_ID_lsuOp         (_id2exe_io_next_ID_lsuOp),	// @[CRRV/src/core/Core.scala:20:30]
-    .io_id2exe_ID_lsuData       (_id2exe_io_next_ID_lsuData),	// @[CRRV/src/core/Core.scala:20:30]
-    .io_id2exe_ID_regWen        (_id2exe_io_next_ID_regWen),	// @[CRRV/src/core/Core.scala:20:30]
-    .io_id2exe_ID_regWaddr      (_id2exe_io_next_ID_regWaddr),	// @[CRRV/src/core/Core.scala:20:30]
-    .io_id2exe_ID_csrOp         (_id2exe_io_next_ID_csrOp),	// @[CRRV/src/core/Core.scala:20:30]
-    .io_id2exe_ID_csrAddr       (_id2exe_io_next_ID_csrAddr),	// @[CRRV/src/core/Core.scala:20:30]
-    .io_id2exe_ID_csrWriteData  (_id2exe_io_next_ID_csrWriteData),	// @[CRRV/src/core/Core.scala:20:30]
-    .io_id2exe_ID_exceptType    (_id2exe_io_next_ID_exceptType),	// @[CRRV/src/core/Core.scala:20:30]
-    .io_control_flush           (_pipelineControl_io_flushAll),	// @[CRRV/src/core/Core.scala:27:31]
-    .io_csrRead_data            (_hazardResolver_io_csrRead_data),	// @[CRRV/src/core/Core.scala:28:31]
+    .io_id2exe_IF_instValid     (_id2exe_io_next_IF_instValid),	// @[CRRV/src/core/Core.scala:21:30]
+    .io_id2exe_IF_pc            (_id2exe_io_next_IF_pc),	// @[CRRV/src/core/Core.scala:21:30]
+    .io_id2exe_ID_inst          (_id2exe_io_next_ID_inst),	// @[CRRV/src/core/Core.scala:21:30]
+    .io_id2exe_ID_aluOp         (_id2exe_io_next_ID_aluOp),	// @[CRRV/src/core/Core.scala:21:30]
+    .io_id2exe_ID_mduOp         (_id2exe_io_next_ID_mduOp),	// @[CRRV/src/core/Core.scala:21:30]
+    .io_id2exe_ID_src1          (_id2exe_io_next_ID_src1),	// @[CRRV/src/core/Core.scala:21:30]
+    .io_id2exe_ID_src2          (_id2exe_io_next_ID_src2),	// @[CRRV/src/core/Core.scala:21:30]
+    .io_id2exe_ID_lsuOp         (_id2exe_io_next_ID_lsuOp),	// @[CRRV/src/core/Core.scala:21:30]
+    .io_id2exe_ID_lsuData       (_id2exe_io_next_ID_lsuData),	// @[CRRV/src/core/Core.scala:21:30]
+    .io_id2exe_ID_regWen        (_id2exe_io_next_ID_regWen),	// @[CRRV/src/core/Core.scala:21:30]
+    .io_id2exe_ID_regWaddr      (_id2exe_io_next_ID_regWaddr),	// @[CRRV/src/core/Core.scala:21:30]
+    .io_id2exe_ID_csrOp         (_id2exe_io_next_ID_csrOp),	// @[CRRV/src/core/Core.scala:21:30]
+    .io_id2exe_ID_csrAddr       (_id2exe_io_next_ID_csrAddr),	// @[CRRV/src/core/Core.scala:21:30]
+    .io_id2exe_ID_csrWriteData  (_id2exe_io_next_ID_csrWriteData),	// @[CRRV/src/core/Core.scala:21:30]
+    .io_id2exe_ID_exceptType    (_id2exe_io_next_ID_exceptType),	// @[CRRV/src/core/Core.scala:21:30]
+    .io_control_flush           (_pipelineControl_io_flushAll),	// @[CRRV/src/core/Core.scala:28:31]
+    .io_csrRead_data            (_hazardResolver_io_csrRead_data),	// @[CRRV/src/core/Core.scala:29:31]
     .io_control_stallReq        (_executeStage_io_control_stallReq),
     .io_exe2mem_IF_instValid    (_executeStage_io_exe2mem_IF_instValid),
     .io_exe2mem_IF_pc           (_executeStage_io_exe2mem_IF_pc),
@@ -3115,25 +3439,25 @@ module Core(	// @[<stdin>:2073:10]
     .io_regForward_data         (_executeStage_io_regForward_data),
     .io_regForward_load         (_executeStage_io_regForward_load)
   );
-  PipelineStage_2 exe2mem (	// @[CRRV/src/core/Core.scala:22:30]
+  PipelineStage_2 exe2mem (	// @[CRRV/src/core/Core.scala:23:30]
     .clock                   (clock),
     .reset                   (reset),
-    .io_flush                (_pipelineControl_io_flushAll),	// @[CRRV/src/core/Core.scala:27:31]
-    .io_stallPrev            (_pipelineControl_io_stallEXE),	// @[CRRV/src/core/Core.scala:27:31]
-    .io_stallNext            (_pipelineControl_io_stallMEM),	// @[CRRV/src/core/Core.scala:27:31]
-    .io_prev_IF_instValid    (_executeStage_io_exe2mem_IF_instValid),	// @[CRRV/src/core/Core.scala:21:30]
-    .io_prev_IF_pc           (_executeStage_io_exe2mem_IF_pc),	// @[CRRV/src/core/Core.scala:21:30]
-    .io_prev_ID_inst         (_executeStage_io_exe2mem_ID_inst),	// @[CRRV/src/core/Core.scala:21:30]
-    .io_prev_ID_lsuOp        (_executeStage_io_exe2mem_ID_lsuOp),	// @[CRRV/src/core/Core.scala:21:30]
-    .io_prev_ID_lsuData      (_executeStage_io_exe2mem_ID_lsuData),	// @[CRRV/src/core/Core.scala:21:30]
-    .io_prev_ID_regWen       (_executeStage_io_exe2mem_ID_regWen),	// @[CRRV/src/core/Core.scala:21:30]
-    .io_prev_ID_regWaddr     (_executeStage_io_exe2mem_ID_regWaddr),	// @[CRRV/src/core/Core.scala:21:30]
-    .io_prev_ID_csrOp        (_executeStage_io_exe2mem_ID_csrOp),	// @[CRRV/src/core/Core.scala:21:30]
-    .io_prev_ID_csrAddr      (_executeStage_io_exe2mem_ID_csrAddr),	// @[CRRV/src/core/Core.scala:21:30]
-    .io_prev_ID_csrWriteData (_executeStage_io_exe2mem_ID_csrWriteData),	// @[CRRV/src/core/Core.scala:21:30]
-    .io_prev_ID_exceptType   (_executeStage_io_exe2mem_ID_exceptType),	// @[CRRV/src/core/Core.scala:21:30]
-    .io_prev_EXE_load        (_executeStage_io_exe2mem_EXE_load),	// @[CRRV/src/core/Core.scala:21:30]
-    .io_prev_EXE_exeResult   (_executeStage_io_exe2mem_EXE_exeResult),	// @[CRRV/src/core/Core.scala:21:30]
+    .io_flush                (_pipelineControl_io_flushAll),	// @[CRRV/src/core/Core.scala:28:31]
+    .io_stallPrev            (_pipelineControl_io_stallEXE),	// @[CRRV/src/core/Core.scala:28:31]
+    .io_stallNext            (_pipelineControl_io_stallMEM),	// @[CRRV/src/core/Core.scala:28:31]
+    .io_prev_IF_instValid    (_executeStage_io_exe2mem_IF_instValid),	// @[CRRV/src/core/Core.scala:22:30]
+    .io_prev_IF_pc           (_executeStage_io_exe2mem_IF_pc),	// @[CRRV/src/core/Core.scala:22:30]
+    .io_prev_ID_inst         (_executeStage_io_exe2mem_ID_inst),	// @[CRRV/src/core/Core.scala:22:30]
+    .io_prev_ID_lsuOp        (_executeStage_io_exe2mem_ID_lsuOp),	// @[CRRV/src/core/Core.scala:22:30]
+    .io_prev_ID_lsuData      (_executeStage_io_exe2mem_ID_lsuData),	// @[CRRV/src/core/Core.scala:22:30]
+    .io_prev_ID_regWen       (_executeStage_io_exe2mem_ID_regWen),	// @[CRRV/src/core/Core.scala:22:30]
+    .io_prev_ID_regWaddr     (_executeStage_io_exe2mem_ID_regWaddr),	// @[CRRV/src/core/Core.scala:22:30]
+    .io_prev_ID_csrOp        (_executeStage_io_exe2mem_ID_csrOp),	// @[CRRV/src/core/Core.scala:22:30]
+    .io_prev_ID_csrAddr      (_executeStage_io_exe2mem_ID_csrAddr),	// @[CRRV/src/core/Core.scala:22:30]
+    .io_prev_ID_csrWriteData (_executeStage_io_exe2mem_ID_csrWriteData),	// @[CRRV/src/core/Core.scala:22:30]
+    .io_prev_ID_exceptType   (_executeStage_io_exe2mem_ID_exceptType),	// @[CRRV/src/core/Core.scala:22:30]
+    .io_prev_EXE_load        (_executeStage_io_exe2mem_EXE_load),	// @[CRRV/src/core/Core.scala:22:30]
+    .io_prev_EXE_exeResult   (_executeStage_io_exe2mem_EXE_exeResult),	// @[CRRV/src/core/Core.scala:22:30]
     .io_next_IF_instValid    (_exe2mem_io_next_IF_instValid),
     .io_next_IF_pc           (_exe2mem_io_next_IF_pc),
     .io_next_ID_inst         (_exe2mem_io_next_ID_inst),
@@ -3148,119 +3472,148 @@ module Core(	// @[<stdin>:2073:10]
     .io_next_EXE_load        (_exe2mem_io_next_EXE_load),
     .io_next_EXE_exeResult   (_exe2mem_io_next_EXE_exeResult)
   );
-  MemoryStage memoryStage (	// @[CRRV/src/core/Core.scala:23:30]
-    .io_exe2mem_IF_instValid    (_exe2mem_io_next_IF_instValid),	// @[CRRV/src/core/Core.scala:22:30]
-    .io_exe2mem_IF_pc           (_exe2mem_io_next_IF_pc),	// @[CRRV/src/core/Core.scala:22:30]
-    .io_exe2mem_ID_inst         (_exe2mem_io_next_ID_inst),	// @[CRRV/src/core/Core.scala:22:30]
-    .io_exe2mem_ID_lsuOp        (_exe2mem_io_next_ID_lsuOp),	// @[CRRV/src/core/Core.scala:22:30]
-    .io_exe2mem_ID_lsuData      (_exe2mem_io_next_ID_lsuData),	// @[CRRV/src/core/Core.scala:22:30]
-    .io_exe2mem_ID_regWen       (_exe2mem_io_next_ID_regWen),	// @[CRRV/src/core/Core.scala:22:30]
-    .io_exe2mem_ID_regWaddr     (_exe2mem_io_next_ID_regWaddr),	// @[CRRV/src/core/Core.scala:22:30]
-    .io_exe2mem_ID_csrOp        (_exe2mem_io_next_ID_csrOp),	// @[CRRV/src/core/Core.scala:22:30]
-    .io_exe2mem_ID_csrAddr      (_exe2mem_io_next_ID_csrAddr),	// @[CRRV/src/core/Core.scala:22:30]
-    .io_exe2mem_ID_csrWriteData (_exe2mem_io_next_ID_csrWriteData),	// @[CRRV/src/core/Core.scala:22:30]
-    .io_exe2mem_ID_exceptType   (_exe2mem_io_next_ID_exceptType),	// @[CRRV/src/core/Core.scala:22:30]
-    .io_exe2mem_EXE_load        (_exe2mem_io_next_EXE_load),	// @[CRRV/src/core/Core.scala:22:30]
-    .io_exe2mem_EXE_exeResult   (_exe2mem_io_next_EXE_exeResult),	// @[CRRV/src/core/Core.scala:22:30]
-    .io_dataRam_ready           (io_data_out_ready),
-    .io_control_stallReq        (_memoryStage_io_control_stallReq),
-    .io_mem2wb_IF_instValid     (_memoryStage_io_mem2wb_IF_instValid),
-    .io_mem2wb_IF_pc            (_memoryStage_io_mem2wb_IF_pc),
-    .io_mem2wb_ID_inst          (_memoryStage_io_mem2wb_ID_inst),
-    .io_mem2wb_ID_lsuOp         (_memoryStage_io_mem2wb_ID_lsuOp),
-    .io_mem2wb_ID_regWen        (_memoryStage_io_mem2wb_ID_regWen),
-    .io_mem2wb_ID_regWaddr      (_memoryStage_io_mem2wb_ID_regWaddr),
-    .io_mem2wb_ID_csrOp         (_memoryStage_io_mem2wb_ID_csrOp),
-    .io_mem2wb_ID_csrAddr       (_memoryStage_io_mem2wb_ID_csrAddr),
-    .io_mem2wb_ID_csrWriteData  (_memoryStage_io_mem2wb_ID_csrWriteData),
-    .io_mem2wb_ID_exceptType    (_memoryStage_io_mem2wb_ID_exceptType),
-    .io_mem2wb_EXE_exeResult    (_memoryStage_io_mem2wb_EXE_exeResult),
-    .io_mem2wb_MEM_memAddr      (_memoryStage_io_mem2wb_MEM_memAddr),
-    .io_dataRam_valid           (io_data_out_valid),
-    .io_dataRam_bits_addr       (io_data_out_bits_addr),
-    .io_dataRam_bits_writeEn    (io_data_out_bits_writeEn),
-    .io_dataRam_bits_size       (io_data_out_bits_size),
-    .io_dataRam_bits_wdata      (io_data_out_bits_wdata),
-    .io_memCsrStall_op          (_memoryStage_io_memCsrStall_op),
-    .io_memCsrStall_addr        (_memoryStage_io_memCsrStall_addr),
-    .io_regForward_en           (_memoryStage_io_regForward_en),
-    .io_regForward_addr         (_memoryStage_io_regForward_addr),
-    .io_regForward_data         (_memoryStage_io_regForward_data),
-    .io_regForward_load         (_memoryStage_io_regForward_load)
+  MemoryStage memoryStage (	// @[CRRV/src/core/Core.scala:24:30]
+    .clock                            (clock),
+    .reset                            (reset),
+    .io_exe2mem_IF_instValid          (_exe2mem_io_next_IF_instValid),	// @[CRRV/src/core/Core.scala:23:30]
+    .io_exe2mem_IF_pc                 (_exe2mem_io_next_IF_pc),	// @[CRRV/src/core/Core.scala:23:30]
+    .io_exe2mem_ID_inst               (_exe2mem_io_next_ID_inst),	// @[CRRV/src/core/Core.scala:23:30]
+    .io_exe2mem_ID_lsuOp              (_exe2mem_io_next_ID_lsuOp),	// @[CRRV/src/core/Core.scala:23:30]
+    .io_exe2mem_ID_lsuData            (_exe2mem_io_next_ID_lsuData),	// @[CRRV/src/core/Core.scala:23:30]
+    .io_exe2mem_ID_regWen             (_exe2mem_io_next_ID_regWen),	// @[CRRV/src/core/Core.scala:23:30]
+    .io_exe2mem_ID_regWaddr           (_exe2mem_io_next_ID_regWaddr),	// @[CRRV/src/core/Core.scala:23:30]
+    .io_exe2mem_ID_csrOp              (_exe2mem_io_next_ID_csrOp),	// @[CRRV/src/core/Core.scala:23:30]
+    .io_exe2mem_ID_csrAddr            (_exe2mem_io_next_ID_csrAddr),	// @[CRRV/src/core/Core.scala:23:30]
+    .io_exe2mem_ID_csrWriteData       (_exe2mem_io_next_ID_csrWriteData),	// @[CRRV/src/core/Core.scala:23:30]
+    .io_exe2mem_ID_exceptType         (_exe2mem_io_next_ID_exceptType),	// @[CRRV/src/core/Core.scala:23:30]
+    .io_exe2mem_EXE_load              (_exe2mem_io_next_EXE_load),	// @[CRRV/src/core/Core.scala:23:30]
+    .io_exe2mem_EXE_exeResult         (_exe2mem_io_next_EXE_exeResult),	// @[CRRV/src/core/Core.scala:23:30]
+    .io_control_flush                 (_pipelineControl_io_flushAll),	// @[CRRV/src/core/Core.scala:28:31]
+    .io_dataRam_out_ready             (io_data_out_ready),
+    .io_dataRam_in_rdata              (io_data_in_rdata),
+    .io_excMon_valid                  (_hazardResolver_io_memExcMonCheck_valid),	// @[CRRV/src/core/Core.scala:29:31]
+    .io_control_stallReq              (_memoryStage_io_control_stallReq),
+    .io_mem2wb_IF_instValid           (_memoryStage_io_mem2wb_IF_instValid),
+    .io_mem2wb_IF_pc                  (_memoryStage_io_mem2wb_IF_pc),
+    .io_mem2wb_ID_inst                (_memoryStage_io_mem2wb_ID_inst),
+    .io_mem2wb_ID_lsuOp               (_memoryStage_io_mem2wb_ID_lsuOp),
+    .io_mem2wb_ID_regWen              (_memoryStage_io_mem2wb_ID_regWen),
+    .io_mem2wb_ID_regWaddr            (_memoryStage_io_mem2wb_ID_regWaddr),
+    .io_mem2wb_ID_csrOp               (_memoryStage_io_mem2wb_ID_csrOp),
+    .io_mem2wb_ID_csrAddr             (_memoryStage_io_mem2wb_ID_csrAddr),
+    .io_mem2wb_ID_csrWriteData        (_memoryStage_io_mem2wb_ID_csrWriteData),
+    .io_mem2wb_ID_exceptType          (_memoryStage_io_mem2wb_ID_exceptType),
+    .io_mem2wb_EXE_exeResult          (_memoryStage_io_mem2wb_EXE_exeResult),
+    .io_mem2wb_MEM_memAddr            (_memoryStage_io_mem2wb_MEM_memAddr),
+    .io_mem2wb_MEM_excMonCommit_addr  (_memoryStage_io_mem2wb_MEM_excMonCommit_addr),
+    .io_mem2wb_MEM_excMonCommit_set   (_memoryStage_io_mem2wb_MEM_excMonCommit_set),
+    .io_mem2wb_MEM_excMonCommit_clear (_memoryStage_io_mem2wb_MEM_excMonCommit_clear),
+    .io_mem2wb_MEM_amoValid           (_memoryStage_io_mem2wb_MEM_amoValid),
+    .io_mem2wb_MEM_amoResult          (_memoryStage_io_mem2wb_MEM_amoResult),
+    .io_dataRam_out_valid             (io_data_out_valid),
+    .io_dataRam_out_bits_addr         (io_data_out_bits_addr),
+    .io_dataRam_out_bits_writeEn      (io_data_out_bits_writeEn),
+    .io_dataRam_out_bits_size         (io_data_out_bits_size),
+    .io_dataRam_out_bits_wdata        (io_data_out_bits_wdata),
+    .io_excMon_addr                   (_memoryStage_io_excMon_addr),
+    .io_memCsrStall_op                (_memoryStage_io_memCsrStall_op),
+    .io_memCsrStall_addr              (_memoryStage_io_memCsrStall_addr),
+    .io_regForward_en                 (_memoryStage_io_regForward_en),
+    .io_regForward_addr               (_memoryStage_io_regForward_addr),
+    .io_regForward_data               (_memoryStage_io_regForward_data),
+    .io_regForward_load               (_memoryStage_io_regForward_load)
   );
-  PipelineStage_3 mem2wb (	// @[CRRV/src/core/Core.scala:24:30]
-    .clock                   (clock),
-    .reset                   (reset),
-    .io_flush                (_pipelineControl_io_flushAll),	// @[CRRV/src/core/Core.scala:27:31]
-    .io_stallPrev            (_pipelineControl_io_stallMEM),	// @[CRRV/src/core/Core.scala:27:31]
-    .io_stallNext            (_pipelineControl_io_stallWB),	// @[CRRV/src/core/Core.scala:27:31]
-    .io_prev_IF_instValid    (_memoryStage_io_mem2wb_IF_instValid),	// @[CRRV/src/core/Core.scala:23:30]
-    .io_prev_IF_pc           (_memoryStage_io_mem2wb_IF_pc),	// @[CRRV/src/core/Core.scala:23:30]
-    .io_prev_ID_inst         (_memoryStage_io_mem2wb_ID_inst),	// @[CRRV/src/core/Core.scala:23:30]
-    .io_prev_ID_lsuOp        (_memoryStage_io_mem2wb_ID_lsuOp),	// @[CRRV/src/core/Core.scala:23:30]
-    .io_prev_ID_regWen       (_memoryStage_io_mem2wb_ID_regWen),	// @[CRRV/src/core/Core.scala:23:30]
-    .io_prev_ID_regWaddr     (_memoryStage_io_mem2wb_ID_regWaddr),	// @[CRRV/src/core/Core.scala:23:30]
-    .io_prev_ID_csrOp        (_memoryStage_io_mem2wb_ID_csrOp),	// @[CRRV/src/core/Core.scala:23:30]
-    .io_prev_ID_csrAddr      (_memoryStage_io_mem2wb_ID_csrAddr),	// @[CRRV/src/core/Core.scala:23:30]
-    .io_prev_ID_csrWriteData (_memoryStage_io_mem2wb_ID_csrWriteData),	// @[CRRV/src/core/Core.scala:23:30]
-    .io_prev_ID_exceptType   (_memoryStage_io_mem2wb_ID_exceptType),	// @[CRRV/src/core/Core.scala:23:30]
-    .io_prev_EXE_exeResult   (_memoryStage_io_mem2wb_EXE_exeResult),	// @[CRRV/src/core/Core.scala:23:30]
-    .io_prev_MEM_memAddr     (_memoryStage_io_mem2wb_MEM_memAddr),	// @[CRRV/src/core/Core.scala:23:30]
-    .io_next_IF_instValid    (_mem2wb_io_next_IF_instValid),
-    .io_next_IF_pc           (_mem2wb_io_next_IF_pc),
-    .io_next_ID_inst         (_mem2wb_io_next_ID_inst),
-    .io_next_ID_lsuOp        (_mem2wb_io_next_ID_lsuOp),
-    .io_next_ID_regWen       (_mem2wb_io_next_ID_regWen),
-    .io_next_ID_regWaddr     (_mem2wb_io_next_ID_regWaddr),
-    .io_next_ID_csrOp        (_mem2wb_io_next_ID_csrOp),
-    .io_next_ID_csrAddr      (_mem2wb_io_next_ID_csrAddr),
-    .io_next_ID_csrWriteData (_mem2wb_io_next_ID_csrWriteData),
-    .io_next_ID_exceptType   (_mem2wb_io_next_ID_exceptType),
-    .io_next_EXE_exeResult   (_mem2wb_io_next_EXE_exeResult),
-    .io_next_MEM_memAddr     (_mem2wb_io_next_MEM_memAddr)
+  PipelineStage_3 mem2wb (	// @[CRRV/src/core/Core.scala:25:30]
+    .clock                          (clock),
+    .reset                          (reset),
+    .io_flush                       (_pipelineControl_io_flushAll),	// @[CRRV/src/core/Core.scala:28:31]
+    .io_stallPrev                   (_pipelineControl_io_stallMEM),	// @[CRRV/src/core/Core.scala:28:31]
+    .io_stallNext                   (_pipelineControl_io_stallWB),	// @[CRRV/src/core/Core.scala:28:31]
+    .io_prev_IF_instValid           (_memoryStage_io_mem2wb_IF_instValid),	// @[CRRV/src/core/Core.scala:24:30]
+    .io_prev_IF_pc                  (_memoryStage_io_mem2wb_IF_pc),	// @[CRRV/src/core/Core.scala:24:30]
+    .io_prev_ID_inst                (_memoryStage_io_mem2wb_ID_inst),	// @[CRRV/src/core/Core.scala:24:30]
+    .io_prev_ID_lsuOp               (_memoryStage_io_mem2wb_ID_lsuOp),	// @[CRRV/src/core/Core.scala:24:30]
+    .io_prev_ID_regWen              (_memoryStage_io_mem2wb_ID_regWen),	// @[CRRV/src/core/Core.scala:24:30]
+    .io_prev_ID_regWaddr            (_memoryStage_io_mem2wb_ID_regWaddr),	// @[CRRV/src/core/Core.scala:24:30]
+    .io_prev_ID_csrOp               (_memoryStage_io_mem2wb_ID_csrOp),	// @[CRRV/src/core/Core.scala:24:30]
+    .io_prev_ID_csrAddr             (_memoryStage_io_mem2wb_ID_csrAddr),	// @[CRRV/src/core/Core.scala:24:30]
+    .io_prev_ID_csrWriteData        (_memoryStage_io_mem2wb_ID_csrWriteData),	// @[CRRV/src/core/Core.scala:24:30]
+    .io_prev_ID_exceptType          (_memoryStage_io_mem2wb_ID_exceptType),	// @[CRRV/src/core/Core.scala:24:30]
+    .io_prev_EXE_exeResult          (_memoryStage_io_mem2wb_EXE_exeResult),	// @[CRRV/src/core/Core.scala:24:30]
+    .io_prev_MEM_memAddr            (_memoryStage_io_mem2wb_MEM_memAddr),	// @[CRRV/src/core/Core.scala:24:30]
+    .io_prev_MEM_excMonCommit_addr  (_memoryStage_io_mem2wb_MEM_excMonCommit_addr),	// @[CRRV/src/core/Core.scala:24:30]
+    .io_prev_MEM_excMonCommit_set   (_memoryStage_io_mem2wb_MEM_excMonCommit_set),	// @[CRRV/src/core/Core.scala:24:30]
+    .io_prev_MEM_excMonCommit_clear (_memoryStage_io_mem2wb_MEM_excMonCommit_clear),	// @[CRRV/src/core/Core.scala:24:30]
+    .io_prev_MEM_amoValid           (_memoryStage_io_mem2wb_MEM_amoValid),	// @[CRRV/src/core/Core.scala:24:30]
+    .io_prev_MEM_amoResult          (_memoryStage_io_mem2wb_MEM_amoResult),	// @[CRRV/src/core/Core.scala:24:30]
+    .io_next_IF_instValid           (_mem2wb_io_next_IF_instValid),
+    .io_next_IF_pc                  (_mem2wb_io_next_IF_pc),
+    .io_next_ID_inst                (_mem2wb_io_next_ID_inst),
+    .io_next_ID_lsuOp               (_mem2wb_io_next_ID_lsuOp),
+    .io_next_ID_regWen              (_mem2wb_io_next_ID_regWen),
+    .io_next_ID_regWaddr            (_mem2wb_io_next_ID_regWaddr),
+    .io_next_ID_csrOp               (_mem2wb_io_next_ID_csrOp),
+    .io_next_ID_csrAddr             (_mem2wb_io_next_ID_csrAddr),
+    .io_next_ID_csrWriteData        (_mem2wb_io_next_ID_csrWriteData),
+    .io_next_ID_exceptType          (_mem2wb_io_next_ID_exceptType),
+    .io_next_EXE_exeResult          (_mem2wb_io_next_EXE_exeResult),
+    .io_next_MEM_memAddr            (_mem2wb_io_next_MEM_memAddr),
+    .io_next_MEM_excMonCommit_addr  (_mem2wb_io_next_MEM_excMonCommit_addr),
+    .io_next_MEM_excMonCommit_set   (_mem2wb_io_next_MEM_excMonCommit_set),
+    .io_next_MEM_excMonCommit_clear (_mem2wb_io_next_MEM_excMonCommit_clear),
+    .io_next_MEM_amoValid           (_mem2wb_io_next_MEM_amoValid),
+    .io_next_MEM_amoResult          (_mem2wb_io_next_MEM_amoResult)
   );
-  WriteBackStage writeBackStage (	// @[CRRV/src/core/Core.scala:25:30]
-    .io_mem2wb_IF_instValid    (_mem2wb_io_next_IF_instValid),	// @[CRRV/src/core/Core.scala:24:30]
-    .io_mem2wb_IF_pc           (_mem2wb_io_next_IF_pc),	// @[CRRV/src/core/Core.scala:24:30]
-    .io_mem2wb_ID_inst         (_mem2wb_io_next_ID_inst),	// @[CRRV/src/core/Core.scala:24:30]
-    .io_mem2wb_ID_lsuOp        (_mem2wb_io_next_ID_lsuOp),	// @[CRRV/src/core/Core.scala:24:30]
-    .io_mem2wb_ID_regWen       (_mem2wb_io_next_ID_regWen),	// @[CRRV/src/core/Core.scala:24:30]
-    .io_mem2wb_ID_regWaddr     (_mem2wb_io_next_ID_regWaddr),	// @[CRRV/src/core/Core.scala:24:30]
-    .io_mem2wb_ID_csrOp        (_mem2wb_io_next_ID_csrOp),	// @[CRRV/src/core/Core.scala:24:30]
-    .io_mem2wb_ID_csrAddr      (_mem2wb_io_next_ID_csrAddr),	// @[CRRV/src/core/Core.scala:24:30]
-    .io_mem2wb_ID_csrWriteData (_mem2wb_io_next_ID_csrWriteData),	// @[CRRV/src/core/Core.scala:24:30]
-    .io_mem2wb_ID_exceptType   (_mem2wb_io_next_ID_exceptType),	// @[CRRV/src/core/Core.scala:24:30]
-    .io_mem2wb_EXE_exeResult   (_mem2wb_io_next_EXE_exeResult),	// @[CRRV/src/core/Core.scala:24:30]
-    .io_mem2wb_MEM_memAddr     (_mem2wb_io_next_MEM_memAddr),	// @[CRRV/src/core/Core.scala:24:30]
-    .io_read_rdata             (io_data_in_rdata),
-    .io_wb2csr_op              (_writeBackStage_io_wb2csr_op),
-    .io_wb2csr_addr            (_writeBackStage_io_wb2csr_addr),
-    .io_wb2csr_data            (_writeBackStage_io_wb2csr_data),
-    .io_wb2csr_exceptType      (_writeBackStage_io_wb2csr_exceptType),
-    .io_wb2csr_exceptPc        (_writeBackStage_io_wb2csr_exceptPc),
-    .io_regForward_en          (_writeBackStage_io_regForward_en),
-    .io_regForward_addr        (_writeBackStage_io_regForward_addr),
-    .io_regForward_data        (_writeBackStage_io_regForward_data),
-    .io_debug_valid            (io_debug_valid),
-    .io_debug_halt             (io_debug_halt),
-    .io_debug_deviceAccess     (io_debug_deviceAccess),
-    .io_debug_deviceAddr       (io_debug_deviceAddr),
-    .io_debug_pc               (io_debug_pc),
-    .io_debug_regWen           (io_debug_regWen),
-    .io_debug_regWaddr         (io_debug_regWaddr),
-    .io_debug_regWdata         (io_debug_regWdata)
+  WriteBackStage writeBackStage (	// @[CRRV/src/core/Core.scala:26:30]
+    .io_mem2wb_IF_instValid           (_mem2wb_io_next_IF_instValid),	// @[CRRV/src/core/Core.scala:25:30]
+    .io_mem2wb_IF_pc                  (_mem2wb_io_next_IF_pc),	// @[CRRV/src/core/Core.scala:25:30]
+    .io_mem2wb_ID_inst                (_mem2wb_io_next_ID_inst),	// @[CRRV/src/core/Core.scala:25:30]
+    .io_mem2wb_ID_lsuOp               (_mem2wb_io_next_ID_lsuOp),	// @[CRRV/src/core/Core.scala:25:30]
+    .io_mem2wb_ID_regWen              (_mem2wb_io_next_ID_regWen),	// @[CRRV/src/core/Core.scala:25:30]
+    .io_mem2wb_ID_regWaddr            (_mem2wb_io_next_ID_regWaddr),	// @[CRRV/src/core/Core.scala:25:30]
+    .io_mem2wb_ID_csrOp               (_mem2wb_io_next_ID_csrOp),	// @[CRRV/src/core/Core.scala:25:30]
+    .io_mem2wb_ID_csrAddr             (_mem2wb_io_next_ID_csrAddr),	// @[CRRV/src/core/Core.scala:25:30]
+    .io_mem2wb_ID_csrWriteData        (_mem2wb_io_next_ID_csrWriteData),	// @[CRRV/src/core/Core.scala:25:30]
+    .io_mem2wb_ID_exceptType          (_mem2wb_io_next_ID_exceptType),	// @[CRRV/src/core/Core.scala:25:30]
+    .io_mem2wb_EXE_exeResult          (_mem2wb_io_next_EXE_exeResult),	// @[CRRV/src/core/Core.scala:25:30]
+    .io_mem2wb_MEM_memAddr            (_mem2wb_io_next_MEM_memAddr),	// @[CRRV/src/core/Core.scala:25:30]
+    .io_mem2wb_MEM_excMonCommit_addr  (_mem2wb_io_next_MEM_excMonCommit_addr),	// @[CRRV/src/core/Core.scala:25:30]
+    .io_mem2wb_MEM_excMonCommit_set   (_mem2wb_io_next_MEM_excMonCommit_set),	// @[CRRV/src/core/Core.scala:25:30]
+    .io_mem2wb_MEM_excMonCommit_clear (_mem2wb_io_next_MEM_excMonCommit_clear),	// @[CRRV/src/core/Core.scala:25:30]
+    .io_mem2wb_MEM_amoValid           (_mem2wb_io_next_MEM_amoValid),	// @[CRRV/src/core/Core.scala:25:30]
+    .io_mem2wb_MEM_amoResult          (_mem2wb_io_next_MEM_amoResult),	// @[CRRV/src/core/Core.scala:25:30]
+    .io_read_rdata                    (io_data_in_rdata),
+    .io_wb2csr_op                     (_writeBackStage_io_wb2csr_op),
+    .io_wb2csr_addr                   (_writeBackStage_io_wb2csr_addr),
+    .io_wb2csr_data                   (_writeBackStage_io_wb2csr_data),
+    .io_wb2csr_exceptType             (_writeBackStage_io_wb2csr_exceptType),
+    .io_wb2csr_exceptPc               (_writeBackStage_io_wb2csr_exceptPc),
+    .io_excMonCommit_addr             (_writeBackStage_io_excMonCommit_addr),
+    .io_excMonCommit_set              (_writeBackStage_io_excMonCommit_set),
+    .io_excMonCommit_clear            (_writeBackStage_io_excMonCommit_clear),
+    .io_regForward_en                 (_writeBackStage_io_regForward_en),
+    .io_regForward_addr               (_writeBackStage_io_regForward_addr),
+    .io_regForward_data               (_writeBackStage_io_regForward_data),
+    .io_debug_valid                   (io_debug_valid),
+    .io_debug_halt                    (io_debug_halt),
+    .io_debug_deviceAccess            (io_debug_deviceAccess),
+    .io_debug_deviceAddr              (io_debug_deviceAddr),
+    .io_debug_pc                      (io_debug_pc),
+    .io_debug_regWen                  (io_debug_regWen),
+    .io_debug_regWaddr                (io_debug_regWaddr),
+    .io_debug_regWdata                (io_debug_regWdata)
   );
-  PipelineControl pipelineControl (	// @[CRRV/src/core/Core.scala:27:31]
-    .io_ifStallReq           (_fetchStage_io_control_stallReq),	// @[CRRV/src/core/Core.scala:17:30]
-    .io_exeStallReq          (_executeStage_io_control_stallReq),	// @[CRRV/src/core/Core.scala:21:30]
-    .io_memStallReq          (_memoryStage_io_control_stallReq),	// @[CRRV/src/core/Core.scala:23:30]
-    .io_idFlushReq           (_decodeStage_io_control_flushIF),	// @[CRRV/src/core/Core.scala:19:30]
-    .io_idFlushTarget        (_decodeStage_io_control_flushPc),	// @[CRRV/src/core/Core.scala:19:30]
-    .io_loadHazardFlage      (_hazardResolver_io_loadHazardFlag),	// @[CRRV/src/core/Core.scala:28:31]
-    .io_csrHazardFlag        (_hazardResolver_io_csrHazardFlag),	// @[CRRV/src/core/Core.scala:28:31]
-    .io_exceptType           (_writeBackStage_io_wb2csr_exceptType),	// @[CRRV/src/core/Core.scala:25:30]
-    .io_csrInfo_mepc         (_csrFile_io_csrInfo_mepc),	// @[CRRV/src/core/Core.scala:29:31]
-    .io_csrInfo_trapEnterVec (_csrFile_io_csrInfo_trapEnterVec),	// @[CRRV/src/core/Core.scala:29:31]
+  PipelineControl pipelineControl (	// @[CRRV/src/core/Core.scala:28:31]
+    .io_ifStallReq           (_fetchStage_io_control_stallReq),	// @[CRRV/src/core/Core.scala:18:30]
+    .io_exeStallReq          (_executeStage_io_control_stallReq),	// @[CRRV/src/core/Core.scala:22:30]
+    .io_memStallReq          (_memoryStage_io_control_stallReq),	// @[CRRV/src/core/Core.scala:24:30]
+    .io_idFlushReq           (_decodeStage_io_control_flushIF),	// @[CRRV/src/core/Core.scala:20:30]
+    .io_idFlushTarget        (_decodeStage_io_control_flushPc),	// @[CRRV/src/core/Core.scala:20:30]
+    .io_loadHazardFlage      (_hazardResolver_io_loadHazardFlag),	// @[CRRV/src/core/Core.scala:29:31]
+    .io_csrHazardFlag        (_hazardResolver_io_csrHazardFlag),	// @[CRRV/src/core/Core.scala:29:31]
+    .io_exceptType           (_writeBackStage_io_wb2csr_exceptType),	// @[CRRV/src/core/Core.scala:26:30]
+    .io_csrInfo_mepc         (_csrFile_io_csrInfo_mepc),	// @[CRRV/src/core/Core.scala:30:31]
+    .io_csrInfo_trapEnterVec (_csrFile_io_csrInfo_trapEnterVec),	// @[CRRV/src/core/Core.scala:30:31]
     .io_stallIF              (_pipelineControl_io_stallIF),
     .io_stallID              (_pipelineControl_io_stallID),
     .io_stallEXE             (_pipelineControl_io_stallEXE),
@@ -3270,72 +3623,89 @@ module Core(	// @[<stdin>:2073:10]
     .io_flushIF              (_pipelineControl_io_flushIF),
     .io_flushPc              (_pipelineControl_io_flushPc)
   );
-  HazardResolver hazardResolver (	// @[CRRV/src/core/Core.scala:28:31]
-    .io_regRead1_en      (_decodeStage_io_regRead1_en),	// @[CRRV/src/core/Core.scala:19:30]
-    .io_regRead1_addr    (_decodeStage_io_regRead1_addr),	// @[CRRV/src/core/Core.scala:19:30]
-    .io_regRead2_en      (_decodeStage_io_regRead2_en),	// @[CRRV/src/core/Core.scala:19:30]
-    .io_regRead2_addr    (_decodeStage_io_regRead2_addr),	// @[CRRV/src/core/Core.scala:19:30]
-    .io_csrRead_op       (_executeStage_io_csrRead_op),	// @[CRRV/src/core/Core.scala:21:30]
-    .io_csrRead_addr     (_executeStage_io_csrRead_addr),	// @[CRRV/src/core/Core.scala:21:30]
-    .io_exeForward_en    (_executeStage_io_regForward_en),	// @[CRRV/src/core/Core.scala:21:30]
-    .io_exeForward_addr  (_executeStage_io_regForward_addr),	// @[CRRV/src/core/Core.scala:21:30]
-    .io_exeForward_data  (_executeStage_io_regForward_data),	// @[CRRV/src/core/Core.scala:21:30]
-    .io_exeForward_load  (_executeStage_io_regForward_load),	// @[CRRV/src/core/Core.scala:21:30]
-    .io_memForward_en    (_memoryStage_io_regForward_en),	// @[CRRV/src/core/Core.scala:23:30]
-    .io_memForward_addr  (_memoryStage_io_regForward_addr),	// @[CRRV/src/core/Core.scala:23:30]
-    .io_memForward_data  (_memoryStage_io_regForward_data),	// @[CRRV/src/core/Core.scala:23:30]
-    .io_memForward_load  (_memoryStage_io_regForward_load),	// @[CRRV/src/core/Core.scala:23:30]
-    .io_wbForward_en     (_writeBackStage_io_regForward_en),	// @[CRRV/src/core/Core.scala:25:30]
-    .io_wbForward_addr   (_writeBackStage_io_regForward_addr),	// @[CRRV/src/core/Core.scala:25:30]
-    .io_wbForward_data   (_writeBackStage_io_regForward_data),	// @[CRRV/src/core/Core.scala:25:30]
-    .io_memCsrStall_op   (_memoryStage_io_memCsrStall_op),	// @[CRRV/src/core/Core.scala:23:30]
-    .io_memCsrStall_addr (_memoryStage_io_memCsrStall_addr),	// @[CRRV/src/core/Core.scala:23:30]
-    .io_wbCsrStall_op    (_writeBackStage_io_wb2csr_op),	// @[CRRV/src/core/Core.scala:25:30]
-    .io_wbCsrStall_addr  (_writeBackStage_io_wb2csr_addr),	// @[CRRV/src/core/Core.scala:25:30]
-    .io_regFile1_data    (_regFile_io_read1_data),	// @[CRRV/src/core/Core.scala:30:31]
-    .io_regFile2_data    (_regFile_io_read2_data),	// @[CRRV/src/core/Core.scala:30:31]
-    .io_regCsr_data      (_csrFile_io_read_data),	// @[CRRV/src/core/Core.scala:29:31]
-    .io_regRead1_data    (_hazardResolver_io_regRead1_data),
-    .io_regRead2_data    (_hazardResolver_io_regRead2_data),
-    .io_csrRead_data     (_hazardResolver_io_csrRead_data),
-    .io_regFile1_en      (_hazardResolver_io_regFile1_en),
-    .io_regFile1_addr    (_hazardResolver_io_regFile1_addr),
-    .io_regFile2_en      (_hazardResolver_io_regFile2_en),
-    .io_regFile2_addr    (_hazardResolver_io_regFile2_addr),
-    .io_regCsr_addr      (_hazardResolver_io_regCsr_addr),
-    .io_loadHazardFlag   (_hazardResolver_io_loadHazardFlag),
-    .io_csrHazardFlag    (_hazardResolver_io_csrHazardFlag)
+  HazardResolver hazardResolver (	// @[CRRV/src/core/Core.scala:29:31]
+    .io_regRead1_en          (_decodeStage_io_regRead1_en),	// @[CRRV/src/core/Core.scala:20:30]
+    .io_regRead1_addr        (_decodeStage_io_regRead1_addr),	// @[CRRV/src/core/Core.scala:20:30]
+    .io_regRead2_en          (_decodeStage_io_regRead2_en),	// @[CRRV/src/core/Core.scala:20:30]
+    .io_regRead2_addr        (_decodeStage_io_regRead2_addr),	// @[CRRV/src/core/Core.scala:20:30]
+    .io_csrRead_op           (_executeStage_io_csrRead_op),	// @[CRRV/src/core/Core.scala:22:30]
+    .io_csrRead_addr         (_executeStage_io_csrRead_addr),	// @[CRRV/src/core/Core.scala:22:30]
+    .io_regFile1_data        (_regFile_io_read1_data),	// @[CRRV/src/core/Core.scala:31:31]
+    .io_regFile2_data        (_regFile_io_read2_data),	// @[CRRV/src/core/Core.scala:31:31]
+    .io_regCsr_data          (_csrFile_io_read_data),	// @[CRRV/src/core/Core.scala:30:31]
+    .io_exeForward_en        (_executeStage_io_regForward_en),	// @[CRRV/src/core/Core.scala:22:30]
+    .io_exeForward_addr      (_executeStage_io_regForward_addr),	// @[CRRV/src/core/Core.scala:22:30]
+    .io_exeForward_data      (_executeStage_io_regForward_data),	// @[CRRV/src/core/Core.scala:22:30]
+    .io_exeForward_load      (_executeStage_io_regForward_load),	// @[CRRV/src/core/Core.scala:22:30]
+    .io_memForward_en        (_memoryStage_io_regForward_en),	// @[CRRV/src/core/Core.scala:24:30]
+    .io_memForward_addr      (_memoryStage_io_regForward_addr),	// @[CRRV/src/core/Core.scala:24:30]
+    .io_memForward_data      (_memoryStage_io_regForward_data),	// @[CRRV/src/core/Core.scala:24:30]
+    .io_memForward_load      (_memoryStage_io_regForward_load),	// @[CRRV/src/core/Core.scala:24:30]
+    .io_wbForward_en         (_writeBackStage_io_regForward_en),	// @[CRRV/src/core/Core.scala:26:30]
+    .io_wbForward_addr       (_writeBackStage_io_regForward_addr),	// @[CRRV/src/core/Core.scala:26:30]
+    .io_wbForward_data       (_writeBackStage_io_regForward_data),	// @[CRRV/src/core/Core.scala:26:30]
+    .io_wbExcMon_addr        (_writeBackStage_io_excMonCommit_addr),	// @[CRRV/src/core/Core.scala:26:30]
+    .io_wbExcMon_set         (_writeBackStage_io_excMonCommit_set),	// @[CRRV/src/core/Core.scala:26:30]
+    .io_wbExcMon_clear       (_writeBackStage_io_excMonCommit_clear),	// @[CRRV/src/core/Core.scala:26:30]
+    .io_memExcMonCheck_addr  (_memoryStage_io_excMon_addr),	// @[CRRV/src/core/Core.scala:24:30]
+    .io_excMonCheck_valid    (_excMon_io_check_valid),	// @[CRRV/src/core/Core.scala:32:31]
+    .io_memCsrStall_op       (_memoryStage_io_memCsrStall_op),	// @[CRRV/src/core/Core.scala:24:30]
+    .io_memCsrStall_addr     (_memoryStage_io_memCsrStall_addr),	// @[CRRV/src/core/Core.scala:24:30]
+    .io_wbCsrStall_op        (_writeBackStage_io_wb2csr_op),	// @[CRRV/src/core/Core.scala:26:30]
+    .io_wbCsrStall_addr      (_writeBackStage_io_wb2csr_addr),	// @[CRRV/src/core/Core.scala:26:30]
+    .io_regRead1_data        (_hazardResolver_io_regRead1_data),
+    .io_regRead2_data        (_hazardResolver_io_regRead2_data),
+    .io_csrRead_data         (_hazardResolver_io_csrRead_data),
+    .io_regFile1_en          (_hazardResolver_io_regFile1_en),
+    .io_regFile1_addr        (_hazardResolver_io_regFile1_addr),
+    .io_regFile2_en          (_hazardResolver_io_regFile2_en),
+    .io_regFile2_addr        (_hazardResolver_io_regFile2_addr),
+    .io_regCsr_addr          (_hazardResolver_io_regCsr_addr),
+    .io_memExcMonCheck_valid (_hazardResolver_io_memExcMonCheck_valid),
+    .io_excMonCheck_addr     (_hazardResolver_io_excMonCheck_addr),
+    .io_loadHazardFlag       (_hazardResolver_io_loadHazardFlag),
+    .io_csrHazardFlag        (_hazardResolver_io_csrHazardFlag)
   );
-  CsrFile csrFile (	// @[CRRV/src/core/Core.scala:29:31]
+  CsrFile csrFile (	// @[CRRV/src/core/Core.scala:30:31]
     .clock                   (clock),
     .reset                   (reset),
-    .io_read_addr            (_hazardResolver_io_regCsr_addr),	// @[CRRV/src/core/Core.scala:28:31]
-    .io_write_op             (_writeBackStage_io_wb2csr_op),	// @[CRRV/src/core/Core.scala:25:30]
-    .io_write_addr           (_writeBackStage_io_wb2csr_addr),	// @[CRRV/src/core/Core.scala:25:30]
-    .io_write_data           (_writeBackStage_io_wb2csr_data),	// @[CRRV/src/core/Core.scala:25:30]
-    .io_write_exceptType     (_writeBackStage_io_wb2csr_exceptType),	// @[CRRV/src/core/Core.scala:25:30]
-    .io_write_exceptPc       (_writeBackStage_io_wb2csr_exceptPc),	// @[CRRV/src/core/Core.scala:25:30]
+    .io_read_addr            (_hazardResolver_io_regCsr_addr),	// @[CRRV/src/core/Core.scala:29:31]
+    .io_write_op             (_writeBackStage_io_wb2csr_op),	// @[CRRV/src/core/Core.scala:26:30]
+    .io_write_addr           (_writeBackStage_io_wb2csr_addr),	// @[CRRV/src/core/Core.scala:26:30]
+    .io_write_data           (_writeBackStage_io_wb2csr_data),	// @[CRRV/src/core/Core.scala:26:30]
+    .io_write_exceptType     (_writeBackStage_io_wb2csr_exceptType),	// @[CRRV/src/core/Core.scala:26:30]
+    .io_write_exceptPc       (_writeBackStage_io_wb2csr_exceptPc),	// @[CRRV/src/core/Core.scala:26:30]
     .io_read_data            (_csrFile_io_read_data),
     .io_csrInfo_mepc         (_csrFile_io_csrInfo_mepc),
     .io_csrInfo_trapEnterVec (_csrFile_io_csrInfo_trapEnterVec)
   );
-  RegFile regFile (	// @[CRRV/src/core/Core.scala:30:31]
+  RegFile regFile (	// @[CRRV/src/core/Core.scala:31:31]
     .clock         (clock),
-    .io_read1_en   (_hazardResolver_io_regFile1_en),	// @[CRRV/src/core/Core.scala:28:31]
-    .io_read1_addr (_hazardResolver_io_regFile1_addr),	// @[CRRV/src/core/Core.scala:28:31]
-    .io_read2_en   (_hazardResolver_io_regFile2_en),	// @[CRRV/src/core/Core.scala:28:31]
-    .io_read2_addr (_hazardResolver_io_regFile2_addr),	// @[CRRV/src/core/Core.scala:28:31]
-    .io_write_en   (_writeBackStage_io_regForward_en),	// @[CRRV/src/core/Core.scala:25:30]
-    .io_write_addr (_writeBackStage_io_regForward_addr),	// @[CRRV/src/core/Core.scala:25:30]
-    .io_write_data (_writeBackStage_io_regForward_data),	// @[CRRV/src/core/Core.scala:25:30]
+    .io_read1_en   (_hazardResolver_io_regFile1_en),	// @[CRRV/src/core/Core.scala:29:31]
+    .io_read1_addr (_hazardResolver_io_regFile1_addr),	// @[CRRV/src/core/Core.scala:29:31]
+    .io_read2_en   (_hazardResolver_io_regFile2_en),	// @[CRRV/src/core/Core.scala:29:31]
+    .io_read2_addr (_hazardResolver_io_regFile2_addr),	// @[CRRV/src/core/Core.scala:29:31]
+    .io_write_en   (_writeBackStage_io_regForward_en),	// @[CRRV/src/core/Core.scala:26:30]
+    .io_write_addr (_writeBackStage_io_regForward_addr),	// @[CRRV/src/core/Core.scala:26:30]
+    .io_write_data (_writeBackStage_io_regForward_data),	// @[CRRV/src/core/Core.scala:26:30]
     .io_read1_data (_regFile_io_read1_data),
     .io_read2_data (_regFile_io_read2_data)
   );
+  ExclusiveMonitor excMon (	// @[CRRV/src/core/Core.scala:32:31]
+    .clock           (clock),
+    .reset           (reset),
+    .io_flush        (_pipelineControl_io_flushAll),	// @[CRRV/src/core/Core.scala:28:31]
+    .io_check_addr   (_hazardResolver_io_excMonCheck_addr),	// @[CRRV/src/core/Core.scala:29:31]
+    .io_update_addr  (_writeBackStage_io_excMonCommit_addr),	// @[CRRV/src/core/Core.scala:26:30]
+    .io_update_set   (_writeBackStage_io_excMonCommit_set),	// @[CRRV/src/core/Core.scala:26:30]
+    .io_update_clear (_writeBackStage_io_excMonCommit_clear),	// @[CRRV/src/core/Core.scala:26:30]
+    .io_check_valid  (_excMon_io_check_valid)
+  );
 endmodule
 
-module AXI4Arbiter(	// @[<stdin>:2185:10]
-  input         clock,	// @[<stdin>:2186:11]
-                reset,	// @[<stdin>:2187:11]
+module AXI4Arbiter(	// @[<stdin>:2665:10]
+  input         clock,	// @[<stdin>:2666:11]
+                reset,	// @[<stdin>:2667:11]
                 io_axiInst_ar_valid,	// @[CRRV/src/bus/AXI4Arbiter.scala:14:14]
   input  [31:0] io_axiInst_ar_bits_addr,	// @[CRRV/src/bus/AXI4Arbiter.scala:14:14]
   input  [2:0]  io_axiInst_ar_bits_size,	// @[CRRV/src/bus/AXI4Arbiter.scala:14:14]
@@ -3385,81 +3755,83 @@ module AXI4Arbiter(	// @[<stdin>:2185:10]
   output        io_axiOut_w_bits_last	// @[CRRV/src/bus/AXI4Arbiter.scala:14:14]
 );
 
-  wire       _io_axiData_b_valid_T;	// @[CRRV/src/bus/AXI4Arbiter.scala:72:28]
-  wire       _io_axiData_r_valid_output;	// @[CRRV/src/bus/AXI4Arbiter.scala:69:28]
-  wire       _io_axiInst_r_valid_output;	// @[CRRV/src/bus/AXI4Arbiter.scala:61:28]
+  wire       _io_axiData_b_valid_T;	// @[CRRV/src/bus/AXI4Arbiter.scala:76:28]
+  wire       _io_axiData_r_valid_output;	// @[CRRV/src/bus/AXI4Arbiter.scala:73:28]
+  wire       _io_axiInst_r_valid_output;	// @[CRRV/src/bus/AXI4Arbiter.scala:65:28]
   reg  [2:0] casez_tmp;	// @[CRRV/src/bus/AXI4Arbiter.scala:31:17, :33:39]
   wire       axiInstReq = io_axiInst_ar_valid | io_axiInst_aw_valid;	// @[CRRV/src/bus/AXI4Arbiter.scala:23:34]
   wire       axiDataReq = io_axiData_ar_valid | io_axiData_aw_valid;	// @[CRRV/src/bus/AXI4Arbiter.scala:24:34]
   reg  [2:0] state;	// @[CRRV/src/bus/AXI4Arbiter.scala:30:46]
   wire       _selInst_T_3 = state == 3'h0;	// @[CRRV/src/bus/AXI4Arbiter.scala:30:46, :31:17]
-  wire       axiInstEnd = _io_axiInst_r_valid_output & io_axiOut_r_bits_last;	// @[CRRV/src/bus/AXI4Arbiter.scala:25:50, :61:28]
+  wire       axiInstEnd = _io_axiInst_r_valid_output & io_axiOut_r_bits_last;	// @[CRRV/src/bus/AXI4Arbiter.scala:25:50, :65:28]
   wire       axiDataEnd =
-    _io_axiData_b_valid_T | _io_axiData_r_valid_output & io_axiOut_r_bits_last;	// @[CRRV/src/bus/AXI4Arbiter.scala:26:{51,84}, :69:28, :72:28]
-  always_comb begin	// @[CRRV/src/bus/AXI4Arbiter.scala:30:46, :31:17, :33:39, :37:24, :42:24, :47:13, :50:13]
-    casez (state)	// @[CRRV/src/bus/AXI4Arbiter.scala:30:46, :31:17, :33:39, :37:24, :42:24, :47:13, :50:13]
+    _io_axiData_b_valid_T | _io_axiData_r_valid_output & io_axiOut_r_bits_last;	// @[CRRV/src/bus/AXI4Arbiter.scala:26:{51,84}, :73:28, :76:28]
+  wire       _GEN = axiDataReq & ~axiDataEnd;	// @[CRRV/src/bus/AXI4Arbiter.scala:24:34, :26:51, :33:{23,26}]
+  wire       _GEN_0 = axiInstReq & ~axiInstEnd;	// @[CRRV/src/bus/AXI4Arbiter.scala:23:34, :25:50, :34:{30,33}]
+  wire [2:0] _GEN_1 = _GEN ? 3'h2 : {2'h0, _GEN_0};	// @[CRRV/src/bus/AXI4Arbiter.scala:33:{23,47}, :34:30, :47:{39,47}, :48:{46,54}, :49:28]
+  always_comb begin	// @[CRRV/src/bus/AXI4Arbiter.scala:31:17, :33:39, :37:24, :42:24, :47:39]
+    casez (state)	// @[CRRV/src/bus/AXI4Arbiter.scala:30:46, :31:17, :33:39, :37:24, :42:24, :47:39]
       3'b000:
-        casez_tmp =
-          axiDataReq & ~axiDataEnd ? 3'h2 : axiInstReq & ~axiInstEnd ? 3'h1 : state;	// @[CRRV/src/bus/AXI4Arbiter.scala:23:34, :24:34, :25:50, :26:51, :30:46, :31:17, :33:{23,26,39,47}, :34:{30,33,46,54}, :37:24, :42:24, :47:13, :50:13]
+        casez_tmp = _GEN ? 3'h2 : _GEN_0 ? 3'h1 : state;	// @[CRRV/src/bus/AXI4Arbiter.scala:30:46, :31:17, :33:{23,39,47}, :34:{30,46,54}, :37:24, :42:24, :47:39]
       3'b001:
-        casez_tmp = axiInstEnd ? 3'h3 : state;	// @[CRRV/src/bus/AXI4Arbiter.scala:25:50, :30:46, :31:17, :33:39, :37:24, :38:15, :42:24, :47:13, :50:13]
+        casez_tmp = axiInstEnd ? 3'h3 : state;	// @[CRRV/src/bus/AXI4Arbiter.scala:25:50, :30:46, :31:17, :33:39, :37:24, :38:15, :42:24, :47:39]
       3'b010:
-        casez_tmp = axiDataEnd ? 3'h4 : state;	// @[CRRV/src/bus/AXI4Arbiter.scala:26:51, :30:46, :31:17, :33:39, :37:24, :42:24, :43:15, :47:13, :50:13]
+        casez_tmp = axiDataEnd ? 3'h4 : state;	// @[CRRV/src/bus/AXI4Arbiter.scala:26:51, :30:46, :31:17, :33:39, :37:24, :42:24, :43:15, :47:39]
       3'b011:
-        casez_tmp = 3'h0;	// @[CRRV/src/bus/AXI4Arbiter.scala:30:46, :31:17, :33:39, :37:24, :42:24, :47:13, :50:13]
+        casez_tmp = _GEN_1;	// @[CRRV/src/bus/AXI4Arbiter.scala:31:17, :33:39, :37:24, :42:24, :47:{39,47}, :48:46]
       3'b100:
-        casez_tmp = 3'h0;	// @[CRRV/src/bus/AXI4Arbiter.scala:30:46, :31:17, :33:39, :37:24, :42:24, :47:13, :50:13]
+        casez_tmp = _GEN_1;	// @[CRRV/src/bus/AXI4Arbiter.scala:31:17, :33:39, :37:24, :42:24, :47:{39,47}, :48:46]
       3'b101:
-        casez_tmp = state;	// @[CRRV/src/bus/AXI4Arbiter.scala:30:46, :31:17, :33:39, :37:24, :42:24, :47:13, :50:13]
+        casez_tmp = state;	// @[CRRV/src/bus/AXI4Arbiter.scala:30:46, :31:17, :33:39, :37:24, :42:24, :47:39]
       3'b110:
-        casez_tmp = state;	// @[CRRV/src/bus/AXI4Arbiter.scala:30:46, :31:17, :33:39, :37:24, :42:24, :47:13, :50:13]
+        casez_tmp = state;	// @[CRRV/src/bus/AXI4Arbiter.scala:30:46, :31:17, :33:39, :37:24, :42:24, :47:39]
       default:
-        casez_tmp = state;	// @[CRRV/src/bus/AXI4Arbiter.scala:30:46, :31:17, :33:39, :37:24, :42:24, :47:13, :50:13]
-    endcase	// @[CRRV/src/bus/AXI4Arbiter.scala:30:46, :31:17, :33:39, :37:24, :42:24, :47:13, :50:13]
+        casez_tmp = state;	// @[CRRV/src/bus/AXI4Arbiter.scala:30:46, :31:17, :33:39, :37:24, :42:24, :47:39]
+    endcase	// @[CRRV/src/bus/AXI4Arbiter.scala:30:46, :31:17, :33:39, :37:24, :42:24, :47:39]
   end // always_comb
-  wire       selData = state == 3'h2 | state == 3'h4 | axiDataReq & _selInst_T_3;	// @[CRRV/src/bus/AXI4Arbiter.scala:24:34, :30:46, :31:17, :33:47, :43:15, :54:{24,45,59}, :55:17]
+  wire       selData = state == 3'h2 | state == 3'h4 | axiDataReq & _selInst_T_3;	// @[CRRV/src/bus/AXI4Arbiter.scala:24:34, :30:46, :31:17, :33:47, :43:15, :58:{24,45,59}, :59:17]
   wire       selInst =
-    (state == 3'h1 | state == 3'h3 | axiInstReq & _selInst_T_3) & ~selData;	// @[CRRV/src/bus/AXI4Arbiter.scala:23:34, :30:46, :31:17, :34:54, :38:15, :54:59, :56:{25,46,60}, :57:{17,40}, :58:5]
-  assign _io_axiInst_r_valid_output = selInst & io_axiOut_r_valid;	// @[CRRV/src/bus/AXI4Arbiter.scala:57:40, :61:28]
-  assign _io_axiData_r_valid_output = selData & io_axiOut_r_valid;	// @[CRRV/src/bus/AXI4Arbiter.scala:54:59, :69:28]
-  assign _io_axiData_b_valid_T = selData & io_axiOut_b_valid;	// @[CRRV/src/bus/AXI4Arbiter.scala:54:59, :72:28]
-  always @(posedge clock) begin	// @[<stdin>:2186:11]
-    if (reset)	// @[<stdin>:2186:11]
+    (state == 3'h1 | state == 3'h3 | axiInstReq & _selInst_T_3) & ~selData;	// @[CRRV/src/bus/AXI4Arbiter.scala:23:34, :30:46, :31:17, :34:54, :38:15, :58:59, :60:{25,46,60}, :61:{17,40}, :62:5]
+  assign _io_axiInst_r_valid_output = selInst & io_axiOut_r_valid;	// @[CRRV/src/bus/AXI4Arbiter.scala:61:40, :65:28]
+  assign _io_axiData_r_valid_output = selData & io_axiOut_r_valid;	// @[CRRV/src/bus/AXI4Arbiter.scala:58:59, :73:28]
+  assign _io_axiData_b_valid_T = selData & io_axiOut_b_valid;	// @[CRRV/src/bus/AXI4Arbiter.scala:58:59, :76:28]
+  always @(posedge clock) begin	// @[<stdin>:2666:11]
+    if (reset)	// @[<stdin>:2666:11]
       state <= 3'h0;	// @[CRRV/src/bus/AXI4Arbiter.scala:30:46]
-    else	// @[<stdin>:2186:11]
+    else	// @[<stdin>:2666:11]
       state <= casez_tmp;	// @[CRRV/src/bus/AXI4Arbiter.scala:30:46, :31:17, :33:39]
   end // always @(posedge)
-  assign io_axiInst_ar_ready = selInst & io_axiOut_ar_ready;	// @[<stdin>:2185:10, CRRV/src/bus/AXI4Arbiter.scala:57:40, :60:28]
-  assign io_axiInst_r_valid = _io_axiInst_r_valid_output;	// @[<stdin>:2185:10, CRRV/src/bus/AXI4Arbiter.scala:61:28]
-  assign io_axiInst_r_bits_data = io_axiOut_r_bits_data;	// @[<stdin>:2185:10]
-  assign io_axiInst_r_bits_last = io_axiOut_r_bits_last;	// @[<stdin>:2185:10]
-  assign io_axiData_ar_ready = selData & io_axiOut_ar_ready;	// @[<stdin>:2185:10, CRRV/src/bus/AXI4Arbiter.scala:54:59, :68:28]
-  assign io_axiData_r_valid = _io_axiData_r_valid_output;	// @[<stdin>:2185:10, CRRV/src/bus/AXI4Arbiter.scala:69:28]
-  assign io_axiData_r_bits_data = io_axiOut_r_bits_data;	// @[<stdin>:2185:10]
-  assign io_axiData_r_bits_last = io_axiOut_r_bits_last;	// @[<stdin>:2185:10]
-  assign io_axiData_aw_ready = selData & io_axiOut_aw_ready;	// @[<stdin>:2185:10, CRRV/src/bus/AXI4Arbiter.scala:54:59, :70:28]
-  assign io_axiData_w_ready = selData & io_axiOut_w_ready;	// @[<stdin>:2185:10, CRRV/src/bus/AXI4Arbiter.scala:54:59, :71:28]
-  assign io_axiOut_ar_valid = selData ? io_axiData_ar_valid : io_axiInst_ar_valid;	// @[<stdin>:2185:10, CRRV/src/bus/AXI4Arbiter.scala:54:59, :76:22]
+  assign io_axiInst_ar_ready = selInst & io_axiOut_ar_ready;	// @[<stdin>:2665:10, CRRV/src/bus/AXI4Arbiter.scala:61:40, :64:28]
+  assign io_axiInst_r_valid = _io_axiInst_r_valid_output;	// @[<stdin>:2665:10, CRRV/src/bus/AXI4Arbiter.scala:65:28]
+  assign io_axiInst_r_bits_data = io_axiOut_r_bits_data;	// @[<stdin>:2665:10]
+  assign io_axiInst_r_bits_last = io_axiOut_r_bits_last;	// @[<stdin>:2665:10]
+  assign io_axiData_ar_ready = selData & io_axiOut_ar_ready;	// @[<stdin>:2665:10, CRRV/src/bus/AXI4Arbiter.scala:58:59, :72:28]
+  assign io_axiData_r_valid = _io_axiData_r_valid_output;	// @[<stdin>:2665:10, CRRV/src/bus/AXI4Arbiter.scala:73:28]
+  assign io_axiData_r_bits_data = io_axiOut_r_bits_data;	// @[<stdin>:2665:10]
+  assign io_axiData_r_bits_last = io_axiOut_r_bits_last;	// @[<stdin>:2665:10]
+  assign io_axiData_aw_ready = selData & io_axiOut_aw_ready;	// @[<stdin>:2665:10, CRRV/src/bus/AXI4Arbiter.scala:58:59, :74:28]
+  assign io_axiData_w_ready = selData & io_axiOut_w_ready;	// @[<stdin>:2665:10, CRRV/src/bus/AXI4Arbiter.scala:58:59, :75:28]
+  assign io_axiOut_ar_valid = selData ? io_axiData_ar_valid : io_axiInst_ar_valid;	// @[<stdin>:2665:10, CRRV/src/bus/AXI4Arbiter.scala:58:59, :80:22]
   assign io_axiOut_ar_bits_addr =
-    selData ? io_axiData_ar_bits_addr : io_axiInst_ar_bits_addr;	// @[<stdin>:2185:10, CRRV/src/bus/AXI4Arbiter.scala:54:59, :82:21]
+    selData ? io_axiData_ar_bits_addr : io_axiInst_ar_bits_addr;	// @[<stdin>:2665:10, CRRV/src/bus/AXI4Arbiter.scala:58:59, :86:21]
   assign io_axiOut_ar_bits_size =
-    selData ? io_axiData_ar_bits_size : io_axiInst_ar_bits_size;	// @[<stdin>:2185:10, CRRV/src/bus/AXI4Arbiter.scala:54:59, :82:21]
-  assign io_axiOut_aw_valid = selData ? io_axiData_aw_valid : io_axiInst_aw_valid;	// @[<stdin>:2185:10, CRRV/src/bus/AXI4Arbiter.scala:54:59, :78:22]
+    selData ? io_axiData_ar_bits_size : io_axiInst_ar_bits_size;	// @[<stdin>:2665:10, CRRV/src/bus/AXI4Arbiter.scala:58:59, :86:21]
+  assign io_axiOut_aw_valid = selData ? io_axiData_aw_valid : io_axiInst_aw_valid;	// @[<stdin>:2665:10, CRRV/src/bus/AXI4Arbiter.scala:58:59, :82:22]
   assign io_axiOut_aw_bits_addr =
-    selData ? io_axiData_aw_bits_addr : io_axiInst_aw_bits_addr;	// @[<stdin>:2185:10, CRRV/src/bus/AXI4Arbiter.scala:54:59, :83:21]
+    selData ? io_axiData_aw_bits_addr : io_axiInst_aw_bits_addr;	// @[<stdin>:2665:10, CRRV/src/bus/AXI4Arbiter.scala:58:59, :87:21]
   assign io_axiOut_aw_bits_size =
-    selData ? io_axiData_aw_bits_size : io_axiInst_aw_bits_size;	// @[<stdin>:2185:10, CRRV/src/bus/AXI4Arbiter.scala:54:59, :83:21]
-  assign io_axiOut_w_valid = selData ? io_axiData_w_valid : io_axiInst_w_valid;	// @[<stdin>:2185:10, CRRV/src/bus/AXI4Arbiter.scala:54:59, :79:22]
+    selData ? io_axiData_aw_bits_size : io_axiInst_aw_bits_size;	// @[<stdin>:2665:10, CRRV/src/bus/AXI4Arbiter.scala:58:59, :87:21]
+  assign io_axiOut_w_valid = selData ? io_axiData_w_valid : io_axiInst_w_valid;	// @[<stdin>:2665:10, CRRV/src/bus/AXI4Arbiter.scala:58:59, :83:22]
   assign io_axiOut_w_bits_data =
-    selData ? io_axiData_w_bits_data : io_axiInst_w_bits_data;	// @[<stdin>:2185:10, CRRV/src/bus/AXI4Arbiter.scala:54:59, :84:21]
+    selData ? io_axiData_w_bits_data : io_axiInst_w_bits_data;	// @[<stdin>:2665:10, CRRV/src/bus/AXI4Arbiter.scala:58:59, :88:21]
   assign io_axiOut_w_bits_strb =
-    selData ? io_axiData_w_bits_strb : io_axiInst_w_bits_strb;	// @[<stdin>:2185:10, CRRV/src/bus/AXI4Arbiter.scala:54:59, :84:21]
+    selData ? io_axiData_w_bits_strb : io_axiInst_w_bits_strb;	// @[<stdin>:2665:10, CRRV/src/bus/AXI4Arbiter.scala:58:59, :88:21]
   assign io_axiOut_w_bits_last =
-    selData ? io_axiData_w_bits_last : io_axiInst_w_bits_last;	// @[<stdin>:2185:10, CRRV/src/bus/AXI4Arbiter.scala:54:59, :84:21]
+    selData ? io_axiData_w_bits_last : io_axiInst_w_bits_last;	// @[<stdin>:2665:10, CRRV/src/bus/AXI4Arbiter.scala:58:59, :88:21]
 endmodule
 
-module SimpleMux2(	// @[<stdin>:2281:10]
-  input         clock,	// @[<stdin>:2282:11]
+module SimpleMux2(	// @[<stdin>:2781:10]
+  input         clock,	// @[<stdin>:2782:11]
                 io_sel2,	// @[CRRV/src/bus/SimpleUtils.scala:10:14]
                 io_in_out_valid,	// @[CRRV/src/bus/SimpleUtils.scala:10:14]
   input  [31:0] io_in_out_bits_addr,	// @[CRRV/src/bus/SimpleUtils.scala:10:14]
@@ -3480,20 +3852,20 @@ module SimpleMux2(	// @[<stdin>:2281:10]
 );
 
   reg readSel;	// @[CRRV/src/bus/SimpleUtils.scala:16:24]
-  always @(posedge clock)	// @[<stdin>:2282:11]
+  always @(posedge clock)	// @[<stdin>:2782:11]
     readSel <= io_sel2;	// @[CRRV/src/bus/SimpleUtils.scala:16:24]
-  assign io_in_out_ready = io_sel2 | io_out1_out_ready;	// @[<stdin>:2281:10, CRRV/src/bus/SimpleUtils.scala:20:25]
-  assign io_in_in_rdata = readSel ? io_out2_in_rdata : io_out1_in_rdata;	// @[<stdin>:2281:10, CRRV/src/bus/SimpleUtils.scala:16:24, :18:24]
-  assign io_out1_out_valid = io_in_out_valid & ~io_sel2;	// @[<stdin>:2281:10, CRRV/src/bus/SimpleUtils.scala:22:{40,43}]
-  assign io_out1_out_bits_addr = io_in_out_bits_addr;	// @[<stdin>:2281:10]
-  assign io_out1_out_bits_writeEn = io_in_out_bits_writeEn;	// @[<stdin>:2281:10]
-  assign io_out1_out_bits_size = io_in_out_bits_size;	// @[<stdin>:2281:10]
-  assign io_out1_out_bits_wdata = io_in_out_bits_wdata;	// @[<stdin>:2281:10]
-  assign io_out2_out_bits_addr = io_in_out_bits_addr;	// @[<stdin>:2281:10]
+  assign io_in_out_ready = io_sel2 | io_out1_out_ready;	// @[<stdin>:2781:10, CRRV/src/bus/SimpleUtils.scala:20:25]
+  assign io_in_in_rdata = readSel ? io_out2_in_rdata : io_out1_in_rdata;	// @[<stdin>:2781:10, CRRV/src/bus/SimpleUtils.scala:16:24, :18:24]
+  assign io_out1_out_valid = io_in_out_valid & ~io_sel2;	// @[<stdin>:2781:10, CRRV/src/bus/SimpleUtils.scala:22:{40,43}]
+  assign io_out1_out_bits_addr = io_in_out_bits_addr;	// @[<stdin>:2781:10]
+  assign io_out1_out_bits_writeEn = io_in_out_bits_writeEn;	// @[<stdin>:2781:10]
+  assign io_out1_out_bits_size = io_in_out_bits_size;	// @[<stdin>:2781:10]
+  assign io_out1_out_bits_wdata = io_in_out_bits_wdata;	// @[<stdin>:2781:10]
+  assign io_out2_out_bits_addr = io_in_out_bits_addr;	// @[<stdin>:2781:10]
 endmodule
 
-module SimpleXbar(	// @[<stdin>:2301:10]
-  input         clock,	// @[<stdin>:2302:11]
+module SimpleXbar(	// @[<stdin>:2801:10]
+  input         clock,	// @[<stdin>:2802:11]
                 io_simpleIn_out_valid,	// @[CRRV/src/bus/SimpleXbar.scala:9:14]
   input  [31:0] io_simpleIn_out_bits_addr,	// @[CRRV/src/bus/SimpleXbar.scala:9:14]
   input         io_simpleIn_out_bits_writeEn,	// @[CRRV/src/bus/SimpleXbar.scala:9:14]
@@ -3534,9 +3906,9 @@ module SimpleXbar(	// @[<stdin>:2301:10]
   );
 endmodule
 
-module CLINT(	// @[<stdin>:2322:10]
-  input         clock,	// @[<stdin>:2323:11]
-                reset,	// @[<stdin>:2324:11]
+module CLINT(	// @[<stdin>:2822:10]
+  input         clock,	// @[<stdin>:2823:11]
+                reset,	// @[<stdin>:2824:11]
   input  [31:0] io_out_bits_addr,	// @[CRRV/src/bus/CLINT.scala:14:14]
   output [31:0] io_in_rdata	// @[CRRV/src/bus/CLINT.scala:14:14]
 );
@@ -3544,13 +3916,13 @@ module CLINT(	// @[<stdin>:2322:10]
   reg [63:0] mtime;	// @[CRRV/src/bus/CLINT.scala:16:22]
   reg [15:0] tick;	// @[CRRV/src/bus/CLINT.scala:17:22]
   reg [31:0] outputData;	// @[CRRV/src/bus/CLINT.scala:24:27]
-  always @(posedge clock) begin	// @[<stdin>:2323:11]
-    if (reset) begin	// @[<stdin>:2323:11]
+  always @(posedge clock) begin	// @[<stdin>:2823:11]
+    if (reset) begin	// @[<stdin>:2823:11]
       mtime <= 64'h0;	// @[CRRV/src/bus/CLINT.scala:16:22]
       tick <= 16'h0;	// @[CRRV/src/bus/CLINT.scala:17:22]
       outputData <= 32'h0;	// @[CRRV/src/bus/CLINT.scala:24:27]
     end
-    else begin	// @[<stdin>:2323:11]
+    else begin	// @[<stdin>:2823:11]
       if (tick == 16'h10) begin	// @[CRRV/src/bus/CLINT.scala:17:22, :19:13]
         mtime <= mtime + 64'h1;	// @[CRRV/src/bus/CLINT.scala:16:22, :21:20]
         tick <= 16'h0;	// @[CRRV/src/bus/CLINT.scala:17:22]
@@ -3565,12 +3937,12 @@ module CLINT(	// @[<stdin>:2322:10]
         outputData <= 32'h0;	// @[CRRV/src/bus/CLINT.scala:24:27]
     end
   end // always @(posedge)
-  assign io_in_rdata = outputData;	// @[<stdin>:2322:10, CRRV/src/bus/CLINT.scala:24:27]
+  assign io_in_rdata = outputData;	// @[<stdin>:2822:10, CRRV/src/bus/CLINT.scala:24:27]
 endmodule
 
-module Simple2AXI4(	// @[<stdin>:2354:10, :2475:10]
-  input         clock,	// @[<stdin>:2355:11, :2476:11]
-                reset,	// @[<stdin>:2356:11, :2477:11]
+module Simple2AXI4(	// @[<stdin>:2854:10, :2975:10]
+  input         clock,	// @[<stdin>:2855:11, :2976:11]
+                reset,	// @[<stdin>:2856:11, :2977:11]
                 io_simple_out_valid,	// @[CRRV/src/bus/Simple2AXI4.scala:14:14]
   input  [31:0] io_simple_out_bits_addr,	// @[CRRV/src/bus/Simple2AXI4.scala:14:14]
   input         io_simple_out_bits_writeEn,	// @[CRRV/src/bus/Simple2AXI4.scala:14:14]
@@ -3645,10 +4017,10 @@ module Simple2AXI4(	// @[<stdin>:2354:10, :2475:10]
   wire        _io_axi_w_bits_last_T = state == 3'h3;	// @[CRRV/src/bus/Simple2AXI4.scala:28:30, :36:21, :86:32]
   wire        _io_axi_w_bits_last_T_1 = state == 3'h4;	// @[CRRV/src/bus/Simple2AXI4.scala:28:30, :53:15, :89:52]
   wire        _GEN_2 = state == 3'h0;	// @[CRRV/src/bus/Simple2AXI4.scala:28:30, :33:17]
-  always @(posedge clock) begin	// @[<stdin>:2355:11, :2476:11]
-    if (reset)	// @[<stdin>:2355:11, :2476:11]
+  always @(posedge clock) begin	// @[<stdin>:2855:11, :2976:11]
+    if (reset)	// @[<stdin>:2855:11, :2976:11]
       state <= 3'h0;	// @[CRRV/src/bus/Simple2AXI4.scala:28:30]
-    else	// @[<stdin>:2355:11, :2476:11]
+    else	// @[<stdin>:2855:11, :2976:11]
       state <= casez_tmp;	// @[CRRV/src/bus/Simple2AXI4.scala:28:30, :33:17, :35:33]
     if (_GEN_2 | state == 3'h1 | ~(state == 3'h2 & _GEN)) begin	// @[CRRV/src/bus/Simple2AXI4.scala:28:30, :30:18, :33:17, :36:21, :42:15, :46:{27,50}, :47:15]
     end
@@ -3663,25 +4035,25 @@ module Simple2AXI4(	// @[<stdin>:2354:10, :2475:10]
   end // always @(posedge)
   assign io_simple_out_ready =
     state == 3'h5
-    & addr == (_simple_addr_T_1 ? io_simple_out_bits_addr : _simple_addr_T_3);	// @[<stdin>:2354:10, :2475:10, CRRV/src/bus/Simple2AXI4.scala:19:24, :20:37, :22:8, :28:30, :31:18, :48:15, :68:{33,43,52}]
-  assign io_simple_in_rdata = addr[2] ? rdata[63:32] : rdata[31:0];	// @[<stdin>:2354:10, :2475:10, CRRV/src/bus/Simple2AXI4.scala:30:18, :31:18, :69:{29,34,44,59}]
-  assign io_axi_ar_valid = state == 3'h1;	// @[<stdin>:2354:10, :2475:10, CRRV/src/bus/Simple2AXI4.scala:28:30, :36:21, :82:32]
-  assign io_axi_ar_bits_addr = addr;	// @[<stdin>:2354:10, :2475:10, CRRV/src/bus/Simple2AXI4.scala:31:18]
-  assign io_axi_ar_bits_size = _GEN_1;	// @[<stdin>:2354:10, :2475:10, CRRV/src/bus/Simple2AXI4.scala:84:23]
-  assign io_axi_aw_valid = _io_axi_w_bits_last_T;	// @[<stdin>:2354:10, :2475:10, CRRV/src/bus/Simple2AXI4.scala:86:32]
-  assign io_axi_aw_bits_addr = addr;	// @[<stdin>:2354:10, :2475:10, CRRV/src/bus/Simple2AXI4.scala:31:18]
-  assign io_axi_aw_bits_size = _GEN_1;	// @[<stdin>:2354:10, :2475:10, CRRV/src/bus/Simple2AXI4.scala:84:23]
-  assign io_axi_w_valid = _io_axi_w_bits_last_T | _io_axi_w_bits_last_T_1;	// @[<stdin>:2354:10, :2475:10, CRRV/src/bus/Simple2AXI4.scala:86:32, :89:{43,52}]
-  assign io_axi_w_bits_data = {2{io_simple_out_bits_wdata}};	// @[<stdin>:2354:10, :2475:10, CRRV/src/bus/Simple2AXI4.scala:71:21]
-  assign io_axi_w_bits_strb = casez_tmp_0[7:0];	// @[<stdin>:2354:10, :2475:10, CRRV/src/bus/Simple2AXI4.scala:73:39, :92:23]
-  assign io_axi_w_bits_last = _io_axi_w_bits_last_T | _io_axi_w_bits_last_T_1;	// @[<stdin>:2354:10, :2475:10, CRRV/src/bus/Simple2AXI4.scala:86:32, :89:52, :91:43]
+    & addr == (_simple_addr_T_1 ? io_simple_out_bits_addr : _simple_addr_T_3);	// @[<stdin>:2854:10, :2975:10, CRRV/src/bus/Simple2AXI4.scala:19:24, :20:37, :22:8, :28:30, :31:18, :48:15, :68:{33,43,52}]
+  assign io_simple_in_rdata = addr[2] ? rdata[63:32] : rdata[31:0];	// @[<stdin>:2854:10, :2975:10, CRRV/src/bus/Simple2AXI4.scala:30:18, :31:18, :69:{29,34,44,59}]
+  assign io_axi_ar_valid = state == 3'h1;	// @[<stdin>:2854:10, :2975:10, CRRV/src/bus/Simple2AXI4.scala:28:30, :36:21, :82:32]
+  assign io_axi_ar_bits_addr = addr;	// @[<stdin>:2854:10, :2975:10, CRRV/src/bus/Simple2AXI4.scala:31:18]
+  assign io_axi_ar_bits_size = _GEN_1;	// @[<stdin>:2854:10, :2975:10, CRRV/src/bus/Simple2AXI4.scala:84:23]
+  assign io_axi_aw_valid = _io_axi_w_bits_last_T;	// @[<stdin>:2854:10, :2975:10, CRRV/src/bus/Simple2AXI4.scala:86:32]
+  assign io_axi_aw_bits_addr = addr;	// @[<stdin>:2854:10, :2975:10, CRRV/src/bus/Simple2AXI4.scala:31:18]
+  assign io_axi_aw_bits_size = _GEN_1;	// @[<stdin>:2854:10, :2975:10, CRRV/src/bus/Simple2AXI4.scala:84:23]
+  assign io_axi_w_valid = _io_axi_w_bits_last_T | _io_axi_w_bits_last_T_1;	// @[<stdin>:2854:10, :2975:10, CRRV/src/bus/Simple2AXI4.scala:86:32, :89:{43,52}]
+  assign io_axi_w_bits_data = {2{io_simple_out_bits_wdata}};	// @[<stdin>:2854:10, :2975:10, CRRV/src/bus/Simple2AXI4.scala:71:21]
+  assign io_axi_w_bits_strb = casez_tmp_0[7:0];	// @[<stdin>:2854:10, :2975:10, CRRV/src/bus/Simple2AXI4.scala:73:39, :92:23]
+  assign io_axi_w_bits_last = _io_axi_w_bits_last_T | _io_axi_w_bits_last_T_1;	// @[<stdin>:2854:10, :2975:10, CRRV/src/bus/Simple2AXI4.scala:86:32, :89:52, :91:43]
 endmodule
 
 // external module Debug
 
-module CRRVTop(	// @[<stdin>:2602:10]
-  input         clock,	// @[<stdin>:2603:11]
-                reset,	// @[<stdin>:2604:11]
+module CRRVTop(	// @[<stdin>:3102:10]
+  input         clock,	// @[<stdin>:3103:11]
+                reset,	// @[<stdin>:3104:11]
                 io_interrupt,	// @[CRRV/src/CRRVTop.scala:11:14]
                 io_master_awready,	// @[CRRV/src/CRRVTop.scala:11:14]
                 io_master_wready,	// @[CRRV/src/CRRVTop.scala:11:14]
@@ -3964,24 +4336,24 @@ module CRRVTop(	// @[<stdin>:2602:10]
     .debug_regWaddr     (_core_io_debug_regWaddr),	// @[CRRV/src/CRRVTop.scala:13:20]
     .debug_regWdata     (_core_io_debug_regWdata)	// @[CRRV/src/CRRVTop.scala:13:20]
   );
-  assign io_master_awid = 4'h0;	// @[<stdin>:2602:10, CRRV/src/CRRVTop.scala:15:30, :18:30, :19:30]
-  assign io_master_awlen = 8'h0;	// @[<stdin>:2602:10, CRRV/src/CRRVTop.scala:15:30, :18:30, :19:30]
-  assign io_master_awburst = 2'h0;	// @[<stdin>:2602:10, CRRV/src/CRRVTop.scala:15:30, :18:30, :19:30]
-  assign io_master_bready = 1'h1;	// @[<stdin>:2602:10, CRRV/src/CRRVTop.scala:13:20, :15:30, :16:30, :17:30, :18:30, :19:30]
-  assign io_master_arid = 4'h0;	// @[<stdin>:2602:10, CRRV/src/CRRVTop.scala:15:30, :18:30, :19:30]
-  assign io_master_arlen = 8'h0;	// @[<stdin>:2602:10, CRRV/src/CRRVTop.scala:15:30, :18:30, :19:30]
-  assign io_master_arburst = 2'h0;	// @[<stdin>:2602:10, CRRV/src/CRRVTop.scala:15:30, :18:30, :19:30]
-  assign io_master_rready = 1'h1;	// @[<stdin>:2602:10, CRRV/src/CRRVTop.scala:13:20, :15:30, :16:30, :17:30, :18:30, :19:30]
-  assign io_slave_awready = 1'h0;	// @[<stdin>:2602:10, CRRV/src/CRRVTop.scala:13:20, :15:30, :18:30]
-  assign io_slave_wready = 1'h0;	// @[<stdin>:2602:10, CRRV/src/CRRVTop.scala:13:20, :15:30, :18:30]
-  assign io_slave_bvalid = 1'h0;	// @[<stdin>:2602:10, CRRV/src/CRRVTop.scala:13:20, :15:30, :18:30]
-  assign io_slave_bresp = 2'h0;	// @[<stdin>:2602:10, CRRV/src/CRRVTop.scala:15:30, :18:30, :19:30]
-  assign io_slave_bid = 4'h0;	// @[<stdin>:2602:10, CRRV/src/CRRVTop.scala:15:30, :18:30, :19:30]
-  assign io_slave_arready = 1'h0;	// @[<stdin>:2602:10, CRRV/src/CRRVTop.scala:13:20, :15:30, :18:30]
-  assign io_slave_rvalid = 1'h0;	// @[<stdin>:2602:10, CRRV/src/CRRVTop.scala:13:20, :15:30, :18:30]
-  assign io_slave_rresp = 2'h0;	// @[<stdin>:2602:10, CRRV/src/CRRVTop.scala:15:30, :18:30, :19:30]
-  assign io_slave_rdata = 64'h0;	// @[<stdin>:2602:10, CRRV/src/CRRVTop.scala:80:20]
-  assign io_slave_rlast = 1'h0;	// @[<stdin>:2602:10, CRRV/src/CRRVTop.scala:13:20, :15:30, :18:30]
-  assign io_slave_rid = 4'h0;	// @[<stdin>:2602:10, CRRV/src/CRRVTop.scala:15:30, :18:30, :19:30]
+  assign io_master_awid = 4'h0;	// @[<stdin>:3102:10, CRRV/src/CRRVTop.scala:15:30, :18:30, :19:30]
+  assign io_master_awlen = 8'h0;	// @[<stdin>:3102:10, CRRV/src/CRRVTop.scala:15:30, :18:30, :19:30]
+  assign io_master_awburst = 2'h0;	// @[<stdin>:3102:10, CRRV/src/CRRVTop.scala:15:30, :18:30, :19:30]
+  assign io_master_bready = 1'h1;	// @[<stdin>:3102:10, CRRV/src/CRRVTop.scala:13:20, :15:30, :16:30, :17:30, :18:30, :19:30]
+  assign io_master_arid = 4'h0;	// @[<stdin>:3102:10, CRRV/src/CRRVTop.scala:15:30, :18:30, :19:30]
+  assign io_master_arlen = 8'h0;	// @[<stdin>:3102:10, CRRV/src/CRRVTop.scala:15:30, :18:30, :19:30]
+  assign io_master_arburst = 2'h0;	// @[<stdin>:3102:10, CRRV/src/CRRVTop.scala:15:30, :18:30, :19:30]
+  assign io_master_rready = 1'h1;	// @[<stdin>:3102:10, CRRV/src/CRRVTop.scala:13:20, :15:30, :16:30, :17:30, :18:30, :19:30]
+  assign io_slave_awready = 1'h0;	// @[<stdin>:3102:10, CRRV/src/CRRVTop.scala:13:20, :15:30, :18:30]
+  assign io_slave_wready = 1'h0;	// @[<stdin>:3102:10, CRRV/src/CRRVTop.scala:13:20, :15:30, :18:30]
+  assign io_slave_bvalid = 1'h0;	// @[<stdin>:3102:10, CRRV/src/CRRVTop.scala:13:20, :15:30, :18:30]
+  assign io_slave_bresp = 2'h0;	// @[<stdin>:3102:10, CRRV/src/CRRVTop.scala:15:30, :18:30, :19:30]
+  assign io_slave_bid = 4'h0;	// @[<stdin>:3102:10, CRRV/src/CRRVTop.scala:15:30, :18:30, :19:30]
+  assign io_slave_arready = 1'h0;	// @[<stdin>:3102:10, CRRV/src/CRRVTop.scala:13:20, :15:30, :18:30]
+  assign io_slave_rvalid = 1'h0;	// @[<stdin>:3102:10, CRRV/src/CRRVTop.scala:13:20, :15:30, :18:30]
+  assign io_slave_rresp = 2'h0;	// @[<stdin>:3102:10, CRRV/src/CRRVTop.scala:15:30, :18:30, :19:30]
+  assign io_slave_rdata = 64'h0;	// @[<stdin>:3102:10, CRRV/src/CRRVTop.scala:80:20]
+  assign io_slave_rlast = 1'h0;	// @[<stdin>:3102:10, CRRV/src/CRRVTop.scala:13:20, :15:30, :18:30]
+  assign io_slave_rid = 4'h0;	// @[<stdin>:3102:10, CRRV/src/CRRVTop.scala:15:30, :18:30, :19:30]
 endmodule
 
