@@ -24,15 +24,15 @@ class WriteBackStage extends Module {
   val mem2wb = io.mem2wb.MEM
   val addr   = io.mem2wb.MEM.memAddr
 
-  val shiftData = io.read.rdata >> (Cat(addr(1, 0), 0.U(3.W)))
+  val rdata = io.read.rdata
   val readData = MuxLookup(id2wb.lsuOp, 0.U)(
     Seq(
-      LSU_LB -> (Cat(Fill(24, shiftData(7)), shiftData(7, 0))),
-      LSU_LBU -> (Cat(0.U(24.W), shiftData(7, 0))),
-      LSU_LH -> (Cat(Fill(16, shiftData(15)), shiftData(15, 0))),
-      LSU_LHU -> (Cat(0.U(16.W), shiftData(15, 0))),
-      LSU_LW -> (shiftData),
-      LSU_LR -> (shiftData)
+      LSU_LB -> (Cat(Fill(24, rdata(7)), rdata(7, 0))),
+      LSU_LBU -> (Cat(0.U(24.W), rdata(7, 0))),
+      LSU_LH -> (Cat(Fill(16, rdata(15)), rdata(15, 0))),
+      LSU_LHU -> (Cat(0.U(16.W), rdata(15, 0))),
+      LSU_LW -> (rdata),
+      LSU_LR -> (rdata)
     )
   )
 

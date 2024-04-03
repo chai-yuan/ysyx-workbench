@@ -12,17 +12,19 @@ class CRRVTop extends Module {
   // CRRV CPU
   val core = Module(new Core)
   // val arbiter    = Module(new SimpleArbiter)
-  val axiArbiter     = Module(new AXI4Arbiter)
-  val xbar           = Module(new SimpleXbar)
-  val clint          = Module(new CLINT)
-  val simple2axiInst = Module(new Simple2AXI4)
-  val simple2axiData = Module(new Simple2AXI4)
-  val debug          = Module(new Debug)
+  val axiArbiter      = Module(new AXI4Arbiter)
+  val xbar            = Module(new SimpleXbar)
+  val clint           = Module(new CLINT)
+  val simpleAlignment = Module(new SimpleAlignment)
+  val simple2axiInst  = Module(new Simple2AXI4)
+  val simple2axiData  = Module(new Simple2AXI4)
+  val debug           = Module(new Debug)
   // val icache         = Module(new InstCache(256, 2))
   // icache.io.flush := false.B
 
   core.io.inst <> simple2axiInst.io.simple
-  core.io.data <> xbar.io.simpleIn
+  core.io.data <> simpleAlignment.io.in
+  simpleAlignment.io.out <> xbar.io.simpleIn
   xbar.io.simpleOut <> simple2axiData.io.simple
   xbar.io.simpleCLINT <> clint.io
 

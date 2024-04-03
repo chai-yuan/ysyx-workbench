@@ -10,11 +10,11 @@ import io._
   *
   * @param tickCount
   */
-class CLINT(val tickCount: Int = 16) extends Module {
+class CLINT(val tickCount: Int = 8) extends Module {
   val io = IO(Flipped(new SimpleIO(ADDR_WIDTH, DATA_WIDTH)))
 
   val mtime = RegInit(0.U(64.W))
-  val tick  = RegInit(0.U(16.W))
+  val tick  = RegInit(0.U(8.W))
   tick := tick + 1.U
   when(tick === tickCount.U) {
     tick  := 0.U
@@ -25,8 +25,8 @@ class CLINT(val tickCount: Int = 16) extends Module {
   outputData := MuxCase(
     0.U,
     Seq(
-      (io.out.bits.addr(15, 0) === 0.U) -> (mtime(31, 0)),
-      (io.out.bits.addr(15, 0) === 4.U) -> (mtime(63, 32))
+      (io.out.bits.addr(15, 0) === "hbff8".U) -> (mtime(31, 0)),
+      (io.out.bits.addr(15, 0) === "hbffc".U) -> (mtime(63, 32))
     )
   )
 
