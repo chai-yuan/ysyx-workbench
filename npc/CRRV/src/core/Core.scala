@@ -12,6 +12,7 @@ class Core extends Module {
   val io = IO(new Bundle {
     val inst  = new SimpleIO(ADDR_WIDTH, INST_WIDTH)
     val data  = new SimpleIO(ADDR_WIDTH, DATA_WIDTH)
+    val intr  = new InterruptIO
     val debug = Output(new DebugIO)
   })
 
@@ -81,6 +82,7 @@ class Core extends Module {
   // csr file
   csrFile.io.read <> hazardResolver.io.regCsr
   csrFile.io.write <> writeBackStage.io.wb2csr
+  csrFile.io.intr := io.intr
 
   // excMon
   excMon.io.flush <> pipelineControl.io.flushAll

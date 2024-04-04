@@ -47,9 +47,10 @@ class PipelineControl extends Module {
     )
   )
   // 异常
-  val excFlush = io.exceptType =/= EXC_NONE
+  val excFlush = io.exceptType =/= EXC_NONE || io.csrInfo.intr || io.csrInfo.sleep
   val excPc = MuxLookup(io.exceptType, 0.U)(
     Seq(
+      (io.csrInfo.intr) -> (io.csrInfo.trapEnterVec),
       (EXC_ECALL) -> (io.csrInfo.trapEnterVec),
       (EXC_MRET) -> (io.csrInfo.mepc)
     )

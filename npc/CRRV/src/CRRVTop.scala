@@ -26,15 +26,18 @@ class CRRVTop extends Module {
   core.io.data <> simpleAlignment.io.in
   simpleAlignment.io.out <> xbar.io.simpleIn
   xbar.io.simpleOut <> simple2axiData.io.simple
-  xbar.io.simpleCLINT <> clint.io
+  xbar.io.simpleCLINT <> clint.io.core
 
   axiArbiter.io.axiInst <> simple2axiInst.io.axi
   axiArbiter.io.axiData <> simple2axiData.io.axi
   val aximaster = axiArbiter.io.axiOut
 
   // CPU IO
-  debug.io.clock := clock
-  debug.io.reset := reset
+  core.io.intr.timer  := clint.io.intr
+  core.io.intr.soft   := false.B
+  core.io.intr.extern := false.B
+  debug.io.clock      := clock
+  debug.io.reset      := reset
   core.io.debug <> debug.io.debug
 
   aximaster.aw.ready := io.master.awready
