@@ -15,6 +15,8 @@ class CsrFile extends Module {
 
     val intr    = new InterruptIO
     val csrInfo = new CsrInfoIO
+
+    val debug = Output(new CsrDebugIO)
   })
   // CSR
   val mstatus   = RegInit(0.U(32.W))

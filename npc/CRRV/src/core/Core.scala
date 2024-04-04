@@ -70,7 +70,6 @@ class Core extends Module {
 
   writeBackStage.io.mem2wb <> mem2wb.io.next
   writeBackStage.io.read := io.data.in
-  io.debug               := writeBackStage.io.debug
 
   // register file
   regFile.io.read1 <> hazardResolver.io.regFile1
@@ -114,4 +113,9 @@ class Core extends Module {
 
   pipelineControl.io.csrHazardFlag   := hazardResolver.io.csrHazardFlag
   pipelineControl.io.loadHazardFlage := hazardResolver.io.loadHazardFlag
+
+  // debug
+  io.debug.debugInfo := writeBackStage.io.debug
+  io.debug.regs      := regFile.io.debug
+  io.debug.csr       := csrFile.io.debug
 }

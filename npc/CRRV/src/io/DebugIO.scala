@@ -5,14 +5,21 @@ import chisel3.util._
 import config.CPUconfig
 
 class DebugIO extends Bundle {
-  val valid = Bool()
-  val halt  = Bool()
+  val debugInfo = new DebugInfoIO
+  val regs      = new RegDebugIO
+  val csr       = new CsrDebugIO
+}
 
+class DebugInfoIO extends Bundle {
+  val valid        = Bool()
+  val halt         = Bool()
   val deviceAccess = Bool()
   val deviceAddr   = UInt(CPUconfig.ADDR_WIDTH.W)
-
-  val pc       = UInt(CPUconfig.ADDR_WIDTH.W)
-  val regWen   = Bool()
-  val regWaddr = UInt(5.W)
-  val regWdata = UInt(CPUconfig.DATA_WIDTH.W)
+  val pc           = UInt(CPUconfig.ADDR_WIDTH.W)
 }
+
+class RegDebugIO extends Bundle {
+  val regs = Vec(32, UInt(CPUconfig.DATA_WIDTH.W))
+}
+
+class CsrDebugIO extends Bundle {}
