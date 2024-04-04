@@ -22,4 +22,13 @@ class RegDebugIO extends Bundle {
   val regs = Vec(32, UInt(CPUconfig.DATA_WIDTH.W))
 }
 
-class CsrDebugIO extends Bundle {}
+class CsrDebugIO extends Bundle {
+  val mstatus  = UInt(32.W)
+  val mcause   = UInt(32.W)
+  val mtvec    = UInt(32.W)
+  val mepc     = UInt(32.W)
+  val mscratch = UInt(32.W)
+  val mie      = UInt(32.W)
+  val mip      = UInt(32.W)
+  val mtval    = UInt(32.W)
+}

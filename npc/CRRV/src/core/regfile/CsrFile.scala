@@ -100,6 +100,15 @@ class CsrFile extends Module {
   io.csrInfo.trapEnterVec := mtvec
   io.csrInfo.intr         := intr
   io.csrInfo.sleep        := sleep
+  // debug
+  io.debug.mstatus  := mstatus
+  io.debug.mcause   := mcause
+  io.debug.mie      := mie
+  io.debug.mtvec    := mtvec
+  io.debug.mepc     := mepc
+  io.debug.mip      := mip
+  io.debug.mtval    := mtval
+  io.debug.mscratch := mscratch
 }
 
 class CsrInfoIO extends Bundle {
