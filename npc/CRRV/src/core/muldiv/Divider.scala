@@ -22,6 +22,9 @@ class Divider extends Module {
     val divresult = Output(UInt(DATA_WIDTH.W))
     val remresult = Output(UInt(DATA_WIDTH.W))
   })
+  // 检测除零和溢出
+  val divideZero = (io.opr2 === 0.U)
+  val overflow   = (io.opr1 === "h8000_0000".U && io.opr2 === "hffff_ffff".U)
   // 记录结果的符号状态
   val opr1Neg      = io.sign && io.opr1(DATA_WIDTH - 1)
   val opr2Neg      = io.sign && io.opr2(DATA_WIDTH - 1)
@@ -64,7 +67,21 @@ class Divider extends Module {
   val divresult = quotient
   val remresult = dividend(DATA_WIDTH * 2 - 1, DATA_WIDTH)
   // 输出结果
-  io.valid     := io.en && !io.flush && state === sEnd
-  io.divresult := Mux(divResultNeg, -divresult, divresult)
-  io.remresult := Mux(remResultNeg, -remresult, remresult)
+  io.valid := io.en && !io.flush && state === sEnd
+  io.divresult := MuxCase(
+    divresult,
+    Seq(
+      (divideZero) -> ("hffff_ffff".U),
+      (io.sign && overflow) -> (io.opr1),
+      (divResultNeg) -> (-divresult)
+    )
+  )
+  io.remresult := MuxCase(
+    remresult,
+    Seq(
+      (divideZero) -> (io.opr1),
+      (io.sign && overflow) -> (0.U),
+      (remResultNeg) -> (-remresult)
+    )
+  )
 }
