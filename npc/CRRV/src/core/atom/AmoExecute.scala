@@ -21,8 +21,8 @@ class AmoExecute extends Module {
     val ramWdata = Output(UInt(DATA_WIDTH.W))
   })
   // state of finite state machine
-  val sIdle :: sStore :: sEnd :: Nil = Enum(3)
-  val state                          = RegInit(sIdle)
+  val sIdle :: sStore :: Nil = Enum(2)
+  val state                  = RegInit(sIdle)
 
   // operands
   val opr1 = io.ramRdata
@@ -55,15 +55,12 @@ class AmoExecute extends Module {
         }
       }
       is(sStore) {
-        state := sEnd
-      }
-      is(sEnd) {
         state := sIdle
       }
     }
   }
   // output signals
-  io.ready    := state === sEnd
+  io.ready    := (state === sStore && io.ramValid)
   io.regWdata := io.ramRdata
   io.ramWen   := state === sStore
   io.ramWdata := result
