@@ -1,3 +1,5 @@
+`define FAST_UART
+
 module uart_top_apb (
        input   wire        reset
      , input   wire        clock
@@ -14,6 +16,22 @@ module uart_top_apb (
      , input   wire        uart_rx       // serial output
      , output  wire        uart_tx       // serial input
 );
+`ifdef FAST_UART
+
+assign in_pready = in_psel && in_penable;
+assign in_pslverr = 1'b0;
+assign in_prdata = {4{8'h60}};
+
+always @(posedge clock) begin
+  if(in_psel && in_penable && in_pwrite) begin
+    case (in_paddr[1:0])
+      2'b00: $write("%c",in_pwdata[7:0]);
+      default : $write("unknow addr %x\n",in_paddr[7:0]);
+    endcase
+  end
+end
+
+`else
    //--------------------------------------------------
    wire   rtsn;
    wire   ctsn = 1'b0;
@@ -88,4 +106,6 @@ module uart_top_apb (
           .dtr_pad_o   (dtr_pad_o),
           .int_o       (interrupt)
    );
+
+`endif // FAST_UART
 endmodule

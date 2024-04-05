@@ -61,4 +61,10 @@ void sim_exec() {
     IFDEF(CONFIG_VTRACE, dump_wave());
 
     sim_statistic.clock_cycle++;
+
+#ifdef CONFIG_LOOP_CHECK
+    if ((sim_statistic.clock_cycle % 0x200000) == 0)
+        Log("check point : clock : %u, pc : 0x%x", sim_statistic.clock_cycle,
+            cpu.pc);
+#endif
 }

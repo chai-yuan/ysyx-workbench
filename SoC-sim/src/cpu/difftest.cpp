@@ -57,6 +57,12 @@ void init_difftest(char* ref_so_file, long img_size, int port) {
     difftest_flush();
 }
 
+#define CHECK_REG(name)                                                                     \
+    if (ref->name != cpu.name) {                                                            \
+        printf("difftest fail at " #name ",NPC: 0x%x, REF: 0x%x\n\n", cpu.name,ref->name);  \
+        return false;                                                                       \
+    }
+
 static bool isa_difftest_checkregs(CPU_regs* ref) {
     for (int i = 1; i < 32; i++) {
         if (cpu.gpr[i] != ref->gpr[i]) {
@@ -65,10 +71,15 @@ static bool isa_difftest_checkregs(CPU_regs* ref) {
             return false;
         }
     }
-    if (cpu.pc != ref->pc) {
-        printf("PC: NPC: 0x%x, REF: 0x%x\n", cpu.pc, ref->pc);
-        return false;
-    }
+    CHECK_REG(pc);
+    CHECK_REG(mstatus);
+    CHECK_REG(mcause);
+    CHECK_REG(mepc);
+    CHECK_REG(mtvec);
+    CHECK_REG(mscratch);
+    CHECK_REG(mie);
+    CHECK_REG(mip);
+    CHECK_REG(mtval);
 
     return true;
 }
