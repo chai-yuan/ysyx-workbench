@@ -10,7 +10,7 @@ import io._
   *
   * @param tickCount
   */
-class CLINT(val tickCount: Int = 2) extends Module {
+class CLINT(val tickCount: Int = 4) extends Module {
   val io = IO(new Bundle {
     val core = Flipped(new SimpleIO(ADDR_WIDTH, DATA_WIDTH))
     val intr = Output(Bool())
@@ -23,6 +23,7 @@ class CLINT(val tickCount: Int = 2) extends Module {
   val timermatchh = RegInit(0.U(32.W))
   val timermatch  = Cat(timermatchh, timermatchl)
   val tick        = RegInit(0.U(8.W))
+
   tick := tick + 1.U
   when(tick === tickCount.U) {
     tick  := 0.U

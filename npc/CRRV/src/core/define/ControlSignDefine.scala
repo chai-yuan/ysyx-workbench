@@ -95,7 +95,7 @@ object ControlSignDefine {
 
     ECALL     ->  List(N, N, N, OPR_ZERO, OPR_ZERO, ALU_ADD,  BR_NOP,   LSU_NOP,  CSR_NOP,  MDU_NOP,    EXC_ECALL),
     EBREAK    ->  List(N, N, N, OPR_ZERO, OPR_ZERO, ALU_ADD,  BR_NOP,   LSU_NOP,  CSR_NOP,  MDU_NOP,    EXC_NONE),
-    WFI       ->  List(N, N, N, OPR_ZERO, OPR_ZERO, ALU_ADD,  BR_NOP,   LSU_NOP,  CSR_NOP,  MDU_NOP,    EXC_NONE),
+    WFI       ->  List(N, N, N, OPR_ZERO, OPR_ZERO, ALU_NOP,  BR_NOP,   LSU_NOP,  CSR_NOP,  MDU_NOP,    EXC_NONE),
     MRET      ->  List(N, N, N, OPR_ZERO, OPR_ZERO, ALU_ADD,  BR_NOP,   LSU_NOP,  CSR_NOP,  MDU_NOP,    EXC_MRET),
   )
 }

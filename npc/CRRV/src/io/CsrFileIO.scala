@@ -22,8 +22,9 @@ class CsrWriteIO extends Bundle {
   val addr = Output(UInt(CSR_ADDR_WIDTH.W))
   val data = Output(UInt(DATA_WIDTH.W))
 
-  val exceptType = Output(UInt(EXC_TYPE_WIDTH.W))
-  val exceptPc   = Output(UInt(ADDR_WIDTH.W))
+  val exceptType   = Output(UInt(EXC_TYPE_WIDTH.W))
+  val exceptPc     = Output(UInt(ADDR_WIDTH.W))
+  val exceptNextPc = Output(UInt(ADDR_WIDTH.W))
 }
 
 /**

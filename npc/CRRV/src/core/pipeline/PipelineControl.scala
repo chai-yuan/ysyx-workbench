@@ -47,20 +47,20 @@ class PipelineControl extends Module {
     )
   )
   // 异常
-  val excFlush = io.exceptType =/= EXC_NONE || io.csrInfo.intr || io.csrInfo.sleep
+  val excFlush = io.exceptType =/= EXC_NONE
   val excPc = MuxLookup(io.exceptType, 0.U)(
     Seq(
-      (io.csrInfo.intr) -> (io.csrInfo.trapEnterVec),
       (EXC_ECALL) -> (io.csrInfo.trapEnterVec),
       (EXC_MRET) -> (io.csrInfo.mepc)
     )
   )
   // 生成清空信号
-  val flushAll = io.memFlushReq || excFlush
+  val flushAll = io.memFlushReq || excFlush || io.csrInfo.intr
   val flushIF  = flushAll || io.idFlushReq
   val flushPc = MuxCase(
     0.U,
     Seq(
+      (io.csrInfo.intr) -> (io.csrInfo.trapEnterVec),
       (excFlush) -> (excPc),
       (io.memFlushReq) -> (io.memFlushTarget),
       (io.idFlushReq) -> (io.idFlushTarget)

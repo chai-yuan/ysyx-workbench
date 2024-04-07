@@ -13,7 +13,7 @@ class CsrFile extends Module {
     val read  = Flipped(new CsrReadIO)
     val write = Flipped(new CsrWriteIO)
 
-    val intr    = new InterruptIO
+    val intr    = Input(Bool())
     val csrInfo = new CsrInfoIO
 
     val debug = Output(new CsrDebugIO)
@@ -50,38 +50,56 @@ class CsrFile extends Module {
   val readValid = true.B
   // 处理写入数据
   val writeEn = dontTouch(io.write.op =/= CSR_NOP && io.write.op =/= CSR_R)
+  val writeOldData = MuxLookup(io.write.addr, 0.U) {
+    Seq(
+      (CSR_MSTATUS) -> (mstatus),
+      (CSR_MCAUSE) -> (mcause),
+      (CSR_MTVEC) -> (mtvec),
+      (CSR_MEPC) -> (mepc),
+      (CSR_MVENDORID) -> (mvendorid),
+      (CSR_MARCHID) -> (marchid),
+      (CSR_MSCRATCH) -> (mscratch),
+      (CSR_MIE) -> (mie),
+      (CSR_MIP) -> (mip),
+      (CSR_MTVAL) -> (mtval)
+    )
+  }
   val writeData = MuxLookup(io.write.op, 0.U)(
     Seq(
       CSR_W -> io.write.data,
       CSR_RW -> io.write.data,
-      CSR_RS -> (readData | io.write.data),
-      CSR_RC -> (readData & ~io.write.data)
+      CSR_RS -> (writeOldData | io.write.data),
+      CSR_RC -> (writeOldData & ~io.write.data)
     )
   )
   // 中断更新
-  when(io.intr.timer) {
-    mip   := mip | (1 << 7).U
+  mip := Mux(io.intr, "h80".U, 0.U)
+  when(io.intr) {
     sleep := false.B
-  }.otherwise {
-    mip := mip & ~(1 << 7).U
   }
-  val intr = mip(7) && mie(7) && mstatus(3)
+
+  val intr            = mip(7) && mie(7) && mstatus(3)
+  val exceptPc        = io.write.exceptPc
+  val exceptNextPcReg = RegInit(0.U(32.W))
+  exceptNextPcReg := Mux(io.write.exceptNextPc > 4.U, io.write.exceptNextPc, exceptNextPcReg)
   // 控制状态更新
   when(intr) { // 中断更新
-    mepc      := io.write.exceptPc
+    mepc      := exceptNextPcReg
     mcause    := "h8000_0007".U(32.W)
     mtval     := 0.U
     mstatus   := ((mstatus & "h08".U) << 4.U) | (privilege << 11.U)
     privilege := CSR_MODE_M
   }
-    .elsewhen(io.write.exceptType =/= EXC_NONE) { // 异常更新
-      when(io.write.exceptType === EXC_ECALL) {
-        mepc      := io.write.exceptPc
-        mcause    := Mux(privilege === CSR_MODE_M, 11.U, 8.U)
-        mtval     := io.write.exceptPc
-        mstatus   := ((mstatus & "h08".U) << 4.U) | (privilege << 11.U)
-        privilege := CSR_MODE_M
-      }
+    .elsewhen(io.write.exceptType === EXC_ECALL) { // ECALL
+      mepc      := exceptPc
+      mcause    := Mux(privilege === CSR_MODE_M, 11.U, 8.U)
+      mtval     := exceptPc
+      mstatus   := ((mstatus & "h08".U) << 4.U) | (privilege << 11.U)
+      privilege := CSR_MODE_M
+    }
+    .elsewhen(io.write.exceptType === EXC_MRET) {
+      mstatus   := ((mstatus & "h80".U) >> 4.U) | (privilege << 11.U) | "h80".U
+      privilege := mstatus(12, 11)
     }
     .elsewhen(writeEn) { // 写入更新
       when(io.write.addr === CSR_MSTATUS) { mstatus := writeData }

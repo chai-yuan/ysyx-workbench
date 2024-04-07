@@ -8,6 +8,7 @@ class DebugIO extends Bundle {
   val debugInfo = new DebugInfoIO
   val regs      = new RegDebugIO
   val csr       = new CsrDebugIO
+  val intr      = Bool()
 }
 
 class DebugInfoIO extends Bundle {

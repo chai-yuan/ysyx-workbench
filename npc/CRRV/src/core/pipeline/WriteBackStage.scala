@@ -47,11 +47,12 @@ class WriteBackStage extends Module {
   // 原子指令
   io.excMonCommit <> mem2wb.excMonCommit
   // csr
-  io.wb2csr.op         := id2wb.csrOp
-  io.wb2csr.addr       := id2wb.csrAddr
-  io.wb2csr.data       := id2wb.csrWriteData
-  io.wb2csr.exceptType := id2wb.exceptType
-  io.wb2csr.exceptPc   := if2wb.pc
+  io.wb2csr.op           := id2wb.csrOp
+  io.wb2csr.addr         := id2wb.csrAddr
+  io.wb2csr.data         := id2wb.csrWriteData
+  io.wb2csr.exceptType   := id2wb.exceptType
+  io.wb2csr.exceptPc     := if2wb.pc
+  io.wb2csr.exceptNextPc := id2wb.nextpc
   // 写入寄存器组
   io.regForward.en   := id2wb.regWen
   io.regForward.addr := id2wb.regWaddr
