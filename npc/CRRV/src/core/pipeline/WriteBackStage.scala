@@ -60,7 +60,7 @@ class WriteBackStage extends Module {
   io.regForward.load := exe2wb.load
   // debug
   io.debug.valid        := if2wb.instValid
-  io.debug.halt         := id2wb.inst === EBREAK
+  io.debug.halt         := id2wb.inst === EBREAK || id2wb.exceptType === EXC_ILLEG
   io.debug.deviceAccess := id2wb.lsuOp =/= LSU_NOP
   io.debug.deviceAddr   := exe2wb.exeResult
   io.debug.pc           := if2wb.pc

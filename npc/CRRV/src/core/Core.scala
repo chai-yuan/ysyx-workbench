@@ -78,12 +78,11 @@ class Core extends Module {
   regFile.io.write.addr := writeBackStage.io.regForward.addr
   regFile.io.write.data := writeBackStage.io.regForward.data
 
-  val intrReg = RegInit(false.B)
-  intrReg := Mux(io.debug.debugInfo.valid, io.intr.timer, intrReg)
+  val timer_intr = io.intr.timer && io.debug.debugInfo.valid
   // csr file
   csrFile.io.read <> hazardResolver.io.regCsr
   csrFile.io.write <> writeBackStage.io.wb2csr
-  csrFile.io.intr := intrReg
+  csrFile.io.intr := timer_intr
 
   // excMon
   excMon.io.flush <> pipelineControl.io.flushAll
@@ -120,5 +119,5 @@ class Core extends Module {
   io.debug.debugInfo := writeBackStage.io.debug
   io.debug.regs      := regFile.io.debug
   io.debug.csr       := csrFile.io.debug
-  io.debug.intr      := RegNext(intrReg)
+  io.debug.intr      := RegNext(timer_intr)
 }

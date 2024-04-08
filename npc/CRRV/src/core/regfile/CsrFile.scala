@@ -84,7 +84,7 @@ class CsrFile extends Module {
   exceptNextPcReg := Mux(io.write.exceptNextPc > 4.U, io.write.exceptNextPc, exceptNextPcReg)
   // 控制状态更新
   when(intr) { // 中断更新
-    mepc      := exceptNextPcReg
+    mepc      := Mux(io.write.exceptNextPc > 4.U, io.write.exceptNextPc, exceptNextPcReg)
     mcause    := "h8000_0007".U(32.W)
     mtval     := 0.U
     mstatus   := ((mstatus & "h08".U) << 4.U) | (privilege << 11.U)
