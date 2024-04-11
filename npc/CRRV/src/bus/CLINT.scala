@@ -10,7 +10,7 @@ import io._
   *
   * @param tickCount
   */
-class CLINT(val tickCount: Int = 4) extends Module {
+class CLINT(val tickCount: Int = 16) extends Module {
   val io = IO(new Bundle {
     val core = Flipped(new SimpleIO(ADDR_WIDTH, DATA_WIDTH))
     val intr = Output(Bool())

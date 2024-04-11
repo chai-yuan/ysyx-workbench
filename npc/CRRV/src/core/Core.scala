@@ -7,6 +7,7 @@ import core.pipeline._
 import core.regfile._
 import io._
 import core.atom.ExclusiveMonitor
+import core.define.OperationDefine
 
 class Core extends Module {
   val io = IO(new Bundle {
@@ -78,7 +79,8 @@ class Core extends Module {
   regFile.io.write.addr := writeBackStage.io.regForward.addr
   regFile.io.write.data := writeBackStage.io.regForward.data
 
-  val timer_intr = io.intr.timer && io.debug.debugInfo.valid
+  val timer_intr =
+    io.intr.timer && io.debug.debugInfo.valid && writeBackStage.io.wb2csr.exceptType === OperationDefine.EXC_NONE
   // csr file
   csrFile.io.read <> hazardResolver.io.regCsr
   csrFile.io.write <> writeBackStage.io.wb2csr
@@ -119,5 +121,5 @@ class Core extends Module {
   io.debug.debugInfo := writeBackStage.io.debug
   io.debug.regs      := regFile.io.debug
   io.debug.csr       := csrFile.io.debug
-  io.debug.intr      := RegNext(timer_intr)
+  io.debug.intr      := timer_intr
 }
