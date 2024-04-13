@@ -3,16 +3,15 @@
 #include <cpu/sim.h>
 #include <trace.h>
 
-static bool sim_intr = false;
-
 extern "C" void debug_sim_halt() {
     set_npc_state(NPC_END, cpu.pc, cpu.gpr[10]);
 }
 
-extern "C" void debug_sim_intr() {
-    sim_intr = true;
+extern "C" void debug_sim_intr(int no) {
+    #ifdef CONFIG_DIFFTEST
+    ref_difftest_raise_intr(no);
+    #endif
 }
-
 
 extern "C" void debug_update_csr(int mstatus, int mcause, int mtvec, int mepc,
                                  int mscratch, int mie, int mip, int mtval) {
@@ -73,17 +72,29 @@ extern "C" void debug_update_cpu(int deviceAccess,
     cpu.pc = pc;
     sim_statistic.valid_cycle++;
 
+    // if (cpu.pc == 0x8013b224){
+    //     printf("clock_cycle : %d\n",sim_statistic.clock_cycle);
+    //     exit(0);
+    // }
+
 #ifdef CONFIG_DIFFTEST
-    if (deviceAccess &&
-        ((0x02000000 <= deviceAddr && deviceAddr < 0x02080000) ||
-         (0x10000000 <= deviceAddr && deviceAddr < 0x10020000))) {
-        difftest_flush();
-    } else if(sim_intr) {
-        ref_difftest_raise_intr(0x80000007);
-    } else if (cpu.pc != CONFIG_PC) {
-        CPU_regs ref;
-        difftest_step(&ref);
-        difftest_checkregs(&ref);
-    }
+
+CPU_regs ref;
+static bool device = false;
+
+if (device){
+    ref_difftest_regcpy(&cpu, DIFFTEST_TO_REF);
+} else if (cpu.pc != CONFIG_PC){
+    ref_difftest_exec(1);
+}
+device = deviceAccess && ((0x02000000 <= deviceAddr && deviceAddr < 0x10002000));
+
+ref_difftest_regcpy(&ref, DIFFTEST_TO_DUT);
+difftest_checkregs(&ref);
+
+// if (deviceAddr == 0x809fe640){
+//     npc_state.state = NPC_STOP;
+// }
+
 #endif
 }

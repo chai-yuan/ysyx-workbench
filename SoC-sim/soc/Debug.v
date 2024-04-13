@@ -53,7 +53,7 @@ module Debug (
 );
 
 import "DPI-C" function void debug_sim_halt();
-import "DPI-C" function void debug_sim_intr();
+import "DPI-C" function void debug_sim_intr(int no);
 import "DPI-C" function void debug_update_csr(int mstatus, int mcause, int mtvec, int mepc,
                                  int mscratch, int mie, int mip, int mtval);
 import "DPI-C" function void debug_update_reg(
@@ -68,6 +68,7 @@ import "DPI-C" function void debug_update_cpu(int deviceAccess,
                                  );
 
 wire valid = !reset && debug_debugInfo_valid;
+
 always @(posedge clock) begin
 debug_update_csr(
     debug_csr_mstatus,debug_csr_mcause,debug_csr_mtvec,debug_csr_mepc,
@@ -84,16 +85,12 @@ debug_update_reg(
     debug_regs_regs_30, debug_regs_regs_31
 );
 
-if(debug_intr) begin
-    debug_sim_intr();
-end
-
-
 if(valid) begin
     debug_update_cpu(debug_debugInfo_deviceAccess,debug_debugInfo_deviceAddr,debug_debugInfo_pc);
     if(debug_debugInfo_halt)begin
         debug_sim_halt();
     end
+    debug_sim_intr(debug_intr);
 end
 
 end

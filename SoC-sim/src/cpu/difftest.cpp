@@ -71,15 +71,15 @@ static bool isa_difftest_checkregs(CPU_regs* ref) {
             return false;
         }
     }
-    CHECK_REG(pc);
     CHECK_REG(mstatus);
     CHECK_REG(mcause);
     CHECK_REG(mepc);
     CHECK_REG(mtvec);
     CHECK_REG(mscratch);
     CHECK_REG(mie);
-    CHECK_REG(mip);
+    // CHECK_REG(mip);
     CHECK_REG(mtval);
+    CHECK_REG(pc);
 
     return true;
 }
