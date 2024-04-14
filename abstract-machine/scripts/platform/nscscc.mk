@@ -8,7 +8,7 @@ LDFLAGS   += --gc-sections -e _start
 CFLAGS += -DMAINARGS=\"$(mainargs)\"
 .PHONY: $(AM_HOME)/am/src/loongarch/nscscc/trm.c
 
-NPCFLAGS +=
+NPCARGS += $(IMAGE).bin
 
 image: $(IMAGE).elf
 	@$(OBJDUMP) -d -M no-aliases $(IMAGE).elf > $(IMAGE).txt
@@ -16,6 +16,6 @@ image: $(IMAGE).elf
 	@$(OBJCOPY) -S --set-section-flags .bss=alloc,contents -O binary $(IMAGE).elf $(IMAGE).bin
 
 run: image
-	$(MAKE) -C $(NPC_HOME)/simulation ISA=$(ISA) run ARGS="$(NPCFLAGS)" IMG=$(IMAGE).bin
+	$(MAKE) -C /Project/NSCSCC2024/LA32R-Simulator ARGS="$(NPCARGS)" run
 
 

@@ -3,7 +3,7 @@
 #include <klib.h>
 #include "../loongarch32r.h"
 
-#define npc_trap(code) while(1);
+# define npc_trap(code) asm volatile("move $a0, %0; break 0" : :"r"(code))
 
 extern char _heap_start, _heap_end;
 
