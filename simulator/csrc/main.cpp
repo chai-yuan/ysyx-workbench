@@ -1,7 +1,7 @@
 #include <common.h>
-#include <cpu/sim.h>
 #include <monitor.h>
 #include <nvboard.h>
+#include <sim/sim.h>
 
 NPCState npc_state = {.state = NPC_STOP, .halt_pc = 0, .halt_ret = 0};
 
@@ -13,7 +13,7 @@ int is_exit_status_bad() {
 
 #ifdef CONFIG_NVBOARD
 static VysyxSoCFull dut;
-void nvboard_bind_all_pins(VysyxSoCFull* top) {
+void nvboard_bind_all_pins(VysyxSoCFull *top) {
     nvboard_bind_pin(&top->externalPins_vga_vsync, 1, VGA_VSYNC);
     nvboard_bind_pin(&top->externalPins_vga_hsync, 1, VGA_HSYNC);
     nvboard_bind_pin(&top->externalPins_vga_valid, 1, VGA_BLANK_N);
@@ -60,7 +60,7 @@ static void single_cycle() {
 }
 #endif
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
     Verilated::commandArgs(argc, argv);
     init_monitor(argc, argv);
 

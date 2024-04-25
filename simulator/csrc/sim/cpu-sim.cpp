@@ -1,12 +1,17 @@
 #include <cpu/cpu.h>
 #include <cpu/difftest.h>
-#include <cpu/sim.h>
 #include <memory/paddr.h>
-#include <trace.h>
+#include <sim/sim.h>
+#include <sim/trace.h>
 
-VysyxSoCFull* sim_soc;
-VerilatedContext* contextp;
-VerilatedVcdC* tfp;
+#ifdef CONFIG_SOC
+VysyxSoCFull *sim_top;
+#elif CONFIG_NPC
+VCRRVTop *sim_top;
+#endif
+
+VerilatedContext *contextp;
+VerilatedVcdC *tfp;
 
 sim_statistic_t sim_statistic;
 bool vtrace_enable;
@@ -16,7 +21,7 @@ void sim_init() {
 
     contextp = new VerilatedContext();
     tfp = new VerilatedVcdC();
-    sim_soc = new VysyxSoCFull();
+    sim_top = new VysyxSoCFull();
     IFDEF(CONFIG_VTRACE, vtrace_init("debug.vcd"));
 
     sim_statistic.clock_cycle = sim_statistic.valid_cycle = 0;
@@ -26,23 +31,23 @@ void sim_init() {
 }
 
 void sim_reset() {
-    sim_soc->clock = 0;
-    sim_soc->reset = 1;
-    sim_soc->eval();
+    sim_top->clock = 0;
+    sim_top->reset = 1;
+    sim_top->eval();
     IFDEF(CONFIG_VTRACE, dump_wave());
 
     for (int i = 0; i < 24; i++) {
-        sim_soc->clock = 1;
-        sim_soc->eval();
+        sim_top->clock = 1;
+        sim_top->eval();
         IFDEF(CONFIG_VTRACE, dump_wave());
-        sim_soc->clock = 0;
-        sim_soc->eval();
+        sim_top->clock = 0;
+        sim_top->eval();
         IFDEF(CONFIG_VTRACE, dump_wave());
     }
 
-    sim_soc->clock = 1;
-    sim_soc->reset = 0;
-    sim_soc->eval();
+    sim_top->clock = 1;
+    sim_top->reset = 0;
+    sim_top->eval();
     IFDEF(CONFIG_VTRACE, dump_wave());
 }
 
@@ -52,12 +57,12 @@ void sim_exit() {
 }
 
 void sim_exec() {
-    sim_soc->clock = 0;
-    sim_soc->eval();
+    sim_top->clock = 0;
+    sim_top->eval();
     IFDEF(CONFIG_VTRACE, dump_wave());
 
-    sim_soc->clock = 1;
-    sim_soc->eval();
+    sim_top->clock = 1;
+    sim_top->eval();
     IFDEF(CONFIG_VTRACE, dump_wave());
 
     sim_statistic.clock_cycle++;

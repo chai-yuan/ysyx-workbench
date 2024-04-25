@@ -4,14 +4,15 @@
 #include <memory/paddr.h>
 #include <readline/history.h>
 #include <readline/readline.h>
+#include <sim/sim.h>
 #include <utils.h>
-#include <cpu/sim.h>
 
 static int is_batch_mode = false;
 
-/* We use the `readline' library to provide more flexibility to read from stdin. */
-static char* rl_gets() {
-    static char* line_read = NULL;
+/* We use the `readline' library to provide more flexibility to read from stdin.
+ */
+static char *rl_gets() {
+    static char *line_read = NULL;
 
     if (line_read) {
         free(line_read);
@@ -27,19 +28,19 @@ static char* rl_gets() {
     return line_read;
 }
 
-static int cmd_c(char* args) {
+static int cmd_c(char *args) {
     cpu_exec(-1);
     return 0;
 }
 
-static int cmd_q(char* args) {
+static int cmd_q(char *args) {
     npc_state.state = NPC_QUIT;
     return -1;
 }
 
-static int cmd_help(char* args);
+static int cmd_help(char *args);
 
-static int cmd_si(char* args) {
+static int cmd_si(char *args) {
     if (args == NULL) {
         cpu_exec(1);
     } else {
@@ -48,7 +49,7 @@ static int cmd_si(char* args) {
     return 0;
 }
 
-static int cmd_info(char* args) {
+static int cmd_info(char *args) {
     Assert(args != NULL, "The info command requires an argument");
     if (*args == 'r') {
         isa_reg_display();
@@ -58,16 +59,16 @@ static int cmd_info(char* args) {
     return 0;
 }
 
-static int cmd_x(char* args) {
-    char* slen = strtok(NULL, " ");
-    char* saddr = strtok(NULL, " ");
+static int cmd_x(char *args) {
+    char *slen = strtok(NULL, " ");
+    char *saddr = strtok(NULL, " ");
     int len = 0;
     vaddr_t addr = 0;
 
     sscanf(slen, "%d", &len);
     sscanf(saddr, "%x", &addr);
 
-    Log("read len %d,addr %x",len,addr);
+    Log("read len %d,addr %x", len, addr);
 
     for (int i = 0; i < len; i++) {
         word_t rdata;
@@ -78,16 +79,16 @@ static int cmd_x(char* args) {
     return 0;
 }
 
-static int cmd_v(char *args){
+static int cmd_v(char *args) {
     vtrace_enable = !vtrace_enable;
-    printf("vtrace %s\n",vtrace_enable ? "enable" : "disable");
+    printf("vtrace %s\n", vtrace_enable ? "enable" : "disable");
     return 0;
 }
 
 static struct {
-    const char* name;
-    const char* description;
-    int (*handler)(char*);
+    const char *name;
+    const char *description;
+    int (*handler)(char *);
 } cmd_table[] = {
     {"help", "Display information about all supported commands", cmd_help},
     {"c", "Continue the execution of the program", cmd_c},
@@ -100,9 +101,9 @@ static struct {
 
 #define NR_CMD ARRLEN(cmd_table)
 
-static int cmd_help(char* args) {
+static int cmd_help(char *args) {
     /* extract the first argument */
-    char* arg = strtok(NULL, " ");
+    char *arg = strtok(NULL, " ");
     int i;
 
     if (arg == NULL) {
@@ -113,7 +114,8 @@ static int cmd_help(char* args) {
     } else {
         for (i = 0; i < NR_CMD; i++) {
             if (strcmp(arg, cmd_table[i].name) == 0) {
-                printf("%s - %s\n", cmd_table[i].name, cmd_table[i].description);
+                printf("%s - %s\n", cmd_table[i].name,
+                       cmd_table[i].description);
                 return 0;
             }
         }
@@ -133,23 +135,20 @@ void sdb_mainloop() {
         return;
     }
 
-    for (char* str; (str = rl_gets()) != NULL;) {
-        char* str_end = str + strlen(str);
-
+    for (char *str; (str = rl_gets()) != NULL;) {
+        char *str_end = str + strlen(str);
         /* extract the first token as the command */
-        char* cmd = strtok(str, " ");
+        char *cmd = strtok(str, " ");
         if (cmd == NULL) {
             continue;
         }
-
         /* treat the remaining string as the arguments,
          * which may need further parsing
          */
-        char* args = cmd + strlen(cmd) + 1;
+        char *args = cmd + strlen(cmd) + 1;
         if (args >= str_end) {
             args = NULL;
         }
-
         int i;
         for (i = 0; i < NR_CMD; i++) {
             if (strcmp(cmd, cmd_table[i].name) == 0) {
@@ -159,7 +158,6 @@ void sdb_mainloop() {
                 break;
             }
         }
-
         if (i == NR_CMD) {
             printf("Unknown command '%s'\n", cmd);
         }

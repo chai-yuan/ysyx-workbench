@@ -1,16 +1,16 @@
 #include <cpu/cpu.h>
 #include <cpu/difftest.h>
-#include <cpu/sim.h>
-#include <trace.h>
+#include <sim/sim.h>
+#include <sim/trace.h>
 
 extern "C" void debug_sim_halt() {
     set_npc_state(NPC_END, cpu.pc, cpu.gpr[10]);
 }
 
 extern "C" void debug_sim_intr(int no) {
-    #ifdef CONFIG_DIFFTEST
+#ifdef CONFIG_DIFFTEST
     ref_difftest_raise_intr(no);
-    #endif
+#endif
 }
 
 extern "C" void debug_update_csr(int mstatus, int mcause, int mtvec, int mepc,
@@ -25,12 +25,14 @@ extern "C" void debug_update_csr(int mstatus, int mcause, int mtvec, int mepc,
     cpu.mtval = mtval;
 }
 
-extern "C" void debug_update_reg(
-    int reg0, int reg1, int reg2, int reg3, int reg4, int reg5, int reg6, int reg7, int reg8, int reg9,
-    int reg10, int reg11, int reg12, int reg13, int reg14, int reg15, int reg16, int reg17, int reg18, int reg19,
-    int reg20, int reg21, int reg22, int reg23, int reg24, int reg25, int reg26, int reg27, int reg28, int reg29,
-    int reg30, int reg31
-) {
+extern "C" void debug_update_reg(int reg0, int reg1, int reg2, int reg3,
+                                 int reg4, int reg5, int reg6, int reg7,
+                                 int reg8, int reg9, int reg10, int reg11,
+                                 int reg12, int reg13, int reg14, int reg15,
+                                 int reg16, int reg17, int reg18, int reg19,
+                                 int reg20, int reg21, int reg22, int reg23,
+                                 int reg24, int reg25, int reg26, int reg27,
+                                 int reg28, int reg29, int reg30, int reg31) {
     cpu.gpr[0] = reg0;
     cpu.gpr[1] = reg1;
     cpu.gpr[2] = reg2;
@@ -65,10 +67,7 @@ extern "C" void debug_update_reg(
     cpu.gpr[31] = reg31;
 }
 
-extern "C" void debug_update_cpu(int deviceAccess,
-                                 int deviceAddr,
-                                 int pc
-                                 ) {
+extern "C" void debug_update_cpu(int deviceAccess, int deviceAddr, int pc) {
     cpu.pc = pc;
     sim_statistic.valid_cycle++;
 
@@ -79,22 +78,19 @@ extern "C" void debug_update_cpu(int deviceAccess,
 
 #ifdef CONFIG_DIFFTEST
 
-CPU_regs ref;
-static bool device = false;
+    CPU_regs ref;
+    static bool device = false;
 
-if (device){
-    ref_difftest_regcpy(&cpu, DIFFTEST_TO_REF);
-} else if (cpu.pc != CONFIG_PC){
-    ref_difftest_exec(1);
-}
-device = deviceAccess && ((0x02000000 <= deviceAddr && deviceAddr < 0x10002000));
+    if (device) {
+        ref_difftest_regcpy(&cpu, DIFFTEST_TO_REF);
+    } else if (cpu.pc != CONFIG_PC) {
+        ref_difftest_exec(1);
+    }
+    device =
+        deviceAccess && ((0x02000000 <= deviceAddr && deviceAddr < 0x10002000));
 
-ref_difftest_regcpy(&ref, DIFFTEST_TO_DUT);
-difftest_checkregs(&ref);
-
-// if (deviceAddr == 0x809fe640){
-//     npc_state.state = NPC_STOP;
-// }
+    ref_difftest_regcpy(&ref, DIFFTEST_TO_DUT);
+    difftest_checkregs(&ref);
 
 #endif
 }

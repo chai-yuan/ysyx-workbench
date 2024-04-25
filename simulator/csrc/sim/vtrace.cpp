@@ -1,10 +1,10 @@
-#include <cpu/sim.h>
-#include <trace.h>
+#include <sim/sim.h>
+#include <sim/trace.h>
 
-void vtrace_init(const char* vcd_file) {
+void vtrace_init(const char *vcd_file) {
     Log("vtrace on");
     contextp->traceEverOn(true);
-    sim_soc->trace(tfp, 0);
+    sim_top->trace(tfp, 0);
     tfp->open(vcd_file);
 }
 
@@ -16,7 +16,7 @@ void vtrace_exit() {
 
 void dump_wave() {
     if (vtrace_enable) {
-        sim_soc->eval();
+        sim_top->eval();
 
         contextp->timeInc(1);
         tfp->dump(contextp->time());
