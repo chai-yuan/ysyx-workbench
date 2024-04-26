@@ -25,4 +25,4 @@ image: $(IMAGE).elf
 	
 	
 run: image
-	$(MAKE) -C $(NPC_HOME)/simulation ISA=$(ISA) run ARGS="$(NPCFLAGS)" IMG=$(IMAGE).bin
+	$(MAKE) -C $(SIM_HOME) ISA=$(ISA) run ARGS="$(NPCFLAGS)" IMG=$(IMAGE).bin

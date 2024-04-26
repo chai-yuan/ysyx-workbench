@@ -9,7 +9,7 @@ verilog:
 	$(call git_commit, "generate verilog")
 	mkdir -p $(BUILD_DIR)
 	mill -i __.runMain --mainClass Elaborate
-	cp CRRVTop.v $(SOC_HOME)/soc/
+	cp CRRVTop.v $(SIM_HOME)/vsrc/
 
 help:
 	mill -i __.test.runMain Elaborate --help

@@ -4,9 +4,9 @@
 #include <sim/sim.h>
 #include <sim/trace.h>
 
-#ifdef CONFIG_SOC
+#ifdef ysyxSoCFull
 VysyxSoCFull *sim_top;
-#elif CONFIG_NPC
+#elif CRRVTop
 VCRRVTop *sim_top;
 #endif
 
@@ -19,9 +19,15 @@ bool vtrace_enable;
 void sim_init() {
     Log("sim init");
 
+#ifdef ysyxSoCFull
+    sim_top = new VysyxSoCFull();
+#elif CRRVTop
+    sim_top = new VCRRVTop();
+#endif
+
     contextp = new VerilatedContext();
     tfp = new VerilatedVcdC();
-    sim_top = new VysyxSoCFull();
+
     IFDEF(CONFIG_VTRACE, vtrace_init("debug.vcd"));
 
     sim_statistic.clock_cycle = sim_statistic.valid_cycle = 0;

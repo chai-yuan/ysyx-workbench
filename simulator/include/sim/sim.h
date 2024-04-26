@@ -4,11 +4,11 @@
 #include "verilated.h"
 #include <common.h>
 
-#ifdef CONFIG_SOC
+#ifdef ysyxSoCFull
 #include "VysyxSoCFull.h"
 extern VysyxSoCFull *sim_top;
-#elif CONFIG_NPC
-#inlcude "VCRRVTop.h"
+#elif CRRVTop
+#include "VCRRVTop.h"
 extern VCRRVTop *sim_top;
 #endif
 

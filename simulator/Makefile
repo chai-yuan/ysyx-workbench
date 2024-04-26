@@ -19,7 +19,7 @@ VERILATOR_FLAGS += --trace --debug --cc --exe --build --no-timing --timescale "1
 BIN 		:= $(OBJ_DIR)/V$(TOP_NAME)
 
 # gcc
-CFLAGS 	:= -I$(INCLUDE_DIR) -I$(NVBOARD_HOME)/usr/include -g -Wall -Wextra
+CFLAGS 	:= -I$(INCLUDE_DIR) -I$(NVBOARD_HOME)/usr/include -g -Wall -Wextra -D$(TOP_NAME)
 LDFLAGS := -ldl -lreadline
 LDFLAGS += $(shell sdl2-config --libs) -lSDL2_image -lSDL2_ttf
 
