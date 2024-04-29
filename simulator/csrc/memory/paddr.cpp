@@ -4,8 +4,6 @@
 #include <cstdlib>
 #include <memory/paddr.h>
 
-#define MEM_BASE 0x30000000
-
 uint8_t *raw_mem;
 paddr_t mem_base, mem_size = 0x08000000;
 

@@ -21,13 +21,13 @@ extern "C" void mrom_read(uint32_t addr, uint32_t *data) {
     *data = *(uint32_t *)(raw_mem + addr);
 }
 
-extern "C" void sim_mem_read(int addr, int *data) {
+extern "C" void sim_mem_read(uint32_t addr, uint32_t *data) {
     addr = addr & 0x0FFFFFFC;
     *data = *(uint32_t *)(raw_mem + addr);
 }
 
-extern "C" void sim_mem_write(int addr, int size, int data) {
-    addr = addr & 0x0FFFFFFC;
+extern "C" void sim_mem_write(uint32_t addr, uint32_t size, uint32_t data) {
+    addr = addr & 0x0FFFFFFF;
     // 根据要写入的尺寸，决定如何处理数据
     switch (size) {
     case 0: // 写入1字节
@@ -37,7 +37,7 @@ extern "C" void sim_mem_write(int addr, int size, int data) {
         *(uint16_t *)(raw_mem + addr) = (uint16_t)(data & 0xFFFF);
         break;
     case 2: // 写入4字节
-        *(uint32_t *)(raw_mem + addr) = (uint32_t)data;
+        *(uint32_t *)(raw_mem + addr) = data;
         break;
     }
 }

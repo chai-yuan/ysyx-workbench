@@ -1,12 +1,13 @@
 AM_SRCS := riscv/npc/start.S \
            riscv/npc/trm.c \
-           riscv/npc/ioe.c \
-           riscv/npc/timer.c \
-           riscv/npc/input.c \
+           riscv/npc/ioe/ioe.c \
+           riscv/npc/ioe/uart.c \
+           riscv/npc/ioe/timer.c \
+           riscv/npc/ioe/input.c \
+           riscv/npc/ioe/gpu.c \
            riscv/npc/cte.c \
-           riscv/npc/trap.S \
-           platform/dummy/vme.c \
-           platform/dummy/mpe.c
+           riscv/npc/mpe.c \
+           riscv/npc/trap.S
 
 CFLAGS    += -fdata-sections -ffunction-sections
 LDFLAGS   += -T $(AM_HOME)/scripts/linker.ld \
@@ -15,7 +16,7 @@ LDFLAGS   += --gc-sections -e _start
 CFLAGS += -DMAINARGS=\"$(mainargs)\"
 .PHONY: $(AM_HOME)/am/src/riscv/npc/trm.c
 
-NPCFLAGS += -d $(NEMU_HOME)/build/riscv32-nemu-interpreter-so
+NPCFLAGS += -d /home/charain/Project/mini-rv32ima/sim-nemu/mini-rv32ima.so
 NPCFLAGS += -b
 
 image: $(IMAGE).elf
@@ -25,4 +26,4 @@ image: $(IMAGE).elf
 	
 	
 run: image
-	$(MAKE) -C $(SIM_HOME) ISA=$(ISA) run ARGS="$(NPCFLAGS)" IMG=$(IMAGE).bin
+	$(MAKE) -C $(SIM_HOME) TOP_NAME=CRRVTop ISA=$(ISA) run ARGS="$(NPCFLAGS)" IMG=$(IMAGE).bin

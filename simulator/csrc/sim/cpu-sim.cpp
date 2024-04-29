@@ -19,14 +19,14 @@ bool vtrace_enable;
 void sim_init() {
     Log("sim init");
 
+    contextp = new VerilatedContext();
+    tfp = new VerilatedVcdC();
+
 #ifdef ysyxSoCFull
     sim_top = new VysyxSoCFull();
 #elif CRRVTop
     sim_top = new VCRRVTop();
 #endif
-
-    contextp = new VerilatedContext();
-    tfp = new VerilatedVcdC();
 
     IFDEF(CONFIG_VTRACE, vtrace_init("debug.vcd"));
 

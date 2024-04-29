@@ -1,29 +1,25 @@
 #include <am.h>
 #include <klib-macros.h>
+#include <klib.h>
 #include "../riscv.h"
 
 #define npc_trap(code) asm volatile("mv a0, %0; ebreak" : : "r"(code))
 
-extern char _heap_start;
+extern char _heap_start, _heap_end;
+
 int main(const char* args);
 
-extern char _pmem_start;
-#define PMEM_SIZE (128 * 1024 * 1024)
-#define PMEM_END ((uintptr_t) & _pmem_start + PMEM_SIZE)
-
-Area heap = RANGE(&_heap_start, PMEM_END);
+Area heap = RANGE(&_heap_start, &_heap_end);
 #ifndef MAINARGS
 #define MAINARGS ""
 #endif
 static const char mainargs[] = MAINARGS;
 
 void putch(char ch) {
-    outb(0xa00003f8, ch);
 }
 
 void halt(int code) {
     npc_trap(code);
-
     while (1)
         ;
 }
