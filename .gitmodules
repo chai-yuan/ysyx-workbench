@@ -1,0 +1,6 @@
+[submodule "abstract-machine"]
+	path = abstract-machine
+	url = https://github.com/chai-yuan/abstract-machine.git
+[submodule "am-kernels"]
+	path = am-kernels
+	url = https://github.com/chai-yuan/am-kernels.git
