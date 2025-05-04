@@ -30,7 +30,8 @@
           pkgs.spike
           pkgs.dtc
           pkgs.clang-tools
-        pkgs.ffmpeg
+          pkgs.SDL2
+          pkgs.ffmpeg
         ];
 
         shellHook = ''
